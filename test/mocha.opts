@@ -1,0 +1,6 @@
+--require dotenv/config
+--require ts-node/register
+--require source-map-support/register
+--recursive
+--reporter list
+--exit
