@@ -61,9 +61,7 @@
     "typescript": "^2.7.2"
   },
   "dependencies": {
-    "@types/async": "^2.0.48",
-    "@types/node": "^9.4.6",
-    "async": "^2.6.0"
+    "@types/node": "^9.4.6"
   },
   "config": {
     "commitizen": {

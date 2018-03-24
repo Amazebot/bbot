@@ -1,27 +1,49 @@
+/**
+ * State object, can be modified by a series of middleware pieces
+ * Has some known properties but can contain others needed for type of process.
+ */
 export interface IContext {
+  [key: string]: any | {
+    response?: {}
+  }
 }
 
 /**
  * A generic middleware pipeline function that can either continue the pipeline
- * or interrupt it.
+ * or interrupt it. Can return a promise to wait on before next piece executed.
  *
- * If execution should continue, the middleware should call the `next` function
- * with `done` as an optional argument (to allow override).
- *
- * If not, the middleware should call the `done` function with no arguments.
- *
- * Middleware may wrap the `done` function in order to execute logic after the
- * final callback has been executed.
+ * The `next` function should be called to continue on to the next piece in the
+ * stack. It can be called with a single, optional argument: either the provided
+ * `done` function or a new function that eventually calls done, to execute
+ * logic after the stack completes. If the argument is not given, the provided
+ * done will be assumed.
  */
 export interface IMiddlewarePiece {
-  (context: IContext, next: Function, done?: Function): Promise<any>
+  (context: IContext, next: (done?: IMiddlewarePieceDone) => Promise<void>, done: IMiddlewarePieceDone): Promise<any> | void
 }
 
 /**
- * A callback to fire on successful execution of a middleware stack
- * Should accept no arguments and can return a promise for middleware caller
- * to wait before continuing to other operations.
+ * A `done` function, created when executing middleware piece, is passed to each
+ * piece and can be called (with no arguments) to interrupt the stack and begin
+ * executing the chain of completion functions.
+ */
+export interface IMiddlewarePieceDone {
+  (newDone?: IMiddlewarePieceDone): Promise<void>
+}
+
+/**
+ * Middleware complete function, handles successful processing and final state
+ * of context after middleware stack completes, before the callback.
+ */
+export interface IMiddlewareComplete {
+  (context: IContext, done: IMiddlewarePieceDone): any
+}
+
+/**
+ * A callback to fire when middleware finished executing, regardless of success.
+ * Can return a promise for middleware executor to wait before continuing to
+ * other operations. May be given an error if a middleware piece throws.
  */
 export interface IMiddlewareCallback {
-  (): Promise<void> | undefined
+  (err?: Error): Promise<void> | void
 }
