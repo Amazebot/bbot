@@ -1,12 +1,14 @@
-process.env.LOG_LEVEL = 'silent' // suppress bot logs
-
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import { EventEmitter } from 'events'
+import { logger } from './logger'
 import * as bot from './bot'
+const initLogLevel = logger.level
 
 describe('bot', () => {
+  before(() => logger.level = 'silent')
+  after(() => logger.level = initLogLevel)
   describe('.events', () => {
     it('exports an event emitter', () => {
       expect(bot.events).to.be.instanceof(EventEmitter)

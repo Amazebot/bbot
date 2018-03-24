@@ -1,3 +1,4 @@
+import { logger } from './logger'
 import { IContext, IMiddlewarePiece, IMiddlewareCallback, IMiddlewareComplete, IMiddlewarePieceDone } from '../config/middlewareInterfaces'
 
 /**
@@ -31,7 +32,7 @@ export default class Middleware {
 
   /** Execute all middleware in order, following by chained completion handlers. */
   execute (context: IContext, complete: IMiddlewareComplete, callback: IMiddlewareCallback): Promise<IContext> {
-    console.log(`[middleware] executing ${this.type} middleware`, { size: this.stack.length }) /** @todo logger.debug */
+    logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
     return new Promise((resolve, reject) => {
       /** The initial completion handler that may be wrapped by iterations. */
       const initDone: IMiddlewarePieceDone = () => {
@@ -49,7 +50,7 @@ export default class Middleware {
         } catch (err) {
           err.context = context
           err.middleware = this.type
-          console.error(err) /** @todo logger.error */
+          logger.error(err)
           done().catch()
           throw err
         }
@@ -60,7 +61,7 @@ export default class Middleware {
        * piece then the success callback.
        */
       const finished = (err: Error | null, done: IMiddlewarePieceDone): void => {
-        console.log(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`) /** @todo logger.debug */
+        logger.debug(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`)
         if (err) reject(err)
         else Promise.resolve(complete(context, done)).then(() => resolve(context)).catch()
       }

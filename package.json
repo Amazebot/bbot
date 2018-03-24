@@ -61,7 +61,9 @@
     "typescript": "^2.7.2"
   },
   "dependencies": {
-    "@types/node": "^9.4.6"
+    "@types/node": "^9.4.6",
+    "@types/winston": "^2.3.8",
+    "winston": "^2.4.1"
   },
   "config": {
     "commitizen": {
