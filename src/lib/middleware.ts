@@ -1,5 +1,11 @@
+/**
+ * @module middleware
+ * Provide interfaces to create and populate an asynchronous middleware pipeline
+ * for any internal process.
+ */
+
 import { logger } from './logger'
-import { IContext, IMiddlewarePiece, IMiddlewareCallback, IMiddlewareComplete, IMiddlewarePieceDone } from '../config/middlewareInterfaces'
+import { IContext, IPiece, IPieceDone, IComplete, ICallback } from '../config/middlewareInterfaces'
 
 /**
  * Generic async middleware, handles a stack (or pipeline) of functions that
@@ -18,24 +24,24 @@ import { IContext, IMiddlewarePiece, IMiddlewareCallback, IMiddlewareComplete, I
  * Different kinds of middleware may receive different information in the
  * context object. For more details, see the API for each type of middleware.
  */
-export default class Middleware {
+export class Middleware {
   /** Contains middleware "pieces" (callbacks) to execute */
-  public stack: IMiddlewarePiece[] = []
+  public stack: IPiece[] = []
 
   /** Remember own name for tracing middleware */
   constructor (public type: string = 'default') {}
 
   /** Add a piece to the pipeline */
-  register (piece: IMiddlewarePiece): void {
+  register (piece: IPiece): void {
     this.stack.push(piece)
   }
 
   /** Execute all middleware in order, following by chained completion handlers. */
-  execute (context: IContext, complete: IMiddlewareComplete, callback: IMiddlewareCallback): Promise<IContext> {
+  execute (context: IContext, complete: IComplete, callback: ICallback): Promise<IContext> {
     logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
     return new Promise((resolve, reject) => {
       /** The initial completion handler that may be wrapped by iterations. */
-      const initDone: IMiddlewarePieceDone = () => {
+      const initDone: IPieceDone = () => {
         return Promise.resolve(callback()).then(() => resolve(context))
       }
 
@@ -43,8 +49,8 @@ export default class Middleware {
        * Execute a single piece of middleware. If an error occurs, complete the
        * middleware without executing deeper.
        */
-      const executePiece = async (done: IMiddlewarePieceDone, piece: IMiddlewarePiece, cb: Function) => {
-        const next: IMiddlewarePieceDone = (newDone?: IMiddlewarePieceDone) => cb(newDone || done)
+      const executePiece = async (done: IPieceDone, piece: IPiece, cb: Function) => {
+        const next: IPieceDone = (newDone?: IPieceDone) => cb(newDone || done)
         try {
           await Promise.resolve(piece(context, next, done))
         } catch (err) {
@@ -60,7 +66,7 @@ export default class Middleware {
        * Called when async reduce completes all iterations, to run `complete`
        * piece then the success callback.
        */
-      const finished = (err: Error | null, done: IMiddlewarePieceDone): void => {
+      const finished = (err: Error | null, done: IPieceDone): void => {
         logger.debug(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`)
         if (err) reject(err)
         else Promise.resolve(complete(context, done)).then(() => resolve(context)).catch()
@@ -71,10 +77,10 @@ export default class Middleware {
        * Calls `finished` at the end, or if an error occurs.
        */
       const reduceStack = async (): Promise<void> => {
-        let done: IMiddlewarePieceDone = initDone
+        let done: IPieceDone = initDone
         try {
           for (let piece of this.stack) {
-            await executePiece(done, piece, (newDone: IMiddlewarePieceDone) => {
+            await executePiece(done, piece, (newDone: IPieceDone) => {
               done = newDone
             })
           }

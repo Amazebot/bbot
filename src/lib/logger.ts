@@ -1,3 +1,9 @@
+/**
+ * @module logger
+ * Contains an instance of a Winston `logger` and the `Logger` class to provide
+ * access to modify or replace the logger with a custom instance.
+ */
+
 import * as winston from 'winston'
 
 /**
@@ -24,7 +30,7 @@ export const logger = new (winston.Logger)({
   transports: [
     new winston.transports.File({
       name: 'errors',
-      filename: 'logs/error.log',
+      filename: 'error.log',
       level: 'error',
       maxsize: 500000,
       timestamp: true,
@@ -32,7 +38,7 @@ export const logger = new (winston.Logger)({
     }),
     new winston.transports.File({
       name: 'combined',
-      filename: 'logs/combined.log',
+      filename: 'combined.log',
       level: 'debug',
       maxsize: 500000,
       timestamp: true,
@@ -40,7 +46,9 @@ export const logger = new (winston.Logger)({
     }),
     new winston.transports.Console({
       name: 'console',
+      prettyPrint: true,
       colorize: true,
+      timestamp: true,
       humanReadableUnhandledException: true
     })
   ]
