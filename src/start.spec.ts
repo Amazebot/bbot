@@ -1,4 +1,6 @@
 import { expect } from 'chai'
+import { config } from './lib/argv'
+config.logLevel = 'silent'
 
 describe('start', () => {
   it('runs async bot startup', () => {

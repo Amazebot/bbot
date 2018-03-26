@@ -5,6 +5,7 @@
  */
 
 import * as winston from 'winston'
+import { config } from './argv'
 
 /**
  * Winston logger provides a logging interface common to many Node apps, with
@@ -22,9 +23,10 @@ import * as winston from 'winston'
  *
  * @todo Update to Winston v3 when typings complete
  * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20418
+ * @todo Add filter to prevent logging passwords etc
  */
 export const logger = new (winston.Logger)({
-  level: process.env.LOG_LEVEL || 'info',
+  level: config.logLevel,
   handleExceptions: true,
   exitOnError: (err) => ((err as any).middleware === undefined),
   transports: [

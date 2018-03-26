@@ -3,10 +3,11 @@ module.exports = function (wallaby) {
     name: 'bbot',
     files: [
       "src/**/*.ts",
+      "package.json",
       { pattern: "src/**/*.spec.ts", ignore: true },
       { pattern: "src/**/*.d.ts", ignore: true },
     ],
-    tests: ["src/**/*.spec.ts"],
+    tests: ["src/lib/*.spec.ts"],
     testFramework: 'mocha',
     env: {
       type: 'node'

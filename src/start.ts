@@ -6,4 +6,4 @@
  */
 
 import * as b from './index'
-module.exports = b.bot.start().then(() => b)
+export = b.bot.start().then(() => b)

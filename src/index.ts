@@ -11,10 +11,16 @@
  *  bbot.bot.start()
  */
 
+import * as argv from './lib/argv'
 import * as bot from './lib/bot'
 import * as logger from './lib/logger'
 import * as middleware from './lib/middleware'
+
+/** Use `dotenv` to load local env settings from `.env` file in development */
+if (process.env.NODE_ENV === 'development') require('dotenv').config()
+
 export {
+  argv,
   bot,
   logger,
   middleware

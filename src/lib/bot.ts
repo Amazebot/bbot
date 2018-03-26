@@ -6,6 +6,7 @@
  */
 
 import { EventEmitter } from 'events'
+import { config } from './argv'
 import { logger } from './logger'
 import { IOptions } from '../config/botInterfaces'
 export let started: boolean = false
@@ -30,7 +31,8 @@ export const events = new EventEmitter()
  */
 export async function start (opts?: IOptions) {
   logger.info('Bleep Bloop... starting up ~(O_O)~')
-  if (opts) logger.info('with options', opts)
+  Object.assign(config, opts)
+  logger.info('Using config:', config)
   started = true
   events.emit('ready')
   return exports
