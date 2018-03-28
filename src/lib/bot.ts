@@ -30,9 +30,9 @@ export const events = new EventEmitter()
  *  bbot.bot.start()
  */
 export async function start (opts?: IOptions) {
-  logger.info('Bleep Bloop... starting up ~(O_O)~')
+  logger.info(`Starting up ${config.name}... bleep bloop ~(O_O)~`)
   Object.assign(config, opts)
-  logger.info('Using config:', config)
+  logger.info('Using config...', config)
   started = true
   events.emit('ready')
   return exports

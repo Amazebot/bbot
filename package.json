@@ -37,7 +37,9 @@
     "test:package": "preview && mocha 'src/*.spec.ts'",
     "docs": "rimraf ./docs/* && typedoc --options ./typedoc.json ./src",
     "prebuild": "npm run test",
-    "build": "rimraf ./dist/* && tsc && npm run test:package && npm run docs"
+    "build": "rimraf ./dist/* && tsc && npm run test:package && npm run docs",
+    "local": "ts-node -r dotenv/config src/start",
+    "start": "node -r dotenv/config dist/start"
   },
   "husky": {
     "hooks": {

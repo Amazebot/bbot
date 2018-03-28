@@ -55,7 +55,7 @@ export function getConfig () {
       process.exit(1)
     })
     .argv
-  const config: any = []
+  const config: any = {}
   for (let key of Object.keys(argv)) {
     if (optionsFilterKeys.indexOf(key) !== -1) {
       config[key] = argv[key]
