@@ -8,6 +8,12 @@ import * as winston from 'winston'
 import { config } from './argv'
 
 /**
+ * Allows extensions to create new logs
+ * @link https://github.com/winstonjs/winston/tree/2.x
+ */
+export class Logger extends winston.Logger {}
+
+/**
  * Winston logger provides a logging interface common to many Node apps, with
  * custom levels, filters, and outputs, and service integrations.
  * It will also handle exceptions and exit after logging (except middleware).
@@ -25,7 +31,7 @@ import { config } from './argv'
  * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20418
  * @todo Add filter to prevent logging passwords etc
  */
-export const logger = new (winston.Logger)({
+export const logger = new Logger({
   level: config.logLevel,
   handleExceptions: true,
   exitOnError: (err) => ((err as any).middleware === undefined),
@@ -55,9 +61,3 @@ export const logger = new (winston.Logger)({
     })
   ]
 })
-
-/**
- * Allows extensions to create new logs
- * @link https://github.com/winstonjs/winston/tree/2.x
- */
-export const Logger = winston.Logger

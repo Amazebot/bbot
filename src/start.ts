@@ -5,5 +5,5 @@
  * script directly from command line.
  */
 
-import * as b from './index'
-export = b.bot.start().then(() => b)
+import * as bbot from './index'
+module.exports = bbot.start().then(() => bbot)

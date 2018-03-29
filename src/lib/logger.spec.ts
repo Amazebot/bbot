@@ -7,7 +7,6 @@ const throwNextTick = (err) => process.nextTick(() => { throw err })
 
 describe('logger', () => {
   before(() => {
-    logger.level = 'silent' // suppress all standard logs
     logger.add(winston.transports.Memory, {
       json: true,
       level: 'debug'

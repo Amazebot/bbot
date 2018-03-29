@@ -2,11 +2,13 @@ import { expect } from 'chai'
 
 describe('index', () => {
   it('exports all lib modules', () => {
-    expect(Object.keys(require('bbot'))).to.eql([
-      'argv',
-      'bot',
+    expect(require('bbot')).to.include.all.keys([
+      'events',
+      'config',
       'logger',
-      'middleware'
+      'middlewares',
+      'adapters',
+      'start'
     ])
   })
 })

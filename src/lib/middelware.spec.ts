@@ -3,12 +3,9 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import { logger } from './logger'
 import { Middleware } from './middleware'
-const initLogLevel = logger.level
 const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
 
 describe('middleware', () => {
-  before(() => logger.level = 'silent')
-  after(() => logger.level = initLogLevel)
   describe('.register', () => {
     it('adds a piece to the stack', () => {
       const middleware = new Middleware('complete')

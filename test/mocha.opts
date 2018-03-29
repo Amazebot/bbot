@@ -1,5 +1,6 @@
 --require ts-node/register
 --require source-map-support/register
+--require test/mocha.env.js
 --recursive
 --reporter list
 --exit
