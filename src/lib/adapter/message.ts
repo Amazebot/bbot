@@ -14,16 +14,19 @@ export interface IMessageAdapter extends IAdapter {
  * Message Adapter class, extended to connect bBot with messaging platform.
  * Methods are just raw endpoints to be extended.
  */
-export class MessageAdapter extends Adapter implements IMessageAdapter {
+export abstract class MessageAdapter extends Adapter implements IMessageAdapter {
   name = 'message-adapter'
+  async receive (message: any, ...strings: string[]) {
+    this.logger.debug('Message adapter `receive` called without override')
+  }
   async send (envelope: any, ...strings: string[]) {
     this.logger.debug('Message adapter `send` called without override')
   }
-  async emote (envelope: any, ...strings: string[]) {
-    this.logger.debug('Message adapter `emote` called without override')
-  }
   async reply (envelope: any, ...strings: string[]) {
     this.logger.debug('Message adapter `reply` called without override')
+  }
+  async emote (envelope: any, ...strings: string[]) {
+    this.logger.debug('Message adapter `emote` called without override')
   }
   async topic (envelope: any, ...strings: string[]) {
     this.logger.debug('Message adapter `topic` called without override')
@@ -33,8 +36,5 @@ export class MessageAdapter extends Adapter implements IMessageAdapter {
   }
   async play (envelope: any, ...strings: string[]) {
     this.logger.debug('Message adapter `play` called without override')
-  }
-  async receive (message: any, ...strings: string[]) {
-    this.logger.debug('Message adapter `receive` called without override')
   }
 }

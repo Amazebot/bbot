@@ -37,7 +37,7 @@
     "test:package": "preview && mocha 'src/*.spec.ts'",
     "docs": "rimraf ./docs/* && typedoc --options ./typedoc.json ./src",
     "prebuild": "npm run test",
-    "build": "rimraf ./dist/* && tsc && npm run test:package && npm run docs",
+    "build": "rimraf ./dist/* && tsc && npm run test:package",
     "local": "ts-node -r dotenv/config src/start",
     "start": "node -r dotenv/config dist/start"
   },
@@ -50,6 +50,7 @@
     "@types/chai": "^4.1.2",
     "@types/mocha": "^2.2.48",
     "@types/mock-fs": "^3.6.30",
+    "@types/sinon": "^4.3.1",
     "chai": "^4.1.2",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",

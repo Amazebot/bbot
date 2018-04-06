@@ -111,6 +111,10 @@
     "@types/glob" "*"
     "@types/node" "*"
 
+"@types/sinon@^4.3.1":
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-4.3.1.tgz#32458f9b166cd44c23844eee4937814276f35199"
+
 "@types/winston@^2.3.8":
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/@types/winston/-/winston-2.3.8.tgz#88964f45ecb5ed1feb4bfb38a24316bee8bf8768"

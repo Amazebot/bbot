@@ -23,7 +23,7 @@ export interface IAdapter {
 }
 
 /** Base Adapter class, extending to create different types of adapters. */
-export class Adapter implements IAdapter {
+export abstract class Adapter implements IAdapter {
   name = 'base-adapter'
   events = events
   config = config
