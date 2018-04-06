@@ -159,3 +159,14 @@ export function loadMiddleware () {
   middlewares.remember = new Middleware('remember')
   middlewares.respond = new Middleware('respond')
 }
+
+/**
+ * Remove all middleware for reset
+ */
+export function unloadMiddleware () {
+  delete middlewares.listen
+  delete middlewares.understand
+  delete middlewares.receive
+  delete middlewares.remember
+  delete middlewares.respond
+}

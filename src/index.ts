@@ -19,4 +19,4 @@ export * from './lib/bot'
 
 /** Load once modules exported */
 import { load } from './lib/bot'
-load()
+load().catch((err) => console.error(err))

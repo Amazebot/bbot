@@ -49,6 +49,15 @@ export function loadAdapters () {
   adapters.analytics = loadAdapter(config.analyticsAdapter)
 }
 
+/** Unload adapters for resetting bot */
+export function unloadAdapters () {
+  delete adapters.message
+  delete adapters.language
+  delete adapters.storage
+  delete adapters.webhook
+  delete adapters.analytics
+}
+
 /**
  * Require adapter module.
  * Resolves local path or NPM package.
@@ -59,12 +68,13 @@ export function loadAdapter (adapterPath?: string) {
   if (!adapterPath) return null
   if (/^(\/|\.|\\)/.test(adapterPath)) {
     let modulePath = 'node_modules/bbot/dist'
+    let sourcePath = 'src'
     let mainPath = path.dirname(require.main!.filename)
     let mainModule = path.resolve(mainPath, modulePath)
     let currentPath = process.cwd()
     let currentModule = path.resolve(currentPath, modulePath)
     adapterPath = require.resolve(adapterPath, {
-      paths: [ mainPath, mainModule, currentPath, currentModule ]
+      paths: [ mainPath, mainModule, currentPath, currentModule, sourcePath ]
     })
   }
   logger.debug(`Loading adapter from ${adapterPath}`)
