@@ -1,0 +1,41 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Start",
+      "cwd": "${workspaceRoot}",
+      "env": {
+        "NODE_ENV": "development",
+        "BOT_LOG_LEVEL": "debug",
+        "TS_NODE_CACHE_DIRECTORY": "${workspaceRoot}/.ts-node"
+      },
+      "sourceMaps": true,
+      "runtimeExecutable": "node",
+      "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+      "args": [
+        "--require",
+        "ts-node/register",
+        "--require",
+        "source-map-support/register",
+        "${workspaceFolder}/src/start.ts"
+      ],
+      "protocol": "inspector",
+      "stopOnEntry": false
+    },
+    {
+      "name": "Current Spec",
+      "type": "node",
+      "sourceMaps": true,
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/.bin/_mocha",
+      "args": ["${relativeFile}"],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector"
+    }
+  ]
+}

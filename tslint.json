@@ -6,6 +6,8 @@
     ]
   },
   "rules": {
+    "no-unused-expression": true,
+    "no-unused-variable": true,
     "semicolon": [
       true,
       "never"

@@ -5,36 +5,45 @@
  * as managing middleware and executing the high level "thought process".
  */
 import { promisify } from 'util'
-import { loadAdapters, startAdapters, unloadAdapters } from './adapter'
-import { events } from './events'
-import { config } from './argv'
-import { logger } from './logger'
-import { loadMiddleware, unloadMiddleware } from './middleware'
+import {
+  events,
+  config,
+  name,
+  logger,
+  loadMiddleware,
+  unloadMiddleware,
+  loadAdapters,
+  startAdapters,
+  unloadAdapters
+} from '..'
 
-const setImmediatePromise = promisify(setImmediate)
-const states: { [key: string]: 0 | 1 } = {
-  waiting: 1, loading: 0, loaded: 0, starting: 0, ready: 0, shutdown: 0
+/** Await helper, pauses for event loop */
+export const eventDelay = promisify(setImmediate)
+
+/** Internal index for loading status */
+const status: { [key: string]: 0 | 1 } = {
+  waiting: 1, loading: 0, loaded: 0, starting: 0, started: 0, shutdown: 0
 }
 
 /**
- * Private helper for setting and logging loading states.
+ * Private helper for setting and logging loading status.
  */
-function setState (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'ready' | 'shutdown') {
-  for (let state of Object.keys(states)) states[state] = (set === state) ? 1 : 0
+function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'started' | 'shutdown') {
+  for (let key of Object.keys(status)) status[key] = (set === key) ? 1 : 0
   if (set === 'loading') {
-    logger.info(`${config.name} loading  . . . . . ~(0_0)~`)
+    logger.info(`${name} loading  . . . . . ~(0_0)~`)
   } else if (set === 'starting') {
-    logger.info(`${config.name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
-  } else if (set === 'ready') {
-    logger.info(`${config.name} ready  . . . . . . ~(O_O)~ bleep bloop`)
+    logger.info(`${name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
+  } else if (set === 'started') {
+    logger.info(`${name} started  . . . . . ~(O_O)~ bleep bloop`)
   }
 }
 
 /**
  * Find out where the loading or shutdown process is at.
  */
-export function getState (): string {
-  for (let state of Object.keys(states)) if (states[state] === 1) return state
+export function getStatus (): string {
+  for (let key of Object.keys(status)) if (status[key] === 1) return key
   return 'broken' // should never get here
 }
 
@@ -43,14 +52,15 @@ export function getState (): string {
  * Extensions/adapters can interrupt or modify the stack before start.
  */
 export async function load (): Promise<void> {
-  if (getState() !== 'waiting') await reset()
-  setState('loading')
+  if (getStatus() !== 'waiting') await reset()
+  setStatus('loading')
   logger.debug('Using config:', config)
   loadMiddleware()
   loadAdapters()
   // loadServer()
-  await setImmediatePromise()
-  setState('loaded')
+  await eventDelay()
+  setStatus('loaded')
+  events.emit('loaded')
 }
 
 /**
@@ -60,27 +70,35 @@ export async function load (): Promise<void> {
  *  bbot.start()
  */
 export async function start (): Promise<void> {
-  if (getState() !== 'loaded') await load()
-  setState('starting')
+  if (getStatus() !== 'loaded') await load()
+  setStatus('starting')
   await startAdapters()
   // await startSever()
-  setState('ready')
-  await setImmediatePromise()
-  events.emit('ready')
+  await eventDelay()
+  setStatus('started')
+  events.emit('started')
 }
 
 /**
  * Make it stop!
- * Stops responding but keeps history and loaded components
+ * Stops responding but keeps history and loaded components.
+ * Will wait until started if shutdown called while starting.
  * @example
  *  import * as bbot from 'bbot'
  *  bbot.shutdown()
  */
 export async function shutdown (): Promise<void> {
+  const status = getStatus()
+  if (status === 'shutdown') return
+  if (status === 'loading') {
+    await new Promise((resolve) => events.on('loaded', () => resolve()))
+  } else if (status === 'starting') {
+    await new Promise((resolve) => events.on('started', () => resolve()))
+  }
   // shutdown server
   // stop thought process
-  await setImmediatePromise()
-  setState('shutdown')
+  await eventDelay()
+  setStatus('shutdown')
 }
 
 /**
@@ -88,13 +106,10 @@ export async function shutdown (): Promise<void> {
  * Allow start to be called again without reloading
  */
 export async function pause (): Promise<void> {
-  if (getState() !== 'ready') {
-    logger.error('Cannot pause unless in ready state')
-    return
-  }
   await shutdown()
-  await setImmediatePromise()
-  setState('loaded')
+  await eventDelay()
+  setStatus('loaded')
+  events.emit('paused')
 }
 
 /**
@@ -102,10 +117,23 @@ export async function pause (): Promise<void> {
  * Would allow redefining classes before calling start again, mostly for tests.
  */
 export async function reset (): Promise<void> {
-  if (getState() !== 'shutdown') await shutdown()
+  const status = getStatus()
+  if (status === 'waiting') return
+  if (status !== 'shutdown') await shutdown()
   unloadAdapters()
   unloadMiddleware()
   // unloadServer()
-  await setImmediatePromise()
-  setState('waiting')
+  await eventDelay()
+  setStatus('waiting')
+  events.emit('waiting')
+}
+
+/** Input message to put through thought process */
+export async function receive (): Promise<void> {
+  /** @todo */
+}
+
+/** Output message at end of thought process */
+export async function send (): Promise<void> {
+  /** @todo */
 }

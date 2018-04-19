@@ -103,6 +103,11 @@ For more information, see https://amazebot.github.io/bbot'`
   return config
 }
 
+/** Access all settings from argv, env, package.json and custom config file */
 export const config = getConfig()
+
+/** Make some configs available at module root */
+export const name = config.name
+export const alias = config.alias
 
 if (process.platform !== 'win32') process.on('SIGTERM', () => process.exit(0))

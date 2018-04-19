@@ -6,7 +6,7 @@ describe('start', () => {
     /** @todo fix and re-enable test using submodule require to start */
     // require('bbot/start').then((bbot) => {
     return require('./start').then((bbot) => {
-      expect(bbot.getState()).to.equal('ready')
+      expect(bbot.getStatus()).to.equal('started')
     })
   })
 })

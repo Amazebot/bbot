@@ -1,11 +1,7 @@
-/**
- * @module logger
- * Contains an instance of a Winston `logger` and the `Logger` class to provide
- * access to modify or replace the logger with a custom instance.
- */
+/** @module logger */
 
 import * as winston from 'winston'
-import { config } from './argv'
+import { config } from '..'
 
 /**
  * Allows extensions to create new logs

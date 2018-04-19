@@ -30,7 +30,8 @@
     "alias": "bbot"
   },
   "scripts": {
-    "pretest": "tslint -p .",
+    "lint": "tslint -p .",
+    "pretest": "yarn lint",
     "test": "nyc mocha './src/lib/**/*.spec.ts'",
     "test:hook": "mocha './**/*.spec.ts'",
     "test:debug": "mocha  --inspect --debug-brk 'src/**/*.spec.ts'",

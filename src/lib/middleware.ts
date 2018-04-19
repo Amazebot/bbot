@@ -1,23 +1,13 @@
-/**
- * @module middleware
- * Provide interfaces to create and populate an asynchronous middleware pipeline
- * for any internal process.
- */
+/** @module middleware */
 
-import { logger } from './logger'
+import {
+  logger,
+  State,
+  IState
+} from '..'
 
 /** Collection of middleware types and their stacks. */
 export const middlewares: { [key: string]: Middleware } = {}
-
-/**
- * State object, can be modified by a series of middleware pieces
- * Has some known properties but can contain others needed for type of process.
- */
-export interface IContext {
-  [key: string]: any | {
-    response?: {}
-  }
-}
 
 /**
  * A generic middleware pipeline function that can either continue the pipeline
@@ -30,7 +20,7 @@ export interface IContext {
  * done will be assumed.
  */
 export interface IPiece {
-  (context: IContext, next: (done?: IPieceDone) => Promise<void>, done: IPieceDone): Promise<any> | void
+  (state: State, next: (done?: IPieceDone) => Promise<void>, done: IPieceDone): Promise<any> | void
 }
 
 /**
@@ -44,10 +34,10 @@ export interface IPieceDone {
 
 /**
  * Middleware complete function, handles successful processing and final state
- * of context after middleware stack completes, before the callback.
+ * after middleware stack completes, before the callback.
  */
 export interface IComplete {
-  (context: IContext, done: IPieceDone): any
+  (state: State, done: IPieceDone): any
 }
 
 /**
@@ -61,20 +51,20 @@ export interface ICallback {
 
 /**
  * Generic async middleware, handles a stack (or pipeline) of functions that
- * to pass along and possibly modify context for a final piece of functionality.
+ * to pass along and possibly modify state for a final piece of functionality.
  *
  * Similar to Express middleware, every middleware `piece` receives the same API
- * signature of `context`, `next`, and `done`. Each piece can either continue
+ * signature of `state`, `next`, and `done`. Each piece can either continue
  * the chain (by calling next) or interrupt the chain (by calling done).
  * If all middleware continues, a `complete` function is called to handle the
- * final context state.
+ * final state.
  *
  * Middleware may wrap the done callback to allow executing code in the second
  * half of the process (after `complete` has been executed or a deeper piece
  * of middleware has interrupted).
  *
- * Different kinds of middleware may receive different information in the
- * context object. For more details, see the API for each type of middleware.
+ * Different kinds of middleware may receive different information in the state
+ * object. For more details, see the API for each type of middleware.
  */
 export class Middleware {
   /** Contains middleware "pieces" (callbacks) to execute */
@@ -88,13 +78,16 @@ export class Middleware {
     this.stack.push(piece)
   }
 
-  /** Execute all middleware in order, following by chained completion handlers. */
-  execute (context: IContext, complete: IComplete, callback: ICallback): Promise<IContext> {
+  /** Execute middleware in order, following by chained completion handlers. */
+  execute (initState: IState, complete: IComplete, callback: ICallback): Promise<State> {
     logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
     return new Promise((resolve, reject) => {
+      /** Starting point for state to be processed by all middleware pieces */
+      const state = new State(initState)
+
       /** The initial completion handler that may be wrapped by iterations. */
       const initDone: IPieceDone = () => {
-        return Promise.resolve(callback()).then(() => resolve(context))
+        return Promise.resolve(callback()).then(() => resolve(state))
       }
 
       /**
@@ -104,9 +97,9 @@ export class Middleware {
       const executePiece = async (done: IPieceDone, piece: IPiece, cb: Function) => {
         const next: IPieceDone = (newDone?: IPieceDone) => cb(newDone || done)
         try {
-          await Promise.resolve(piece(context, next, done))
+          await Promise.resolve(piece(state, next, done))
         } catch (err) {
-          err.context = context
+          err.state = state
           err.middleware = this.type
           logger.error(err)
           done().catch()
@@ -121,7 +114,7 @@ export class Middleware {
       const finished = (err: Error | null, done: IPieceDone): void => {
         logger.debug(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`)
         if (err) reject(err)
-        else Promise.resolve(complete(context, done)).then(() => resolve(context)).catch()
+        else Promise.resolve(complete(state, done)).then(() => resolve(state)).catch()
       }
 
       /**
@@ -153,20 +146,45 @@ export class Middleware {
  * Contains pieces for async execution at each stage of input processing loop.
  */
 export function loadMiddleware () {
+  middlewares.hear = new Middleware('hear')
   middlewares.listen = new Middleware('listen')
   middlewares.understand = new Middleware('understand')
-  middlewares.receive = new Middleware('receive')
-  middlewares.remember = new Middleware('remember')
   middlewares.respond = new Middleware('respond')
+  middlewares.remember = new Middleware('remember')
 }
 
 /**
  * Remove all middleware for reset
  */
 export function unloadMiddleware () {
+  delete middlewares.hear
   delete middlewares.listen
   delete middlewares.understand
-  delete middlewares.receive
-  delete middlewares.remember
   delete middlewares.respond
+  delete middlewares.remember
+}
+
+/** Register middleware piece to execute before any matching */
+export function hearMiddleware (middlewarePiece: IPiece) {
+  middlewares.hear.register(middlewarePiece)
+}
+
+/** Register middleware piece to execute after listener match */
+export function listenMiddleware (middlewarePiece: IPiece) {
+  middlewares.listen.register(middlewarePiece)
+}
+
+/** Register middleware piece to execute with NLP before intent match */
+export function understandMiddleware (middlewarePiece: IPiece) {
+  middlewares.understand.register(middlewarePiece)
+}
+
+/** Register middleware piece to execute with before sending any response */
+export function respondMiddleware (middlewarePiece: IPiece) {
+  middlewares.respond.register(middlewarePiece)
+}
+
+/** Register middleware piece to execute with before storing data */
+export function rememberMiddleware (middlewarePiece: IPiece) {
+  middlewares.remember.register(middlewarePiece)
 }
