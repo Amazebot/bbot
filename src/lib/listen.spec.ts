@@ -17,10 +17,14 @@ import * as listen from './listen'
 
 // setup spies and mock listener class that matches on 'test'
 const mockUser = new User('TEST_ID', { name: 'testy' })
+
+// message matching listener that looks for 'test'
 const mockMessage = new TextMessage(mockUser, 'test')
 class MockListener extends listen.Listener {
-  matcher (message) { return /test/.test(message.text) }
+  async matcher (message) { return /test/.test(message.text) }
 }
+
+// spy on listener and middleware methods
 const callback = sinon.spy()
 const mockListener = new MockListener(callback)
 const matcher = sinon.spy(mockListener, 'matcher')
@@ -28,6 +32,7 @@ const mockMiddleware = new Middleware('mock')
 const mockPiece = sinon.spy()
 const execute = sinon.spy(mockMiddleware, 'execute')
 mockMiddleware.register(mockPiece)
+
 const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
 
 describe('listen', () => {
@@ -117,6 +122,31 @@ describe('listen', () => {
       expect(result.match).to.equal('delayed')
     })
   })
+  describe('NaturalLanguageListener', () => {
+    it('.process adds matcher result to state', () => {
+      const nluListener = new listen.NaturalLanguageListener({
+        intent: 'foo'
+      }, (state) => {
+        expect(state.match).to.eql({
+          intent: 'foo',
+          entities: {},
+          confidence: 20
+        })
+      })
+      const message = new TextMessage(mockUser, 'foo')
+      message.nlu = { intent: 'foo', entities: {}, confidence: 100 }
+      return nluListener.process(message)
+    })
+    it('.process fails match below confidence threshold', async () => {
+      const nluListener = new listen.NaturalLanguageListener({
+        intent: 'foo'
+      }, () => null)
+      const message = new TextMessage(mockUser, 'foo')
+      message.nlu = { intent: 'foo', entities: {}, confidence: 79 }
+      const state = await nluListener.process(message)
+      expect(state.matched).to.equal(false)
+    })
+  })
   describe('.listenText', () => {
     it('adds text listener to collection, returning ID', () => {
       const id = listen.listenText(/test/, () => null)
@@ -132,6 +162,18 @@ describe('listen', () => {
   describe('.listenCustom', () => {
     const id = listen.listenCustom(() => null, () => null)
     expect(listen.listeners[id]).to.be.instanceof(listen.CustomListener)
+  })
+  describe('.understand', () => {
+    it('adds NLU listener to NLU collection, returning ID', () => {
+      const id = listen.understand({ intent: 'test' }, () => null)
+      expect(listen.nluListeners[id]).to.be.instanceof(listen.NaturalLanguageListener)
+    })
+  })
+  describe('.understandCustom', () => {
+    it('adds custom listener to NLU collection, returning ID', () => {
+      const id = listen.understandCustom(() => null, () => null)
+      expect(listen.nluListeners[id]).to.be.instanceof(listen.CustomListener)
+    })
   })
   describe('.directPattern', () => {
     it('creates new regex for bot name prefixed to original', () => {

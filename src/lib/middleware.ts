@@ -174,17 +174,17 @@ export function listenMiddleware (middlewarePiece: IPiece) {
   middlewares.listen.register(middlewarePiece)
 }
 
-/** Register middleware piece to execute with NLP before intent match */
+/** Register middleware piece to execute with NLU before intent match */
 export function understandMiddleware (middlewarePiece: IPiece) {
   middlewares.understand.register(middlewarePiece)
 }
 
-/** Register middleware piece to execute with before sending any response */
+/** Register middleware piece to execute before sending any response */
 export function respondMiddleware (middlewarePiece: IPiece) {
   middlewares.respond.register(middlewarePiece)
 }
 
-/** Register middleware piece to execute with before storing data */
+/** Register middleware piece to execute before storing data */
 export function rememberMiddleware (middlewarePiece: IPiece) {
   middlewares.remember.register(middlewarePiece)
 }

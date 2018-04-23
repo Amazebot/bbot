@@ -15,22 +15,39 @@ import {
   CatchAllMessage,
   name,
   alias,
-  doBit
+  doBit,
+  TextMessage
 } from '..'
 
-/**
- * @todo Do NOT use `match` as truthy, add explicit `pass` boolean instead.
- *       Allows intent to be populated and set `pass` when `match` is null.
- */
-
-/** Array of listeners to feed message streams */
+/** Array of listeners to feed message streams via listen middleware */
 export const listeners: {
-  [id: string]: Listener
+  [id: string]: TextListener | CustomListener
+} = {}
+
+/** Array of special language listeners, processed by understand middleware */
+export const nluListeners: {
+  [id: string]: NaturalLanguageListener | CustomListener
 } = {}
 
 /** Interface for matcher functions - resolved value must be truthy */
 export interface IMatcher {
-  (message: Message): Promise<any> | any
+  (input: any): Promise<any> | any
+}
+
+/** Interface for natural language matchers to evaluate returned NLU result */
+export interface INaturalLanguageListenerOptions {
+  intent?: string,                 // Match this intent string
+  entities?: {[key: string]: any}, // Match these entities (never required)
+  confidence?: number,             // Threshold for confidence matching
+  requireConfidence?: boolean,     // Do not match without meeting threshold
+  requireIntent?: boolean          // Do not match without intent
+}
+
+/** Match object interface for language matchers to populate */
+export interface INaturalLanguageMatch {
+  intent?: string | null, // the intent that was matched (if matched on intent)
+  entities?: {[key: string]: any} // any subset of entities that were matched
+  confidence?: number, // the confidence relative to the threshold (+/-)
 }
 
 /** Function called if the incoming message matches */
@@ -58,6 +75,8 @@ export interface IListenerMeta {
 export abstract class Listener {
   callback: IListenerCallback
   id: string
+  match: any
+
   /** Create a listener, add to collection */
   constructor (
     action: IListenerCallback | string,
@@ -70,11 +89,11 @@ export abstract class Listener {
   }
 
   /**
-   * Determine if this listener should trigger the callback
-   * Note that the method can be async or not, custom matchers will be wrapped
-   * with a forced promise resolve in case they return immediately.
+   * Determine if this listener should trigger the callback.
+   * Note that the method must be async, custom matcher will be promise wrapped.
+   * Abstract input has no enforced type, but resolved result MUST be truthy.
    */
-  abstract matcher (message: Message): Promise<any> | any
+  abstract matcher (input: any): Promise<any>
 
   /**
    * Runs the matcher, then middleware and callback if matched.
@@ -91,13 +110,14 @@ export abstract class Listener {
       else logger.debug(`Listener did not match`, { id: this.meta.id })
     }
   ): Promise<IState> {
-    const match = await Promise.resolve(this.matcher(message))
+    this.match = await Promise.resolve(this.matcher(message))
     const state = new State({
       message: message,
       listener: this,
-      match: match
+      match: this.match,
+      matched: (this.match) ? true : false
     })
-    if (match) {
+    if (state.matched) {
       const complete: IComplete = (state, done) => {
         logger.debug(`Executing ${this.constructor.name} callback`, { id: this.meta.id })
         this.callback(state)
@@ -118,6 +138,8 @@ export abstract class Listener {
 
 /** Custom listeners use unique matching function */
 export class CustomListener extends Listener {
+  match: any
+
   /** Accepts custom function to test message */
   constructor (
     public customMatcher: IMatcher,
@@ -139,7 +161,9 @@ export class CustomListener extends Listener {
 
 /** Text listeners use basic regex matching */
 export class TextListener extends Listener {
-  /** Accepts regex before standard arguments */
+  match: RegExpMatchArray | undefined
+
+  /** Create text listener for regex pattern */
   constructor (
     public regex: RegExp,
     callback: IListenerCallback | string,
@@ -158,7 +182,57 @@ export class TextListener extends Listener {
   }
 }
 
-/** @todo LanguageListener - match intent and confidence threshold */
+/**
+ * Language listener uses NLU adapter result to match on intent and (optionally)
+ * entities and/or confidence threshold. NLU must be trained to provide intent.
+ * @todo Update this concept, matcher is uninformed at this stage.
+ * @todo Use argv / environment variable for default confidence threshold.
+ */
+export class NaturalLanguageListener extends Listener {
+  match: INaturalLanguageMatch | undefined
+
+  /** Create language listener for NLU matching */
+  constructor (
+    public options: INaturalLanguageListenerOptions,
+    callback: IListenerCallback | string,
+    meta?: IListenerMeta
+  ) {
+    super(callback, meta)
+    if (!this.options.confidence) this.options.confidence = 80
+    if (!this.options.entities) this.options.entities = {}
+    if (!this.options.requireConfidence) this.options.requireConfidence = true
+    if (!this.options.requireIntent) this.options.requireIntent = true
+  }
+
+  /** Match on message's NLU properties */
+  async matcher (message: TextMessage) {
+    if (!message.nlu) {
+      logger.error('NaturalLanguageListener attempted matching without NLU', { id: this.meta.id })
+      return undefined
+    }
+
+    const confidence = (message.nlu.confidence - this.options.confidence!)
+    if (this.options.requireConfidence && confidence < 0) return undefined
+
+    const intent: string | null = (this.options.intent === message.nlu.intent)
+      ? message.nlu.intent
+      : null
+    if (this.options.intent && !message.nlu.intent) return undefined
+
+    const entities: {[key: string]: any} = {}
+    Object.keys(this.options.entities!).forEach((key) => {
+      if (
+        JSON.stringify(this.options.entities![key]) ===
+        JSON.stringify(message.nlu!.entities[key])
+      ) entities[key] = message.nlu!.entities[key]
+    })
+    const match: INaturalLanguageMatch = { intent, entities, confidence }
+    if (match) {
+      logger.debug(`NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold`, { id: this.meta.id })
+    }
+    return match
+  }
+}
 
 /** Create text listener with provided regex, action and optional meta */
 export function listenText (
@@ -193,19 +267,49 @@ export function listenCustom (
   return listener.id
 }
 
+/** Create a natural language listener to match on NLU result attributes */
+export function understand (
+  options: INaturalLanguageListenerOptions,
+  action: IListenerCallback | string,
+  meta?: IListenerMeta
+): string {
+  const nluListener = new NaturalLanguageListener(options, action, meta)
+  nluListeners[nluListener.id] = nluListener
+  return nluListener.id
+}
+
+/** @todo FIX THIS */
+/*
+export function understandDirect (
+  options: INaturalLanguageListenerOptions,
+  action: IListenerCallback | string,
+  meta?: IListenerMeta
+): string {
+  // const matcher = directPattern(/(.*)/) --> pass into custom listener...
+  const nluListener = new NaturalLanguageListener(options, action, meta)
+  nluListeners[nluListener.id] = nluListener
+  return nluListener.id
+}
+*/
+
+/** Create a custom listener to process NLU result with provided function */
+export function understandCustom (
+  matcher: IMatcher,
+  action: IListenerCallback | string,
+  meta?: IListenerMeta
+): string {
+  const nluListener = new CustomListener(matcher, action, meta)
+  nluListeners[nluListener.id] = nluListener
+  return nluListener.id
+}
+
 /** Build a regular expression that matches text prefixed with the bot's name */
 export function directPattern (regex: RegExp): RegExp {
   const regexWithoutModifiers = regex.toString().split('/')
   regexWithoutModifiers.shift()
   const modifiers = regexWithoutModifiers.pop()
-  const startsWithAnchor = regexWithoutModifiers[0] && regexWithoutModifiers[0][0] === '^'
   const pattern = regexWithoutModifiers.join('/')
   const botName = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-
-  if (startsWithAnchor) {
-    logger.warn(`Anchors don't work well with direct listens, perhaps you want to use standard listen`)
-    logger.warn(`The regex in question was ${regex.toString()}`)
-  }
 
   if (!alias) {
     return new RegExp(`^\\s*[@]?${botName}[:,]?\\s*(?:${pattern})`, modifiers)

@@ -24,8 +24,22 @@ export abstract class Message {
   }
 }
 
+/**
+ * NLU attributes interface
+ * @param intent A key characterising what the message was about
+ * @param entities Additional data inferred from the message or context
+ * @param confidence The level of surety that the NLU provider is correct
+ */
+export interface INaturalLanguage {
+  intent: string
+  entities: {[key: string]: any}
+  confidence: number
+}
+
 /** A plain text/string message type. */
 export class TextMessage extends Message {
+  nlu?: INaturalLanguage
+
   /**
    * Create a text message.
    * @param user The user who sent the message
