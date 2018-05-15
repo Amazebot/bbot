@@ -73,6 +73,14 @@ describe('middleware', () => {
         sinon.assert.calledOnce(complete)
       })
     })
+    it('executes the callback when there are no pieces', () => {
+      const testMiddleware = new middleware.Middleware('complete')
+      const complete = (state, done) => done()
+      const callback = sinon.spy()
+      return testMiddleware.execute({}, complete, callback).then(() => {
+        sinon.assert.calledOnce(callback)
+      })
+    })
     it('executes the complete function when there are other pieces', () => {
       const testMiddleware = new middleware.Middleware('complete')
       const piece = (state, next, done) => next()

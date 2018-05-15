@@ -4,8 +4,7 @@ import {
   logger,
   Message,
   Middleware,
-  State,
-  IState,
+  B,
   counter,
   IComplete,
   ICallback,
@@ -52,7 +51,7 @@ export interface INaturalLanguageMatch {
 
 /** Function called if the incoming message matches */
 export interface IListenerCallback {
-  (state: IState): void
+  (b: B): any
 }
 
 /** Called at the end of middleware with status of match */
@@ -63,6 +62,7 @@ export interface IListenerDone {
 /** Hold extra key/value data for extensions to use, such as ID */
 export interface IListenerMeta {
   id?: string,
+  force?: boolean,
   [key: string]: any
 }
 
@@ -76,6 +76,7 @@ export abstract class Listener {
   callback: IListenerCallback
   id: string
   match: any
+  force: boolean = false
 
   /** Create a listener, add to collection */
   constructor (
@@ -86,6 +87,7 @@ export abstract class Listener {
       ? (state) => doBit(action, state)
       : action
     this.id = (this.meta.id) ? this.meta.id : counter('listener')
+    if (typeof this.meta.force !== 'undefined') this.force = this.meta.force
   }
 
   /**
@@ -98,29 +100,32 @@ export abstract class Listener {
   /**
    * Runs the matcher, then middleware and callback if matched.
    * Middleware can intercept and prevent the callback from executing.
-   * @param message    The message to listen on
+   * If the state has already matched on prior listener, it will not match again
+   * unless forced to, with the listener's `force` property. Consecutive matches
+   * will overwrite the prior match result.
+   * @param b          State containing message to listen on, from hear process
    * @param middleware Executes before the listener callback
    * @param done       Called after middleware (optional), with match status
    */
   async process (
-    message: Message,
+    b: B,
     middleware: Middleware = new Middleware('listener'),
     done: IListenerDone = (matched) => {
       if (matched) logger.debug(`Listener matched`, { id: this.meta.id })
       else logger.debug(`Listener did not match`, { id: this.meta.id })
     }
-  ): Promise<IState> {
-    this.match = await Promise.resolve(this.matcher(message))
-    const state = new State({
-      message: message,
-      listener: this,
-      match: this.match,
-      matched: (this.match) ? true : false
-    })
-    if (state.matched) {
-      const complete: IComplete = (state, done) => {
+  ): Promise<B> {
+    const match = await Promise.resolve(this.matcher(b.message))
+    const matched = (match) ? true : false
+    if (!matched && !b.matched) b.matched = false // set unless already matched
+    if (matched && b.matched && this.force) b.matched = false // force rematch
+    if (matched && !b.matched) {
+      b.listener = this
+      b.match = match
+      b.matched = matched
+      const complete: IComplete = (b, done) => {
         logger.debug(`Executing ${this.constructor.name} callback`, { id: this.meta.id })
-        this.callback(state)
+        this.callback(b)
         return Promise.resolve(done())
       }
       const callback: ICallback = (err) => {
@@ -128,10 +133,10 @@ export abstract class Listener {
         if (err) logger.error(err.message, err.stack)
         if (done) done(result)
       }
-      return middleware.execute(state, complete, callback)
+      return middleware.execute(b, complete, callback)
     } else {
       if (done) done(false)
-      return state
+      return b
     }
   }
 }
@@ -268,7 +273,7 @@ export function listenCustom (
 }
 
 /** Create a natural language listener to match on NLU result attributes */
-export function understand (
+export function understandText (
   options: INaturalLanguageListenerOptions,
   action: IListenerCallback | string,
   meta?: IListenerMeta

@@ -2,7 +2,7 @@
 
 import {
   logger,
-  State,
+  B,
   IState
 } from '..'
 
@@ -20,7 +20,7 @@ export const middlewares: { [key: string]: Middleware } = {}
  * done will be assumed.
  */
 export interface IPiece {
-  (state: State, next: (done?: IPieceDone) => Promise<void>, done: IPieceDone): Promise<any> | void
+  (state: B, next: (done?: IPieceDone) => Promise<void>, done: IPieceDone): Promise<any> | void
 }
 
 /**
@@ -37,7 +37,7 @@ export interface IPieceDone {
  * after middleware stack completes, before the callback.
  */
 export interface IComplete {
-  (state: State, done: IPieceDone): any
+  (state: B, done: IPieceDone): any
 }
 
 /**
@@ -78,16 +78,19 @@ export class Middleware {
     this.stack.push(piece)
   }
 
-  /** Execute middleware in order, following by chained completion handlers. */
-  execute (initState: IState, complete: IComplete, callback: ICallback): Promise<State> {
+  /**
+   * Execute middleware in order, following by chained completion handlers.
+   * State to process can be an object with state properties or existing state.
+   */
+  execute (initState: IState, complete: IComplete, callback?: ICallback): Promise<B> {
     logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
     return new Promise((resolve, reject) => {
-      /** Starting point for state to be processed by all middleware pieces */
-      const state = new State(initState)
+      const state = (initState instanceof B) ? initState : new B(initState)
 
       /** The initial completion handler that may be wrapped by iterations. */
       const initDone: IPieceDone = () => {
-        return Promise.resolve(callback()).then(() => resolve(state))
+        const resolver = (callback) ? callback() : undefined
+        return Promise.resolve(resolver).then(() => resolve(state))
       }
 
       /**
@@ -153,9 +156,7 @@ export function loadMiddleware () {
   middlewares.remember = new Middleware('remember')
 }
 
-/**
- * Remove all middleware for reset
- */
+/** Remove all middleware for reset */
 export function unloadMiddleware () {
   delete middlewares.hear
   delete middlewares.listen

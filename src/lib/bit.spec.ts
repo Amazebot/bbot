@@ -1,9 +1,11 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { State } from './state'
-import { logger } from './logger'
+import * as bot from '..'
 import * as bit from './bit'
+
+// Mock for initial state object
+const message = new bot.TextMessage(new bot.User('test-user'), 'foo')
 
 describe('bit', () => {
   describe('Bit', () => {
@@ -18,10 +20,10 @@ describe('bit', () => {
     describe('.execute', () => {
       it('calls bit callback with state', async () => {
         const callback = sinon.spy()
-        const state = new State()
+        const b = new bot.B({ message })
         const aBit = new bit.Bit({ callback })
-        await aBit.execute(state)
-        sinon.assert.calledWith(callback, state)
+        await aBit.execute(b)
+        sinon.assert.calledWith(callback, b)
       })
     })
   })
@@ -34,14 +36,14 @@ describe('bit', () => {
   describe('.doBit', () => {
     it('executes the bit by ID', async () => {
       const bitId = bit.setupBit({})
-      const state = new State()
+      const b = new bot.B({ message })
       const execute = sinon.spy(bit.bits[bitId], 'execute')
-      await bit.doBit(bitId, state)
-      sinon.assert.calledWith(execute, state)
+      await bit.doBit(bitId, b)
+      sinon.assert.calledWith(execute, b)
     })
     it('logs error if bit ID does not exist', async () => {
-      const error = sinon.spy(logger, 'error')
-      await bit.doBit('404bit', new State())
+      const error = sinon.spy(bot.logger, 'error')
+      await bit.doBit('404bit', new bot.B({ message }))
       sinon.assert.calledWithMatch(error, /unknown/)
     })
   })

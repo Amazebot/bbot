@@ -1,5 +1,5 @@
 import {
-  IListenerCallback, counter, logger, IState
+  IListenerCallback, counter, logger, B
 } from '..'
 
 /** Keep all created bits, for getting by their ID as key */
@@ -79,11 +79,11 @@ export class Bit implements IBit {
   }
 
   /**
-   * Do stuff with current state (e.g. send replies and/or call callbacks)
+   * Do stuff with current bot state (e.g. send replies and/or call callbacks)
    * @todo Do send if has `send` property.
    */
-  async execute (state: IState): Promise<any> {
-    if (this.callback) await Promise.resolve(this.callback(state))
+  async execute (b: B): Promise<any> {
+    if (this.callback) await Promise.resolve(this.callback(b))
   }
 }
 
@@ -94,13 +94,13 @@ export function setupBit (options: IBit) {
   return bit.id
 }
 
-/** Execute a bit using its ID, providing current conversation state */
-export async function doBit (id: string, state: IState): Promise<void> {
+/** Execute a bit using its ID, providing current bot state */
+export async function doBit (id: string, b: B): Promise<void> {
   const bit = bits[id]
   if (!bit) {
     logger.error('Attempted to do bit with unknown ID')
     return
   }
-  await Promise.resolve(bit.execute(state))
+  await Promise.resolve(bit.execute(b))
   return
 }

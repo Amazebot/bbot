@@ -20,16 +20,7 @@ describe('message', () => {
         toString () { return 'test' }
       }
       const mockMessage = new MockMessage(mockUser)
-      expect(mockMessage).to.include.all.keys([ 'id', 'done' ])
-    })
-    it('updates done status on finish', () => {
-      class MockMessage extends message.Message {
-        toString () { return 'test' }
-      }
-      const mockMessage = new MockMessage(mockUser)
-      expect(mockMessage.done).to.equal(false)
-      mockMessage.finish()
-      expect(mockMessage.done).to.equal(true)
+      expect(mockMessage).to.include.all.keys([ 'id', 'user' ])
     })
     it('accepts ID if given', () => {
       class MockMessage extends message.Message {

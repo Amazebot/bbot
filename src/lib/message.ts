@@ -5,9 +5,6 @@ import {
 
 /** Represents an incoming message from the chat. */
 export abstract class Message {
-  /** If it has finished processed */
-  done: boolean = false
-
   /**
    * Create a message.
    * @param user The user who sent the message
@@ -17,11 +14,6 @@ export abstract class Message {
 
   /** String representation of the message */
   abstract toString (): string
-
-  /** Indicate that no other listener should be called for the message */
-  finish () {
-    this.done = true
-  }
 }
 
 /**

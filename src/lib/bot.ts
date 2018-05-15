@@ -14,7 +14,11 @@ import {
   unloadMiddleware,
   loadAdapters,
   startAdapters,
-  unloadAdapters
+  unloadAdapters,
+  Message,
+  ICallback,
+  hear,
+  B
 } from '..'
 
 /** Await helper, pauses for event loop */
@@ -25,9 +29,7 @@ const status: { [key: string]: 0 | 1 } = {
   waiting: 1, loading: 0, loaded: 0, starting: 0, started: 0, shutdown: 0
 }
 
-/**
- * Private helper for setting and logging loading status.
- */
+/** Private helper for setting and logging loading status. */
 function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'started' | 'shutdown') {
   for (let key of Object.keys(status)) status[key] = (set === key) ? 1 : 0
   if (set === 'loading') {
@@ -39,9 +41,7 @@ function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'starte
   }
 }
 
-/**
- * Find out where the loading or shutdown process is at.
- */
+/** Find out where the loading or shutdown process is at. */
 export function getStatus (): string {
   for (let key of Object.keys(status)) if (status[key] === 1) return key
   return 'broken' // should never get here
@@ -128,9 +128,9 @@ export async function reset (): Promise<void> {
   events.emit('waiting')
 }
 
-/** Input message to put through thought process */
-export async function receive (): Promise<void> {
-  /** @todo */
+/** Input message to put through thought process (alias for 'hear' stage) */
+export function receive (message: Message, callback?: ICallback): Promise<B> {
+  return hear(message, callback)
 }
 
 /** Output message at end of thought process */
