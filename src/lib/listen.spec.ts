@@ -116,7 +116,7 @@ describe('listen', () => {
       })
       it('consecutive listeners share state changes', async () => {
         listener.force = true
-        middleware.register((b: B) => {
+        middleware.register((b) => {
           b.modified = (!b.modified) ? 1 : b.modified + 1
         })
         await listener.process(b, middleware)
@@ -271,6 +271,17 @@ describe('listen', () => {
       const id = listen.listenCatchAll(callback)
       await listen.listeners[id].process(new B({ message }))
       sinon.assert.calledOnce(callback)
+    })
+  })
+  describe('.unloadListeners', () => {
+    it('clears all listeners from collection', () => {
+      listen.listenCatchAll(() => null)
+      listen.listenText(/.*/, () => null)
+      listen.understandText({}, () => null)
+      listen.understandCustom(() => null, () => null)
+      listen.unloadListeners()
+      expect(listen.listeners).to.eql({})
+      expect(listen.nluListeners).to.eql({})
     })
   })
 })

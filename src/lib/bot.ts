@@ -10,6 +10,7 @@ import {
   config,
   name,
   logger,
+  unloadListeners,
   loadMiddleware,
   unloadMiddleware,
   loadAdapters,
@@ -122,18 +123,34 @@ export async function reset (): Promise<void> {
   if (status !== 'shutdown') await shutdown()
   unloadAdapters()
   unloadMiddleware()
+  unloadListeners()
   // unloadServer()
   await eventDelay()
   setStatus('waiting')
   events.emit('waiting')
 }
 
+// Primary adapter interfaces...
+
 /** Input message to put through thought process (alias for 'hear' stage) */
 export function receive (message: Message, callback?: ICallback): Promise<B> {
   return hear(message, callback)
 }
 
-/** Output message at end of thought process */
-export async function send (): Promise<void> {
-  /** @todo */
+/** Output message either from thought process callback or self initiated */
+/** @todo Send via adapter and resolve with sent state */
+export function send (message: Message, callback?: ICallback): Promise<B> {
+  console.log('"Sending"', message)
+  const b = new B({ message })
+  const promise = (callback) ? Promise.resolve(callback()) : Promise.resolve()
+  return promise.then(() => b)
+}
+
+/** Store data via adapter, from thought process conclusion or self initiated */
+/** @todo Store via adapter and resolve with storage result */
+export function store (data: any, callback?: ICallback): Promise<any> {
+  console.log('"Storing"', data)
+  const result = {}
+  const promise = (callback) ? Promise.resolve(callback()) : Promise.resolve()
+  return promise.then(() => result)
 }

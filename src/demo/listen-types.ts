@@ -10,7 +10,9 @@ import * as bot from '..'
 // Sends flowers to the console...
 bot.setupBit({
   id: 'send-flowers',
-  callback: (b: bot.B) => bot.logger.info(`💐  - ${b.listener.id} matched on "${b.message.toString()}"`)
+  callback: (b) => {
+    bot.logger.info(`💐  - ${b.listener.id} matched on "${b.message.toString()}"`)
+  }
 })
 
 // ...whenever someone says flowers

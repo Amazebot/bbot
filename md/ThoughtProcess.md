@@ -24,7 +24,7 @@ bBot takes in the message and if recognised, runs the scenario, furthering a
 conversation or a simple exchange. It may not be immediately understood.
 
 Listeners provide a matching function to evaluate the message and fire callbacks
-on match. They are added with the following methods:
+(or execute a named `bit`) on match. They are added with the following methods:
 
 - `.listenText` adds regular expression matching on message text
 - `.listenDirect` adds regular expressions prepended with the bot's name
@@ -44,7 +44,7 @@ A special type of `NaturalLanguageListener` is used for this stage, that
 evaluates the intent and entities of the message, by sending the message to the
 NLU adapter.
 
-- `.understand` adds natural language matching on intent and/or entities
+- `.understandText` adds natural language matching on intent and/or entities
 - `.understandDirect` adds natural language that must be addressed to the bot
 - `.understandCustom` adds custom natural language matching (given NLU result)
 
@@ -55,9 +55,12 @@ language listener, to interrupt or modify the state.
 
 bBot takes any required action, locally or through external integrations.
 
-This is an inherent result of the completion of `listen` and `understand`
-middleware. Matched listeners will have their callbacks called, or if they
-provided a `bit` key, those bits will be executed.
+This is an implicit outcome of `listen` and `understand` stages, but if reached
+without any listener matching, bBot creates a special `CatchAllMessage` message
+to receive. Effectively restarting the process for a new set of listeners that
+can take action when nothing else did.
+
+- `.listenCatchAll` adds a callback for any unmatched message
 
 ## Respond.
 

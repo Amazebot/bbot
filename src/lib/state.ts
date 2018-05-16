@@ -5,12 +5,12 @@ import * as bot from '..'
 /**
  * States accept some known common properties, but can accept any key/value pair
  * that is needed for a specific type of listener or middleware.
+ * Will always be created with at least a message object.
  * The `done` property tells middleware not to continue processing state.
  */
 export interface IState {
+  message: bot.Message
   done?: boolean
-  message?: bot.Message
-  listener?: bot.Listener
   [key: string]: any
 }
 
@@ -29,8 +29,8 @@ export class B implements IState {
   [key: string]: any
   constructor (startingState: IState) {
     // Manual assignment of required keys is just a workaround for type checking
-    this.listener = startingState.listener
     this.message = startingState.message
+    this.listener = startingState.listener
     for (let key in startingState) this[key] = startingState[key]
   }
 

@@ -28,6 +28,12 @@ export const nluListeners: {
   [id: string]: NaturalLanguageListener | CustomListener
 } = {}
 
+/** Clear current listeners, resetting initial empty listener objects */
+export function unloadListeners () {
+  for (let id in listeners) delete listeners[id]
+  for (let id in nluListeners) delete nluListeners[id]
+}
+
 /** Interface for matcher functions - resolved value must be truthy */
 export interface IMatcher {
   (input: any): Promise<any> | any

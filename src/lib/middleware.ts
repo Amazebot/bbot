@@ -20,7 +20,11 @@ export const middlewares: { [key: string]: Middleware } = {}
  * done will be assumed.
  */
 export interface IPiece {
-  (state: B, next: (done?: IPieceDone) => Promise<void>, done: IPieceDone): Promise<any> | void
+  (
+    state: B,
+    next: (done?: IPieceDone) => Promise<void>,
+    done: IPieceDone
+  ): Promise<any> | any
 }
 
 /**
