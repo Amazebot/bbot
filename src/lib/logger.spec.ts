@@ -1,7 +1,6 @@
 import { expect } from 'chai'
-import { logger, Logger } from './logger'
 import * as winston from 'winston'
-import { Middleware } from './middleware'
+import { logger, Logger } from './logger'
 const initLogLevel = logger.level
 const throwNextTick = (err) => process.nextTick(() => { throw err })
 

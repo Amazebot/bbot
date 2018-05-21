@@ -1,15 +1,30 @@
-import { random } from '..'
+import * as bot from '..'
+
+/** Value of data to assign as user instance attributes */
+export class IUser {
+  id?: string
+  name?: string
+  room?: {
+    id?: string
+    name?: string
+  }
+  [key: string]: any
+}
 
 /** Represents a participating user in the chat. */
-export class User {
-  [key: string]: any;
-  /**
-   * Create a User
-   * @param id    A unique ID for the user, randomly generated if not given
-   * @param meta  Key/value pairs of extra data to assign as instance attributes
-   */
-  constructor (public id: string = random(), meta?: { [key: string]: any }) {
+export class User implements IUser {
+  id: string
+  room: {
+    id?: string
+    name?: string
+  }
+  name?: string
+  [key: string]: any
+  /** Create a User */
+  constructor (meta?: IUser) {
+    this.id = (meta && meta.id) ? meta.id : bot.random()
     if (meta) Object.keys(meta).forEach((key: string) => this[key] = meta[key])
+    this.room = (meta && meta.room) ? meta.room : {}
     if (!this.name) this.name = this.id
   }
 }

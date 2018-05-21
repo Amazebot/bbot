@@ -1,6 +1,4 @@
-import {
-  IListenerCallback, counter, logger, B
-} from '..'
+import * as bot from '..'
 
 /** Keep all created bits, for getting by their ID as key */
 export const bits: {
@@ -16,8 +14,8 @@ export interface IBit {
   id?: string,
   send?: string | string[],
   catch?: string,
-  callback?: IListenerCallback,
-  catchCallback?: IListenerCallback,
+  callback?: bot.IListenerCallback,
+  catchCallback?: bot.IListenerCallback,
   condition?: RegExp | string,
   intent?: string,
   listen?: string,
@@ -41,9 +39,9 @@ export class Bit implements IBit {
   /** To send if response unmatched by listeners */
   catch?: string
   /** Function to call when executing bit (after any defined sends) */
-  callback?: IListenerCallback
+  callback?: bot.IListenerCallback
   /** Function to call when response unmatched by listeners */
-  catchCallback?: IListenerCallback
+  catchCallback?: bot.IListenerCallback
   /** Regex or string converted to regex for listener to trigger bit */
   condition?: RegExp | string
   /** Key for language processed intent to match for execution */
@@ -71,10 +69,10 @@ export class Bit implements IBit {
    * that does something outside chat, but can be triggered by chat scripts.
    */
   constructor (options: IBit) {
-    this.id = (options.id) ? options.id : counter('bit')
+    this.id = (options.id) ? options.id : bot.counter('bit')
     Object.keys(options).forEach((key: string) => this[key] = options[key])
     if (!this.send && !this.callback) {
-      logger.warn('Bit won\'t work without a send or callback attribute.')
+      bot.logger.warn('Bit won\'t work without a send or callback attribute.')
     }
   }
 
@@ -82,7 +80,7 @@ export class Bit implements IBit {
    * Do stuff with current bot state (e.g. send replies and/or call callbacks)
    * @todo Do send if has `send` property.
    */
-  async execute (b: B): Promise<any> {
+  async execute (b: bot.B): Promise<any> {
     if (this.callback) await Promise.resolve(this.callback(b))
   }
 }
@@ -95,10 +93,10 @@ export function setupBit (options: IBit) {
 }
 
 /** Execute a bit using its ID, providing current bot state */
-export async function doBit (id: string, b: B): Promise<void> {
+export async function doBit (id: string, b: bot.B): Promise<void> {
   const bit = bits[id]
   if (!bit) {
-    logger.error('Attempted to do bit with unknown ID')
+    bot.logger.error('Attempted to do bit with unknown ID')
     return
   }
   await Promise.resolve(bit.execute(b))

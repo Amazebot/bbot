@@ -1,11 +1,11 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import * as bot from '..'
 import * as bit from './bit'
+import * as bot from '..'
 
 // Mock for initial state object
-const message = new bot.TextMessage(new bot.User('test-user'), 'foo')
+const message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
 
 describe('bit', () => {
   describe('Bit', () => {

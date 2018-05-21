@@ -1,5 +1,7 @@
 [thought]: ./ThoughtProcess.md
 
+Add note this a guide for script developers. To see a feature comparison, go here ... <LINK TO ENGINEERING SECTION>
+
 Requiring/importing the bot...
 
 Async all the things

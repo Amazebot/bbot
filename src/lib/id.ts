@@ -1,4 +1,3 @@
-/** @module id */
 import crypto from 'crypto'
 
 /**

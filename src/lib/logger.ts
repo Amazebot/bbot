@@ -1,7 +1,5 @@
-/** @module logger */
-
 import * as winston from 'winston'
-import { config } from '..'
+import * as bot from '..'
 
 /**
  * Allows extensions to create new logs
@@ -28,7 +26,7 @@ export class Logger extends winston.Logger {}
  * @todo Add filter to prevent logging passwords etc
  */
 export const logger = new Logger({
-  level: config.logLevel,
+  level: bot.config.logLevel,
   handleExceptions: true,
   exitOnError: (err) => ((err as any).middleware === undefined),
   transports: [

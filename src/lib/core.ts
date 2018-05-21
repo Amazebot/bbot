@@ -1,26 +1,5 @@
-/**
- * @module bot
- * The core bBot methods. Manages operational aspects like start/stopping,
- * logging, event emitting, the internal server and external connections as well
- * as managing middleware and executing the high level "thought process".
- */
 import { promisify } from 'util'
-import {
-  events,
-  config,
-  name,
-  logger,
-  unloadListeners,
-  loadMiddleware,
-  unloadMiddleware,
-  loadAdapters,
-  startAdapters,
-  unloadAdapters,
-  Message,
-  ICallback,
-  hear,
-  B
-} from '..'
+import * as bot from '..'
 
 /** Await helper, pauses for event loop */
 export const eventDelay = promisify(setImmediate)
@@ -34,11 +13,11 @@ const status: { [key: string]: 0 | 1 } = {
 function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'started' | 'shutdown') {
   for (let key of Object.keys(status)) status[key] = (set === key) ? 1 : 0
   if (set === 'loading') {
-    logger.info(`${name} loading  . . . . . ~(0_0)~`)
+    bot.logger.info(`${bot.name} loading  . . . . . ~(0_0)~`)
   } else if (set === 'starting') {
-    logger.info(`${name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
+    bot.logger.info(`${bot.name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
   } else if (set === 'started') {
-    logger.info(`${name} started  . . . . . ~(O_O)~ bleep bloop`)
+    bot.logger.info(`${bot.name} started  . . . . . ~(O_O)~ bleep bloop`)
   }
 }
 
@@ -55,13 +34,13 @@ export function getStatus (): string {
 export async function load (): Promise<void> {
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
-  logger.debug('Using config:', config)
-  loadMiddleware()
-  loadAdapters()
+  bot.logger.debug('Using config:', bot.config)
+  bot.loadMiddleware()
+  bot.loadAdapters()
   // loadServer()
   await eventDelay()
   setStatus('loaded')
-  events.emit('loaded')
+  bot.events.emit('loaded')
 }
 
 /**
@@ -73,11 +52,11 @@ export async function load (): Promise<void> {
 export async function start (): Promise<void> {
   if (getStatus() !== 'loaded') await load()
   setStatus('starting')
-  await startAdapters()
+  await bot.startAdapters()
   // await startSever()
   await eventDelay()
   setStatus('started')
-  events.emit('started')
+  bot.events.emit('started')
 }
 
 /**
@@ -92,9 +71,9 @@ export async function shutdown (): Promise<void> {
   const status = getStatus()
   if (status === 'shutdown') return
   if (status === 'loading') {
-    await new Promise((resolve) => events.on('loaded', () => resolve()))
+    await new Promise((resolve) => bot.events.on('loaded', () => resolve()))
   } else if (status === 'starting') {
-    await new Promise((resolve) => events.on('started', () => resolve()))
+    await new Promise((resolve) => bot.events.on('started', () => resolve()))
   }
   // shutdown server
   // stop thought process
@@ -110,7 +89,7 @@ export async function pause (): Promise<void> {
   await shutdown()
   await eventDelay()
   setStatus('loaded')
-  events.emit('paused')
+  bot.events.emit('paused')
 }
 
 /**
@@ -121,34 +100,40 @@ export async function reset (): Promise<void> {
   const status = getStatus()
   if (status === 'waiting') return
   if (status !== 'shutdown') await shutdown()
-  unloadAdapters()
-  unloadMiddleware()
-  unloadListeners()
+  bot.unloadAdapters()
+  bot.unloadMiddleware()
+  bot.unloadListeners()
   // unloadServer()
   await eventDelay()
   setStatus('waiting')
-  events.emit('waiting')
+  bot.events.emit('waiting')
 }
 
 // Primary adapter interfaces...
 
 /** Input message to put through thought process (alias for 'hear' stage) */
-export function receive (message: Message, callback?: ICallback): Promise<B> {
-  return hear(message, callback)
+export function receive (
+  message: bot.Message,
+  callback?: bot.ICallback
+): Promise<bot.B> {
+  return bot.hear(message, callback)
 }
 
 /** Output message either from thought process callback or self initiated */
 /** @todo Send via adapter and resolve with sent state */
-export function send (message: Message, callback?: ICallback): Promise<B> {
+export function send (
+  message: bot.Message,
+  callback?: bot.ICallback
+): Promise<bot.B> {
   console.log('"Sending"', message)
-  const b = new B({ message })
+  const b = new bot.B({ message })
   const promise = (callback) ? Promise.resolve(callback()) : Promise.resolve()
   return promise.then(() => b)
 }
 
 /** Store data via adapter, from thought process conclusion or self initiated */
 /** @todo Store via adapter and resolve with storage result */
-export function store (data: any, callback?: ICallback): Promise<any> {
+export function store (data: any, callback?: bot.ICallback): Promise<any> {
   console.log('"Storing"', data)
   const result = {}
   const promise = (callback) ? Promise.resolve(callback()) : Promise.resolve()

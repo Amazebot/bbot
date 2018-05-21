@@ -1,5 +1,3 @@
-/** @module bBot */
-
 export * from './lib/argv'
 export * from './lib/events'
 export * from './lib/logger'
@@ -12,5 +10,5 @@ export * from './lib/user'
 export * from './lib/message'
 export * from './lib/listen'
 export * from './lib/bit'
-export * from './lib/bot'
+export * from './lib/core'
 export * from './lib/thought-process'

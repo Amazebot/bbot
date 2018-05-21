@@ -43,12 +43,6 @@ describe('message adapter', () => {
       sinon.assert.calledWithMatch(log, /emote/, { strings: ['testing'] })
     })
   })
-  describe('.emote', () => {
-    it('logs debug', async () => {
-      await mockAdapter.emote({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /emote/, { strings: ['testing'] })
-    })
-  })
   describe('.topic', () => {
     it('logs debug', async () => {
       await mockAdapter.topic({ user: { name: 'tester' } }, 'testing')
@@ -65,6 +59,12 @@ describe('message adapter', () => {
     it('logs debug', async () => {
       await mockAdapter.play({ user: { name: 'tester' } }, 'testing')
       sinon.assert.calledWithMatch(log, /play/, { strings: ['testing'] })
+    })
+  })
+  describe('.react', () => {
+    it('logs debug', async () => {
+      await mockAdapter.react({ user: { name: 'tester' } }, 'testing')
+      sinon.assert.calledWithMatch(log, /react/, { strings: ['testing'] })
     })
   })
 })

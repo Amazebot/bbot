@@ -1,15 +1,15 @@
-/** @module state */
-
 import * as bot from '..'
 
 /**
  * States accept some known common properties, but can accept any key/value pair
  * that is needed for a specific type of listener or middleware.
- * Will always be created with at least a message object.
+ * Will always be created with at least a message object (can be empty).
  * The `done` property tells middleware not to continue processing state.
  */
 export interface IState {
-  message: bot.Message
+  message: bot.Message // the received message, persists in state for response
+  method?: bot.MessageMethod // response type method (send, reply, emote, etc)
+  strings?: string[] // response string content (message, topic or emote text)
   done?: boolean
   [key: string]: any
 }
@@ -26,6 +26,9 @@ export class B implements IState {
   listener: bot.Listener
   match?: any
   matched?: boolean
+  method?: bot.MessageMethod
+  envelope?: bot.Envelope
+  strings?: string[]
   [key: string]: any
   constructor (startingState: IState) {
     // Manual assignment of required keys is just a workaround for type checking

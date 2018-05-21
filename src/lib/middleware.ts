@@ -1,10 +1,4 @@
-/** @module middleware */
-
-import {
-  logger,
-  B,
-  IState
-} from '..'
+import * as bot from '..'
 
 /** Collection of middleware types and their stacks. */
 export const middlewares: { [key: string]: Middleware } = {}
@@ -21,7 +15,7 @@ export const middlewares: { [key: string]: Middleware } = {}
  */
 export interface IPiece {
   (
-    state: B,
+    state: bot.B,
     next: (done?: IPieceDone) => Promise<void>,
     done: IPieceDone
   ): Promise<any> | any
@@ -41,7 +35,7 @@ export interface IPieceDone {
  * after middleware stack completes, before the callback.
  */
 export interface IComplete {
-  (state: B, done: IPieceDone): any
+  (state: bot.B, done: IPieceDone): any
 }
 
 /**
@@ -86,10 +80,10 @@ export class Middleware {
    * Execute middleware in order, following by chained completion handlers.
    * State to process can be an object with state properties or existing state.
    */
-  execute (initState: IState, complete: IComplete, callback?: ICallback): Promise<B> {
-    logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
+  execute (initState: bot.IState, complete: IComplete, callback?: ICallback): Promise<bot.B> {
+    bot.logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
     return new Promise((resolve, reject) => {
-      const state = (initState instanceof B) ? initState : new B(initState)
+      const state = (initState instanceof bot.B) ? initState : new bot.B(initState)
 
       /** The initial completion handler that may be wrapped by iterations. */
       const initDone: IPieceDone = () => {
@@ -108,7 +102,7 @@ export class Middleware {
         } catch (err) {
           err.state = state
           err.middleware = this.type
-          logger.error(err)
+          bot.logger.error(err)
           done().catch()
           throw err
         }
@@ -119,7 +113,7 @@ export class Middleware {
        * piece then the success callback.
        */
       const finished = (err: Error | null, done: IPieceDone): void => {
-        logger.debug(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`)
+        bot.logger.debug(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`)
         if (err) reject(err)
         else Promise.resolve(complete(state, done)).then(() => resolve(state)).catch()
       }

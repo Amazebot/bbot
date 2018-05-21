@@ -4,12 +4,13 @@ import { expect } from 'chai'
 import { config } from './argv'
 import { Adapter } from './adapter-classes/base'
 import * as adapter from './adapter'
+import * as bot from '..'
 
 class MockAdapter extends Adapter {
   name = 'mock-adapter'
   async start () { /* mock start */ }
 }
-const mockAdapter = new MockAdapter()
+const mockAdapter = new MockAdapter(bot)
 const start = sinon.spy(mockAdapter, 'start')
 export const use = sinon.spy(() => mockAdapter)
 

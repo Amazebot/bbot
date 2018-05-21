@@ -1,5 +1,3 @@
-/** @module argv */
-
 import * as yargs from 'yargs'
 import * as packageJSON from '../../package.json'
 
