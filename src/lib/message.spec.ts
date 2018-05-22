@@ -81,11 +81,17 @@ describe('message', () => {
       const envelope = new message.Envelope().write('Test 1', 'Test 2')
       expect(envelope.strings).to.eql(['Test 1', 'Test 2'])
     })
+    it('.write concatenates existing strings with cumulative calls', () => {
+      const envelope = new message.Envelope()
+      envelope.write('Test 1', 'Test 2')
+      envelope.write('Test 3')
+      expect(envelope.strings).to.eql(['Test 1', 'Test 2', 'Test 3'])
+    })
     it('.attach adds payload content to envelope', () => {
       const envelope = new message.Envelope().attach({ foo: 'bar' })
       expect(envelope.payload).to.eql({ foo: 'bar' })
     })
-    it('.attach can build payload with cumulative requests', () => {
+    it('.attach can build payload with cumulative calls', () => {
       const envelope = new message.Envelope()
       envelope.attach({ foo: 'bar' })
       envelope.attach({ baz: 'qux' })
@@ -117,12 +123,12 @@ describe('message', () => {
       expect(envelope.room).to.eql(room)
     })
   })
-  describe('.replyEnvelope', () => {
+  describe('.responseEnvelope', () => {
     it('addresses envelope to message origin from state', () => {
       const user = new bot.User({ id: 'test-user', room: { id: 'dm-room' } })
       const message = new bot.TextMessage(user, 'Testing...')
       const b = new bot.B({ message })
-      const envelope = bot.replyEnvelope(b)
+      const envelope = bot.responseEnvelope(b)
       expect(envelope.room).to.eql(message.user.room)
       expect(envelope.message).to.eql(message)
       expect(envelope.user).to.eql(message.user)

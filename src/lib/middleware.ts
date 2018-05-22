@@ -80,10 +80,10 @@ export class Middleware {
    * Execute middleware in order, following by chained completion handlers.
    * State to process can be an object with state properties or existing state.
    */
-  execute (initState: bot.IState, complete: IComplete, callback?: ICallback): Promise<bot.B> {
+  execute (initState: bot.IState | bot.B, complete: IComplete, callback?: ICallback): Promise<bot.B> {
     bot.logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
     return new Promise((resolve, reject) => {
-      const state = (initState instanceof bot.B) ? initState : new bot.B(initState)
+      const state: bot.B = (initState instanceof bot.B) ? initState : new bot.B(initState)
 
       /** The initial completion handler that may be wrapped by iterations. */
       const initDone: IPieceDone = () => {

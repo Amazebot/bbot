@@ -64,7 +64,8 @@ export async function act (b: bot.B, done: bot.IPieceDone): Promise<void> {
  */
 export async function respond (
   b: bot.B | bot.IState,
-  callback?: bot.ICallback): Promise<bot.B> {
+  callback?: bot.ICallback
+): Promise<bot.B> {
   bot.events.emit('respond', b)
   bot.logger.debug(`Respond process started for message ID ${b.message.id}`)
   if (!bot.adapters.message) {
@@ -72,8 +73,7 @@ export async function respond (
   }
   return bot.middlewares.respond.execute(b, async (b, done) => {
     if (!b.method) b.method = 'send' // default response sends back to room
-    const strings = (b.strings && !Array.isArray(b.strings)) ? b.strings : []
-    await bot.adapters.message[b.method].call(bot.adapters.message, b.envelope, ...strings)
+    await bot.adapters.message[b.method].call(bot.adapters.message, b.envelope)
     done().catch((err) => bot.logger.error(`Respond process error: `, err))
   }, callback)
 }

@@ -108,34 +108,3 @@ export async function reset (): Promise<void> {
   setStatus('waiting')
   bot.events.emit('waiting')
 }
-
-// Primary adapter interfaces...
-
-/** Input message to put through thought process (alias for 'hear' stage) */
-export function receive (
-  message: bot.Message,
-  callback?: bot.ICallback
-): Promise<bot.B> {
-  return bot.hear(message, callback)
-}
-
-/** Output message either from thought process callback or self initiated */
-/** @todo Send via adapter and resolve with sent state */
-export function send (
-  message: bot.Message,
-  callback?: bot.ICallback
-): Promise<bot.B> {
-  console.log('"Sending"', message)
-  const b = new bot.B({ message })
-  const promise = (callback) ? Promise.resolve(callback()) : Promise.resolve()
-  return promise.then(() => b)
-}
-
-/** Store data via adapter, from thought process conclusion or self initiated */
-/** @todo Store via adapter and resolve with storage result */
-export function store (data: any, callback?: bot.ICallback): Promise<any> {
-  console.log('"Storing"', data)
-  const result = {}
-  const promise = (callback) ? Promise.resolve(callback()) : Promise.resolve()
-  return promise.then(() => result)
-}

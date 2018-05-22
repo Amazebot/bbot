@@ -88,16 +88,4 @@ describe('bot', () => {
       expect(bot.getStatus()).to.equal('started')
     })
   })
-  describe('.receive', () => {
-    it('enters hear process, executing middleware', async () => {
-      const callback = sinon.spy()
-      bot.load()
-      bot.hearMiddleware((b, next, done) => {
-        callback()
-        done()
-      })
-      await bot.receive(new bot.TextMessage(new bot.User(), 'test'))
-      sinon.assert.calledOnce(callback)
-    })
-  })
 })

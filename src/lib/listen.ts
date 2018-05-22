@@ -213,12 +213,12 @@ export class NaturalLanguageListener extends Listener {
     if (this.options.intent && !message.nlu.intent) return undefined
 
     const entities: {[key: string]: any} = {}
-    Object.keys(this.options.entities!).forEach((key) => {
+    for (let key of Object.keys(this.options.entities!)) {
       if (
         JSON.stringify(this.options.entities![key]) ===
-        JSON.stringify(message.nlu!.entities[key])
-      ) entities[key] = message.nlu!.entities[key]
-    })
+        JSON.stringify(message.nlu.entities[key])
+      ) entities[key] = message.nlu.entities[key]
+    }
     const match: INaturalLanguageMatch = { intent, entities, confidence }
     if (match) {
       bot.logger.debug(`NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold`, { id: this.meta.id })

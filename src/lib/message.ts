@@ -107,11 +107,14 @@ export class Envelope implements IEnvelope {
   message?: Message
   strings?: string[]
   payload?: any
+
   /** Add string content to an envelope, could be message text or reaction */
   write (...strings: string[]): Envelope {
-    this.strings = strings
+    if (!this.strings) this.strings = []
+    this.strings = this.strings.concat(strings)
     return this
   }
+
   /** Add multi-media attachments to a message, could be buttons or files etc */
   attach (payload: any): Envelope {
     if (!this.payload) this.payload = {}
@@ -133,7 +136,7 @@ export function createEnvelope (address: IEnvelope): Envelope {
 }
 
 /** Address an envelope back to a message's origin. */
-export function replyEnvelope (address: bot.B): Envelope {
+export function responseEnvelope (address: bot.B): Envelope {
   const envelope = new Envelope()
   envelope.message = address.message
   envelope.user = address.message.user

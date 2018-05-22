@@ -10,7 +10,7 @@ const counts: { [key: string]: number } = { 'uid': 0 }
  * @param prefix Key for counter, prepend to return value
  */
 export function counter (prefix: string = 'uid'): string {
-  if (Object.keys(counts).indexOf(prefix) === -1) counts[prefix] = 0
+  if (!Object.keys(counts).includes(prefix)) counts[prefix] = 0
   counts[prefix]++
   return `${prefix}_${counts[prefix]}`
 }

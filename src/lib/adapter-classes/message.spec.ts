@@ -19,52 +19,17 @@ describe('message adapter', () => {
       expect(mockAdapter).to.be.instanceof(MessageAdapter)
     })
   })
-  describe('.receive', () => {
+  describe('.hear', () => {
     it('logs debug', async () => {
-      await mockAdapter.receive('testing')
-      sinon.assert.calledWithMatch(log, /receive/, { message: 'testing' })
+      await mockAdapter.hear('testing')
+      sinon.assert.calledWithMatch(log, /hear/, { message: 'testing' })
     })
   })
-  describe('.send', () => {
+  describe('.respond', () => {
     it('logs debug', async () => {
-      await mockAdapter.send({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /send/, { strings: ['testing'] })
-    })
-  })
-  describe('.reply', () => {
-    it('logs debug', async () => {
-      await mockAdapter.reply({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /reply/, { strings: ['testing'] })
-    })
-  })
-  describe('.emote', () => {
-    it('logs debug', async () => {
-      await mockAdapter.emote({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /emote/, { strings: ['testing'] })
-    })
-  })
-  describe('.topic', () => {
-    it('logs debug', async () => {
-      await mockAdapter.topic({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /topic/, { strings: ['testing'] })
-    })
-  })
-  describe('.notify', () => {
-    it('logs debug', async () => {
-      await mockAdapter.notify({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /notify/, { strings: ['testing'] })
-    })
-  })
-  describe('.play', () => {
-    it('logs debug', async () => {
-      await mockAdapter.play({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /play/, { strings: ['testing'] })
-    })
-  })
-  describe('.react', () => {
-    it('logs debug', async () => {
-      await mockAdapter.react({ user: { name: 'tester' } }, 'testing')
-      sinon.assert.calledWithMatch(log, /react/, { strings: ['testing'] })
+      const envelope = bot.createEnvelope({ user: new bot.User() })
+      await mockAdapter.respond(envelope, 'test')
+      sinon.assert.calledWithMatch(log, /test/, { envelope })
     })
   })
 })

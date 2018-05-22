@@ -70,7 +70,7 @@ export class Bit implements IBit {
    */
   constructor (options: IBit) {
     this.id = (options.id) ? options.id : bot.counter('bit')
-    Object.keys(options).forEach((key: string) => this[key] = options[key])
+    for (let key of Object.keys(options)) this[key] = options[key]
     if (!this.send && !this.callback) {
       bot.logger.warn('Bit won\'t work without a send or callback attribute.')
     }

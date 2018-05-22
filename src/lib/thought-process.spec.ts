@@ -18,6 +18,16 @@ describe('thought-process', () => {
     bot.rememberMiddleware((b, next, done) => b.remembered = true)
   })
   describe('.hear', () => {
+    it('enters hear process, executing middleware', async () => {
+      const callback = sinon.spy()
+      bot.load()
+      bot.hearMiddleware((b, next, done) => {
+        callback()
+        done()
+      })
+      await thought.hear(new bot.TextMessage(new bot.User(), 'test'))
+      sinon.assert.calledOnce(callback)
+    })
     it('calls callback before resolving', async () => {
       const callback = sinon.spy()
       await thought.hear(message, callback)
