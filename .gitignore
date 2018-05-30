@@ -67,3 +67,6 @@ docs/
 
 # compiled source, published to NPM, but not required in repository
 dist/
+
+# node cache for debug compiled source
+/.ts-node

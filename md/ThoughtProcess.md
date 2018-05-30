@@ -41,10 +41,10 @@ bBot can use natural language services to listen for the intent rather than the
 exact command. The nature of the message is collected from external providers.
 
 A special type of `NaturalLanguageListener` is used for this stage, that
-evaluates the intent and entities of the message, by sending the message to the
-NLU adapter.
+evaluates the intent, entities and/or sentiment of the message, by sending the
+message to the NLU adapter.
 
-- `.understandText` adds natural language matching on intent and/or entities
+- `.understandText` adds natural language matching on intent/entities/sentiment
 - `.understandDirect` adds natural language that must be addressed to the bot
 - `.understandCustom` adds custom natural language matching (given NLU result)
 

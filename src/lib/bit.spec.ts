@@ -4,10 +4,12 @@ import { expect } from 'chai'
 import * as bit from './bit'
 import * as bot from '..'
 
-// Mock for initial state object
-const message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+let message: bot.TextMessage
 
 describe('bit', () => {
+  before(() => {
+    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+  })
   describe('Bit', () => {
     it('assigns ID if not given', () => {
       const aBit = new bit.Bit({})

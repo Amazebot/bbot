@@ -4,12 +4,16 @@ import * as state from './state'
 import { expect } from 'chai'
 import * as bot from '..'
 
-// Mocks for state population
-const listener = new bot.TextListener(/.*/, () => null)
-const message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
-const stubs: { [key: string]: sinon.SinonStub } = {}
+let listener: bot.TextListener
+let message: bot.TextMessage
+let stubs: { [key: string]: sinon.SinonStub }
 
 describe('state', () => {
+  before(() => {
+    stubs = {}
+    listener = new bot.TextListener(/.*/, () => null)
+    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+  })
   describe('B', () => {
     it('provides access to bot properties', () => {
       const b = new state.B({ message, listener })

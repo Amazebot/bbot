@@ -3,10 +3,14 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as middleware from './middleware'
 import * as bot from '..'
+
 const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
-const message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+let message: bot.TextMessage
 
 describe('middleware', () => {
+  before(() => {
+    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+  })
   beforeEach(() => middleware.unloadMiddleware())
   describe('.register', () => {
     it('adds a piece to the stack', () => {

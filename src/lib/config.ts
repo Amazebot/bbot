@@ -5,6 +5,7 @@ export interface IConfig {
   name: string,
   alias?: string,
   logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent',
+  autoSave?: boolean,
   messageAdapter?: string,
   languageAdapter?: string,
   storageAdapter?: string,
@@ -31,13 +32,17 @@ export function getConfig (): IConfig {
     })
     .option('alias', {
       type: 'string',
-      describe: 'Alternate name for the bot.\n',
-      default: false
+      describe: 'Alternate name for the bot.\n'
     })
     .option('log-level', {
       type: 'string',
       describe: 'The starting minimum level for logging events (silent|debug|info|warn|error).',
       default: 'info'
+    })
+    .option('auto-save', {
+      type: 'boolean',
+      describe: 'Save data in the brain every 5 seconds (defaults true).',
+      default: true
     })
     .option('message-adapter', {
       type: 'string',
@@ -96,7 +101,8 @@ For more information, see https://amazebot.github.io/bbot'`
     languageAdapter: argv.languageAdapter,
     storageAdapter: argv.storageAdapter,
     webhookAdapter: argv.webhookAdapter,
-    analyticsAdapter: argv.analyticsAdapter
+    analyticsAdapter: argv.analyticsAdapter,
+    autoSave: argv.autoSave
   }
   return config
 }

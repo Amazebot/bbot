@@ -7,7 +7,7 @@ module.exports = function (wallaby) {
       { pattern: 'src/**/*.spec.ts', ignore: true },
       { pattern: 'src/**/*.d.ts', ignore: true }
     ],
-    tests: ['src/lib/**/*.spec.ts'],
+    tests: ['src/lib/**/*.spec.ts', 'src/adapters/**/*.spec.ts'],
     testFramework: 'mocha',
     env: {
       type: 'node'

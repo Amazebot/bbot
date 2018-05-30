@@ -4,9 +4,10 @@ import { expect } from 'chai'
 import * as bot from '..'
 import * as message from './message'
 
-const mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' })
+let mockUser: bot.User
 
 describe('message', () => {
+  before(() => mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' }))
   describe('Message', () => {
     it('allows extending', () => {
       class MockMessage extends message.Message {

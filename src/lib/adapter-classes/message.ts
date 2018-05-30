@@ -7,11 +7,24 @@ import * as bot from '../..'
  */
 export abstract class MessageAdapter extends Adapter {
   name = 'message-adapter'
-  async hear (message: any): Promise<any> {
-    this.bot.logger.debug('Message adapter `hear` called without override', { message })
+  /** Open connection to messaging platform */
+  async open () {
+    this.bot.logger.debug('Message adapter `open` called without override')
   }
-  /** Respond takes current state, containing envelope */
+  /** Close connection to messaging platform */
+  async close () {
+    this.bot.logger.debug('Storage adapter `close` called without override')
+  }
+  /** Process an incoming message from platform */
+  async hear (message: any): Promise<any> {
+    this.bot.logger.debug('Message adapter `hear` called without override', {
+      message
+    })
+  }
+  /** Take addressed envelope to action in platform, per given method */
   async respond (envelope: bot.Envelope, method: string): Promise<any> {
-    this.bot.logger.debug(`Message adapter ${method} called without override`, { envelope })
+    this.bot.logger.debug(`Message adapter ${method} called without override`, {
+      envelope
+    })
   }
 }

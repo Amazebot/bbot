@@ -1,26 +1,28 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import { config } from './argv'
-import { Adapter } from './adapter-classes/base'
-import * as adapter from './adapter'
 import * as bot from '..'
+import * as adapter from './adapter'
 
-class MockAdapter extends Adapter {
+let mockAdapter: bot.Adapter
+let start: sinon.SinonSpy
+export const use = sinon.spy(() => mockAdapter) // allows spec to run as module
+class MockAdapter extends bot.Adapter {
   name = 'mock-adapter'
   async start () { /* mock start */ }
 }
-const mockAdapter = new MockAdapter(bot)
-const start = sinon.spy(mockAdapter, 'start')
-export const use = sinon.spy(() => mockAdapter)
 
 describe('adapter', () => {
+  before(() => {
+    mockAdapter = new MockAdapter(bot)
+    start = sinon.spy(mockAdapter, 'start')
+  })
   beforeEach(() => {
-    delete config.messageAdapter
-    delete config.languageAdapter
-    delete config.storageAdapter
-    delete config.webhookAdapter
-    delete config.analyticsAdapter
+    delete bot.config.messageAdapter
+    delete bot.config.languageAdapter
+    delete bot.config.storageAdapter
+    delete bot.config.webhookAdapter
+    delete bot.config.analyticsAdapter
   })
   afterEach(() => {
     use.resetHistory()
@@ -29,7 +31,7 @@ describe('adapter', () => {
   describe('.loadAdapter', () => {
     it('loads adapter exported at path', () => {
       const test = adapter.loadAdapter('./lib/adapter.spec')
-      expect(test).to.be.an.instanceof(Adapter)
+      expect(test).to.be.an.instanceof(bot.Adapter)
       sinon.assert.calledOnce(use)
     })
   })
@@ -38,30 +40,30 @@ describe('adapter', () => {
       expect(() => adapter.loadAdapters()).to.not.throw()
     })
     it('throws if bad path in config for adapter', () => {
-      config.messageAdapter = 'foo',
+      bot.config.messageAdapter = 'foo',
       expect(() => adapter.loadAdapters()).to.throw()
     })
     it('loads all configured adapters at valid path', () => {
-      config.storageAdapter = './lib/adapter.spec'
-      config.analyticsAdapter = './lib/adapter.spec'
+      bot.config.storageAdapter = './lib/adapter.spec'
+      bot.config.analyticsAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       sinon.assert.calledTwice(use)
     })
     it('keeps loaded adapters in collection', () => {
-      config.messageAdapter = './lib/adapter.spec'
+      bot.config.messageAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
-      expect(adapter.adapters.message).to.be.instanceof(Adapter)
+      expect(adapter.adapters.message).to.be.instanceof(bot.Adapter)
       expect(adapter.adapters.language).to.equal(null)
     })
     it('can load shell adapter extending message adapter', () => {
-      config.messageAdapter = './adapters/shell'
+      bot.config.messageAdapter = './adapters/shell'
       adapter.loadAdapters()
     })
   })
   describe('.startAdapters', () => {
     it('starts all configured adapters', () => {
-      config.languageAdapter = './lib/adapter.spec'
-      config.webhookAdapter = './lib/adapter.spec'
+      bot.config.languageAdapter = './lib/adapter.spec'
+      bot.config.webhookAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       adapter.startAdapters()
       sinon.assert.calledTwice(start)
@@ -69,8 +71,8 @@ describe('adapter', () => {
   })
   describe('.unloadAdapters', () => {
     it('clears all configured adapters', () => {
-      config.languageAdapter = './lib/adapter.spec'
-      config.webhookAdapter = './lib/adapter.spec'
+      bot.config.languageAdapter = './lib/adapter.spec'
+      bot.config.webhookAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       adapter.unloadAdapters()
       expect(adapter.adapters).to.eql({})

@@ -4,10 +4,12 @@ import { expect } from 'chai'
 import * as bot from '..'
 import * as thought from './thought-process'
 
-// Mock for initial state object
-const message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+let message: bot.TextMessage
 
 describe('thought-process', () => {
+  before(() => {
+    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+  })
   beforeEach(async () => {
     // Start with fresh middleware to track state changes in each stage
     await bot.load()

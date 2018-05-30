@@ -78,10 +78,26 @@ export async function respond (
   }, callback)
 }
 
-/** Record incoming and outgoing messages, via middleware */
-export async function remember (b: bot.B, done: bot.IPieceDone): Promise<void> {
-  // storage adapter await goes here
+/**
+ * Record incoming and outgoing messages, via middleware.
+ * Stores whatever values remain in state after middleware pieces execute.
+ * Strips the main bot class and any function attributes from state beforehand.
+ */
+export async function remember (
+  b: bot.B,
+  callback?: bot.ICallback
+): Promise<any> {
   bot.events.emit('remember', b)
   bot.logger.debug(`Remember process started for message ID ${b.message.id}`)
-  done().catch((err) => bot.logger.error(`Remember process error: `, err))
+  const stateExcludes = ['bot'] /** @todo Add more to minimize storage size */
+  const state = Object.keys(b)
+    .filter((key) => !stateExcludes.includes(key))
+    .reduce((obj: any, key) => {
+      if (typeof obj[key] !== 'function') obj[key] = b[key]
+      return obj
+    }, {})
+  return bot.middlewares.remember.execute(state, async (state, done) => {
+    await bot.adapters.storage.store('states', state)
+    done().catch((err) => bot.logger.error(`Remember process error: `, err))
+  }, callback)
 }

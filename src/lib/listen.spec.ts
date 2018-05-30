@@ -4,28 +4,26 @@ import { expect } from 'chai'
 import * as listen from './listen'
 import * as bot from '..'
 
-// setup spies and mock listener class that matches on 'test'
-const mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' })
-
-// place holder var for state, mocks and spies, populated before each test
+let mockUser: bot.User
 let b: bot.B
 let middleware: bot.Middleware
-let listener: MockListener
 let callback: sinon.SinonSpy
 let matcher: sinon.SinonSpy
 let piece: sinon.SinonSpy
 let execute: sinon.SinonSpy
+let listener: listen.Listener
 
-// listener to match messages containing 'test'
+const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
 class MockListener extends listen.Listener {
   async matcher (message) {
     return /test/.test(message.toString())
   }
 }
 
-const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
-
 describe('listen', () => {
+  before(() => {
+    mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' })
+  })
   describe('Listener', () => {
     beforeEach(() => {
       b = new bot.B({ message: new bot.TextMessage(mockUser, 'test') })
@@ -154,11 +152,12 @@ describe('listen', () => {
         expect(state.match).to.eql({
           intent: 'foo',
           entities: {},
+          sentiment: {},
           confidence: 20
         })
       })
       const message = new bot.TextMessage(mockUser, 'foo')
-      message.nlu = { intent: 'foo', entities: {}, confidence: 100 }
+      message.nlu = { intent: 'foo', entities: {}, sentiment: {}, confidence: 100 }
       return nluListener.process(new bot.B({ message }))
     })
     it('.process fails match below confidence threshold', async () => {

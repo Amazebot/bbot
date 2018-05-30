@@ -25,6 +25,7 @@ export interface IMatcher {
 export interface INaturalLanguageListenerOptions {
   intent?: string,                 // Match this intent string
   entities?: {[key: string]: any}, // Match these entities (never required)
+  sentiment?: {[key: string]: any},// Match on sentiment / tone results from NLU
   confidence?: number,             // Threshold for confidence matching
   requireConfidence?: boolean,     // Do not match without meeting threshold
   requireIntent?: boolean          // Do not match without intent
@@ -34,6 +35,7 @@ export interface INaturalLanguageListenerOptions {
 export interface INaturalLanguageMatch {
   intent?: string | null, // the intent that was matched (if matched on intent)
   entities?: {[key: string]: any} // any subset of entities that were matched
+  sentiment?: {[key: string]: any},// any subset of matched sentiment results
   confidence?: number, // the confidence relative to the threshold (+/-)
 }
 
@@ -176,8 +178,8 @@ export class TextListener extends Listener {
 }
 
 /**
- * Language listener uses NLU adapter result to match on intent and (optionally)
- * entities and/or confidence threshold. NLU must be trained to provide intent.
+ * Language listener uses NLU adapter result to match on intent and/or entities,
+ * sentiment or confidence threshold. NLU must be trained to provide intent.
  * @todo Update this concept, matcher is uninformed at this stage.
  * @todo Use argv / environment variable for default confidence threshold.
  */
@@ -193,6 +195,7 @@ export class NaturalLanguageListener extends Listener {
     super(callback, meta)
     if (!this.options.confidence) this.options.confidence = 80
     if (!this.options.entities) this.options.entities = {}
+    if (!this.options.sentiment) this.options.sentiment = {}
     if (!this.options.requireConfidence) this.options.requireConfidence = true
     if (!this.options.requireIntent) this.options.requireIntent = true
   }
@@ -219,7 +222,22 @@ export class NaturalLanguageListener extends Listener {
         JSON.stringify(message.nlu.entities[key])
       ) entities[key] = message.nlu.entities[key]
     }
-    const match: INaturalLanguageMatch = { intent, entities, confidence }
+
+    const sentiment: {[key: string]: any} = {}
+    for (let key of Object.keys(this.options.sentiment!)) {
+      if (
+        message.nlu.sentiment &&
+        JSON.stringify(this.options.sentiment![key]) ===
+        JSON.stringify(message.nlu.sentiment[key])
+      ) sentiment[key] = message.nlu.sentiment[key]
+    }
+
+    const match: INaturalLanguageMatch = {
+      intent,
+      entities,
+      sentiment,
+      confidence
+    }
     if (match) {
       bot.logger.debug(`NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold`, { id: this.meta.id })
     }
