@@ -27,26 +27,30 @@
 [zapier]: https://zapier.com/
 [express]: https://expressjs.com/
 
+[alpha]: #alpha--june-2018
+[beta]: #beta--july-2018
+[release]: #release--august-2018
+[post-release]: #post-release--q4-2018
+
 # bBot Modules
 
 ## <img src="img/map.svg" height="30"> Roadmap
 
-bBot is in active development with an alpha release focused on fundamentals
-for ease of maintenance and supporting quality contributions.
+bBot is in active development with an [alpha][alpha] version focused on
+fundamentals for ease of maintenance and fully tested module design.
 
-The upcoming **beta** will include modules that work together to provide bBot's
-unique features for modelling and executing conversational UI.
+The upcoming [beta][beta] will include modules that work together to provide
+bBot's unique features for modelling and executing conversational UI.
 
-The first **release** will add guides and usage examples to get started. With at
-least one of each adapter type to provide full utility and patterns to follow.
+The first [release][release] will add tutorials and examples to get started.
+With at least one of each adapter to provide full utility and patterns.s
 
-Subsequent **minor versions** beyond release will add adapters for a variety of
-storage, natural language processing, and messaging platforms (including for
+Subsequent minor versions [post release][post-release] will add adapters for a
+variety of storage, natural language, and messaging platforms (including for
 voice interfaces).
 
-Our first post-release **major version** will add a UI for conversation
-designers to prototype and test interactions, while maintaining the flexibility
-of the programming interface.
+Our next **major version** will add a UI for conversation designers to prototype
+and test interactions, while maintaining the flexibility for coders.
 
 ___
 
@@ -131,7 +135,7 @@ context to an interaction.
 ### <img src="img/nlp.svg" height="20"> Natural Language Adapters
 
 We will include [Watson][watson] as a default option for adding NLU to match
-and respond based on message intent, entities and sentiment.
+and respond based on message intent, entities and/or sentiment.
 
 ### <img src="img/path.svg" height="20"> Path
 
@@ -183,7 +187,7 @@ to be presented in the message platform.
 The bot comes loaded with a variety of example interactions that can be engaged
 with and modified to learn the basics.
 
-## Post Release | Q3 2018
+## Post Release | Q4 2018
 
 ### <img src="img/i18n.svg" height="20"> Internationalisation
 
@@ -214,7 +218,6 @@ Messaging platform support extends to [Telegram][telegram], [Discord][discord],
 
 We'll add more adapters for [Rasa][rasa], [Wit.ai][wit] and
 [Dialogflow][dialogflow].
-
 
 ___
 
