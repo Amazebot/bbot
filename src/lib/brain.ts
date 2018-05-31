@@ -12,6 +12,10 @@ const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 export let saveInterval: NodeJS.Timer
 export let saveIntervalValue: number = 5000
 
+/** Set keys to remove from data before keep */
+/** @todo Add more to minimize storage size */
+const keepExcludes = ['bot']
+
 /** Internal storage for brain data, can hold any key/value collection */
 export const memory: {
   [key: string]: any
@@ -83,13 +87,21 @@ export function unset (key: string, collection: string = 'private') {
 }
 
 /**
- * Persist set of key/value pairs to store, via adapter.
- * @param collection name of data object containing pairs
- * @param data key/value pairs, subset of collection
+ * Keep serial data in collection, via adapter (converted to plain objects)
+ * @todo add test that stored state translates to plain object.
  */
-export async function keep (collection: string, data: { [key: string]: any }) {
+export async function keep (collection: string, data: any) {
   if (!bot.adapters.storage) {
     throw new Error('Store called without storage adapter')
+  }
+  if (typeof data === 'object') {
+    data = deepClone(Object.keys(data)
+      .filter((key) => !keepExcludes.includes(key))
+      .reduce((obj: any, key) => {
+        if (typeof obj[key] !== 'function') obj[key] = data[key]
+        return obj
+      }, {})
+    )
   }
   await bot.adapters.storage.keep(collection, data)
 }

@@ -115,8 +115,7 @@ export abstract class Listener {
       b.matched = matched
       const complete: bot.IComplete = (b, done) => {
         bot.logger.debug(`Executing ${this.constructor.name} callback`, { id: this.meta.id })
-        this.callback(b)
-        return Promise.resolve(done())
+        return Promise.resolve(this.callback(b)).then(() => done())
       }
       const callback: bot.ICallback = (err) => {
         let result = (!err)
@@ -126,7 +125,7 @@ export abstract class Listener {
       return middleware.execute(b, complete, callback)
     } else {
       if (done) done(false)
-      return b
+      return Promise.resolve(b)
     }
   }
 }

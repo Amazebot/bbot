@@ -18,6 +18,7 @@ export interface IState {
  * B is a pseudonym for the internal state handled by the thought process.
  * States have access to all bBot modules from the bot property.
  * It has defined properties but can be extended with any key/value pair.
+ * Each thought process attaches timestamps if they are actioned.
  */
 export class B implements IState {
   bot = bot
@@ -28,6 +29,10 @@ export class B implements IState {
   matched?: boolean
   method?: string
   envelope?: bot.Envelope
+  heard?: number
+  listened?: number
+  responded?: number
+  remembered?: number
   [key: string]: any
 
   /** Create new state, usually assigned as `b` in middleware callbacks. */
@@ -71,8 +76,8 @@ export class B implements IState {
   }
 
   /** Issues the response to the message adapter by whatever method is given */
-  respond (method: string = 'send', callback?: bot.ICallback) {
+  async respond (method: string = 'send', callback?: bot.ICallback) {
     if (method) this.method = method
-    return bot.respond(this, callback)
+    await bot.respond(this, callback)
   }
 }

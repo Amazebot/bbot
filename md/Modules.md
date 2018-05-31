@@ -98,6 +98,11 @@ files. Accessible to all modules and extensions.
 Control and access the running status - pause, play, shutdown, reboot.
 **~(O_O)~** bleep bloop.
 
+### <img src="img/script.svg" height="20"> Scripts
+
+Allows bot to process external file/s on load. For developers to add behaviour
+and conversation content using bBot (its primary purpose).
+
 ### <img src="img/id.svg" height="20"> ID
 
 Assigns every listener, message, user and state instance within either a hash 
@@ -186,6 +191,11 @@ to be presented in the message platform.
 
 The bot comes loaded with a variety of example interactions that can be engaged
 with and modified to learn the basics.
+
+### <img src="img/clap-board.svg" height="20"> Pretend
+
+A set of mock adapters, that emulate processing developer's scripts in a live
+platform. For unit testing assertions on bot interactions.
 
 ## Post Release | Q4 2018
 
