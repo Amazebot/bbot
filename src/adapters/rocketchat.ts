@@ -1,12 +1,11 @@
 import * as bot from '..'
 import * as sdk from '@rocket.chat/sdk'
 
-console.log(sdk.settings)
-
 export class Rocketchat extends bot.MessageAdapter {
   name = 'rocketchat-message-adapter'
   constructor (bot: any) {
     super(bot)
+    sdk.settings.integrationId = 'bBot'
     this.bot.logger.info('Using Rocket.Chat as message adapter')
   }
 
@@ -70,21 +69,13 @@ export class Rocketchat extends bot.MessageAdapter {
     const robotIsNamed = message.msg.indexOf(this.bot.name) === startOfText || message.msg.indexOf(this.bot.alias) === startOfText
     if ((isDM || isLC) && !robotIsNamed) message.msg = `${this.bot.name} ${message.msg}`
 
-    // Attachments, format properties for bBot
+    // Attachments, format properties as payload for bBot rich message type
     if (Array.isArray(message.attachments) && message.attachments.length) {
-      let attachment = message.attachments[0]
-      if (attachment.image_url) {
-        attachment.link = `${sdk.settings.host}${attachment.image_url}`
-        attachment.type = 'image'
-      } else if (attachment.audio_url) {
-        attachment.link = `${sdk.settings.host}${attachment.audio_url}`
-        attachment.type = 'audio'
-      } else if (attachment.video_url) {
-        attachment.link = `${sdk.settings.host}${attachment.video_url}`
-        attachment.type = 'video'
-      }
-      this.bot.logger.debug('Message type AttachmentMessage')
-      return this.bot.receive(new AttachmentMessage(user, attachment, message.msg, message._id))
+      this.bot.logger.debug('Message type RichMessage')
+      return this.bot.receive(new bot.RichMessage(user, {
+        attachments: message.attachments,
+        text: message.text
+      }, message._id))
     }
 
     // Standard text messages, receive as is

@@ -1,11 +1,12 @@
+/**
+ * Demo :: List Types
+ * Sets up text listeners with a variety of matching functions.
+ * Shows different matching methods to trigger the same bit.
+ * Run demo from project root: `ts-node src/demo/listen-types`
+ */
+
 import * as bot from '..'
 /** @todo Disable file logging in demo */
-
-/**
- * Setting up basic listeners.
- * Run demo using `ts-node src/demo/listen-types`
- * Shows different matching methods to trigger the same bit.
- */
 
 // Sends flowers to the console...
 bot.setupBit({
