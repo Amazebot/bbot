@@ -12,12 +12,12 @@ export abstract class Message {
     this.user = (user instanceof bot.User) ? user : new bot.User(user)
   }
 
-  /** String representation of the message */
+  /** String representation of the message. */
   abstract toString (): string
 }
 
 /**
- * NLU attributes interface
+ * NLU attributes interface.
  * @param intent A key characterising what the message was about
  * @param entities Additional data inferred from the message or context
  * @param sentiment Tone or emotional data provided from NLU parsing of text
@@ -46,6 +46,24 @@ export class TextMessage extends Message {
 
   toString () {
     return this.text
+  }
+}
+
+/** A message containing payload attributes from messaging platform. */
+export class RichMessage extends Message {
+
+  /**
+   * Create a rich message.
+   * @param user    The user who sent the message
+   * @param payload The payload to attach
+   * @param id      A unique ID for the message
+   */
+  constructor (user: bot.User, public payload: any, id?: string) {
+    super(user, id)
+  }
+
+  toString () {
+    return JSON.stringify(this.payload)
   }
 }
 
@@ -83,7 +101,7 @@ export class CatchAllMessage extends Message {
   }
 }
 
-/** Envelope interface, to create from scratch */
+/** Envelope interface, to create from scratch. */
 export interface IEnvelope {
   user?: bot.User
   room?: {
