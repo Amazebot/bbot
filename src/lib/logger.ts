@@ -26,7 +26,7 @@ export class Logger extends winston.Logger {}
  * @todo Add filter to prevent logging passwords etc
  */
 export const logger = new Logger({
-  level: bot.config.logLevel,
+  level: process.env.BOT_LOG_LEVEL,
   handleExceptions: true,
   exitOnError: (err) => ((err as any).middleware === undefined),
   transports: [

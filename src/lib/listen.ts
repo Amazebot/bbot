@@ -10,6 +10,12 @@ export const nluListeners: {
   [id: string]: NaturalLanguageListener | CustomListener
 } = {}
 
+/** Array of fallback listeners to be processed if neither of the above match */
+/** @todo add test coverage for this in thought process */
+export const catchAllListeners: {
+  [id: string]: CatchAllListener
+} = {}
+
 /** Clear current listeners, resetting initial empty listener objects */
 export function unloadListeners () {
   for (let id in listeners) delete listeners[id]
@@ -101,8 +107,7 @@ export abstract class Listener {
     b: bot.B,
     middleware = new bot.Middleware('listener'),
     done: IListenerDone = (matched) => {
-      if (matched) bot.logger.debug(`Listener matched`, { id: this.meta.id })
-      else bot.logger.debug(`Listener did not match`, { id: this.meta.id })
+      bot.logger.debug(`[listener] ${this.id} process done (${(matched) ? 'matched' : 'no match'})`)
     }
   ): Promise<bot.B> {
     const match = await Promise.resolve(this.matcher(b.message))
@@ -114,7 +119,7 @@ export abstract class Listener {
       b.match = match
       b.matched = matched
       const complete: bot.IComplete = (b, done) => {
-        bot.logger.debug(`Executing ${this.constructor.name} callback`, { id: this.meta.id })
+        bot.logger.debug(`[listen] executing ${this.constructor.name} callback for ID ${this.id}`)
         return Promise.resolve(this.callback(b)).then(() => done())
       }
       const callback: bot.ICallback = (err) => {
@@ -130,10 +135,24 @@ export abstract class Listener {
   }
 }
 
+/** Listener to match on any CatchAllMessage type */
+export class CatchAllListener extends Listener {
+  /** Accepts only super args, matcher is fixed */
+  constructor (action: IListenerCallback | string, meta?: IListenerMeta) {
+    super(action, meta)
+  }
+
+  /** Matching function looks for any CatchAllMessage */
+  async matcher (message: bot.Message) {
+    if (message instanceof bot.CatchAllMessage) {
+      bot.logger.debug(`[listen] message "${message}" matched catch all ID ${this.id}`)
+      return message
+    }
+  }
+}
+
 /** Custom listeners use unique matching function */
 export class CustomListener extends Listener {
-  match: any
-
   /** Accepts custom function to test message */
   constructor (
     public customMatcher: IMatcher,
@@ -147,7 +166,7 @@ export class CustomListener extends Listener {
   async matcher (message: bot.Message) {
     const match = await Promise.resolve(this.customMatcher(message))
     if (match) {
-      bot.logger.debug(`Message "${message}" matched custom listener`, { id: this.meta.id })
+      bot.logger.debug(`[listen] message "${message}" matched custom listener ID ${this.id}`)
     }
     return match
   }
@@ -155,8 +174,6 @@ export class CustomListener extends Listener {
 
 /** Text listeners use basic regex matching */
 export class TextListener extends Listener {
-  match: RegExpMatchArray | undefined
-
   /** Create text listener for regex pattern */
   constructor (
     public regex: RegExp,
@@ -167,10 +184,10 @@ export class TextListener extends Listener {
   }
 
   /** Use async because matchers must return a promise */
-  async matcher (message: bot.Message) {
+  async matcher (message: bot.Message): Promise<RegExpMatchArray | null> {
     const match = message.toString().match(this.regex)
     if (match) {
-      bot.logger.debug(`Message "${message}" matched text listener regex /${this.regex}/`, { id: this.meta.id })
+      bot.logger.debug(`[listen] message "${message}" matched text listener regex /${this.regex}/ ID ${this.id}`)
     }
     return match
   }
@@ -200,9 +217,9 @@ export class NaturalLanguageListener extends Listener {
   }
 
   /** Match on message's NLU properties */
-  async matcher (message: bot.TextMessage) {
+  async matcher (message: bot.TextMessage): Promise<INaturalLanguageMatch | undefined> {
     if (!message.nlu) {
-      bot.logger.error('NaturalLanguageListener attempted matching without NLU', { id: this.meta.id })
+      bot.logger.error(`[listen] NaturalLanguageListener attempted matching without NLU for ID ${this.id}`)
       return undefined
     }
 
@@ -238,7 +255,7 @@ export class NaturalLanguageListener extends Listener {
       confidence
     }
     if (match) {
-      bot.logger.debug(`NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold`, { id: this.meta.id })
+      bot.logger.debug(`[listen] NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold for ID ${this.id}`)
     }
     return match
   }
@@ -263,6 +280,16 @@ export function listenDirect (
 ): string {
   const listener = new TextListener(directPattern(regex), action, meta)
   listeners[listener.id] = listener
+  return listener.id
+}
+
+/** Create a listener that triggers when no other listener matches */
+export function listenCatchAll (
+  action: IListenerCallback | string,
+  meta?: IListenerMeta
+): string {
+  const listener = new CatchAllListener(action, meta)
+  catchAllListeners[listener.id] = listener
   return listener.id
 }
 
@@ -349,9 +376,4 @@ export function listenLeave (action: IListenerCallback | string, meta?: IListene
 /** Create a listener that triggers when user changes the topic */
 export function listenTopic (action: IListenerCallback | string, meta?: IListenerMeta) {
   return listenCustom((message: bot.Message) => message instanceof bot.TopicMessage, action, meta)
-}
-
-/** Create a listener that triggers when no other listener matches */
-export function listenCatchAll (action: IListenerCallback | string, meta?: IListenerMeta) {
-  return listenCustom((message: bot.Message) => message instanceof bot.CatchAllMessage, action, meta)
 }

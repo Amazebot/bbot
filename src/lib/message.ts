@@ -122,6 +122,7 @@ export class Envelope implements IEnvelope {
   room: {
     id?: string
     name?: string
+    type?: string
   } = {}
   user?: bot.User
   message?: Message

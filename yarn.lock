@@ -16,9 +16,9 @@
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@pnpm/self-installer/-/self-installer-2.0.2.tgz#85bb8764c7ccd223999f6142190062c626e8f287"
 
-"@rocket.chat/sdk@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@rocket.chat/sdk/-/sdk-0.2.1.tgz#e975ad29c48056a67993433bf394cd9bf6b126c0"
+"@rocket.chat/sdk@rocketchat/rocket.chat.js.sdk":
+  version "0.2.2"
+  resolved "https://codeload.github.com/rocketchat/rocket.chat.js.sdk/tar.gz/1b95583bdea73ee99c90b6baf25562c3fb641c1b"
   dependencies:
     "@types/lru-cache" "^4.1.0"
     "@types/node" "^9.4.6"

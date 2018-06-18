@@ -8,13 +8,13 @@ import * as bot from '..'
 /** Magic function to un-weird weird things */
 const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
-/** Private interval vars */
+/** Save tracking vars */
 export let saveInterval: NodeJS.Timer
 export let saveIntervalValue: number = 5000
 
 /** Set keys to remove from data before keep */
 /** @todo Add more to minimize storage size */
-const keepExcludes = ['bot']
+export const keepExcludes = ['bot']
 
 /** Internal storage for brain data, can hold any key/value collection */
 export const memory: {

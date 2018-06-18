@@ -24,7 +24,7 @@ export function loadAdapter (adapterPath?: string) {
     }
     adapterPath = require.resolve(adapterPath, resolver)
   }
-  bot.logger.debug(`Loading adapter from ${adapterPath}`)
+  bot.logger.debug(`[adapter] loading from ${adapterPath}`)
   return require(adapterPath).use(bot)
 }
 
@@ -42,10 +42,10 @@ export function startAdapters () {
   return Promise.all(Object.keys(adapters).map((type) => {
     let adapter = adapters[type]
     if (adapter) {
-      bot.logger.debug(`Starting ${type} adapter ${adapter.name}`)
+      bot.logger.debug(`[adapter] starting ${type} type, ${adapter.name}`)
       return Promise.resolve(adapter.start())
     } else {
-      bot.logger.debug(`No ${type} adapter defined`)
+      bot.logger.debug(`[adapter] no ${type} type adapter defined`)
     }
   }))
 }

@@ -73,7 +73,7 @@
     "typescript": "^2.7.2"
   },
   "dependencies": {
-    "@rocket.chat/sdk": "^0.2.1",
+    "@rocket.chat/sdk": "rocketchat/rocket.chat.js.sdk",
     "@types/mongoose": "^5.0.14",
     "@types/node": "^9.4.6",
     "@types/winston": "^2.3.8",
