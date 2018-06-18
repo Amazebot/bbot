@@ -17,6 +17,7 @@ export class User implements IUser {
   room: {
     id?: string
     name?: string
+    type?: string
   }
   name?: string
   [key: string]: any

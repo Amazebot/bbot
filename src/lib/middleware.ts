@@ -82,7 +82,7 @@ export class Middleware {
    * State to process can be an object with state properties or existing state.
    */
   execute (initState: bot.IState | bot.B, complete: IComplete, callback?: ICallback): Promise<bot.B> {
-    bot.logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
+    bot.logger.debug(`[middleware] executing ${this.type} middleware (size: ${this.stack.length})`)
     return new Promise((resolve, reject) => {
       const state: bot.B = (initState instanceof bot.B) ? initState : new bot.B(initState)
 
