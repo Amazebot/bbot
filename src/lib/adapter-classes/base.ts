@@ -16,11 +16,11 @@ export abstract class Adapter {
 
   /** Extend to add any bot startup requirements in adapter environment */
   async start () {
-    this.bot.logger.info('Generic adapter `start` called without override')
+    this.bot.logger.info('[adapter] `start` called without override')
   }
 
   /** Extend to add any bot shutdown requirements in adapter environment */
   async shutdown () {
-    this.bot.logger.info('Generic adapter `shutdown` called without override')
+    this.bot.logger.info('[adapter] `shutdown` called without override')
   }
 }

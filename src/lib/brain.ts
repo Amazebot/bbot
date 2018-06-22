@@ -8,13 +8,13 @@ import * as bot from '..'
 /** Magic function to un-weird weird things */
 const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
-/** Private interval vars */
+/** Save tracking vars */
 export let saveInterval: NodeJS.Timer
 export let saveIntervalValue: number = 5000
 
 /** Set keys to remove from data before keep */
 /** @todo Add more to minimize storage size */
-const keepExcludes = ['bot']
+export const keepExcludes = ['bot']
 
 /** Internal storage for brain data, can hold any key/value collection */
 export const memory: {
@@ -89,6 +89,7 @@ export function unset (key: string, collection: string = 'private') {
 /**
  * Keep serial data in collection, via adapter (converted to plain objects)
  * @todo add test that stored state translates to plain object.
+ * @todo refactor object filtering as a single exported utility (+tests)
  */
 export async function keep (collection: string, data: any) {
   if (!bot.adapters.storage) {

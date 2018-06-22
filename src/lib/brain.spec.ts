@@ -115,9 +115,24 @@ describe('brain', () => {
   })
   describe('.keep', () => {
     it('passes args to storage adapter keep', () => {
-      brain.keep('tests', { a: 'b' })
       let stub = (mockAdapter.keep as sinon.SinonStub)
+      brain.keep('tests', { a: 'b' })
       sinon.assert.calledWithExactly(stub, 'tests', { a: 'b' })
+      stub.resetHistory()
+    })
+    it('removes bot from kept states', () => {
+      let message = new bot.TextMessage(new bot.User(), 'testing')
+      let b = new bot.B({ message: message })
+      let stub = (mockAdapter.keep as sinon.SinonStub)
+      brain.keep('test-state', b)
+      sinon.assert.calledWithExactly(stub, 'test-state', { done: false, message })
+      stub.resetHistory()
+    })
+    it('does not keep any excluded data keys', () => {
+      brain.keepExcludes.push('foo')
+      let stub = (mockAdapter.keep as sinon.SinonStub)
+      brain.keep('tests', { foo: 'foo', bar: 'bar' })
+      sinon.assert.calledWithExactly(stub, 'tests', { bar: 'bar' })
       stub.resetHistory()
     })
   })

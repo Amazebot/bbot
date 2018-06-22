@@ -234,7 +234,7 @@ describe('listen', () => {
     })
   })
   describe('.listenLeave', () => {
-    it('.process calls callback on enter messages', async () => {
+    it('.process calls callback on leave messages', async () => {
       const callback = sinon.spy()
       const message = new bot.LeaveMessage(mockUser)
       const id = listen.listenLeave(callback)
@@ -243,7 +243,7 @@ describe('listen', () => {
     })
   })
   describe('.listenTopic', () => {
-    it('.process calls callback on enter messages', async () => {
+    it('.process calls callback on topic messages', async () => {
       const callback = sinon.spy()
       const message = new bot.TopicMessage(mockUser)
       const id = listen.listenTopic(callback)
@@ -252,11 +252,11 @@ describe('listen', () => {
     })
   })
   describe('.listenCatchAll', () => {
-    it('.process calls callback on enter messages', async () => {
+    it('.process calls callback on catchAll messages', async () => {
       const callback = sinon.spy()
       const message = new bot.CatchAllMessage(new bot.TextMessage(mockUser, ''))
       const id = listen.listenCatchAll(callback)
-      await listen.listeners[id].process(new bot.B({ message }))
+      await listen.catchAllListeners[id].process(new bot.B({ message }))
       sinon.assert.calledOnce(callback)
     })
   })

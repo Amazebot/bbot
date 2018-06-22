@@ -71,8 +71,8 @@ export class Bit implements IBit {
   constructor (options: IBit) {
     this.id = (options.id) ? options.id : bot.counter('bit')
     for (let key of Object.keys(options)) this[key] = options[key]
-    if (!this.send && !this.callback) {
-      bot.logger.warn('Bit won\'t work without a send or callback attribute.')
+    if (!this.strings && !this.attach && !this.callback) {
+      bot.logger.warn(`[bit] won't work without a strings, attach or callback attribute.`)
     }
   }
 
@@ -96,7 +96,7 @@ export function setupBit (options: IBit) {
 export async function doBit (id: string, b: bot.B): Promise<void> {
   const bit = bits[id]
   if (!bit) {
-    bot.logger.error('Attempted to do bit with unknown ID')
+    bot.logger.error('[bit] attempted to do bit with unknown ID')
     return
   }
   await Promise.resolve(bit.execute(b))

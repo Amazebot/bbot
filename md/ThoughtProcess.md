@@ -53,14 +53,16 @@ language listener, to interrupt or modify the state.
 
 ## Act
 
-bBot takes any required action, locally or through external integrations.
+bBot takes action when all else fails, locally or through external integrations.
 
-This is an implicit outcome of `listen` and `understand` stages, but if reached
-without any listener matching, bBot creates a special `CatchAllMessage` message
-to receive. Effectively restarting the process for a new set of listeners that
-can take action when nothing else did.
+This is an outcome of `listen` and `understand` stages passing without any
+listener matching, bBot creates a special `CatchAllMessage` message to receive
+in new set of listeners can take action when nothing else did.
 
 - `.listenCatchAll` adds a callback for any unmatched message
+
+Add a middleware piece via `.actMiddleware` to execute on every matching
+catch-all listener, to interrupt or modify the state.
 
 ## Respond.
 

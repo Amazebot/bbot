@@ -1,7 +1,7 @@
 import * as bot from '..'
 
 /** Value of data to assign as user instance attributes */
-export class IUser {
+export interface IUser {
   id?: string
   name?: string
   room?: {
@@ -17,6 +17,7 @@ export class User implements IUser {
   room: {
     id?: string
     name?: string
+    type?: string
   }
   name?: string
   [key: string]: any

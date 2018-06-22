@@ -69,7 +69,7 @@ export class B implements IState {
       for (let part of content) {
         if (typeof part === 'string') this.write(part)
         else if (typeof part === 'object') this.attach(part)
-        else bot.logger.error(`Unrecognised content for enveloper: ${part}`)
+        else bot.logger.error(`[state] unrecognised content for envelope: ${part}`)
       }
     }
     return this
