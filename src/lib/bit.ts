@@ -71,8 +71,8 @@ export class Bit implements IBit {
   constructor (options: IBit) {
     this.id = (options.id) ? options.id : bot.counter('bit')
     for (let key of Object.keys(options)) this[key] = options[key]
-    if (!this.send && !this.callback) {
-      bot.logger.warn('[bit] won\'t work without a send or callback attribute.')
+    if (!this.strings && !this.attach && !this.callback) {
+      bot.logger.warn(`[bit] won't work without a strings, attach or callback attribute.`)
     }
   }
 

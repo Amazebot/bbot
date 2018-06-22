@@ -14,7 +14,7 @@ describe('middleware', () => {
   beforeEach(() => middleware.unloadMiddleware())
   describe('.register', () => {
     it('adds a piece to the stack', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = (b, next, done) => next()
       testMiddleware.register(piece)
       expect(testMiddleware.stack).to.eql([piece])
@@ -22,7 +22,7 @@ describe('middleware', () => {
   })
   describe('.execute', () => {
     it('returns a promise', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = (b, next, done) => next()
       const complete = (b, done) => done()
       const callback = () => null
@@ -32,7 +32,7 @@ describe('middleware', () => {
       return promise
     })
     it('executes synchronous pieces', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => next())
       const complete = (b, done) => done()
       const callback = () => sinon.assert.calledOnce(piece)
@@ -40,15 +40,27 @@ describe('middleware', () => {
       return testMiddleware.execute({ message }, complete, callback)
     })
     it('executes asynchronous pieces', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => process.nextTick(() => next()))
       const complete = (b, done) => done()
       const callback = () => sinon.assert.calledOnce(piece)
       testMiddleware.register(piece)
       testMiddleware.execute({ message }, complete, callback)
     })
+    it('resolves after asynchronous pieces', async () => {
+      const testMiddleware = new middleware.Middleware('test')
+      const asyncPiece = (b, next, done) => {
+        return delay(50).then(() => {
+          b.delayed = true
+          next()
+        })
+      }
+      testMiddleware.register(asyncPiece)
+      const b = await testMiddleware.execute({ message }, (b, done) => done())
+      expect(b.delayed).to.equal(true)
+    })
     it('creates state when given plain object', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => next())
       const complete = (b, done) => {
         expect(b).to.be.instanceof(bot.B)
@@ -59,7 +71,7 @@ describe('middleware', () => {
     })
     it('accepts and processes initialised state', () => {
       const b = new bot.B({ message })
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => next())
       const complete = (b, done) => {
         expect(b).to.eql(b)
@@ -69,7 +81,7 @@ describe('middleware', () => {
       return testMiddleware.execute({ message }, complete)
     })
     it('executes synchronous pieces in order', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const pieceA = sinon.spy((b, next, done) => next())
       const pieceB = sinon.spy((b, next, done) => next())
       const complete = (b, done) => done()
@@ -79,7 +91,7 @@ describe('middleware', () => {
       testMiddleware.execute({ message }, complete, callback)
     })
     it('executes asynchronous pieces in order', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const pieceA = sinon.spy((b, next, done) => {
         return delay(20).then(() => next())
       })
@@ -93,7 +105,7 @@ describe('middleware', () => {
       return testMiddleware.execute({ message }, complete, callback)
     })
     it('executes the complete function when there are no other pieces', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const complete = sinon.spy((b, done) => done())
       const callback = () => null
       return testMiddleware.execute({ message }, complete, callback).then(() => {
@@ -101,7 +113,7 @@ describe('middleware', () => {
       })
     })
     it('executes the callback when there are no pieces', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const complete = (b, done) => done()
       const callback = sinon.spy()
       return testMiddleware.execute({ message }, complete, callback).then(() => {
@@ -109,7 +121,7 @@ describe('middleware', () => {
       })
     })
     it('executes the complete function when there are other pieces', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = (b, next, done) => next()
       const complete = sinon.spy((b, done) => done())
       const callback = () => null
@@ -119,7 +131,7 @@ describe('middleware', () => {
       })
     })
     it('executes the callback after complete function', () => {
-      const testMiddleware = new middleware.Middleware('complete')
+      const testMiddleware = new middleware.Middleware('test')
       const piece = (b, next, done) => next()
       const complete = (b, done) => done()
       const callback = sinon.spy()
@@ -229,7 +241,7 @@ describe('middleware', () => {
     it('creates middleware for each thought process', () => {
       middleware.loadMiddleware()
       expect(middleware.middlewares).to.include.all.keys([
-        'hear', 'listen', 'understand', 'respond', 'remember'
+        'hear', 'listen', 'understand', 'act', 'respond', 'remember'
       ])
     })
     it('creates all middleware instances', () => {
@@ -276,6 +288,14 @@ describe('middleware', () => {
       const mockPiece = sinon.spy()
       middleware.understandMiddleware(mockPiece)
       expect(middleware.middlewares.understand.stack[0]).to.eql(mockPiece)
+    })
+  })
+  describe('.actMiddleware', () => {
+    it('registers piece in act stack', () => {
+      middleware.loadMiddleware()
+      const mockPiece = sinon.spy()
+      middleware.actMiddleware(mockPiece)
+      expect(middleware.middlewares.act.stack[0]).to.eql(mockPiece)
     })
   })
   describe('.respondMiddleware', () => {

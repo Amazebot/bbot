@@ -89,6 +89,7 @@ export function unset (key: string, collection: string = 'private') {
 /**
  * Keep serial data in collection, via adapter (converted to plain objects)
  * @todo add test that stored state translates to plain object.
+ * @todo refactor object filtering as a single exported utility (+tests)
  */
 export async function keep (collection: string, data: any) {
   if (!bot.adapters.storage) {
