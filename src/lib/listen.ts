@@ -20,6 +20,7 @@ export const catchAllListeners: {
 export function unloadListeners () {
   for (let id in listeners) delete listeners[id]
   for (let id in nluListeners) delete nluListeners[id]
+  for (let id in catchAllListeners) delete catchAllListeners[id]
 }
 
 /** Interface for matcher functions - resolved value must be truthy */

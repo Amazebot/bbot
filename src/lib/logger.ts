@@ -1,5 +1,4 @@
 import * as winston from 'winston'
-import * as bot from '..'
 
 /**
  * Allows extensions to create new logs
