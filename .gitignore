@@ -63,7 +63,7 @@ typings/
 .DS_Store
 
 # generated docs, temporarily disabled from commits while in development
-docs/
+docs/api
 
 # compiled source, published to NPM, but not required in repository
 dist/

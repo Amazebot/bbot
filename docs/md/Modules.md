@@ -25,6 +25,7 @@
 [hangouts]: https://gsuite.google.com/products/chat/
 [chatbase]: https://chatbase.com/
 [zapier]: https://zapier.com/
+[stack-storm]: https://stackstorm.com/
 [express]: https://expressjs.com/
 
 [alpha]: #alpha--june-2018
@@ -217,7 +218,7 @@ Provide a drill down feed of analytics data to external platforms. We'll package
 ### <img src="img/webhook.svg" height="20"> Webhook Adapters
 
 Integrate events and share data with external platforms without effort. We'll
-provide [Zapier][zapier] to start.
+provide [Zapier][zapier] and [StackStorm][stack-storm] to start.
 
 ### <img src="img/chat.svg" height="20"> Message Adapters
 
