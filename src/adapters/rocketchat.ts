@@ -31,14 +31,12 @@ export class Rocketchat extends bot.MessageAdapter {
   }
 
   /** Process every incoming message in subscription */
-  /** @todo Add proper message and meta types from SDK exported interfaces */
   process (err: Error | null, message: any, meta: any) {
     if (err) throw err
     // Prepare message type for bBot to receive...
     bot.logger.info('[rocketchat] filters passed, will hear message')
 
     // Collect required attributes from message meta
-    /** @todo confirm user alias is on message schema not user */
     const isDM = (meta.roomType === 'd')
     const isLC = (meta.roomType === 'l')
     const user = bot.userById(message.u._id, {

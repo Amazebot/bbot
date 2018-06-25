@@ -11,7 +11,6 @@ export const nluListeners: {
 } = {}
 
 /** Array of fallback listeners to be processed if neither of the above match */
-/** @todo add test coverage for this in thought process */
 export const catchAllListeners: {
   [id: string]: CatchAllListener
 } = {}
@@ -197,8 +196,6 @@ export class TextListener extends Listener {
 /**
  * Language listener uses NLU adapter result to match on intent and/or entities,
  * sentiment or confidence threshold. NLU must be trained to provide intent.
- * @todo Update this concept, matcher is uninformed at this stage.
- * @todo Use argv / environment variable for default confidence threshold.
  */
 export class NaturalLanguageListener extends Listener {
   match: INaturalLanguageMatch | undefined
@@ -316,7 +313,6 @@ export function understandText (
   return nluListener.id
 }
 
-/** @todo FIX THIS */
 /*
 export function understandDirect (
   options: INaturalLanguageListenerOptions,

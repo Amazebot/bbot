@@ -7,14 +7,10 @@ export function hear (message: bot.Message, callback?: bot.ICallback): Promise<b
   return bot.middlewares.hear.execute({ message }, listen, callback)
 }
 
-/** @todo update method headers to be consistent and contain inline comments */
-
 /**
  * Process message that was heard, calls middleware for each listener.
  * Continue thought process once all listeners processed if none matched or
  * manually finished the state.
- * @todo Assess if listeners should require `done` to be set to prevent further
- *       processing, or if that should be the default.
  */
 export async function listen (b: bot.B, final: bot.IPieceDone): Promise<void> {
   b.heard = Date.now()
@@ -33,11 +29,6 @@ export async function listen (b: bot.B, final: bot.IPieceDone): Promise<void> {
   }
 }
 
-/**
- * @todo call NLU adapter to understand, add result to `b.message.nlu`
- * @todo test with bundled NLP adapter
- * @todo bypass NLU when b.message instanceof bot.CatchAllMessage
- */
 export async function understand (b: bot.B, done: bot.IPieceDone): Promise<void> {
   bot.events.emit('understand', b)
   bot.logger.debug(`[thought-process] understand started for message ID ${b.message.id}`)
@@ -99,23 +90,6 @@ export async function respond (
  * Stores whatever values remain in state after middleware pieces execute.
  * Checks for prior remembering, as used for completion on listen and respond.
  * Strips the main bot class and any function attributes from state beforehand.
- * @todo Re above, respond could be called without a listen, that's why it might
- *       fire twice. There could be a more graceful way of handling the thought
- *       process completion, like possible using a single interface for thoughts
- *       e.g. thought('hear', args), then it can add the final piece only once,
- *       when used either as thought('hear') or thought('respond'). Could still
- *       retain bot.hear and bot.respond as proxies for above. Should that also
- *       revert usage of bot.listen in place of bot.listenText. Maybe all
- *       thought stages should only be called internally and bot accessors are
- *       bot.receive and bot.send - for hubot compatibility and since when
- *       bot.respond is called directly, its actually unprompted, therefore not
- *       a response.
- *       Consider renaming `thought-process.ts` as just `thought.ts` too.
- *       Move adapter storage check into brain, remember should just call keep.
- *       Consider use of thought for custom contained sets of listeners (e.g.
- *       within a scene), might make sense to accept the listeners as arg, but
- *       use the 'global' listeners as default. Scenes shouldn't reproduce
- *       thought process the way they do in current Playbook.
  */
 export async function remember (
   b: bot.B,

@@ -3,7 +3,6 @@ import { Adapter } from './base'
 /**
  * Storage adapter class, extended to connect brain with external storage
  * provider. Methods are just raw endpoints to be extended.
- * @todo Define return types for `lose` and `keep` to indicate success or count
  */
 export abstract class StorageAdapter extends Adapter {
   name = 'storage-adapter'
