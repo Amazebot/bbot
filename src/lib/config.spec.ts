@@ -25,7 +25,6 @@ describe('config', () => {
     it('loads config from package.json `bot` attribute', () => {
       expect(config.getConfig()).to.have.property('alias', 'bbot')
     })
-    /** @todo restore config file testing without crashing wallaby */
     // it('load config from a defined json file if given', () => {
     //   mock({
     //     '/mock/config.json': JSON.stringify({ name: 'harriet' })

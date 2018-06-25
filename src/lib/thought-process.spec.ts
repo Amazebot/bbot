@@ -303,11 +303,6 @@ describe('thought-process', () => {
       await thought.respond(b, () => Promise.resolve())
       expect(b.responded).to.be.gte(now)
     })
-    /** @todo executes middleware, adds default envelope, adds responded ts, calls callback */
-    // use .hear as example for above
-    // check message adapter tests updated for .respond to have
-    // check that listen and understand go to remember with or without respond
-    // remember should record matched and unmatched, for statistics
   })
   describe('.remember', () => {
     before(() => sinon.stub(bot, 'keep'))

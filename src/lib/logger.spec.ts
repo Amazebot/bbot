@@ -30,7 +30,6 @@ describe('logger', () => {
       expect(JSON.parse(testErrors[0]).message).to.equal('test debug log')
     })
   })
-  /** @todo Fix testing log error handling - tricky to test uncaught in mocha */
   /*
   describe('.error', () => {
     it('exits after logging exception', () => {})

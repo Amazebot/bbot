@@ -6,7 +6,6 @@
  */
 
 import * as bot from '..'
-/** @todo Disable file logging in demo */
 
 // Sends flowers to the console...
 bot.setupBit({

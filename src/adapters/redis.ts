@@ -1,4 +1,3 @@
-/** @todo Refactor Redis adapter from Hubot */
 /*
 // Description:
 //   Persist hubot's brain to redis
