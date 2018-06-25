@@ -69,7 +69,6 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Put memory data in documents by sub-collection */
-  /** @todo compare to copy from last save and only update difference */
   async saveMemory (data: any) {
     this.bot.logger.debug(`[mongo] saving memory data to DB`)
     for (let sub in data) {
@@ -104,14 +103,12 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Add item to serial store data */
-  /** @todo Add class to model and store constructor ref, to restore on find */
   async keep (sub: string, data: any) {
     try {
       this.bot.logger.debug(`[mongo] keep ${sub} value in DB`)
       const query = { sub, type: 'store' }
       const update = { $push: { data } }
       const options = { upsert: true, lean: true }
-      // console.log(data) /** @todo FIX MONGOOSE - hangs until memory crash */
       await this.model.findOneAndUpdate(query, update, options).exec()
       this.bot.logger.debug(`[mongo] kept ${sub}: ${JSON.stringify(update)}`)
     } catch (err) {
@@ -120,9 +117,6 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Find certain stuff in Mongo */
-  /** @todo Refactor model with data as sub-document so it can be queried */
-  /** @todo Add note in docs recommending not to use find on large data sets */
-  /** @todo Use class from model to reinitialise with `new bot[constructor]` */
   async find (sub: string, params: any) {
     this.bot.logger.debug(`[mongo] finding any ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }

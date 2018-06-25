@@ -25,9 +25,6 @@ export interface IPiece {
  * A `done` function, created when executing middleware piece, is passed to each
  * piece and can be called (with no arguments) to interrupt the stack and begin
  * executing the chain of completion functions.
- * @todo Test newDone is called if done called with a function - suspect not
- * @todo let return void or promise<void>, wrap in promise resolve in execute,
- *       update tests that use `() => Promise.resolve()` to just `() => null`
  */
 export interface IPieceDone {
   (newDone?: IPieceDone): Promise<void>

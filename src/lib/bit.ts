@@ -29,7 +29,6 @@ export interface IBit {
  * A single interaction between user and bot.
  * Could be a command to trigger a callback, a request for data or just a
  * connecting line of dialogue.
- * @todo Complete implementation of all attributes.
  */
 export class Bit implements IBit {
   /** For scene and/or dialogue, listener running the bit (required) */
@@ -78,7 +77,6 @@ export class Bit implements IBit {
 
   /**
    * Do stuff with current bot state (e.g. send replies and/or call callbacks)
-   * @todo Do send if has `send` property.
    */
   async execute (b: bot.B): Promise<any> {
     if (this.callback) await Promise.resolve(this.callback(b))
