@@ -1,42 +1,52 @@
 import * as bot from '..'
 import * as sdk from '@rocket.chat/sdk'
 
+/**
+ * Rocket.Chat adapter processes incoming message stream, providing the
+ * their this modules as attributes for advanced listener callbacks to use.
+ * Provides member alias to some SDK methods, to support legacy Hubot scripts.
+ */
 export class Rocketchat extends bot.MessageAdapter {
   name = 'rocketchat-message-adapter'
+  driver = sdk.driver
+  methodCache = sdk.methodCache
+  api = sdk.api
+  settings = sdk.settings
+
   constructor (bot: any) {
     super(bot)
-    sdk.settings.integrationId = 'bBot'
-    bot.logger.info('[rocketchat] using Rocket.Chat as message adapter')
+    this.settings.integrationId = 'bBot'
+    this.bot.logger.info('[rocketchat] using Rocket.Chat as message adapter')
   }
 
-  async start () {
-    bot.logger.info(`[rocketchat] Rocket.Chat adapter in use`)
+  getRoomId = (room: string) => this.driver.getRoomId(room)
+  callMethod = (method: string, ...args: any[]) => this.driver.callMethod(method, args)
 
-    // Make SDK modules available to scripts, via `adapter.`
-    this.driver = sdk.driver
-    this.methodCache = sdk.methodCache
-    this.api = sdk.api
-    this.settings = sdk.settings
+  /** Connect to Rocket.Chat via DDP driver and setup message subscriptions */
+  async start () {
+    this.bot.logger.info(`[rocketchat] Rocket.Chat adapter in use`)
 
     // Print logs with current configs
-    bot.logger.info(`[rocketchat] responds to name: ${bot.name}`)
-    if (bot.alias) bot.logger.info(`[rocketchat] responds to alias: ${bot.alias}`)
+    this.bot.logger.info(`[rocketchat] responds to name: ${bot.name}`)
+    if (this.bot.alias) bot.logger.info(`[rocketchat] responds to alias: ${bot.alias}`)
 
-    sdk.driver.useLog(bot.logger)
-    await sdk.driver.connect()
-    await sdk.driver.login()
-    await sdk.driver.subscribeToMessages()
-    await sdk.driver.respondToMessages(this.process.bind(this))
-    bot.logger.debug(`[rocketchat] connected via DDP`)
+    this.driver.useLog(bot.logger)
+    await this.driver.connect()
+    await this.driver.login()
+    await this.driver.subscribeToMessages()
+    await this.driver.respondToMessages(this.process.bind(this))
+    this.bot.logger.debug(`[rocketchat] connected via DDP`)
   }
 
-  /** Process every incoming message in subscription */
+  /** Cancel subscriptions and disconnect from Rocket.Chat */
+  async shutdown () {
+    this.driver.disconnect()
+  }
+
+  /** Collect attributes to receive every incoming message in subscription */
   process (err: Error | null, message: any, meta: any) {
     if (err) throw err
-    // Prepare message type for bBot to receive...
-    bot.logger.info('[rocketchat] filters passed, will hear message')
-
-    // Collect required attributes from message meta
+    this.bot.logger.info('[rocketchat] filters passed, will hear message')
     const isDM = (meta.roomType === 'd')
     const isLC = (meta.roomType === 'l')
     const user = bot.userById(message.u._id, {
@@ -52,13 +62,13 @@ export class Rocketchat extends bot.MessageAdapter {
     // Room joins, hear without further detail
     if (message.t === 'uj') {
       bot.logger.debug('[rocketchat] hear type EnterMessage')
-      return bot.hear(new bot.EnterMessage(user, message._id))
+      return bot.receive(new bot.EnterMessage(user, message._id))
     }
 
     // Room exit, hear without further detail
     if (message.t === 'ul') {
       bot.logger.debug('[rocketchat] hear type LeaveMessage')
-      return bot.hear(new bot.LeaveMessage(user, message._id))
+      return bot.receive(new bot.LeaveMessage(user, message._id))
     }
 
     // Direct messages prepend bot's name so bBot can respond directly
@@ -69,7 +79,7 @@ export class Rocketchat extends bot.MessageAdapter {
     // Attachments, format properties as payload for bBot rich message type
     if (Array.isArray(message.attachments) && message.attachments.length) {
       bot.logger.debug('[rocketchat] hear type RichMessage')
-      return bot.hear(new bot.RichMessage(user, {
+      return bot.receive(new bot.RichMessage(user, {
         attachments: message.attachments,
         text: message.text
       }, message._id))
@@ -78,34 +88,34 @@ export class Rocketchat extends bot.MessageAdapter {
     // Standard text messages, hear as is
     let textMessage = new bot.TextMessage(user, message.msg, message._id)
     bot.logger.debug(`[rocketchat] hear type TextMessage: ${textMessage.toString()}`)
-    return bot.hear(textMessage)
+    return bot.receive(textMessage)
   }
 
-  async respond (envelope: bot.Envelope, method: string) {
-    switch (method) {
+  async dispatch (envelope: bot.Envelope) {
+    switch (envelope.method) {
       case 'send':
         if (!envelope.strings) throw new Error('Sending without strings')
-        if (!envelope.room.id) throw new Error('Sending without room ID')
+        if (!envelope.room || !envelope.room.id) throw new Error('Sending without room ID')
         for (let text in envelope.strings) {
-          await sdk.driver.sendToRoomId(text, envelope.room.id)
+          await this.driver.sendToRoomId(text, envelope.room.id)
         }
         break
       case 'dm':
         if (!envelope.strings) throw new Error('DM without strings')
         if (!envelope.user) throw new Error('DM without user')
         for (let text in envelope.strings) {
-          await sdk.driver.sendDirectToUser(text, envelope.user.username)
+          await this.driver.sendDirectToUser(text, envelope.user.username)
         }
         break
       case 'reply':
         if (!envelope.strings) throw new Error('Reply without strings')
         if (!envelope.user) throw new Error('Reply without user')
-        if (!envelope.room.id) throw new Error('Reply without room ID')
+        if (!envelope.room || !envelope.room.id) throw new Error('Reply without room ID')
         if (envelope.room.id.indexOf(envelope.user.id) === -1) {
           envelope.strings = envelope.strings.map((s) => `@${envelope.user!.username} ${s}`)
         }
         for (let text in envelope.strings) {
-          await sdk.driver.sendToRoomId(text, envelope.room.id)
+          await this.driver.sendToRoomId(text, envelope.room.id)
         }
         break
       case 'react':
@@ -115,22 +125,12 @@ export class Rocketchat extends bot.MessageAdapter {
           if (!emoji.startsWith(':')) emoji = `:${emoji}`
           if (!emoji.endsWith(':')) emoji = `${emoji}:`
           emoji = emoji.replace('-', '_') // Rocket.Chat syntax
-          await sdk.driver.setReaction(emoji, envelope.message.id)
+          await this.driver.setReaction(emoji, envelope.message.id)
         }
         break
       default:
-        throw new Error(`Rocket.Chat adapter has no ${method} handler`)
+        throw new Error(`Rocket.Chat adapter has no ${envelope.method} handler`)
     }
-  }
-
-  /** Get a room ID via sdk */
-  getRoomId (room: string) {
-    return sdk.driver.getRoomId(room)
-  }
-
-  /** Call a server message via sdk */
-  callMethod (method: string, ...args: any[]) {
-    return sdk.driver.callMethod(method, args)
   }
 }
 

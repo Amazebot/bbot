@@ -3,6 +3,7 @@ import * as bot from '..'
 /** Represents an incoming message from the chat. */
 export abstract class Message {
   user: bot.User
+
   /**
    * Create a message.
    * @param user The sender's user instance (or properties to create it)
@@ -99,68 +100,4 @@ export class CatchAllMessage extends Message {
   toString () {
     return this.message.toString()
   }
-}
-
-/** Envelope interface, to create from scratch. */
-export interface IEnvelope {
-  user?: bot.User
-  room?: {
-    id?: string
-    name?: string
-  },
-  strings?: string[]
-  payload?: any
-}
-
-/**
- * Envelopes are the outgoing equivalent of a message. They can be created in
- * response to a received message, or initialised to send without an original.
- * The envelope contains the details of how to address content (strings or
- * payload data) for a variety of message types within the message platform.
- */
-export class Envelope implements IEnvelope {
-  room: {
-    id?: string
-    name?: string
-    type?: string
-  } = {}
-  user?: bot.User
-  message?: Message
-  strings?: string[]
-  payload?: any
-
-  /** Add string content to an envelope, could be message text or reaction */
-  write (...strings: string[]): Envelope {
-    if (!this.strings) this.strings = []
-    this.strings = this.strings.concat(strings)
-    return this
-  }
-
-  /** Add multi-media attachments to a message, could be buttons or files etc */
-  attach (payload: any): Envelope {
-    if (!this.payload) this.payload = {}
-    Object.assign(this.payload, payload)
-    return this
-  }
-}
-
-/**
- * Create an envelope to send from scratch (without original message)
- * Addresses to user's room if user given. If room given, will override user.
- */
-export function createEnvelope (address: IEnvelope): Envelope {
-  const envelope = new Envelope()
-  if (address.user) envelope.user = address.user
-  if (address.room) envelope.room = address.room
-  else if (address.user) envelope.room = address.user.room
-  return envelope
-}
-
-/** Address an envelope back to a message's origin. */
-export function responseEnvelope (address: bot.B): Envelope {
-  const envelope = new Envelope()
-  envelope.message = address.message
-  envelope.user = address.message.user
-  envelope.room = address.message.user.room
-  return envelope
 }

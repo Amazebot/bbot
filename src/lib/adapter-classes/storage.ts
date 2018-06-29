@@ -7,59 +7,27 @@ import { Adapter } from './base'
 export abstract class StorageAdapter extends Adapter {
   name = 'storage-adapter'
 
+  /** Open connection to storage provider */
+  abstract async start (): Promise<void>
+
+  /** Close connection to storage provider */
+  abstract async shutdown (): Promise<void>
+
   /** Store memory data from brain */
-  async saveMemory (data: any) {
-    this.bot.logger.debug('[storage-adapter] `saveMemory` called without override', {
-      data
-    })
-  }
+  abstract async saveMemory (data: any): Promise<void>
 
   /** Get memory data for brain */
-  async loadMemory () {
-    this.bot.logger.debug('[storage-adapter] `loadMemory` called without override')
-  }
+  abstract async loadMemory (): Promise<any>
 
   /** Add data to series in given collection */
-  async keep (
-    collection: string,
-    data: any
-  ): Promise<void> {
-    this.bot.logger.debug('[storage-adapter] `keep` called without override', {
-      collection,
-      data
-    })
-  }
+  abstract async keep (collection: string, data: any): Promise<void>
 
   /** Query subset of collection from storage provider */
-  async find (
-    collection: string,
-    params: any
-  ): Promise<any | undefined> {
-    this.bot.logger.debug('[storage-adapter] `find` called without override', {
-      collection,
-      params
-    })
-  }
+  abstract async find (collection: string, params: any): Promise<any>
 
   /** Query subset of collection from storage provider, returning single item */
-  async findOne (
-    collection: string,
-    params: any
-  ): Promise<any | undefined> {
-    this.bot.logger.debug('[storage-adapter] `findOne` called without override', {
-      collection,
-      params
-    })
-  }
+  abstract async findOne (collection: string, params: any): Promise<any>
 
   /** Remove anything from collection in storage that matches params */
-  async lose (
-    collection: string,
-    params: any
-  ): Promise<void> {
-    this.bot.logger.debug('[storage-adapter] `lose` called without override', {
-      collection,
-      params
-    })
-  }
+  abstract async lose (collection: string, params: any): Promise<void>
 }

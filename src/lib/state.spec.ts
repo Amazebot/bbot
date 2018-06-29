@@ -1,7 +1,7 @@
 import 'mocha'
 import * as sinon from 'sinon'
-import * as state from './state'
 import { expect } from 'chai'
+import * as state from './state'
 import * as bot from '..'
 
 let listener: bot.TextListener
@@ -31,67 +31,34 @@ describe('state', () => {
       expect(b.done).to.equal(true)
     })
   })
-  describe('.attach', () => {
-    it('calls envelope attach, updating state', () => {
-      const b = new state.B({ message })
-      b.attach({ foo: 'bar' })
-      expect(b.envelope.payload).to.eql({ foo: 'bar' })
-    })
-  })
-  describe('.write', () => {
-    it('calls envelope write, updating state', () => {
-      const b = new state.B({ message })
-      b.write('foo', 'bar')
-      expect(b.envelope.strings).to.eql(['foo', 'bar'])
-    })
-  })
-  describe('.compose', () => {
-    it('calls envelope.write when given strings', () => {
-      const b = new state.B({ message })
-      const write = sinon.spy(b, 'write')
-      b.compose(['foo', 'bar'])
-      sinon.assert.calledWithExactly(write, 'foo')
-      sinon.assert.calledWithExactly(write, 'bar')
-    })
-    it('calls envelope.attach when given object', () => {
-      const b = new state.B({ message })
-      const attach = sinon.spy(b, 'attach')
-      b.compose([{ foo: 'bar' }])
-      sinon.assert.calledWithExactly(attach, { foo: 'bar' })
-    })
-    it('calls both write and attach when given mixed args', () => {
-      const b = new state.B({ message })
-      const write = sinon.spy(b, 'write')
-      const attach = sinon.spy(b, 'attach')
-      b.compose(['foo', { foo: 'bar' }])
-      sinon.assert.calledWithExactly(write, 'foo')
-      sinon.assert.calledWithExactly(attach, { foo: 'bar' })
+  describe('.respondEnvelope', () => {
+    it('creates new envelope from options, state, defaults', () => {
+      const b = new state.B({ message, listener })
+      b.respondEnvelope({ strings: ['hello'] })
+      expect(b.envelope).to.deep.include({
+        message,
+        room: message.user.room,
+        strings: ['hello'],
+        method: 'send'
+      })
     })
   })
   describe('respond', () => {
-    beforeEach(() => stubs.respond = sinon.stub(bot, 'respond'))
+    beforeEach(() => stubs.respond = sinon.stub(bot.thoughts, 'respond'))
     afterEach(() => stubs.respond.restore())
-    it('updates state method to given method name', () => {
+    it('calls respond thought process with the current state', () => {
       const b = new state.B({ message, listener })
-      const compose = sinon.spy(b, 'compose')
-      b.respond('reply')
-      expect(b.method).to.equal('reply')
-    })
-    it('assumes send as default state method', () => {
-      const b = new state.B({ message })
-      b.respond()
-      expect(b.method).to.equal('send')
-    })
-    it('calls bot.respond with the current state', () => {
-      const b = new state.B({ message, listener })
-      b.respond('test')
+      b.respond('testing')
       sinon.assert.calledWith(stubs.respond, b)
     })
-    it('calls bot.respond passing callback if given', () => {
+  })
+  describe('respondVia', () => {
+    it('updates state method before calling respond', () => {
       const b = new state.B({ message, listener })
-      const callback = (err) => (err) ? console.error(err) : console.log('sent')
-      b.respond('test', callback)
-      sinon.assert.calledWith(stubs.respond, b)
+      const respond = sinon.stub(b, 'respond')
+      b.respondVia('reply', 'hey you')
+      expect(b.envelope.method).to.equal('reply')
+      sinon.assert.calledOnce(respond)
     })
   })
 })

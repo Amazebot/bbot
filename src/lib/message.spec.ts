@@ -1,5 +1,4 @@
 import 'mocha'
-import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 import * as message from './message'
@@ -75,64 +74,6 @@ describe('message', () => {
       const catchMessage = new message.CatchAllMessage(textMessage)
       expect(catchMessage.id).to.equal(textMessage.id)
       expect(catchMessage.toString()).to.equal(textMessage.toString())
-    })
-  })
-  describe('Envelope', () => {
-    it('.write adds strings to envelope', () => {
-      const envelope = new message.Envelope().write('Test 1', 'Test 2')
-      expect(envelope.strings).to.eql(['Test 1', 'Test 2'])
-    })
-    it('.write concatenates existing strings with cumulative calls', () => {
-      const envelope = new message.Envelope()
-      envelope.write('Test 1', 'Test 2')
-      envelope.write('Test 3')
-      expect(envelope.strings).to.eql(['Test 1', 'Test 2', 'Test 3'])
-    })
-    it('.attach adds payload content to envelope', () => {
-      const envelope = new message.Envelope().attach({ foo: 'bar' })
-      expect(envelope.payload).to.eql({ foo: 'bar' })
-    })
-    it('.attach can build payload with cumulative calls', () => {
-      const envelope = new message.Envelope()
-      envelope.attach({ foo: 'bar' })
-      envelope.attach({ baz: 'qux' })
-      expect(envelope.payload).to.eql({ foo: 'bar', baz: 'qux' })
-    })
-  })
-  describe('.createEnvelope', () => {
-    it('addresses new envelope to user', () => {
-      const user = new bot.User({ id: 'test-user' })
-      const envelope = bot.createEnvelope({ user })
-      expect(envelope.user).to.eql(user)
-    })
-    it('addresses envelope to user room if set', () => {
-      const room = { id: 'test-room', name: 'testing' }
-      const user = new bot.User({ id: 'test-user', room })
-      const envelope = bot.createEnvelope({ user })
-      expect(envelope.room).to.eql(room)
-    })
-    it('addresses to room if given directly', () => {
-      const room = { id: 'test-room', name: 'testing' }
-      const user = new bot.User({ id: 'test-user' })
-      const envelope = bot.createEnvelope({ user, room })
-      expect(envelope.room).to.eql(room)
-    })
-    it('given room overrules user room', () => {
-      const room = { id: 'test-room', name: 'testing' }
-      const user = new bot.User({ id: 'test-user', room: { id: 'dm-room' } })
-      const envelope = bot.createEnvelope({ user, room })
-      expect(envelope.room).to.eql(room)
-    })
-  })
-  describe('.responseEnvelope', () => {
-    it('addresses envelope to message origin from state', () => {
-      const user = new bot.User({ id: 'test-user', room: { id: 'dm-room' } })
-      const message = new bot.TextMessage(user, 'Testing...')
-      const b = new bot.B({ message })
-      const envelope = bot.responseEnvelope(b)
-      expect(envelope.room).to.eql(message.user.room)
-      expect(envelope.message).to.eql(message)
-      expect(envelope.user).to.eql(message.user)
     })
   })
 })

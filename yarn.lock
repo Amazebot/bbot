@@ -18,7 +18,7 @@
 
 "@rocket.chat/sdk@rocketchat/rocket.chat.js.sdk":
   version "0.2.2"
-  resolved "https://codeload.github.com/rocketchat/rocket.chat.js.sdk/tar.gz/1b95583bdea73ee99c90b6baf25562c3fb641c1b"
+  resolved "https://codeload.github.com/rocketchat/rocket.chat.js.sdk/tar.gz/be6855e333907cef7a6a8154f189bba38da9ca84"
   dependencies:
     "@types/lru-cache" "^4.1.0"
     "@types/node" "^9.4.6"

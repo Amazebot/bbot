@@ -1,16 +1,16 @@
 [thought]: ./ThoughtProcess.md
+[bbot]: https://bBot.chat
 
-Add note this a guide for script developers. To see a feature comparison, go here ... <LINK TO ENGINEERING SECTION>
+> Incomplete doc, will be moved to a GH pages repo for [bBot.chat][bbot]
 
-Requiring/importing the bot...
-
-Async all the things
-
-Logging and error handling
-
-Coffee -> ES2015 -> Typescript
-
-^^^
+### TODO:
+- Add note this a guide for script developers. To see a feature comparison, go here ... <LINK TO ENGINEERING SECTION>
+- Requiring/importing the bot...
+- Explain async changes, less reliant on callbacks
+- Logging and error handling
+- Coffee -> ES2015 -> Typescript
+- Cut down envelope descriptions by pointing to dedicated doc
+- Link paragraphs to examples below and docs for mentioned methods
 
 ## Hearing and Listening
 
@@ -18,81 +18,53 @@ Coffee -> ES2015 -> Typescript
 work slightly differently and we've attempted to find more semantic naming.
 
 ### Hear ➡️ ListenText
-- In **Hubot** `hear` adds a text pattern listener.
+- In **Hubot** `hear` adds a text pattern listener
 - In **bBot** `listenText` does the same, where `hear` is the [process][thought]
-  which determines if incoming messages will be given to listeners.
+  which determines if incoming messages will be given to listeners
 
 ### Respond ➡️ ListenDirect
-- In **Hubot** `respond` add a text pattern listener that will only match if
-  prefixed with the bot's name.
-- In **bBot** `listenDirect` does the same.
+- In **Hubot** `respond` adds a text pattern listener that will only match if
+  prefixed with the bot's name
+- In **bBot** `listenDirect` does the same, where `respond` is used to actually
+  initiate the outgoing response and the [process][thought] to handle it
 
 ### Listen ➡️ ListenCustom
-- In **Hubot** `listen` is a sort of abstract for both `hear` and `respond`.
+- In **Hubot** `listen` is a sort of abstract for both `hear` and `respond`
 - In **bBot** `listen` is the [process][thought] which provides messages to each
-listener. `listenCustom` can be used to create a listener with a custom matching
+  listener
+- `listenCustom` can be used to create a listener with a custom matching
 function.
 
 ### Example
 
-Hubot
+#### Hubot
 ```js
 module.exports = robot => robot.hear(/.*/, () => console.log('I hear!'))
 ```
 
-bBot
+#### bBot
 ```js
-export default bot => bot.listenText(/.*/, () => console.log('I listen!'))
-```
-
-## Receive ➡️ Hear
-
-In Hubot `hear` was used to setup a type of listener, which gets called after
-`receiveMiddleware`. In bBot we use a naming style for the bot's thought process
-that follows simple human terms. So `hear` has been purposed for the first stage
-of that process. The `listenText` method is now the equivalent to Hubot `hear`.
-
-### Example
-
-Hubot
-```js
-const stream = require('my-amazing-integration')
-stream.connect()
-module.exports = robot => stream.on('event', () => {
-  robot.receive(new robot.TextMessage({ id: 'system' }, 'Event fired'))
-})
-```
-
-bBot
-```js
-import * as stream from 'my-amazing-integration'
-stream.connect()
-export default bot => stream.on('event', () => {
-  bot.hear(new bot.TextMessage({ id: 'system' }, 'Event fired'))
-})
+module.exports = bot => bot.listenText(/.*/, () => console.log('I listen!'))
 ```
 
 ## The Response Object vs B State
 
-Hubot had a `Response` class that in bBot is roughly equivalent to `B`, because
-in both it:
-- contains properties about the current state of message processing
-- is passed to listener callbacks
-- provides methods to respond to a received message
-
-The semantics for the response object in Hubot were sometimes misleading, as the
-"response" did not always comprise an actual response and may never be used to
-make one. It was more like a "context", though there was also a `context` in use
-by middleware (which response was a property of) but the full context was not
+The semantics of Hubot's `Response` were sometimes misleading, as the "response"
+did not always comprise an actual response and may never be used to make one. It
+was more like a "context", though there was also a `context` in use by
+middleware (which response was a property of) but the full context was not
 available to higher level functions, like listeners.
 
 In bBot, we've merged `context` and `response` into an all seeing state class
-called `B`. So the same state flows through middleware, listeners and responses,
-allowing callbacks to act with the full context of message processing history.
+called `B`. The same state flows through middleware, listeners and responses,
+allowing callbacks to be informed by the full processing history.
+
+A state instance, `b` takes the place of `res` as the primary argument passed to
+listener callbacks and also provides methods to respond to a received message.
 
 ### Example
 
-Hubot
+#### Hubot
 ```js
 module.exports = robot => {
   robot.receiveMiddleware((context, next, done) => {
@@ -105,9 +77,9 @@ module.exports = robot => {
 }
 ```
 
-bBot
+#### bBot
 ```js
-export default bot => {
+module.exports = bot => {
   bot.hearMiddleware((b, next, done) => {
     console.log(`Received: ${b.message.toString()}`)
     next()
@@ -118,56 +90,121 @@ export default bot => {
 }
 ```
 
-## Message Adapters and Response Methods
+## Responding to Messages
 
-In Hubot, message adapters for different platforms often needed extending with
-custom methods, but the base adapter class still attempted to define raw methods
-for common cases. Some adapters did not even support all the defined methods.
+In Hubot, the `robot` and `response` both attempted to define a set of common
+methods for handling outgoings, like `reply` and `send`, however the semantics
+were a bit off. Sometimes `reply` was used unprompted by an incoming message,
+so it wasn't really replying, sometimes `send` would be used to "reply".
+Sometimes a platform adapter did not support all the defined methods or needed
+extending with custom methods of it's own, used inconsistently with Hubot's.
 
-bBot takes a different approach, the message adapter only has two methods,
-`hear` and `respond`, for incoming and outgoing. `respond` is given the B state
-instance, which includes a `method` property, to define a specific way for the
-adapter to process the response. e.g. `method: 'reply'`, otherwise it defaults
-to `send`. Then the adapter can handle as many or as few methods as it needs.
+bBot takes a different approach, using an envelope's `method` attribute to
+define how the adapter should handle it, e.g as a send (default), an emoji
+reaction, a topic change, whatever. This provides message adapters more
+flexibility to handle as many or few methods as needed.
 
-The outgoing state also includes an `envelope` property, with the  `room` and/or
-`user` to address the message to, as well as the content (`strings` and/or
-`payload`). This provides adapters a more flexible interface to create a variety
-of message types within the chosen platform.
+There are only two ways to initiate outgoings:
+- `respond` is called on a state with an incoming message to respond to.
+- `dispatch` can be called from the bot when there's no originating state.
 
-Composing and sending are also two distinct actions in bBot, to simplify writing
-expressions for advanced callbacks, without complicated handling of arguments
-(i.e. Hubot's tricky but confusing slicing of envelope and string arrays).
-- `write` adds strings to an envelope
-- `attach` adds a payload object to an envelope
-- `compose` adds a mixed array of both of the above
-- `respond` sends, with an optional method specified (defaults to 'send')
+Message adapters only implement `dispatch` to encompass all outgoing content as
+an envelope addressed back to the source or to start a new interaction.
 
-### Adapter Usage Example
+### Messages and Envelopes
 
-Hubot
+bBot and Hubot have the same concept of messages and envelopes. Messages are an
+incoming object from a messaging platform, parsed by the adapter. Envelopes
+address outgoing content, can be unprompted or created to respond to a received
+message. The message adapter parses those back into the messaging platform.
+
+In Hubot, envelopes were often plain objects, but bBot adds some helpers to
+set attributes and the `room` attribute of an envelope in bBot explicitly
+contains `name` or `id` attributes, so adapters can perform better as they don't
+need multiple lookups to determine which was given.
+
+### Forming a Response
+
+Hubot's outgoing methods accepted arguments for composing **and** dispatching
+the envelope, sometimes in different positions. Some methods accepted strings,
+some took the whole envelope object. This often led to tricky argument slicing
+and conditionals.
+
+bBot arguments are strictly typed and it aims to give methods clear purpose,
+consistent patterns and separation of concerns. Composing and dispatching can
+be distinct actions to simplify advanced callbacks, so the *how* is not confused
+with the *what*.
+
+Envelope helpers are as follows (and can be chained together):
+- `toRoomId` sets the room ID
+- `toRoomName` sets the room name
+- `write` adds string content
+- `attach` adds payload content
+- `compose` add strings and/or payloads
+- `via` sets the method for the adapter to implement
+
+States can create and dispatch an envelope responding to an incoming message,
+inheriting the properties to address it back to the source. Using:
+- `respond` to compose and dispatch in one
+- `respondVia` to override the default dispatch method, compose and dispatch
+- `respondEnvelope` to get the envelope first, if it needs to be re-addressed to 
+  a different room or user
+
+### Unprompted Outgoing Example
+
+#### Hubot
 ```js
 module.exports = robot => {
-  robot.hear(/hi$/, (res) => res.send('I heard someone!'))
-  robot.hear(/hello\?$/, (res) => res.reply('I hear you!'))
-  robot.hear(/sup$/, (res) => res.react(':wave:'))
+  const room = { name: 'general' }
+  const user = { name: 'bilbo' }
+  robot.messageRoom(room.name, 'hello #' + room.name)
+  robot.reply({ room, user }, 'hello you')
 }
 ```
 
-bBot
+#### bBot
 ```js
-export default bot => {
-  bot.listenText(/hi$/, (b) => b.write('I heard someone!').respond())
-  bot.listenText(/hello\?$/, (b) => b.write('I hear you!').respond('reply'))
-  bot.listenText(/sup$/, (b) => b.write(':wave:').respond('react'))
+module.exports = bot => {
+  const room = { name: 'general' }
+  const user = { name: 'bilbo' }
+  bot.dispatch(new bot.Envelope({ room }).compose('hello #' + room.name))
+  bot.dispatch(new bot.Envelope({ user }).compose('hello you').via('reply'))
+}
+```
+
+### Responding to Incoming Example
+
+#### Hubot
+```js
+module.exports = robot => {
+  robot.hear(/say hello to (.*)/i, (res) => res.send('Hello ' + res.match[1])
+  robot.hear(/can anyone hear me/i, (res) => {
+    robot.adapter.react(res.envelope, ':raising-hand:')
+  })
+  robot.hear(/welcome me to the (.*) room/i, (res) => {
+    res.envelope.room = res.match[1]
+    res.reply('Welcome')
+  })
+}
+```
+
+#### bBot
+```js
+module.exports = bot => {
+  bot.listenText(/say hello to (.*)/i, (b) => b.respond('Hello ' + res.match[1])
+  bot.listenText(/can anyone hear me/i, (b) => b.respondVia('react', ':raising-hand:')
+  bot.listenText(/welcome me to the (.*) room/i, (b) => {
+    b.respondEnvelope().toRoomName(b.match[1])
+    b.respondVia('reply', 'Welcome')
+  })
 }
 ```
 
 ### Adapter Class Example
 
-Hubot
+#### Hubot
 ```js
-const Adapter = require('hubot').Adapter
+const { Adapter } = require('hubot')
 class Campfire extends Adapter {
   send (envelope/* , ...strings */) {
     const strings = [].slice.call(arguments, 1)
@@ -177,17 +214,21 @@ class Campfire extends Adapter {
       this.send.apply(this, [envelope].concat(strings))
     })
   }
+  topic (envelope, topic) {
+    // < handle custom outgoing method >
+  }
 }
-exports.use = robot => new Campfirerobot
+exports.use = robot => new Campfire(robot)
 ```
 
-bBot
+#### bBot
 ```js
-import { MessageAdapter } from 'bBot'
+const { MessageAdapter } = require('bBot')
 class Campfire extends MessageAdapter {
-  async respond (b) {
-    switch (b.method) {
-      case 'topic': // handle non-standard response methods first
+  async dispatch (envelope) {
+    switch (envelope.method) {
+      case 'topic': 
+        // < handle custom outgoing method >
         break;
       default: // `speak` or `send` would be handled as default method
         for (let string of b.envelope.strings) {
@@ -197,5 +238,27 @@ class Campfire extends MessageAdapter {
     }
   }
 }
-export const use = bot => new Campfirebot
+exports.use = bot => new Campfire(bot)
+```
+
+Alternatively, adapters could define platform methods, to relay from dispatch:
+
+```js
+const { MessageAdapter } = require('bBot')
+class Campfire extends MessageAdapter {
+  dispatch (envelope) {
+    return this[envelope.method](envelope)
+  }
+  send (envelope) {
+    return this.speak(envelope) // proxy to re-direct default method
+  }
+  async speak (envelope) {
+    for (let string of b.envelope.strings) {
+      await this.platform.room(b.envelope.room).speak(string)
+    }
+  }
+  async topic (envelope) {
+    // < handle custom outgoing method >
+  }
+}
 ```
