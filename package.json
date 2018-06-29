@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "An adaptable chatbot framework with a conversational core.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "git@github.com:Amazebot/bbot.git",
   "author": "timkinnane <timkinnane@gmail.com>",
   "license": "MIT",

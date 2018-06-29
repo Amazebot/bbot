@@ -38,6 +38,10 @@ export async function saveMemory () {
 
 /** Update internal memory with any data set (mostly used on load) */
 export async function loadMemory () {
+  if (!bot.adapters.storage) {
+    bot.logger.warn(`[brain] cannot load or persist data without storage adapter.`)
+    return
+  }
   const loaded = await bot.adapters.storage.loadMemory()
   for (let key in loaded) {
     memory[key] = Object.assign({}, memory[key], loaded[key])
@@ -82,9 +86,7 @@ export function unset (key: string, collection: string = 'private') {
 
 /** Keep serial data in collection, via adapter (converted to plain objects) */
 export async function keep (collection: string, data: any) {
-  if (!bot.adapters.storage) {
-    throw new Error('Store called without storage adapter')
-  }
+  if (!bot.adapters.storage) return
   if (typeof data === 'object') {
     data = deepClone(Object.keys(data)
       .filter((key) => !keepExcludes.includes(key))

@@ -173,29 +173,29 @@ describe('listen', () => {
   describe('.listenText', () => {
     it('adds text listener to collection, returning ID', () => {
       const id = listen.listenText(/test/, () => null)
-      expect(listen.listeners[id]).to.be.instanceof(listen.TextListener)
+      expect(listen.globalListeners.listen[id]).to.be.instanceof(listen.TextListener)
     })
   })
   describe('.listenDirect', () => {
     it('adds text listener to collection, returning ID', () => {
       const id = listen.listenDirect(/test/, () => null)
-      expect(listen.listeners[id]).to.be.instanceof(listen.TextListener)
+      expect(listen.globalListeners.listen[id]).to.be.instanceof(listen.TextListener)
     })
   })
   describe('.listenCustom', () => {
     const id = listen.listenCustom(() => null, () => null)
-    expect(listen.listeners[id]).to.be.instanceof(listen.CustomListener)
+    expect(listen.globalListeners.listen[id]).to.be.instanceof(listen.CustomListener)
   })
   describe('.understand', () => {
     it('adds NLU listener to NLU collection, returning ID', () => {
       const id = listen.understandText({ intent: 'test' }, () => null)
-      expect(listen.nluListeners[id]).to.be.instanceof(listen.NaturalLanguageListener)
+      expect(listen.globalListeners.understand[id]).to.be.instanceof(listen.NaturalLanguageListener)
     })
   })
   describe('.understandCustom', () => {
     it('adds custom listener to NLU collection, returning ID', () => {
       const id = listen.understandCustom(() => null, () => null)
-      expect(listen.nluListeners[id]).to.be.instanceof(listen.CustomListener)
+      expect(listen.globalListeners.understand[id]).to.be.instanceof(listen.CustomListener)
     })
   })
   describe('.directPattern', () => {
@@ -229,7 +229,7 @@ describe('listen', () => {
       const callback = sinon.spy()
       const message = new bot.EnterMessage(mockUser)
       const id = listen.listenEnter(callback)
-      await listen.listeners[id].process(new bot.B({ message }))
+      await listen.globalListeners.listen[id].process(new bot.B({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -238,7 +238,7 @@ describe('listen', () => {
       const callback = sinon.spy()
       const message = new bot.LeaveMessage(mockUser)
       const id = listen.listenLeave(callback)
-      await listen.listeners[id].process(new bot.B({ message }))
+      await listen.globalListeners.listen[id].process(new bot.B({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -247,7 +247,7 @@ describe('listen', () => {
       const callback = sinon.spy()
       const message = new bot.TopicMessage(mockUser)
       const id = listen.listenTopic(callback)
-      await listen.listeners[id].process(new bot.B({ message }))
+      await listen.globalListeners.listen[id].process(new bot.B({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -256,7 +256,7 @@ describe('listen', () => {
       const callback = sinon.spy()
       const message = new bot.CatchAllMessage(new bot.TextMessage(mockUser, ''))
       const id = listen.listenCatchAll(callback)
-      await listen.catchAllListeners[id].process(new bot.B({ message }))
+      await listen.globalListeners.act[id].process(new bot.B({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -267,8 +267,8 @@ describe('listen', () => {
       listen.understandText({}, () => null)
       listen.understandCustom(() => null, () => null)
       listen.unloadListeners()
-      expect(listen.listeners).to.eql({})
-      expect(listen.nluListeners).to.eql({})
+      expect(listen.globalListeners.listen).to.eql({})
+      expect(listen.globalListeners.understand).to.eql({})
     })
   })
 })

@@ -1,5 +1,5 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect } from 'chai'
 import * as bit from './bit'
 import * as bot from '..'

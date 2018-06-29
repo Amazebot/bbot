@@ -1,5 +1,5 @@
 import { Adapter } from './base'
-import * as bot from '../..'
+import * as bBot from '../..'
 
 /**
  * Message Adapter class, extended to connect bBot with messaging platform.
@@ -7,24 +7,13 @@ import * as bot from '../..'
  */
 export abstract class MessageAdapter extends Adapter {
   name = 'message-adapter'
+
   /** Open connection to messaging platform */
-  async start () {
-    this.bot.logger.debug('[message-adapter] `start` called without override')
-  }
+  abstract start (): Promise<void>
+
   /** Close connection to messaging platform */
-  async shutdown () {
-    this.bot.logger.debug('[message-adapter] `shutdown` called without override')
-  }
-  /** Process an incoming message from platform */
-  async hear (message: any): Promise<any> {
-    this.bot.logger.debug('[message-adapter] `hear` called without override', {
-      message
-    })
-  }
-  /** Take addressed envelope to action in platform, per given method */
-  async respond (envelope: bot.Envelope, method: string): Promise<any> {
-    this.bot.logger.debug(`[message-adapter] respond via ${method} called without override`, {
-      envelope
-    })
-  }
+  abstract shutdown (): Promise<void>
+
+  /** Take dispatched envelope to action in platform */
+  abstract async dispatch (envelope: bBot.Envelope): Promise<any>
 }

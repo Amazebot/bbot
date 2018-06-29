@@ -37,9 +37,9 @@ bot.listenCustom((message: bot.TextMessage) => {
 const user = new bot.User()
 const start = async () => {
   await bot.start()
-  await bot.hear(new bot.TextMessage(user, 'flowers please'))
-  await bot.hear(new bot.TextMessage(user, '2 orchids for me'))
-  await bot.hear(new bot.TextMessage(user, 'I <3 flowers'))
+  await bot.receive(new bot.TextMessage(user, 'flowers please'))
+  await bot.receive(new bot.TextMessage(user, '2 orchids for me'))
+  await bot.receive(new bot.TextMessage(user, 'I <3 flowers'))
 }
 
 start().catch((err) => bot.logger.error(err))

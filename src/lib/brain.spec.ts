@@ -1,5 +1,5 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 import * as brain from './brain'
@@ -10,19 +10,24 @@ const mockUsers = {
   'u1': new bot.User({ id: 'u1', name: 'test-1' }),
   'u2': new bot.User({ id: 'u2', name: 'test-2' })
 }
-class MockAdapter extends bot.StorageAdapter {}
+class MockAdapter extends bot.StorageAdapter {
+  name = 'mock-storage'
+  async start () { return }
+  async shutdown () { return }
+  async saveMemory () { return }
+  async loadMemory () { return }
+  async keep () { return }
+  async find () { return }
+  async findOne () { return }
+  async lose () { return }
+}
 
 describe('brain', () => {
   before(() => {
-    mockAdapter = new MockAdapter(bot)
-    sinon.stub(mockAdapter, 'start').resolves()
-    sinon.stub(mockAdapter, 'shutdown').resolves()
-    sinon.stub(mockAdapter, 'saveMemory').resolves()
-    sinon.stub(mockAdapter, 'loadMemory').resolves({ test: { foo: 'bar' } })
-    sinon.stub(mockAdapter, 'keep').resolves()
-    sinon.stub(mockAdapter, 'find').resolves([{ test: 'test' }])
-    sinon.stub(mockAdapter, 'findOne').resolves({ test: 'test' })
-    sinon.stub(mockAdapter, 'lose').resolves()
+    mockAdapter = sinon.createStubInstance(MockAdapter)
+    mockAdapter.loadMemory.resolves({ test: { foo: 'bar' } })
+    mockAdapter.find.resolves([{ test: 'test' }])
+    mockAdapter.findOne.resolves({ test: 'test' })
     bot.adapters.storage = mockAdapter
     bot.config.autoSave = false
   })

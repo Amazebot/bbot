@@ -10,6 +10,8 @@ export const use = sinon.spy(() => mockAdapter) // allows spec to run as module
 class MockAdapter extends bot.Adapter {
   name = 'mock-adapter'
   async start () { /* mock start */ }
+  async shutdown () { /* mock shutdown */ }
+  async dispatch () { /* mock dispatch */ }
 }
 
 describe('adapter', () => {

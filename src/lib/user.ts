@@ -21,6 +21,7 @@ export class User implements IUser {
   }
   name?: string
   [key: string]: any
+
   /** Create a User */
   constructor (meta?: IUser) {
     this.id = (meta && meta.id) ? meta.id : bot.random()

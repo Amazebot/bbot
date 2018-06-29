@@ -1,6 +1,5 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as mongoose from 'mongoose'
 import * as bot from '..'
 import * as mongo from './mongo'
 
