@@ -62,9 +62,6 @@ typings/
 # system files
 .DS_Store
 
-# generated docs, temporarily disabled from commits while in development
-docs/api
-
 # compiled source, published to NPM, but not required in repository
 dist/
 
