@@ -46,13 +46,7 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-1.2.0.tgz#81a6731ce4df43619e5c8c945383b3e62a89ea86"
 
-"@types/fs-extra@^4.0.0":
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-4.0.8.tgz#6957ddaf9173195199cb96da3db44c74700463d2"
-  dependencies:
-    "@types/node" "*"
-
-"@types/fs-extra@^5.0.0":
+"@types/fs-extra@5.0.1", "@types/fs-extra@^5.0.0":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-5.0.1.tgz#cd856fbbdd6af2c11f26f8928fd8644c9e9616c9"
   dependencies:
@@ -72,11 +66,11 @@
   dependencies:
     "@types/node" "*"
 
-"@types/handlebars@^4.0.31":
+"@types/handlebars@4.0.36":
   version "4.0.36"
   resolved "https://registry.yarnpkg.com/@types/handlebars/-/handlebars-4.0.36.tgz#ff57c77fa1ab6713bb446534ddc4d979707a3a79"
 
-"@types/highlight.js@^9.1.8":
+"@types/highlight.js@9.12.2":
   version "9.12.2"
   resolved "https://registry.yarnpkg.com/@types/highlight.js/-/highlight.js-9.12.2.tgz#6ee7cd395effe5ec80b515d3ff1699068cd0cd1d"
 
@@ -84,25 +78,21 @@
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@types/load-json-file/-/load-json-file-2.0.7.tgz#c887826f5230b7507d5230994d26315c6776be06"
 
-"@types/lodash@^4.14.37":
-  version "4.14.105"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.105.tgz#9fcc4627a1f98f8f8fce79ddb2bff4afd97e959b"
+"@types/lodash@4.14.104":
+  version "4.14.104"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.104.tgz#53ee2357fa2e6e68379341d92eb2ecea4b11bb80"
 
 "@types/lru-cache@^4.1.0":
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/@types/lru-cache/-/lru-cache-4.1.0.tgz#ef69ce9c3ebb46bd146f0d80f0c1ce38b0508eae"
 
-"@types/marked@0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.0.28.tgz#44ba754e9fa51432583e8eb30a7c4dd249b52faa"
+"@types/marked@0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.3.0.tgz#583c223dd33385a1dda01aaf77b0cd0411c4b524"
 
-"@types/minimatch@*":
+"@types/minimatch@*", "@types/minimatch@3.0.3":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
-
-"@types/minimatch@^2.0.29":
-  version "2.0.29"
-  resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
 "@types/mocha@^2.2.48":
   version "2.2.48"
@@ -136,11 +126,15 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^9.3.0", "@types/node@^9.4.6":
+"@types/node@*":
+  version "10.5.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.1.tgz#d578446f4abff5c0b49ade9b4e5274f6badaadfc"
+
+"@types/node@^9.3.0", "@types/node@^9.4.6":
   version "9.4.7"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-9.4.7.tgz#57d81cd98719df2c9de118f2d5f3b1120dcd7275"
 
-"@types/shelljs@^0.7.0":
+"@types/shelljs@0.7.8":
   version "0.7.8"
   resolved "https://registry.yarnpkg.com/@types/shelljs/-/shelljs-0.7.8.tgz#4b4d6ee7926e58d7bca448a50ba442fd9f6715bd"
   dependencies:
@@ -1153,14 +1147,6 @@ fs-extra@^1.0.0:
     jsonfile "^2.1.0"
     klaw "^1.0.0"
 
-fs-extra@^4.0.0:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.3.tgz#0d852122e5bc5beb453fb028e9c0c9bf36340c94"
-  dependencies:
-    graceful-fs "^4.1.2"
-    jsonfile "^4.0.0"
-    universalify "^0.1.0"
-
 fs-extra@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-5.0.0.tgz#414d0110cdd06705734d055652c5411260c31abd"
@@ -1796,13 +1782,13 @@ lodash@4.17.2:
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.2.tgz#34a3055babe04ce42467b607d700072c7ff6bf42"
 
-lodash@^4.13.1, lodash@^4.17.4, lodash@^4.3.0:
-  version "4.17.5"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
-
-lodash@^4.14.0:
+lodash@^4.14.0, lodash@^4.17.5:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+
+lodash@^4.17.4, lodash@^4.3.0:
+  version "4.17.5"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
 lolex@^2.2.0, lolex@^2.3.2:
   version "2.3.2"
@@ -1867,9 +1853,9 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-marked@^0.3.5:
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.17.tgz#607f06668b3c6b1246b28f13da76116ac1aa2d2b"
+marked@^0.3.17:
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.19.tgz#5d47f709c4c9fc3c216b6d46127280f40b39d790"
 
 md5-hex@^1.2.0:
   version "1.3.0"
@@ -2619,7 +2605,13 @@ resolve-url@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
 
-resolve@^1.1.6, resolve@^1.3.2:
+resolve@^1.1.6:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.8.1.tgz#82f1ec19a423ac1fbd080b0bab06ba36e84a7a26"
+  dependencies:
+    path-parse "^1.0.5"
+
+resolve@^1.3.2:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.6.0.tgz#0fbd21278b27b4004481c395349e7aba60a9ff5c"
   dependencies:
@@ -2748,9 +2740,9 @@ shelljs@0.7.6:
     interpret "^1.0.0"
     rechoir "^0.6.2"
 
-shelljs@^0.7.0:
-  version "0.7.8"
-  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.7.8.tgz#decbcf874b0d1e5fb72e14b164a9683048e9acb3"
+shelljs@^0.8.1:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.2.tgz#345b7df7763f4c2340d584abb532c5f752ca9e35"
   dependencies:
     glob "^7.0.0"
     interpret "^1.0.0"
@@ -3189,33 +3181,29 @@ typedoc-plugin-external-module-name@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/typedoc-plugin-external-module-name/-/typedoc-plugin-external-module-name-1.1.1.tgz#0ef2d6a760b42c703519c474258b6f062983aa83"
 
-typedoc@0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.8.0.tgz#d7172bc6a29964f451b7609c005beadadefe2361"
+typedoc@^0.11.1:
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.11.1.tgz#9f033887fd2218c769e1045feb88a1efed9f12c9"
   dependencies:
-    "@types/fs-extra" "^4.0.0"
-    "@types/handlebars" "^4.0.31"
-    "@types/highlight.js" "^9.1.8"
-    "@types/lodash" "^4.14.37"
-    "@types/marked" "0.0.28"
-    "@types/minimatch" "^2.0.29"
-    "@types/shelljs" "^0.7.0"
-    fs-extra "^4.0.0"
+    "@types/fs-extra" "5.0.1"
+    "@types/handlebars" "4.0.36"
+    "@types/highlight.js" "9.12.2"
+    "@types/lodash" "4.14.104"
+    "@types/marked" "0.3.0"
+    "@types/minimatch" "3.0.3"
+    "@types/shelljs" "0.7.8"
+    fs-extra "^5.0.0"
     handlebars "^4.0.6"
     highlight.js "^9.0.0"
-    lodash "^4.13.1"
-    marked "^0.3.5"
+    lodash "^4.17.5"
+    marked "^0.3.17"
     minimatch "^3.0.0"
     progress "^2.0.0"
-    shelljs "^0.7.0"
+    shelljs "^0.8.1"
     typedoc-default-themes "^0.5.0"
-    typescript "2.4.1"
+    typescript "2.7.2"
 
-typescript@2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.1.tgz#c3ccb16ddaa0b2314de031e7e6fee89e5ba346bc"
-
-typescript@^2.7.2:
+typescript@2.7.2, typescript@^2.7.2:
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.7.2.tgz#2d615a1ef4aee4f574425cdff7026edf81919836"
 
@@ -3249,8 +3237,8 @@ union-value@^1.0.0:
     set-value "^0.4.3"
 
 universalify@^0.1.0:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.1.tgz#fa71badd4437af4c148841e3b3b165f9e9e590b7"
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/universalify/-/universalify-0.1.2.tgz#b646f69be3942dabcecc9d6639c80dc105efaa66"
 
 unpack-stream@^3.0.0:
   version "3.0.2"

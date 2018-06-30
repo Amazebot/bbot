@@ -15,8 +15,8 @@ export interface IEnvelope {
 /**
  * Envelopes are the outgoing equivalent of a message. They can be created to
  * respond to a received message, or initialised to send unprompted by input.
- * The envelope contains details to address content and the content (strings or
- * payload data) for a variety of response methods through the message adapter.
+ * The envelope contains address details and the content (strings or payload
+ * data) for a variety of response methods through the message adapter.
  */
 export class Envelope implements IEnvelope {
   id: string = bot.random()
