@@ -1,9 +1,9 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '../..'
 import * as shell from './shell'
 
-describe('mongo', () => {
+describe('shell', () => {
   describe('.use', () => {
     it('returns adapter instance', () => {
       const store = shell.use(bot)

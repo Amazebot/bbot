@@ -7,20 +7,17 @@ export interface IStore extends mongoose.Document {
   data: any
 }
 
-/** Provide singleton pattern access to model so it only initialises once */
-namespace Model {
-  const models: { [key: string]: mongoose.Model<mongoose.Document> } = {}
-  export function get (collection: string): mongoose.Model<mongoose.Document> {
-    if (!models[collection]) {
-      delete mongoose.connection.models[collection] // make sure its gone
-      models[collection] = mongoose.model(collection, new mongoose.Schema({
-        type: { type: String },
-        sub: { type: String, lowercase: true },
-        data: { type: mongoose.Schema.Types.Mixed }
-      }, { collection }))
-    }
-    return models[collection]
+const models: { [key: string]: mongoose.Model<mongoose.Document> } = {}
+export function getModel (collection: string): mongoose.Model<mongoose.Document> {
+  if (!models[collection]) {
+    delete mongoose.connection.models[collection] // make sure its gone
+    models[collection] = mongoose.model(collection, new mongoose.Schema({
+      type: { type: String },
+      sub: { type: String, lowercase: true },
+      data: { type: mongoose.Schema.Types.Mixed }
+    }, { collection }))
   }
+  return models[collection]
 }
 
 /**
@@ -49,15 +46,16 @@ export class Mongo extends StorageAdapter {
   /** Create adapter instance with ref to bot instance */
   constructor (bot: any) {
     super(bot)
-    this.model = Model.get(this.config.collection)
-    this.bot.logger.info(`Using Mongo as storage adapter.`)
-    this.bot.logger.debug(`Storing to '${this.config.collection}' collection at ${this.config.url}`)
+    this.model = getModel(this.config.collection)
+    this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
+    this.bot.logger.debug(`[mongo] storing to '${this.config.collection}' collection at ${this.config.url}`)
   }
 
   /** Connect to Mongo */
   async start () {
-    this.bot.logger.info(`Connecting to Mongo DB at ${this.config.url}`)
+    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.config.url}`)
     this.store = await mongoose.connect(this.config.url, this.config.connection)
+    this.bot.logger.debug(`[mongo] connected to Mongo DB`)
     return
   }
 
@@ -68,9 +66,8 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Put memory data in documents by sub-collection */
-  /** @todo compare to copy from last save and only update difference */
-  async saveMemory (data: any) {
-    this.bot.logger.debug(`Saving memory data to DB`)
+  async saveMemory (data: any): Promise<void> {
+    this.bot.logger.debug(`[mongo] saving memory data to DB`)
     for (let sub in data) {
       const query = { sub, type: 'memory' }
       const doc = { data: data[sub] }
@@ -81,8 +78,8 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Get all the memory document data */
-  async loadMemory () {
-    this.bot.logger.debug(`Loading memory data from DB`)
+  async loadMemory (): Promise<any> {
+    this.bot.logger.debug(`[mongo] loading memory data from DB`)
     const query = { type: 'memory' }
     const fields = { _id: 0, 'data': 1, 'sub': 1 }
     const opts = { lean: true }
@@ -103,21 +100,22 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Add item to serial store data */
-  /** @todo Add class to model and store constructor ref, to restore on find */
-  async keep (sub: string, data: any) {
-    this.bot.logger.debug(`Adding a ${sub} value to DB`)
-    const query = { sub, type: 'store' }
-    const update = { $push: { data } }
-    const options = { upsert: true, lean: true }
-    await this.model.findOneAndUpdate(query, update, options).exec()
+  async keep (sub: string, data: any): Promise<void> {
+    try {
+      this.bot.logger.debug(`[mongo] keep ${sub} value in DB`)
+      const query = { sub, type: 'store' }
+      const update = { $push: { data } }
+      const options = { upsert: true, lean: true }
+      await this.model.findOneAndUpdate(query, update, options).exec()
+      this.bot.logger.debug(`[mongo] kept ${sub}: ${JSON.stringify(update)}`)
+    } catch (err) {
+      this.bot.logger.error(`[mongo] keep error for ${sub}`, err)
+    }
   }
 
   /** Find certain stuff in Mongo */
-  /** @todo Refactor model with data as sub-document so it can be queried */
-  /** @todo Add note in docs recommending not to use find on large data sets */
-  /** @todo Use class from model to reinitialise with `new bot[constructor]` */
-  async find (sub: string, params: any) {
-    this.bot.logger.debug(`Finding any ${sub} matching ${params}`)
+  async find (sub: string, params: any): Promise<any> {
+    this.bot.logger.debug(`[mongo] finding any ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
     const fields = { _id: 0, 'data': 1 }
     const opts = { lean: true }
@@ -128,23 +126,25 @@ export class Mongo extends StorageAdapter {
       for (let key in params) match = (item[key] === params[key])
       return match
     })
+    this.bot.logger.debug(`[mongo] found matching ${sub}s: ${JSON.stringify(matching)}`)
     return matching
   }
 
   /** Find a thing in Mongo */
   async findOne (sub: string, params: any) {
-    this.bot.logger.debug(`Finding a ${sub} matching ${params}`)
+    this.bot.logger.debug(`[mongo] finding a ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
     const fields = { _id: 0, 'data.$': 1 }
     const opts = { lean: true }
     const doc = await this.model.findOne(query, fields, opts).exec() as IStore
     if (!doc) return undefined
+    this.bot.logger.debug(`[mongo] found a ${sub}: ${JSON.stringify(doc.data[0])}`)
     return doc.data[0]
   }
 
   /** Get rid of stuff in Mongo */
   async lose (sub: string, params: any) {
-    this.bot.logger.debug(`Losing a ${sub} matching ${params}`)
+    this.bot.logger.debug(`[mongo] losing a ${sub} matching ${params}`)
     const query = { sub, type: 'store' }
     const update = { $pull: { data: params } }
     const options = { upsert: true, lean: true }

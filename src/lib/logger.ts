@@ -1,5 +1,4 @@
 import * as winston from 'winston'
-import * as bot from '..'
 
 /**
  * Allows extensions to create new logs
@@ -20,13 +19,9 @@ export class Logger extends winston.Logger {}
  *  import { logger } from 'bbot/logger'
  *  logger.level = 'silent'
  *  logger.transports.errors.level = 'error'
- *
- * @todo Update to Winston v3 when typings complete
- * https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20418
- * @todo Add filter to prevent logging passwords etc
  */
 export const logger = new Logger({
-  level: bot.config.logLevel,
+  level: process.env.BOT_LOG_LEVEL,
   handleExceptions: true,
   exitOnError: (err) => ((err as any).middleware === undefined),
   transports: [

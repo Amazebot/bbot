@@ -1,5 +1,5 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 import * as brain from './brain'
@@ -10,19 +10,24 @@ const mockUsers = {
   'u1': new bot.User({ id: 'u1', name: 'test-1' }),
   'u2': new bot.User({ id: 'u2', name: 'test-2' })
 }
-class MockAdapter extends bot.StorageAdapter {}
+class MockAdapter extends bot.StorageAdapter {
+  name = 'mock-storage'
+  async start () { return }
+  async shutdown () { return }
+  async saveMemory () { return }
+  async loadMemory () { return }
+  async keep () { return }
+  async find () { return }
+  async findOne () { return }
+  async lose () { return }
+}
 
 describe('brain', () => {
   before(() => {
-    mockAdapter = new MockAdapter(bot)
-    sinon.stub(mockAdapter, 'start').resolves()
-    sinon.stub(mockAdapter, 'shutdown').resolves()
-    sinon.stub(mockAdapter, 'saveMemory').resolves()
-    sinon.stub(mockAdapter, 'loadMemory').resolves({ test: { foo: 'bar' } })
-    sinon.stub(mockAdapter, 'keep').resolves()
-    sinon.stub(mockAdapter, 'find').resolves([{ test: 'test' }])
-    sinon.stub(mockAdapter, 'findOne').resolves({ test: 'test' })
-    sinon.stub(mockAdapter, 'lose').resolves()
+    mockAdapter = sinon.createStubInstance(MockAdapter)
+    mockAdapter.loadMemory.resolves({ test: { foo: 'bar' } })
+    mockAdapter.find.resolves([{ test: 'test' }])
+    mockAdapter.findOne.resolves({ test: 'test' })
     bot.adapters.storage = mockAdapter
     bot.config.autoSave = false
   })
@@ -115,9 +120,24 @@ describe('brain', () => {
   })
   describe('.keep', () => {
     it('passes args to storage adapter keep', () => {
-      brain.keep('tests', { a: 'b' })
       let stub = (mockAdapter.keep as sinon.SinonStub)
+      brain.keep('tests', { a: 'b' })
       sinon.assert.calledWithExactly(stub, 'tests', { a: 'b' })
+      stub.resetHistory()
+    })
+    it('removes bot from kept states', () => {
+      let message = new bot.TextMessage(new bot.User(), 'testing')
+      let b = new bot.B({ message: message })
+      let stub = (mockAdapter.keep as sinon.SinonStub)
+      brain.keep('test-state', b)
+      sinon.assert.calledWithExactly(stub, 'test-state', { done: false, message })
+      stub.resetHistory()
+    })
+    it('does not keep any excluded data keys', () => {
+      brain.keepExcludes.push('foo')
+      let stub = (mockAdapter.keep as sinon.SinonStub)
+      brain.keep('tests', { foo: 'foo', bar: 'bar' })
+      sinon.assert.calledWithExactly(stub, 'tests', { bar: 'bar' })
       stub.resetHistory()
     })
   })

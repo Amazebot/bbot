@@ -13,11 +13,11 @@ const status: { [key: string]: 0 | 1 } = {
 function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'started' | 'shutdown') {
   for (let key of Object.keys(status)) status[key] = (set === key) ? 1 : 0
   if (set === 'loading') {
-    bot.logger.info(`${bot.name} loading  . . . . . ~(0_0)~`)
+    bot.logger.info(`[core] ${bot.name} loading  . . . . . ~(0_0)~`)
   } else if (set === 'starting') {
-    bot.logger.info(`${bot.name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
+    bot.logger.info(`[core] ${bot.name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
   } else if (set === 'started') {
-    bot.logger.info(`${bot.name} started  . . . . . ~(O_O)~ bleep bloop`)
+    bot.logger.info(`[core] ${bot.name} started  . . . . . ~(O_O)~ bleep bloop`)
   }
 }
 
@@ -32,9 +32,10 @@ export function getStatus (): string {
  * Extensions/adapters can interrupt or modify the stack before start.
  */
 export async function load (): Promise<void> {
+  bot.logger.level = bot.config.logLevel // in case config changed after init
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
-  bot.logger.debug('Using config:', bot.config)
+  bot.logger.debug('[core] using config:', bot.config)
   bot.loadMiddleware()
   bot.loadAdapters()
   // loadServer()

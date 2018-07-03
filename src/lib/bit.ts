@@ -29,7 +29,6 @@ export interface IBit {
  * A single interaction between user and bot.
  * Could be a command to trigger a callback, a request for data or just a
  * connecting line of dialogue.
- * @todo Complete implementation of all attributes.
  */
 export class Bit implements IBit {
   /** For scene and/or dialogue, listener running the bit (required) */
@@ -71,14 +70,13 @@ export class Bit implements IBit {
   constructor (options: IBit) {
     this.id = (options.id) ? options.id : bot.counter('bit')
     for (let key of Object.keys(options)) this[key] = options[key]
-    if (!this.send && !this.callback) {
-      bot.logger.warn('Bit won\'t work without a send or callback attribute.')
+    if (!this.strings && !this.attach && !this.callback) {
+      bot.logger.warn(`[bit] won't work without a strings, attach or callback attribute.`)
     }
   }
 
   /**
    * Do stuff with current bot state (e.g. send replies and/or call callbacks)
-   * @todo Do send if has `send` property.
    */
   async execute (b: bot.B): Promise<any> {
     if (this.callback) await Promise.resolve(this.callback(b))
@@ -96,7 +94,7 @@ export function setupBit (options: IBit) {
 export async function doBit (id: string, b: bot.B): Promise<void> {
   const bit = bits[id]
   if (!bit) {
-    bot.logger.error('Attempted to do bit with unknown ID')
+    bot.logger.error('[bit] attempted to do bit with unknown ID')
     return
   }
   await Promise.resolve(bit.execute(b))

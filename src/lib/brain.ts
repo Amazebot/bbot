@@ -1,20 +1,14 @@
 import * as bot from '..'
 
-/**
- * @todo Module calls its own methods as exports via `bot.` allowing tests to
- * stub and spy. This is inconsistent with coding style of other modules. Fix?
- */
-
 /** Magic function to un-weird weird things */
 const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
-/** Private interval vars */
+/** Save tracking vars */
 export let saveInterval: NodeJS.Timer
 export let saveIntervalValue: number = 5000
 
 /** Set keys to remove from data before keep */
-/** @todo Add more to minimize storage size */
-const keepExcludes = ['bot']
+export const keepExcludes = ['bot']
 
 /** Internal storage for brain data, can hold any key/value collection */
 export const memory: {
@@ -44,6 +38,10 @@ export async function saveMemory () {
 
 /** Update internal memory with any data set (mostly used on load) */
 export async function loadMemory () {
+  if (!bot.adapters.storage) {
+    bot.logger.warn(`[brain] cannot load or persist data without storage adapter.`)
+    return
+  }
   const loaded = await bot.adapters.storage.loadMemory()
   for (let key in loaded) {
     memory[key] = Object.assign({}, memory[key], loaded[key])
@@ -86,14 +84,9 @@ export function unset (key: string, collection: string = 'private') {
   return bot
 }
 
-/**
- * Keep serial data in collection, via adapter (converted to plain objects)
- * @todo add test that stored state translates to plain object.
- */
+/** Keep serial data in collection, via adapter (converted to plain objects) */
 export async function keep (collection: string, data: any) {
-  if (!bot.adapters.storage) {
-    throw new Error('Store called without storage adapter')
-  }
+  if (!bot.adapters.storage) return
   if (typeof data === 'object') {
     data = deepClone(Object.keys(data)
       .filter((key) => !keepExcludes.includes(key))
@@ -146,7 +139,6 @@ export async function unloadBrain () {
 }
 
 /** Shortcut to get the user collection from memory */
-/** @todo return iterable instance with methods for looping or finding users */
 export function users () {
   return memory.users
 }

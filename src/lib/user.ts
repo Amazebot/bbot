@@ -1,7 +1,7 @@
 import * as bot from '..'
 
 /** Value of data to assign as user instance attributes */
-export class IUser {
+export interface IUser {
   id?: string
   name?: string
   room?: {
@@ -17,9 +17,11 @@ export class User implements IUser {
   room: {
     id?: string
     name?: string
+    type?: string
   }
   name?: string
   [key: string]: any
+
   /** Create a User */
   constructor (meta?: IUser) {
     this.id = (meta && meta.id) ? meta.id : bot.random()

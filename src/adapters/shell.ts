@@ -1,11 +1,19 @@
-import { MessageAdapter } from '..'
+import * as bBot from '..'
 
-export class Shell extends MessageAdapter {
+export class Shell extends bBot.MessageAdapter {
   name = 'shell-message-adapter'
-  constructor (bot: any) {
-    super(bot)
-    this.bot.logger.info('Using Shell as message adapter')
+
+  async start () {
+    this.bot.logger.info('[shell] using Shell as message adapter')
+  }
+
+  async shutdown () {
+    console.log('shutting down')
+  }
+
+  async dispatch () {
+    console.log('printing ')
   }
 }
 
-export const use = (bot: any) => new Shell(bot)
+export const use = (bot: typeof bBot) => new Shell(bot)

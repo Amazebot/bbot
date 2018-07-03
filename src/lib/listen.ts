@@ -1,21 +1,5 @@
 import * as bot from '..'
 
-/** Array of listeners to feed message streams via listen middleware */
-export const listeners: {
-  [id: string]: TextListener | CustomListener
-} = {}
-
-/** Array of special language listeners, processed by understand middleware */
-export const nluListeners: {
-  [id: string]: NaturalLanguageListener | CustomListener
-} = {}
-
-/** Clear current listeners, resetting initial empty listener objects */
-export function unloadListeners () {
-  for (let id in listeners) delete listeners[id]
-  for (let id in nluListeners) delete nluListeners[id]
-}
-
 /** Interface for matcher functions - resolved value must be truthy */
 export interface IMatcher {
   (input: any): Promise<any> | any
@@ -101,8 +85,7 @@ export abstract class Listener {
     b: bot.B,
     middleware = new bot.Middleware('listener'),
     done: IListenerDone = (matched) => {
-      if (matched) bot.logger.debug(`Listener matched`, { id: this.meta.id })
-      else bot.logger.debug(`Listener did not match`, { id: this.meta.id })
+      bot.logger.debug(`[listener] ${this.id} process done (${(matched) ? 'matched' : 'no match'})`)
     }
   ): Promise<bot.B> {
     const match = await Promise.resolve(this.matcher(b.message))
@@ -114,7 +97,7 @@ export abstract class Listener {
       b.match = match
       b.matched = matched
       const complete: bot.IComplete = (b, done) => {
-        bot.logger.debug(`Executing ${this.constructor.name} callback`, { id: this.meta.id })
+        bot.logger.debug(`[listen] executing ${this.constructor.name} callback for ID ${this.id}`)
         return Promise.resolve(this.callback(b)).then(() => done())
       }
       const callback: bot.ICallback = (err) => {
@@ -130,10 +113,24 @@ export abstract class Listener {
   }
 }
 
+/** Listener to match on any CatchAllMessage type */
+export class CatchAllListener extends Listener {
+  /** Accepts only super args, matcher is fixed */
+  constructor (action: IListenerCallback | string, meta?: IListenerMeta) {
+    super(action, meta)
+  }
+
+  /** Matching function looks for any CatchAllMessage */
+  async matcher (message: bot.Message) {
+    if (message instanceof bot.CatchAllMessage) {
+      bot.logger.debug(`[listen] message "${message}" matched catch all ID ${this.id}`)
+      return message
+    }
+  }
+}
+
 /** Custom listeners use unique matching function */
 export class CustomListener extends Listener {
-  match: any
-
   /** Accepts custom function to test message */
   constructor (
     public customMatcher: IMatcher,
@@ -147,7 +144,7 @@ export class CustomListener extends Listener {
   async matcher (message: bot.Message) {
     const match = await Promise.resolve(this.customMatcher(message))
     if (match) {
-      bot.logger.debug(`Message "${message}" matched custom listener`, { id: this.meta.id })
+      bot.logger.debug(`[listen] message "${message}" matched custom listener ID ${this.id}`)
     }
     return match
   }
@@ -155,8 +152,6 @@ export class CustomListener extends Listener {
 
 /** Text listeners use basic regex matching */
 export class TextListener extends Listener {
-  match: RegExpMatchArray | undefined
-
   /** Create text listener for regex pattern */
   constructor (
     public regex: RegExp,
@@ -167,10 +162,10 @@ export class TextListener extends Listener {
   }
 
   /** Use async because matchers must return a promise */
-  async matcher (message: bot.Message) {
+  async matcher (message: bot.Message): Promise<RegExpMatchArray | null> {
     const match = message.toString().match(this.regex)
     if (match) {
-      bot.logger.debug(`Message "${message}" matched text listener regex /${this.regex}/`, { id: this.meta.id })
+      bot.logger.debug(`[listen] message "${message}" matched text listener regex /${this.regex}/ ID ${this.id}`)
     }
     return match
   }
@@ -179,8 +174,6 @@ export class TextListener extends Listener {
 /**
  * Language listener uses NLU adapter result to match on intent and/or entities,
  * sentiment or confidence threshold. NLU must be trained to provide intent.
- * @todo Update this concept, matcher is uninformed at this stage.
- * @todo Use argv / environment variable for default confidence threshold.
  */
 export class NaturalLanguageListener extends Listener {
   match: INaturalLanguageMatch | undefined
@@ -200,9 +193,9 @@ export class NaturalLanguageListener extends Listener {
   }
 
   /** Match on message's NLU properties */
-  async matcher (message: bot.TextMessage) {
+  async matcher (message: bot.TextMessage): Promise<INaturalLanguageMatch | undefined> {
     if (!message.nlu) {
-      bot.logger.error('NaturalLanguageListener attempted matching without NLU', { id: this.meta.id })
+      bot.logger.error(`[listen] NaturalLanguageListener attempted matching without NLU for ID ${this.id}`)
       return undefined
     }
 
@@ -238,120 +231,211 @@ export class NaturalLanguageListener extends Listener {
       confidence
     }
     if (match) {
-      bot.logger.debug(`NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold`, { id: this.meta.id })
+      bot.logger.debug(`[listen] NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold for ID ${this.id}`)
     }
     return match
   }
 }
 
-/** Create text listener with provided regex, action and optional meta */
+/** Collection of listeners and the methods to create each type */
+export class Listeners {
+  listen: { [id: string]: TextListener | CustomListener } = {}
+  understand: { [id: string]: NaturalLanguageListener | CustomListener } = {}
+  act: { [id: string]: CatchAllListener } = {}
+
+  /** Create text listener with provided regex, action and optional meta */
+  text (
+    regex: RegExp,
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    const listener = new TextListener(regex, action, meta)
+    this.listen[listener.id] = listener
+    return listener.id
+  }
+
+  /** Create text listener with regex prepended the bot's name */
+  direct (
+    regex: RegExp,
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    const listener = new TextListener(directPattern(regex), action, meta)
+    this.listen[listener.id] = listener
+    return listener.id
+  }
+
+  /** Create custom listener with provided matcher, action and optional meta */
+  custom (
+    matcher: IMatcher,
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    const listener = new CustomListener(matcher, action, meta)
+    this.listen[listener.id] = listener
+    return listener.id
+  }
+
+  /** Create a listener that triggers when no other listener matches */
+  catchAll (
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    const listener = new CatchAllListener(action, meta)
+    this.act[listener.id] = listener
+    return listener.id
+  }
+
+  /** Create a natural language listener to match on NLU result attributes */
+  understandText (
+    options: INaturalLanguageListenerOptions,
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    const nluListener = new NaturalLanguageListener(options, action, meta)
+    this.understand[nluListener.id] = nluListener
+    return nluListener.id
+  }
+
+  /*
+  understandDirect (
+    options: INaturalLanguageListenerOptions,
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    // const matcher = directPattern(/(.*)/) --> pass into custom listener...
+    const nluListener = new NaturalLanguageListener(options, action, meta)
+    this.understand[nluListener.id] = nluListener
+    return nluListener.id
+  }
+  */
+
+  /** Proxy to create global NLU listener */
+  understandCustom (
+    matcher: IMatcher,
+    action: IListenerCallback | string,
+    meta?: IListenerMeta
+  ): string {
+    const nluListener = new CustomListener(matcher, action, meta)
+    this.understand[nluListener.id] = nluListener
+    return nluListener.id
+  }
+
+  /** Create a listener that triggers when user enters a room */
+  enter (action: IListenerCallback | string, meta?: IListenerMeta) {
+    return this.custom((message: bot.Message) => message instanceof bot.EnterMessage, action, meta)
+  }
+
+  /** Create a listener that triggers when user leaves a room */
+  leave (action: IListenerCallback | string, meta?: IListenerMeta) {
+    return this.custom((message: bot.Message) => message instanceof bot.LeaveMessage, action, meta)
+  }
+
+  /** Create a listener that triggers when user changes the topic */
+  topic (action: IListenerCallback | string, meta?: IListenerMeta) {
+    return this.custom((message: bot.Message) => message instanceof bot.TopicMessage, action, meta)
+  }
+}
+
+/**
+ * Collection of listeners to process against incoming messages in a global
+ * context, i.e. not within any specific isolated conversational pathway.
+ * Each is processed by middleware with the same name as the key.
+ */
+export const globalListeners = new Listeners()
+
+/** Clear current listeners, resetting initial empty listener objects */
+export function unloadListeners () {
+  globalListeners.listen = {}
+  globalListeners.understand = {}
+  globalListeners.act = {}
+}
+
+/** Proxy to create global text listener */
 export function listenText (
   regex: RegExp,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  const listener = new TextListener(regex, action, meta)
-  listeners[listener.id] = listener
-  return listener.id
+  return globalListeners.text(regex, action, meta)
 }
 
-/** Create text listener with regex prepended the bot's name */
+/** Proxy to create global direct listener */
 export function listenDirect (
   regex: RegExp,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  const listener = new TextListener(directPattern(regex), action, meta)
-  listeners[listener.id] = listener
-  return listener.id
+  return globalListeners.direct(regex, action, meta)
 }
 
-/** Create custom listener with provided matcher, action and optional meta */
+/** Proxy to create global custom listener */
 export function listenCustom (
   matcher: IMatcher,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  const listener = new CustomListener(matcher, action, meta)
-  listeners[listener.id] = listener
-  return listener.id
+  return globalListeners.custom(matcher, action, meta)
 }
 
-/** Create a natural language listener to match on NLU result attributes */
+/** Proxy to create global catch all listener */
+export function listenCatchAll (
+  action: IListenerCallback | string,
+  meta?: IListenerMeta
+): string {
+  return globalListeners.catchAll(action, meta)
+}
+
+/** Proxy to create global NLU listener */
 export function understandText (
   options: INaturalLanguageListenerOptions,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  const nluListener = new NaturalLanguageListener(options, action, meta)
-  nluListeners[nluListener.id] = nluListener
-  return nluListener.id
+  return globalListeners.understandText(options, action, meta)
 }
 
-/** @todo FIX THIS */
-/*
-export function understandDirect (
-  options: INaturalLanguageListenerOptions,
-  action: IListenerCallback | string,
-  meta?: IListenerMeta
-): string {
-  // const matcher = directPattern(/(.*)/) --> pass into custom listener...
-  const nluListener = new NaturalLanguageListener(options, action, meta)
-  nluListeners[nluListener.id] = nluListener
-  return nluListener.id
-}
-*/
-
-/** Create a custom listener to process NLU result with provided function */
+/** Proxy to create global NLU listener */
 export function understandCustom (
   matcher: IMatcher,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  const nluListener = new CustomListener(matcher, action, meta)
-  nluListeners[nluListener.id] = nluListener
-  return nluListener.id
+  return globalListeners.understandCustom(matcher, action, meta)
 }
 
-/** Build a regular expression that matches text prefixed with the bot's name */
+/** Proxy to create global enter room listener */
+export function listenEnter (action: IListenerCallback | string, meta?: IListenerMeta) {
+  return globalListeners.enter(action, meta)
+}
+
+/** Proxy to create global leave room listener */
+export function listenLeave (action: IListenerCallback | string, meta?: IListenerMeta) {
+  return globalListeners.leave(action, meta)
+}
+
+/** Proxy to create global topic change listener */
+export function listenTopic (action: IListenerCallback | string, meta?: IListenerMeta) {
+  return globalListeners.topic(action, meta)
+}
+
+/**
+ * Build a regular expression that matches text prefixed with the bot's name
+ * - matches when alias is substring of name
+ * - matches when name is substring of alias
+ */
 export function directPattern (regex: RegExp): RegExp {
   const regexWithoutModifiers = regex.toString().split('/')
   regexWithoutModifiers.shift()
   const modifiers = regexWithoutModifiers.pop()
   const pattern = regexWithoutModifiers.join('/')
   const botName = bot.name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-
   if (!bot.alias) {
     return new RegExp(`^\\s*[@]?${botName}[:,]?\\s*(?:${pattern})`, modifiers)
   }
-
   const botAlias = bot.alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-
-  // matches properly when alias is substring of name
   if (botName.length > botAlias.length) {
     return new RegExp(`^\\s*[@]?(?:${botName}[:,]?|${botAlias}[:,]?)\\s*(?:${pattern})`, modifiers)
   }
-
-  // matches properly when name is substring of alias
   return new RegExp(`^\\s*[@]?(?:${botAlias}[:,]?|${botName}[:,]?)\\s*(?:${pattern})`, modifiers)
-}
-
-/** Create a listener that triggers when user enters a room */
-export function listenEnter (action: IListenerCallback | string, meta?: IListenerMeta) {
-  return listenCustom((message: bot.Message) => message instanceof bot.EnterMessage, action, meta)
-}
-
-/** Create a listener that triggers when user leaves a room */
-export function listenLeave (action: IListenerCallback | string, meta?: IListenerMeta) {
-  return listenCustom((message: bot.Message) => message instanceof bot.LeaveMessage, action, meta)
-}
-
-/** Create a listener that triggers when user changes the topic */
-export function listenTopic (action: IListenerCallback | string, meta?: IListenerMeta) {
-  return listenCustom((message: bot.Message) => message instanceof bot.TopicMessage, action, meta)
-}
-
-/** Create a listener that triggers when no other listener matches */
-export function listenCatchAll (action: IListenerCallback | string, meta?: IListenerMeta) {
-  return listenCustom((message: bot.Message) => message instanceof bot.CatchAllMessage, action, meta)
 }

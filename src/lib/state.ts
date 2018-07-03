@@ -19,6 +19,7 @@ export interface IState {
  * States have access to all bBot modules from the bot property.
  * It has defined properties but can be extended with any key/value pair.
  * Each thought process attaches timestamps if they are actioned.
+ * Provides proxies to envelope messages, so responses can be easily actioned.
  */
 export class B implements IState {
   bot = bot
@@ -37,7 +38,6 @@ export class B implements IState {
 
   /** Create new state, usually assigned as `b` in middleware callbacks. */
   constructor (startingState: IState) {
-    // Manual assignment of required keys is just a workaround for type checking
     this.message = startingState.message
     this.listener = startingState.listener
     for (let key in startingState) this[key] = startingState[key]
@@ -49,35 +49,21 @@ export class B implements IState {
     return this
   }
 
-  /** Proxy for adding payload to envelope, creates if envelope doesn't exist */
-  attach (payload: any) {
-    if (!this.envelope) this.envelope = bot.responseEnvelope(this)
-    this.envelope.attach(payload)
-    return this
+  /** Create or return existing envelope, to respond to incoming message */
+  respondEnvelope (options?: bot.IEnvelope) {
+    if (!this.envelope) this.envelope = new bot.Envelope(options, this)
+    return this.envelope
   }
 
-  /** Proxy for adding strings to envelope, creates if envelope doesn't exist */
-  write (...strings: string[]) {
-    if (!this.envelope) this.envelope = bot.responseEnvelope(this)
-    this.envelope.write(...strings)
-    return this
+  /** Dispatch the envelope via respond thought process */
+  respond (...content: any[]): Promise<B> {
+    this.respondEnvelope().compose(...content)
+    return bot.thoughts.respond(this)
   }
 
-  /** Helper for attaching or writing depending on a dynamic array of items */
-  compose (content?: any[]) {
-    if (content) {
-      for (let part of content) {
-        if (typeof part === 'string') this.write(part)
-        else if (typeof part === 'object') this.attach(part)
-        else bot.logger.error(`Unrecognised content for enveloper: ${part}`)
-      }
-    }
-    return this
-  }
-
-  /** Issues the response to the message adapter by whatever method is given */
-  async respond (method: string = 'send', callback?: bot.ICallback) {
-    if (method) this.method = method
-    await bot.respond(this, callback)
+  /** Set method for dispatching envelope responding to state */
+  respondVia (method: string, ...content: any[]): Promise<B> {
+    this.respondEnvelope().via(method)
+    return this.respond(content)
   }
 }

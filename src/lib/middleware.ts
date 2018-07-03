@@ -25,7 +25,6 @@ export interface IPiece {
  * A `done` function, created when executing middleware piece, is passed to each
  * piece and can be called (with no arguments) to interrupt the stack and begin
  * executing the chain of completion functions.
- * @todo Test newDone is called if done called with a function - suspect not
  */
 export interface IPieceDone {
   (newDone?: IPieceDone): Promise<void>
@@ -82,7 +81,7 @@ export class Middleware {
    * State to process can be an object with state properties or existing state.
    */
   execute (initState: bot.IState | bot.B, complete: IComplete, callback?: ICallback): Promise<bot.B> {
-    bot.logger.debug(`[middleware] executing ${this.type} middleware`, { size: this.stack.length })
+    bot.logger.debug(`[middleware] executing ${this.type} middleware (size: ${this.stack.length})`)
     return new Promise((resolve, reject) => {
       const state: bot.B = (initState instanceof bot.B) ? initState : new bot.B(initState)
 
@@ -151,6 +150,7 @@ export function loadMiddleware () {
   middlewares.hear = new Middleware('hear')
   middlewares.listen = new Middleware('listen')
   middlewares.understand = new Middleware('understand')
+  middlewares.act = new Middleware('act')
   middlewares.respond = new Middleware('respond')
   middlewares.remember = new Middleware('remember')
 }
@@ -160,6 +160,7 @@ export function unloadMiddleware () {
   delete middlewares.hear
   delete middlewares.listen
   delete middlewares.understand
+  delete middlewares.act
   delete middlewares.respond
   delete middlewares.remember
 }
@@ -177,6 +178,11 @@ export function listenMiddleware (middlewarePiece: IPiece) {
 /** Register middleware piece to execute with NLU before intent match */
 export function understandMiddleware (middlewarePiece: IPiece) {
   middlewares.understand.register(middlewarePiece)
+}
+
+/** Register middleware piece to execute with catch-all match */
+export function actMiddleware (middlewarePiece: IPiece) {
+  middlewares.act.register(middlewarePiece)
 }
 
 /** Register middleware piece to execute before sending any response */

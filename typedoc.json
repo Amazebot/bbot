@@ -1,12 +1,14 @@
 {
   "includeDeclarations": "true",
-  "excludeExternals": "true",
-  "entryPoint": "bbot",
-  "mode": "modules",
+  "mode": "file",
   "module": "commonjs",
   "target": "ES6",
+  "name": "bBot",
   "out": "./docs",
-  "theme": "default",
+  "theme": "./docs-theme",
+  "externalPattern": "node_modules",
+  "excludeExternals": true,
+  "excludePrivate": true,
   "exclude": "**/*.spec.ts",
-  "include": "./md"
+  "readme": "none"
 }
