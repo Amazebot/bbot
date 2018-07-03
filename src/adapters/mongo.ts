@@ -7,20 +7,17 @@ export interface IStore extends mongoose.Document {
   data: any
 }
 
-/** Provide singleton pattern access to model so it only initialises once */
-namespace Model {
-  const models: { [key: string]: mongoose.Model<mongoose.Document> } = {}
-  export function get (collection: string): mongoose.Model<mongoose.Document> {
-    if (!models[collection]) {
-      delete mongoose.connection.models[collection] // make sure its gone
-      models[collection] = mongoose.model(collection, new mongoose.Schema({
-        type: { type: String },
-        sub: { type: String, lowercase: true },
-        data: { type: mongoose.Schema.Types.Mixed }
-      }, { collection }))
-    }
-    return models[collection]
+const models: { [key: string]: mongoose.Model<mongoose.Document> } = {}
+export function getModel (collection: string): mongoose.Model<mongoose.Document> {
+  if (!models[collection]) {
+    delete mongoose.connection.models[collection] // make sure its gone
+    models[collection] = mongoose.model(collection, new mongoose.Schema({
+      type: { type: String },
+      sub: { type: String, lowercase: true },
+      data: { type: mongoose.Schema.Types.Mixed }
+    }, { collection }))
   }
+  return models[collection]
 }
 
 /**
@@ -49,7 +46,7 @@ export class Mongo extends StorageAdapter {
   /** Create adapter instance with ref to bot instance */
   constructor (bot: any) {
     super(bot)
-    this.model = Model.get(this.config.collection)
+    this.model = getModel(this.config.collection)
     this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
     this.bot.logger.debug(`[mongo] storing to '${this.config.collection}' collection at ${this.config.url}`)
   }
