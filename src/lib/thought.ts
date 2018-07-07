@@ -19,7 +19,7 @@ export class Thought {
   /** Process receipt of message, pass on final context to listen process. */
   async hear (message: bot.Message): Promise<bot.B> {
     bot.events.emit('hear', message)
-    bot.logger.debug(`[thought] hear started for message ID ${message.id}`)
+    bot.logger.debug(`[thought] hearing message ID ${message.id}`)
     const b = await bot.middlewares.hear.execute({ message }, this.listen.bind(this))
     return b
   }
@@ -28,7 +28,7 @@ export class Thought {
   async listen (b: bot.B, done: bot.IPieceDone): Promise<void> {
     b.heard = Date.now()
     bot.events.emit('listen', b)
-    bot.logger.debug(`[thought] listen started for message ID ${b.message.id}`)
+    bot.logger.debug(`[thought] listening to message ID ${b.message.id}`)
     for (let id in this.listeners.listen) {
       if (b.done) break
       await this.listeners.listen[id].process(b, bot.middlewares.listen)
@@ -44,7 +44,7 @@ export class Thought {
   /** Process message unmatched by basic listeners, try to match with NLU */
   async understand (b: bot.B, done: bot.IPieceDone): Promise<void> {
     bot.events.emit('understand', b)
-    bot.logger.debug(`[thought] understand started for message ID ${b.message.id}`)
+    bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
     for (let id in this.listeners.understand) {
       if (b.done) break
       await this.listeners.understand[id].process(b, bot.middlewares.understand)
@@ -60,7 +60,7 @@ export class Thought {
   /** Process message as catch all if not already handled */
   async act (b: bot.B, done: bot.IPieceDone): Promise<void> {
     bot.events.emit('act', b)
-    bot.logger.debug(`[thought] act started for message ID ${b.message.id}`)
+    bot.logger.debug(`[thought] acting on message ID ${b.message.id}`)
     b.message = new bot.CatchAllMessage(b.message)
     for (let id in this.listeners.act) {
       if (b.done) break
@@ -87,9 +87,9 @@ export class Thought {
   async remember (b: bot.B): Promise<void> {
     bot.events.emit('remember', b)
     if (b.message) {
-      bot.logger.debug(`[thought] remembering state for incoming message ID ${b.message.id}`)
+      bot.logger.debug(`[thought] remember state for incoming message ID ${b.message.id}`)
     } else if (b.envelope) {
-      bot.logger.debug(`[thought] remembering outgoing state for envelope ID ${b.envelope.id}`)
+      bot.logger.debug(`[thought] remember outgoing state for envelope ID ${b.envelope.id}`)
     }
     await bot.middlewares.remember.execute(b, async (b, done) => {
       await bot.keep('states', b)
