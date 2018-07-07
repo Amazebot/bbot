@@ -81,8 +81,11 @@ export class Middleware {
    * State to process can be an object with state properties or existing state.
    */
   execute (initState: bot.IState | bot.B, complete: IComplete, callback?: ICallback): Promise<bot.B> {
-    bot.logger.debug(`[middleware] executing ${this.type} middleware (size: ${this.stack.length})`)
     return new Promise((resolve, reject) => {
+      if (this.stack.length) {
+        bot.logger.debug(`[middleware] executing ${this.type} middleware (size: ${this.stack.length})`)
+      }
+
       const state: bot.B = (initState instanceof bot.B) ? initState : new bot.B(initState)
 
       /** The initial completion handler that may be wrapped by iterations. */
@@ -113,7 +116,6 @@ export class Middleware {
        * piece then the success callback.
        */
       const finished = (err: Error | null, done: IPieceDone): void => {
-        bot.logger.debug(`[middleware] finished ${this.type} middleware ${err ? 'with error' : 'without error'}`)
         if (err) reject(err)
         else Promise.resolve(complete(state, done)).then(() => resolve(state)).catch()
       }

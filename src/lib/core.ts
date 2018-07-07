@@ -76,10 +76,12 @@ export async function shutdown (): Promise<void> {
   } else if (status === 'starting') {
     await new Promise((resolve) => bot.events.on('started', () => resolve()))
   }
+  await bot.shutdownAdapters()
   // shutdown server
   // stop thought process
   await eventDelay()
   setStatus('shutdown')
+  bot.events.emit('shutdown')
 }
 
 /**
