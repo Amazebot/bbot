@@ -14,7 +14,7 @@ export class Shell extends bBot.MessageAdapter {
   }
 
   /** Update chat window and return to input prompt */
-  render () {
+  async render () {
     let _ = '\n'
     let n = '           '
     _ += chalk.cyan('╔═════════════════════════════════════════════════════════▶') + '\n'
@@ -23,11 +23,11 @@ export class Shell extends bBot.MessageAdapter {
     }
     _ += chalk.cyan('╚═════════════════════════════════════════════════════════▶') + '\n\n'
     this.ui.updateBottomBar(_)
-    this.prompt()
+    await this.prompt()
   }
 
   /** Route log events to the inquirer UI */
-  log (transport: string, level: string, msg: string, meta: string) {
+  log (_transport: string, level: string, msg: string) {
     let item = `[${level}]${msg}`
     switch (level) {
       case 'debug': item = chalk.gray(item)
@@ -72,7 +72,9 @@ export class Shell extends bBot.MessageAdapter {
       name: 'message',
       message: chalk.magenta(`[${this.room.name}]`) + chalk.cyan(' ➤')
     })
-    if ((input.message as string).toLowerCase() === 'exit') this.bot.shutdown()
+    if ((input.message as string).toLowerCase() === 'exit') {
+      return this.bot.shutdown()
+    }
     this.messages.push([this.user.name, input.message])
     await this.bot.receive(new this.bot.TextMessage(this.user, input.message))
     return this.render()
@@ -83,7 +85,7 @@ export class Shell extends bBot.MessageAdapter {
     for (let text of (envelope.strings || [])) {
       this.messages.push([this.bot.name, text])
     }
-    this.render()
+    await this.render()
   }
 
   /** Close inquirer UI and exit process when shutdown complete */
