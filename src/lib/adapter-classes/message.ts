@@ -1,10 +1,7 @@
 import { Adapter } from './base'
 import * as bBot from '../..'
 
-/**
- * Message Adapter class, extended to connect bBot with messaging platform.
- * Methods are just raw endpoints to be extended.
- */
+/** Message Adapter class, extended to connect bBot with messaging platform. */
 export abstract class MessageAdapter extends Adapter {
   name = 'message-adapter'
 

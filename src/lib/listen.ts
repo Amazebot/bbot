@@ -5,22 +5,17 @@ export interface IMatcher {
   (input: any): Promise<any> | any
 }
 
-/** Interface for natural language matchers to evaluate returned NLU result */
-export interface INaturalLanguageListenerOptions {
-  intent?: string,                 // Match this intent string
-  entities?: {[key: string]: any}, // Match these entities (never required)
-  sentiment?: {[key: string]: any},// Match on sentiment / tone results from NLU
-  confidence?: number,             // Threshold for confidence matching
-  requireConfidence?: boolean,     // Do not match without meeting threshold
-  requireIntent?: boolean          // Do not match without intent
+/** NLU attributes matcher interface, required attributes from a result */
+export interface INaturalLanguageMatcher extends bot.INaturalLanguage {
+  scoreThreshold?: Number    // Minimum threshold for confidence scores
+  requireThreshold?: boolean // Do not match without meeting threshold
+  requireIntent?: boolean    // Do not match without intent
 }
 
-/** Match object interface for language matchers to populate */
-export interface INaturalLanguageMatch {
-  intent?: string | null, // the intent that was matched (if matched on intent)
-  entities?: {[key: string]: any} // any subset of entities that were matched
-  sentiment?: {[key: string]: any},// any subset of matched sentiment results
-  confidence?: number, // the confidence relative to the threshold (+/-)
+/** NLU matched attributes interface, for language matchers to populate */
+export interface INaturalLanguageMatch extends bot.INaturalLanguage {
+  matchedThreshold?: boolean // True if all required attributes met threshold
+  matchedIntent?: boolean    // True if result contained an intent match
 }
 
 /** Function called if the incoming message matches */
@@ -172,31 +167,39 @@ export class TextListener extends Listener {
 }
 
 /**
- * Language listener uses NLU adapter result to match on intent and/or entities,
- * sentiment or confidence threshold. NLU must be trained to provide intent.
+ * Language listener uses NLU adapter result to match on intent, entities and/or
+ * sentiment of optional score threshold. NLU must be trained to provide intent.
  */
 export class NaturalLanguageListener extends Listener {
   match: INaturalLanguageMatch | undefined
+  matchNLU: INaturalLanguageMatcher = {
+    scoreThreshold: .8,
+    requireThreshold: false,
+    requireIntent: false
+  }
 
-  /** Create language listener for NLU matching */
+  /** Create language listener for NLU matching. Options override defaults */
   constructor (
-    public options: INaturalLanguageListenerOptions,
+    public options: INaturalLanguageMatcher,
     callback: IListenerCallback | string,
     meta?: IListenerMeta
   ) {
     super(callback, meta)
-    if (!this.options.confidence) this.options.confidence = 80
-    if (!this.options.entities) this.options.entities = {}
-    if (!this.options.sentiment) this.options.sentiment = {}
-    if (!this.options.requireConfidence) this.options.requireConfidence = true
-    if (!this.options.requireIntent) this.options.requireIntent = true
+    this.matchNLU = Object.assign(this.matchNLU, this.options)
   }
 
-  /** Match on message's NLU properties */
+  /** Match on message's NLU attributes */
   async matcher (message: bot.TextMessage): Promise<INaturalLanguageMatch | undefined> {
     if (!message.nlu) {
       bot.logger.error(`[listen] NaturalLanguageListener attempted matching without NLU for ID ${this.id}`)
       return undefined
+    }
+    const match: INaturalLanguageMatch = {}
+
+    if (this.matchNLU.intent) {
+      for (let matchIntent in this.matchNLU.intent) {
+        
+      }
     }
 
     const confidence = (message.nlu.confidence - this.options.confidence!)
@@ -224,12 +227,6 @@ export class NaturalLanguageListener extends Listener {
       ) sentiment[key] = message.nlu.sentiment[key]
     }
 
-    const match: INaturalLanguageMatch = {
-      intent,
-      entities,
-      sentiment,
-      confidence
-    }
     if (match) {
       bot.logger.debug(`[listen] NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold for ID ${this.id}`)
     }
@@ -288,7 +285,7 @@ export class Listeners {
 
   /** Create a natural language listener to match on NLU result attributes */
   understandText (
-    options: INaturalLanguageListenerOptions,
+    options: INaturalLanguageMatcher,
     action: IListenerCallback | string,
     meta?: IListenerMeta
   ): string {
@@ -299,7 +296,7 @@ export class Listeners {
 
   /*
   understandDirect (
-    options: INaturalLanguageListenerOptions,
+    options: INaturalLanguageMatcher,
     action: IListenerCallback | string,
     meta?: IListenerMeta
   ): string {
@@ -388,7 +385,7 @@ export function listenCatchAll (
 
 /** Proxy to create global NLU listener */
 export function understandText (
-  options: INaturalLanguageListenerOptions,
+  options: INaturalLanguageMatcher,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {

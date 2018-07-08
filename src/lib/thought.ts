@@ -44,17 +44,20 @@ export class Thought {
   /** Process message unmatched by basic listeners, try to match with NLU */
   async understand (b: bot.B, done: bot.IPieceDone): Promise<void> {
     bot.events.emit('understand', b)
-    bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
-    for (let id in this.listeners.understand) {
-      if (b.done) break
-      await this.listeners.understand[id].process(b, bot.middlewares.understand)
+    if (b.message instanceof bot.TextMessage && bot.adapters.language) {
+      bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
+      await bot.adapters.language.process(b.message)
+      for (let id in this.listeners.understand) {
+        if (b.done) break
+        await this.listeners.understand[id].process(b, bot.middlewares.understand)
+      }
+      if (b.done || b.matched) {
+        if (b.matched) b.understood = Date.now()
+        await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
+        return
+      }
     }
-    if (b.done || b.matched) {
-      if (b.matched) b.understood = Date.now()
-      await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
-    } else {
-      await this.act(b, done)
-    }
+    await this.act(b, done)
   }
 
   /** Process message as catch all if not already handled */
