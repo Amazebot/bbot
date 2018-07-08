@@ -11,6 +11,18 @@ class MockMessenger extends bot.MessageAdapter {
   async start () { return }
   async shutdown () { return }
 }
+class MockLanguage extends bot.LanguageAdapter {
+  name = 'mock-language'
+  async process (message: bot.TextMessage) {
+    message.nlu.intent = 'test'
+    message.nlu.confidence = 100
+    message.nlu.entities = { testing: true }
+    message.nlu.sentiment = {}
+    message.nlu.language = 'en'
+  }
+  async start () { return }
+  async shutdown () { return }
+}
 class MockStorage extends bot.StorageAdapter {
   name = 'mock-storage'
   async start () { return }
@@ -192,6 +204,9 @@ describe('thought', () => {
         await bot.thoughts.understand(new bot.B({ message }), () => Promise.resolve())
         sinon.assert.calledOnce(nlu1)
         sinon.assert.calledOnce(nlu2)
+      })
+      it('NLU listeners receive message with NLU from adapter', async () => {
+        bot.adapters.language = new MockLanguage(bot)
       })
       it('executes understand middleware if listeners match', async () => {
         bot.understandCustom(() => true, () => null)
