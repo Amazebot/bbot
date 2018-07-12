@@ -5,19 +5,6 @@ export interface IMatcher {
   (input: any): Promise<any> | any
 }
 
-/** NLU attributes matcher interface, required attributes from a result */
-export interface INaturalLanguageMatcher extends bot.INaturalLanguage {
-  scoreThreshold?: Number    // Minimum threshold for confidence scores
-  requireThreshold?: boolean // Do not match without meeting threshold
-  requireIntent?: boolean    // Do not match without intent
-}
-
-/** NLU matched attributes interface, for language matchers to populate */
-export interface INaturalLanguageMatch extends bot.INaturalLanguage {
-  matchedThreshold?: boolean // True if all required attributes met threshold
-  matchedIntent?: boolean    // True if result contained an intent match
-}
-
 /** Function called if the incoming message matches */
 export interface IListenerCallback {
   (b: bot.B): any
@@ -121,6 +108,7 @@ export class CatchAllListener extends Listener {
       bot.logger.debug(`[listen] message "${message}" matched catch all ID ${this.id}`)
       return message
     }
+    return undefined
   }
 }
 
@@ -171,66 +159,29 @@ export class TextListener extends Listener {
  * sentiment of optional score threshold. NLU must be trained to provide intent.
  */
 export class NaturalLanguageListener extends Listener {
-  match: INaturalLanguageMatch | undefined
-  matchNLU: INaturalLanguageMatcher = {
-    scoreThreshold: .8,
-    requireThreshold: false,
-    requireIntent: false
-  }
+  match: bot.NaturalLanguageResultsRaw | undefined
 
   /** Create language listener for NLU matching. Options override defaults */
   constructor (
-    public options: INaturalLanguageMatcher,
+    public criteria: bot.NaturalLanguageCriteria,
     callback: IListenerCallback | string,
     meta?: IListenerMeta
   ) {
     super(callback, meta)
-    this.matchNLU = Object.assign(this.matchNLU, this.options)
   }
 
   /** Match on message's NLU attributes */
-  async matcher (message: bot.TextMessage): Promise<INaturalLanguageMatch | undefined> {
+  async matcher (message: bot.TextMessage): Promise<bot.NaturalLanguageResultsRaw | undefined> {
     if (!message.nlu) {
       bot.logger.error(`[listen] NaturalLanguageListener attempted matching without NLU for ID ${this.id}`)
       return undefined
     }
-    const match: INaturalLanguageMatch = {}
-
-    if (this.matchNLU.intent) {
-      for (let matchIntent in this.matchNLU.intent) {
-        
-      }
-    }
-
-    const confidence = (message.nlu.confidence - this.options.confidence!)
-    if (this.options.requireConfidence && confidence < 0) return undefined
-
-    const intent: string | null = (this.options.intent === message.nlu.intent)
-      ? message.nlu.intent
-      : null
-    if (this.options.intent && !message.nlu.intent) return undefined
-
-    const entities: {[key: string]: any} = {}
-    for (let key of Object.keys(this.options.entities!)) {
-      if (
-        JSON.stringify(this.options.entities![key]) ===
-        JSON.stringify(message.nlu.entities[key])
-      ) entities[key] = message.nlu.entities[key]
-    }
-
-    const sentiment: {[key: string]: any} = {}
-    for (let key of Object.keys(this.options.sentiment!)) {
-      if (
-        message.nlu.sentiment &&
-        JSON.stringify(this.options.sentiment![key]) ===
-        JSON.stringify(message.nlu.sentiment[key])
-      ) sentiment[key] = message.nlu.sentiment[key]
-    }
-
+    const match = message.nlu.matchAllCriteria(this.criteria)
     if (match) {
-      bot.logger.debug(`[listen] NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold for ID ${this.id}`)
+      bot.logger.debug(`[listen] NLU matched language listener for ID ${this.id}`)
+      return match
     }
-    return match
+    return undefined
   }
 }
 
@@ -285,11 +236,11 @@ export class Listeners {
 
   /** Create a natural language listener to match on NLU result attributes */
   understandText (
-    options: INaturalLanguageMatcher,
+    criteria: bot.NaturalLanguageCriteria,
     action: IListenerCallback | string,
     meta?: IListenerMeta
   ): string {
-    const nluListener = new NaturalLanguageListener(options, action, meta)
+    const nluListener = new NaturalLanguageListener(criteria, action, meta)
     this.understand[nluListener.id] = nluListener
     return nluListener.id
   }
@@ -385,11 +336,11 @@ export function listenCatchAll (
 
 /** Proxy to create global NLU listener */
 export function understandText (
-  options: INaturalLanguageMatcher,
+  criteria: bot.NaturalLanguageCriteria,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  return globalListeners.understandText(options, action, meta)
+  return globalListeners.understandText(criteria, action, meta)
 }
 
 /** Proxy to create global NLU listener */

@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "git@github.com:Amazebot/bbot.git",
-  "author": "timkinnane <timkinnane@gmail.com>",
+  "author": "timkinnane <tim.kinnane@amazebot.chat>",
   "license": "MIT",
   "private": false,
   "keywords": [
