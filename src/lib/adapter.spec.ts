@@ -19,14 +19,12 @@ describe('adapter', () => {
     mockAdapter = new MockAdapter(bot)
     start = sinon.spy(mockAdapter, 'start')
   })
-  beforeEach(() => {
+  afterEach(() => {
     delete bot.config.messageAdapter
     delete bot.config.languageAdapter
     delete bot.config.storageAdapter
     delete bot.config.webhookAdapter
     delete bot.config.analyticsAdapter
-  })
-  afterEach(() => {
     use.resetHistory()
     start.resetHistory()
   })
@@ -55,7 +53,7 @@ describe('adapter', () => {
       bot.config.messageAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       expect(adapter.adapters.message).to.be.instanceof(bot.Adapter)
-      expect(adapter.adapters.language).to.equal(null)
+      expect(typeof adapter.adapters.language).to.equal('undefined')
     })
     it('can load shell adapter extending message adapter', () => {
       bot.config.messageAdapter = './adapters/shell'

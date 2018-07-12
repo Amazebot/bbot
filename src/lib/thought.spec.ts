@@ -4,9 +4,9 @@ import { expect } from 'chai'
 import * as bot from '..'
 
 let message: bot.TextMessage
-let mockAdapter: bot.Adapter
+let mockAdapter: bot.MessageAdapter
 class MockMessenger extends bot.MessageAdapter {
-  name = 'mock-adapter'
+  name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
   async shutdown () { return }
@@ -14,11 +14,11 @@ class MockMessenger extends bot.MessageAdapter {
 class MockLanguage extends bot.LanguageAdapter {
   name = 'mock-language'
   async process (message: bot.TextMessage) {
-    message.nlu.intent = 'test'
-    message.nlu.confidence = 100
-    message.nlu.entities = { testing: true }
-    message.nlu.sentiment = {}
-    message.nlu.language = 'en'
+    return {
+      intent: [{ id: 'test', score: 1 }],
+      entities: [{ id: 'testing' }],
+      language: [{ id: 'en' }]
+    }
   }
   async start () { return }
   async shutdown () { return }
@@ -51,9 +51,6 @@ describe('thought', () => {
     bot.rememberMiddleware((b, next, done) => b.rememberTest = true)
     mockAdapter = sinon.createStubInstance(MockMessenger)
     bot.adapters.message = mockAdapter
-  })
-  after(() => {
-    delete bot.adapters.message
   })
   describe('Thought', () => {
     it('with listeners, processes listeners', async () => {
@@ -189,6 +186,8 @@ describe('thought', () => {
       })
     })
     describe('.understand', () => {
+      beforeEach(() => bot.adapters.language = new MockLanguage(bot))
+      afterEach(() => delete bot.adapters.language)
       it('state inherits changes from .listen middleware', async () => {
         bot.listenCustom(() => true, () => null)
         const onListen = sinon.spy()
@@ -206,7 +205,13 @@ describe('thought', () => {
         sinon.assert.calledOnce(nlu2)
       })
       it('NLU listeners receive message with NLU from adapter', async () => {
-        bot.adapters.language = new MockLanguage(bot)
+        bot.adapters.language.process = async () => {
+          return { intent: new bot.NaturalLanguageResult().add({ id: 'test' }) }
+        }
+        bot.understandCustom((message: bot.TextMessage) => {
+          expect(message.nlu.results.intent).to.eql([{ id: 'test' }])
+        }, () => null)
+        return bot.thoughts.understand(new bot.B({ message }), () => Promise.resolve())
       })
       it('executes understand middleware if listeners match', async () => {
         bot.understandCustom(() => true, () => null)
@@ -327,7 +332,7 @@ describe('thought', () => {
         const b = new bot.B({ message })
         b.respondEnvelope()
         await bot.thoughts.respond(b)
-        sinon.assert.calledWithExactly(mockAdapter.dispatch, b.envelope)
+        sinon.assert.calledWithExactly((mockAdapter.dispatch as sinon.SinonStub), b.envelope)
       })
       it('receives state when invoked by state respond', async () => {
         const b = new bot.B({ message })
@@ -394,10 +399,10 @@ describe('thought', () => {
       bot.listenCustom(() => true, (b) => b.respond('ping'))
       const now = Date.now()
       const b = await bot.receive(message)
-      expect(b.heard).to.be.gte(now)
-      expect(b.listened).to.be.gte(b.heard)
-      expect(b.responded).to.be.gte(b.listened)
-      expect(b.remembered).to.be.gte(b.responded)
+      expect(b.heard, 'heard gte now').to.be.gte(now)
+      expect(b.listened, 'listened gte heard').to.be.gte(b.heard)
+      expect(b.responded, 'responded gte listened').to.be.gte(b.listened)
+      expect(b.remembered, 'remembered gte responded').to.be.gte(b.responded)
     })
   })
   describe('.dispatch', () => {

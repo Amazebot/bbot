@@ -17,40 +17,9 @@ export abstract class Message {
   abstract toString (): string
 }
 
-/**
- * Interface for a Natural Language Understanding attributes.
- * @param id    The primary text code for a result
- * @param name  A display name equivalent for the ID
- * @param score The positivity or confidence rating of the result
- */
-interface INLUR {
-  id?: string
-  name?: string
-  score?: number
-}
-
-/**
- * NLU attributes interface. Extensible by adapters with custom results.
- * @param intent    A key characterising what the message was about
- * @param entities  Additional data inferred from the message or context
- * @param sentiment Tone or emotional data provided from NLU parsing of text
- * @param phrases   Collection denoting the key talking points in the text
- * @param act       How the proposition described is intended to be used
- * @param language  The language of the text, `.id` as an ISO code.
- */
-export interface INaturalLanguage {
-  intent?: INLUR[]
-  entities?: INLUR[]
-  sentiment?: INLUR[]
-  phrases?: INLUR[]
-  act?: INLUR[]
-  language?: INLUR[]
-  [key: string]: any
-}
-
 /** A plain text/string message type. */
 export class TextMessage extends Message {
-  nlu?: INaturalLanguage
+  nlu?: bot.NLU
 
   /**
    * Create a text message.

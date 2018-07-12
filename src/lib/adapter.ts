@@ -53,8 +53,8 @@ export function loadAdapters () {
     adapters.message = loadAdapter(bot.config.messageAdapter)
     adapters.language = loadAdapter(bot.config.languageAdapter)
     adapters.storage = loadAdapter(bot.config.storageAdapter)
-    // adapters.webhook = loadAdapter(bot.config.webhookAdapter)
-    // adapters.analytics = loadAdapter(bot.config.analyticsAdapter)
+    adapters.webhook = loadAdapter(bot.config.webhookAdapter)
+    adapters.analytics = loadAdapter(bot.config.analyticsAdapter)
   } catch (e) {
     bot.logger.error(e)
     throw new Error(`[adapter] failed to load all adapters`)
@@ -71,6 +71,7 @@ export function startAdapters () {
     } else {
       bot.logger.debug(`[adapter] no ${type} type adapter defined`)
     }
+    return undefined
   }))
 }
 
@@ -82,6 +83,7 @@ export function shutdownAdapters () {
       bot.logger.debug(`[adapter] shutdown ${type} adapter: ${adapter.name}`)
       return Promise.resolve(adapter.shutdown())
     }
+    return undefined
   }))
 }
 

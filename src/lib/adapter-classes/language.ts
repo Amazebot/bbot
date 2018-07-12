@@ -1,5 +1,5 @@
 import { Adapter } from './base'
-import * as bBot from '../..'
+import * as bot from '../..'
 
 /** NLU adapter class, extended to connect bBot with NLU platform. */
 export abstract class LanguageAdapter extends Adapter {
@@ -11,6 +11,6 @@ export abstract class LanguageAdapter extends Adapter {
   /** Close connection to messaging platform */
   abstract shutdown (): Promise<void>
 
-  /** Take message to add NLU attributes from platform response */
-  abstract async process (message: bBot.TextMessage): Promise<any>
+  /** Add NLU results from NLP platform analysis */
+  abstract async process (message: bot.TextMessage): Promise<bot.NaturalLanguageResultsRaw | undefined>
 }

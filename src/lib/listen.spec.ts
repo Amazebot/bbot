@@ -1,6 +1,6 @@
 import 'mocha'
 import sinon from 'sinon'
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import * as listen from './listen'
 import * as bot from '..'
 
@@ -145,29 +145,29 @@ describe('listen', () => {
     })
   })
   describe('NaturalLanguageListener', () => {
-    it('.process adds matcher result to state', () => {
+    it('.process returns state with truthy match for matching results', async () => {
       const nluListener = new listen.NaturalLanguageListener({
-        intent: 'foo'
+        intent: { id: 'foo' }
       }, (state) => {
         expect(state.match).to.eql({
-          intent: 'foo',
-          entities: {},
-          sentiment: {},
-          confidence: 20
+          intent: [{ id: 'foo', name: 'Test Foo' }]
         })
       })
       const message = new bot.TextMessage(mockUser, 'foo')
-      message.nlu = { intent: 'foo', entities: {}, sentiment: {}, confidence: 100 }
-      return nluListener.process(new bot.B({ message }))
+      message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
+      const b = await nluListener.process(new bot.B({ message }))
+      assert.isOk(b.match)
+      assert.isTrue(b.matched)
     })
-    it('.process fails match below confidence threshold', async () => {
+    it('.process returns state with falsy match if below score threshold', async () => {
       const nluListener = new listen.NaturalLanguageListener({
-        intent: 'foo'
+        intent: { id: 'foo', score: .8 }
       }, () => null)
       const message = new bot.TextMessage(mockUser, 'foo')
-      message.nlu = { intent: 'foo', entities: {}, confidence: 79 }
-      const state = await nluListener.process(new bot.B({ message }))
-      expect(state.matched).to.equal(false)
+      message.nlu = new bot.NLU().addResult('intent', { id: 'foo', score: .7 })
+      const b = await nluListener.process(new bot.B({ message }))
+      assert.notOk(b.match)
+      assert.isFalse(b.matched)
     })
   })
   describe('.listenText', () => {
@@ -188,7 +188,7 @@ describe('listen', () => {
   })
   describe('.understand', () => {
     it('adds NLU listener to NLU collection, returning ID', () => {
-      const id = listen.understandText({ intent: 'test' }, () => null)
+      const id = listen.understandText({ intent: { id: 'test' } }, () => null)
       expect(listen.globalListeners.understand[id]).to.be.instanceof(listen.NaturalLanguageListener)
     })
   })
