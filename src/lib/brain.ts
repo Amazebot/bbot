@@ -135,7 +135,7 @@ export async function loadBrain () {
 export async function unloadBrain () {
   await bot.saveMemory()
   bot.clearSaveInterval()
-  if (bot.adapters.storage) bot.adapters.storage.shutdown()
+  if (bot.adapters.storage) await bot.adapters.storage.shutdown()
 }
 
 /** Shortcut to get the user collection from memory */

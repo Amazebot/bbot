@@ -1,10 +1,7 @@
 import { Adapter } from './base'
-import * as bBot from '../..'
+import * as bot from '../..'
 
-/**
- * Message Adapter class, extended to connect bBot with messaging platform.
- * Methods are just raw endpoints to be extended.
- */
+/** Message Adapter class, extended to connect bBot with messaging platform. */
 export abstract class MessageAdapter extends Adapter {
   name = 'message-adapter'
 
@@ -15,5 +12,5 @@ export abstract class MessageAdapter extends Adapter {
   abstract shutdown (): Promise<void>
 
   /** Take dispatched envelope to action in platform */
-  abstract async dispatch (envelope: bBot.Envelope): Promise<any>
+  abstract async dispatch (envelope: bot.Envelope): Promise<any>
 }

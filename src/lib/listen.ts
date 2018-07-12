@@ -5,24 +5,6 @@ export interface IMatcher {
   (input: any): Promise<any> | any
 }
 
-/** Interface for natural language matchers to evaluate returned NLU result */
-export interface INaturalLanguageListenerOptions {
-  intent?: string,                 // Match this intent string
-  entities?: {[key: string]: any}, // Match these entities (never required)
-  sentiment?: {[key: string]: any},// Match on sentiment / tone results from NLU
-  confidence?: number,             // Threshold for confidence matching
-  requireConfidence?: boolean,     // Do not match without meeting threshold
-  requireIntent?: boolean          // Do not match without intent
-}
-
-/** Match object interface for language matchers to populate */
-export interface INaturalLanguageMatch {
-  intent?: string | null, // the intent that was matched (if matched on intent)
-  entities?: {[key: string]: any} // any subset of entities that were matched
-  sentiment?: {[key: string]: any},// any subset of matched sentiment results
-  confidence?: number, // the confidence relative to the threshold (+/-)
-}
-
 /** Function called if the incoming message matches */
 export interface IListenerCallback {
   (b: bot.B): any
@@ -126,6 +108,7 @@ export class CatchAllListener extends Listener {
       bot.logger.debug(`[listen] message "${message}" matched catch all ID ${this.id}`)
       return message
     }
+    return undefined
   }
 }
 
@@ -172,68 +155,33 @@ export class TextListener extends Listener {
 }
 
 /**
- * Language listener uses NLU adapter result to match on intent and/or entities,
- * sentiment or confidence threshold. NLU must be trained to provide intent.
+ * Language listener uses NLU adapter result to match on intent, entities and/or
+ * sentiment of optional score threshold. NLU must be trained to provide intent.
  */
 export class NaturalLanguageListener extends Listener {
-  match: INaturalLanguageMatch | undefined
+  match: bot.NaturalLanguageResultsRaw | undefined
 
-  /** Create language listener for NLU matching */
+  /** Create language listener for NLU matching. Options override defaults */
   constructor (
-    public options: INaturalLanguageListenerOptions,
+    public criteria: bot.NaturalLanguageCriteria,
     callback: IListenerCallback | string,
     meta?: IListenerMeta
   ) {
     super(callback, meta)
-    if (!this.options.confidence) this.options.confidence = 80
-    if (!this.options.entities) this.options.entities = {}
-    if (!this.options.sentiment) this.options.sentiment = {}
-    if (!this.options.requireConfidence) this.options.requireConfidence = true
-    if (!this.options.requireIntent) this.options.requireIntent = true
   }
 
-  /** Match on message's NLU properties */
-  async matcher (message: bot.TextMessage): Promise<INaturalLanguageMatch | undefined> {
+  /** Match on message's NLU attributes */
+  async matcher (message: bot.TextMessage): Promise<bot.NaturalLanguageResultsRaw | undefined> {
     if (!message.nlu) {
       bot.logger.error(`[listen] NaturalLanguageListener attempted matching without NLU for ID ${this.id}`)
       return undefined
     }
-
-    const confidence = (message.nlu.confidence - this.options.confidence!)
-    if (this.options.requireConfidence && confidence < 0) return undefined
-
-    const intent: string | null = (this.options.intent === message.nlu.intent)
-      ? message.nlu.intent
-      : null
-    if (this.options.intent && !message.nlu.intent) return undefined
-
-    const entities: {[key: string]: any} = {}
-    for (let key of Object.keys(this.options.entities!)) {
-      if (
-        JSON.stringify(this.options.entities![key]) ===
-        JSON.stringify(message.nlu.entities[key])
-      ) entities[key] = message.nlu.entities[key]
-    }
-
-    const sentiment: {[key: string]: any} = {}
-    for (let key of Object.keys(this.options.sentiment!)) {
-      if (
-        message.nlu.sentiment &&
-        JSON.stringify(this.options.sentiment![key]) ===
-        JSON.stringify(message.nlu.sentiment[key])
-      ) sentiment[key] = message.nlu.sentiment[key]
-    }
-
-    const match: INaturalLanguageMatch = {
-      intent,
-      entities,
-      sentiment,
-      confidence
-    }
+    const match = message.nlu.matchAllCriteria(this.criteria)
     if (match) {
-      bot.logger.debug(`[listen] NLU matched language listener for ${intent} intent with ${confidence} confidence ${confidence < 0 ? 'under' : 'over'} threshold for ID ${this.id}`)
+      bot.logger.debug(`[listen] NLU matched language listener for ID ${this.id}`)
+      return match
     }
-    return match
+    return undefined
   }
 }
 
@@ -288,18 +236,18 @@ export class Listeners {
 
   /** Create a natural language listener to match on NLU result attributes */
   understandText (
-    options: INaturalLanguageListenerOptions,
+    criteria: bot.NaturalLanguageCriteria,
     action: IListenerCallback | string,
     meta?: IListenerMeta
   ): string {
-    const nluListener = new NaturalLanguageListener(options, action, meta)
+    const nluListener = new NaturalLanguageListener(criteria, action, meta)
     this.understand[nluListener.id] = nluListener
     return nluListener.id
   }
 
   /*
   understandDirect (
-    options: INaturalLanguageListenerOptions,
+    options: INaturalLanguageMatcher,
     action: IListenerCallback | string,
     meta?: IListenerMeta
   ): string {
@@ -388,11 +336,11 @@ export function listenCatchAll (
 
 /** Proxy to create global NLU listener */
 export function understandText (
-  options: INaturalLanguageListenerOptions,
+  criteria: bot.NaturalLanguageCriteria,
   action: IListenerCallback | string,
   meta?: IListenerMeta
 ): string {
-  return globalListeners.understandText(options, action, meta)
+  return globalListeners.understandText(criteria, action, meta)
 }
 
 /** Proxy to create global NLU listener */

@@ -1,8 +1,13 @@
 import path from 'path'
 import * as bot from '..'
 
-/** Collection of adapter (loose) types and their loaded adapter. */
-export const adapters: { [key: string]: any | null } = {}
+/** Collection of adapter types and their loaded adapter. */
+export const adapters: {
+  message?: bot.MessageAdapter | undefined
+  language?: bot.LanguageAdapter | undefined
+  storage?: bot.StorageAdapter | undefined
+  [key: string]: bot.Adapter | undefined
+} = {}
 
 /**
  * Require adapter module from local path or NPM package.
@@ -12,7 +17,7 @@ export const adapters: { [key: string]: any | null } = {}
  * to load that name from within the included adapters path.
  */
 export function loadAdapter (adapterPath?: string) {
-  if (!adapterPath) return null
+  if (!adapterPath) return
   let isPath = /^(\/|\.|\\)/.test(adapterPath)
   if (!isPath) {
     bot.logger.debug(`[adapter] loading adapter by name: ${adapterPath}`)
@@ -66,6 +71,7 @@ export function startAdapters () {
     } else {
       bot.logger.debug(`[adapter] no ${type} type adapter defined`)
     }
+    return undefined
   }))
 }
 
@@ -77,6 +83,7 @@ export function shutdownAdapters () {
       bot.logger.debug(`[adapter] shutdown ${type} adapter: ${adapter.name}`)
       return Promise.resolve(adapter.shutdown())
     }
+    return undefined
   }))
 }
 

@@ -44,17 +44,22 @@ export class Thought {
   /** Process message unmatched by basic listeners, try to match with NLU */
   async understand (b: bot.B, done: bot.IPieceDone): Promise<void> {
     bot.events.emit('understand', b)
-    bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
-    for (let id in this.listeners.understand) {
-      if (b.done) break
-      await this.listeners.understand[id].process(b, bot.middlewares.understand)
+    if (b.message instanceof bot.TextMessage && bot.adapters.language) {
+      if (!bot.adapters.language.process) console.log(bot.adapters.language.name)
+      bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
+      const nluResultsRaw = await bot.adapters.language.process(b.message)
+      if (nluResultsRaw) b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
+      for (let id in this.listeners.understand) {
+        if (b.done) break
+        await this.listeners.understand[id].process(b, bot.middlewares.understand)
+      }
+      if (b.done || b.matched) {
+        if (b.matched) b.understood = Date.now()
+        await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
+        return
+      }
     }
-    if (b.done || b.matched) {
-      if (b.matched) b.understood = Date.now()
-      await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
-    } else {
-      await this.act(b, done)
-    }
+    await this.act(b, done)
   }
 
   /** Process message as catch all if not already handled */
@@ -73,13 +78,15 @@ export class Thought {
   /** Process outgoing message, setting defaults for method and content */
   async respond (b: bot.B | bot.IState): Promise<bot.B> {
     bot.events.emit('respond', b)
-    if (!b.envelope) throw new Error(`[respond] cannot respond without envelope`)
+    if (!bot.adapters.message) throw new Error('[thought] message adapter not found')
+    if (!b.envelope) throw new Error(`[thought] cannot respond without envelope`)
     if (b.message) bot.logger.debug(`[thought] responding to message ID ${b.message.id}`)
     else if (b.envelope) bot.logger.debug(`[thought] respond dispatching envelope ID ${b.envelope.id}`)
     return bot.middlewares.respond.execute(b, async (b, done) => {
-      await bot.adapters.message.dispatch(b.envelope)
-      b.responded = Date.now()
-      await done().catch((err) => bot.logger.error(`[thought] respond error: `, err))
+      await bot.adapters.message!.dispatch(b.envelope!)
+      await done()
+        .then(() => b.responded = Date.now())
+        .catch((err) => bot.logger.error(`[thought] respond error: `, err))
     })
   }
 
