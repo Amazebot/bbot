@@ -149,12 +149,12 @@ export class Middleware {
  * Contains pieces for async execution at each stage of input processing loop.
  */
 export function loadMiddleware () {
-  middlewares.hear = new Middleware('hear')
-  middlewares.listen = new Middleware('listen')
-  middlewares.understand = new Middleware('understand')
-  middlewares.act = new Middleware('act')
-  middlewares.respond = new Middleware('respond')
-  middlewares.remember = new Middleware('remember')
+  if (!middlewares.hear) middlewares.hear = new Middleware('hear')
+  if (!middlewares.listen) middlewares.listen = new Middleware('listen')
+  if (!middlewares.understand) middlewares.understand = new Middleware('understand')
+  if (!middlewares.act) middlewares.act = new Middleware('act')
+  if (!middlewares.respond) middlewares.respond = new Middleware('respond')
+  if (!middlewares.remember) middlewares.remember = new Middleware('remember')
 }
 
 /** Remove all middleware for reset */

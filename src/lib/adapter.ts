@@ -11,10 +11,10 @@ export const adapters: {
 
 /**
  * Require adapter module from local path or NPM package.
+ * If a module name is given, it will be required as normal or from the parent
+ * module path. If that fails, attempt to load from the included adapters path.
  * If local path given, attempt to resolve a number of possible locations in
- * case bBot running from tests or as a node project dependency etc.
- * If a non-path (e.g. module name) is given, but can't be loaded, it attempts
- * to load that name from within the included adapters path.
+ * case bBot running from tests or as a local dependency (in development).
  */
 export function loadAdapter (adapterPath?: string) {
   if (!adapterPath) return
@@ -22,7 +22,11 @@ export function loadAdapter (adapterPath?: string) {
   if (!isPath) {
     bot.logger.debug(`[adapter] loading adapter by name: ${adapterPath}`)
     try {
-      return require(adapterPath).use(bot)
+      if (require.main) {
+        return require(require.resolve(adapterPath, {
+          paths: require.main.paths
+        })).use(bot)
+      } else return require(adapterPath)
     } catch (e) {
       bot.logger.debug(`[adapter] failed to load module, will try from path`)
     }
@@ -31,13 +35,10 @@ export function loadAdapter (adapterPath?: string) {
   bot.logger.debug(`[adapter] loading adapter by path: ${adapterPath}`)
   let sourcePath = 'src'
   let modulePath = 'node_modules/bbot/dist'
-  let mainPath = path.dirname(require.main!.filename)
-  let mainModule = path.resolve(mainPath, modulePath)
   let currentPath = process.cwd()
   let currentModule = path.resolve(currentPath, modulePath)
-  let resolver = {
-    paths: [ sourcePath, mainPath, mainModule, currentPath, currentModule ]
-  }
+  let resolver = { paths: [ sourcePath, currentPath, currentModule ] }
+  if (require.main) resolver.paths = resolver.paths.concat(...require.main.paths)
   try {
     adapterPath = require.resolve(adapterPath, resolver)
     return require(adapterPath).use(bot)
@@ -50,11 +51,11 @@ export function loadAdapter (adapterPath?: string) {
 /** Load all adapters, but don't yet start them. */
 export function loadAdapters () {
   try {
-    adapters.message = loadAdapter(bot.config.messageAdapter)
-    adapters.language = loadAdapter(bot.config.languageAdapter)
-    adapters.storage = loadAdapter(bot.config.storageAdapter)
-    adapters.webhook = loadAdapter(bot.config.webhookAdapter)
-    adapters.analytics = loadAdapter(bot.config.analyticsAdapter)
+    if (!adapters.message) adapters.message = loadAdapter(bot.config.messageAdapter)
+    if (!adapters.language) adapters.language = loadAdapter(bot.config.languageAdapter)
+    if (!adapters.storage) adapters.storage = loadAdapter(bot.config.storageAdapter)
+    if (!adapters.webhook) adapters.webhook = loadAdapter(bot.config.webhookAdapter)
+    if (!adapters.analytics) adapters.analytics = loadAdapter(bot.config.analyticsAdapter)
   } catch (e) {
     bot.logger.error(e)
     throw new Error(`[adapter] failed to load all adapters`)

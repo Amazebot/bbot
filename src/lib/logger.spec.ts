@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import * as winston from 'winston'
 import { logger, Logger } from './logger'
 const initLogLevel = logger.level
-const throwNextTick = (err) => process.nextTick(() => { throw err })
+// const throwNextTick = (err) => process.nextTick(() => { throw err })
 
 describe('logger', () => {
   before(() => {

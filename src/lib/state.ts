@@ -64,6 +64,6 @@ export class B implements IState {
   /** Set method for dispatching envelope responding to state */
   respondVia (method: string, ...content: any[]): Promise<B> {
     this.respondEnvelope().via(method)
-    return this.respond(content)
+    return this.respond(...content)
   }
 }

@@ -14,17 +14,18 @@ export interface INaturalLanguageResult {
 /**
  * Add an operator to compare array of NLU results with one given.
  * Comparisons requiring a score will use the default threshold if none given.
- * - `in` : id and/or name (or score if only score given) exists in the result
- * - `eq` : id and/or name (or score if only score given) are the only result
- * - `max` : id and/or name match result with highest score
- * - `min` : id and/or name match result with lowest score
- * - `gte` : any result has score greater than or equal to comparison
- * - `gt` : any result has score greater than comparison
- * - `lt` : any result has score less than comparison
- * - `lte` : any result has score less than or equal to comparison
+ * - `in`   id and/or name (or score if only score given) exists in the result
+ * - `is`   id and/or name (or score if only score given) are the only result
+ * - `max`  id and/or name match result with highest score
+ * - `min`  id and/or name match result with lowest score
+ * - `eq`   any result has score exactly equal to comparison
+ * - `gte`  any result has score greater than or equal to comparison
+ * - `gt`   any result has score greater than comparison
+ * - `lt`   any result has score less than comparison
+ * - `lte`  any result has score less than or equal to comparison
  */
 export interface INaturalLanguageCriteria extends INaturalLanguageResult {
-  operator?: 'in' | 'eq' | 'max' | 'min' | 'gte' | 'gt' | 'lt' | 'lte'
+  operator?: 'in' | 'is' | 'match' | 'max' | 'min' | 'eq' | 'gte' | 'gt' | 'lt' | 'lte'
 }
 
 /** Array of Natural Language Understanding results */
@@ -35,24 +36,19 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
    * @param index Array index in NLU result set
    * @param criteria NLU criteria or result subset to match on (ignores score)
    */
-  indexIncludes (index: number, criteria: INaturalLanguageResult): INaturalLanguageResult | undefined {
+  indexIncludes (index: number, criteria: INaturalLanguageCriteria): INaturalLanguageResult | undefined {
     if (!Object.keys(criteria).some((key) => {
       return (['id', 'name', 'score'].includes(key))
     })) throw new Error('[nlu] Result matching requires ID, name or score')
     if (this[index] === void 0) return undefined
     const { id, name, score } = criteria
-    const nlur = this[index]
-    if (typeof score !== 'undefined' && !(id || name)) {
-      if (
-        typeof nlur.score !== 'undefined' &&
-        nlur.score === score
-      ) return nlur
-      else return undefined
-    }
-    if (
-      (!id || (id && nlur.id && nlur.id === id)) &&
-      (!name || (name && nlur.name && nlur.name === name))
-    ) return nlur
+    const result = this[index]
+    let found = true
+    if (id || name) {
+      if (id && result.id !== id) found = false
+      if (name && result.name !== name) found = false
+    } else if (result.score !== score) found = false
+    if (found) return result
     return undefined
   }
 
@@ -86,11 +82,11 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
     let matched: INaturalLanguageResult[]
     this.sortByScore()
     if (
-      ['gte', 'gt', 'lt', 'lte'].includes(operator) &&
+      ['eq', 'gte', 'gt', 'lt', 'lte'].includes(operator) &&
       typeof score === 'undefined'
     ) throw new Error('[nlu] Result cannot match score without score criteria')
     if (
-      ['gte', 'gt', 'lt', 'lte'].includes(operator) &&
+      ['eq', 'gte', 'gt', 'lt', 'lte'].includes(operator) &&
       Object.keys(criteria).some((key) => !['score', 'operator'].includes(key))
     ) matched = this.filter((_, index) => this.indexIncludes(index, criteria))
     else matched = Array.from(this)
@@ -99,7 +95,7 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
       case 'in':
         matched = this.filter((_, index) => this.indexIncludes(index, criteria))
         return matched.length ? matched : undefined
-      case 'eq':
+      case 'is':
         if (this.length === 1) matching = this.indexIncludes(0, criteria)
         return matching ? [matching] : undefined
       case 'max':
@@ -108,19 +104,23 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
       case 'min':
         matching = this.indexIncludes(this.length - 1, criteria)
         return matching ? [matching] : undefined
+      case 'eq':
+        matched = matched.filter((item) => (typeof item.score !== 'undefined' && item.score === 0))
+        return (matched.length) ? matched : undefined
       case 'gte':
-        matched = matched.filter((item) => (item.score && item.score >= score!))
+        matched = matched.filter((item) => (typeof item.score !== 'undefined' && item.score >= score!))
         return (matched.length) ? matched : undefined
       case 'gt':
-        matched = matched.filter((item) => (item.score && item.score > score!))
+        matched = matched.filter((item) => (typeof item.score !== 'undefined' && item.score > score!))
         return (matched.length) ? matched : undefined
       case 'lt':
-        matched = matched.filter((item) => (item.score && item.score < score!))
+        matched = matched.filter((item) => (typeof item.score !== 'undefined' && item.score < score!))
         return (matched.length) ? matched : undefined
       case 'lte':
-        matched = matched.filter((item) => (item.score && item.score <= score!))
+        matched = matched.filter((item) => (typeof item.score !== 'undefined' && item.score <= score!))
         return (matched.length) ? matched : undefined
     }
+    return
   }
 
   /** Helper to push a set of result as arguments (returns result instance) */
@@ -140,18 +140,6 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
  * - `act`       How the proposition described is intended to be used
  * - `language`  The language of the text with `.id` as an ISO code
  */
-/*
-export enum NLUKey {
-  intent = 'intent',
-  entities = 'entities',
-  sentiment = 'sentiment',
-  tone = 'tone',
-  phrases = 'phrases',
-  act = 'act',
-  language = 'language'
-}
-export type NLUKeys = 'intent' | 'entities' | 'sentiment' | 'tone' | 'phrases' | 'act' | 'language'
-*/
 export enum NLUKey { intent, entities, sentiment, tone, phrases, act, language }
 export type NLUKeys = keyof typeof NLUKey
 

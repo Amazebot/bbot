@@ -1,5 +1,6 @@
+import 'dotenv/config'
 import * as yargs from 'yargs'
-import * as packageJSON from '../../package.json'
+import { packageJSON } from './json'
 
 export interface IConfig {
   name: string,
@@ -80,7 +81,7 @@ export function getConfig (): IConfig {
     .version(packageJSON.version)
     .alias('version', 'v')
     .help()
-    .alias('help', 'h')
+    .alias('h', 'help')
     .epilogue(
 `All option can be provided as environment variables, with the prefix \`BOT_\`.
 Config can also be declared in \`package.json\` with the key: "botConfig".

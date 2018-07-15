@@ -19,6 +19,18 @@ class MockListener extends listen.Listener {
     return /test/.test(message.toString())
   }
 }
+class BoolListener extends listen.Listener {
+  constructor (
+    public result: boolean,
+    callback: listen.IListenerCallback,
+    meta?: listen.IListenerMeta
+  ) {
+    super(callback, meta)
+  }
+  async matcher () {
+    return this.result
+  }
+}
 
 describe('listen', () => {
   before(() => {
@@ -73,6 +85,16 @@ describe('listen', () => {
         await listener.process(b, middleware)
         await listener.process(b, middleware)
         sinon.assert.calledTwice(execute)
+      })
+      it('executes when forced, after prior listener fails', async () => {
+        let processed = []
+        const A = new BoolListener(true, () => processed.push('A'))
+        const B = new BoolListener(false, () => processed.push('B'))
+        const C = new BoolListener(true, () => processed.push('C'), { force: true })
+        await A.process(b, middleware)
+        await B.process(b, middleware)
+        await C.process(b, middleware)
+        expect(processed).to.eql(['A', 'C'])
       })
       it('executes bit if ID used as callback', async () => {
         const callback = sinon.spy()

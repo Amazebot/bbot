@@ -121,11 +121,11 @@ export class Rocketchat extends bot.MessageAdapter {
       case 'react':
         if (!envelope.strings) throw new Error('React without strings')
         if (!envelope.message) throw new Error('React without message')
-        for (let emoji in envelope.strings) {
-          if (!emoji.startsWith(':')) emoji = `:${emoji}`
-          if (!emoji.endsWith(':')) emoji = `${emoji}:`
-          emoji = emoji.replace('-', '_') // Rocket.Chat syntax
-          await this.driver.setReaction(emoji, envelope.message.id)
+        for (let reaction of envelope.strings) {
+          if (!reaction.startsWith(':')) reaction = `:${reaction}`
+          if (!reaction.endsWith(':')) reaction = `${reaction}:`
+          reaction = reaction.replace('-', '_') // Rocket.Chat syntax
+          await this.driver.setReaction(reaction, envelope.message.id)
         }
         break
       default:

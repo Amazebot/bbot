@@ -1,3 +1,5 @@
+const initEnv = process.env
+delete process.env.BOT_NAME
 import 'mocha'
 import { expect } from 'chai'
 // import mock from 'mock-fs'
@@ -5,6 +7,8 @@ import * as yargs from 'yargs'
 import * as config from './config'
 
 describe('config', () => {
+  beforeEach(() => delete process.env.BOT_NAME)
+  after(() => process.env = initEnv)
   describe('.config', () => {
     it('contains arguments collection, with defaults', () => {
       expect(config.config).to.have.property('name', 'bot')
@@ -20,7 +24,6 @@ describe('config', () => {
     it('loads configs from ENV variables using prefix', () => {
       process.env.BOT_NAME = 'henry'
       expect(config.getConfig()).to.have.property('name', 'henry')
-      delete process.env.BOT_NAME
     })
     it('loads config from package.json `bot` attribute', () => {
       expect(config.getConfig()).to.have.property('alias', 'bb')
