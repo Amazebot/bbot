@@ -20,6 +20,7 @@ describe('adapter', () => {
     start = sinon.spy(mockAdapter, 'start')
   })
   afterEach(() => {
+    for (let key in adapter.adapters) delete adapter.adapters[key]
     delete bot.config.messageAdapter
     delete bot.config.languageAdapter
     delete bot.config.storageAdapter

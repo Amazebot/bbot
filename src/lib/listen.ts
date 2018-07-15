@@ -67,7 +67,7 @@ export abstract class Listener {
     b: bot.B,
     middleware = new bot.Middleware('listener'),
     done: IListenerDone = (matched) => {
-      bot.logger.debug(`[listener] ${this.id} process done (${(matched) ? 'matched' : 'no match'})`)
+      bot.logger.debug(`[listen] ${this.id} process done (${(matched) ? 'matched' : 'no match'})`)
     }
   ): Promise<bot.B> {
     const match = await Promise.resolve(this.matcher(b.message))
@@ -80,7 +80,7 @@ export abstract class Listener {
       b.matched = matched
       const complete: bot.IComplete = (b, done) => {
         bot.logger.debug(`[listen] executing ${this.constructor.name} callback for ID ${this.id}`)
-        return Promise.resolve(this.callback(b)).then(() => done())
+        return Promise.resolve(this.callback(new bot.B(b))).then(() => done())
       }
       const callback: bot.ICallback = (err) => {
         let result = (!err)
@@ -185,11 +185,31 @@ export class NaturalLanguageListener extends Listener {
   }
 }
 
+export interface IListeners {
+  listen: { [id: string]: TextListener | CustomListener }
+  understand: { [id: string]: NaturalLanguageListener | CustomListener }
+  act: { [id: string]: CatchAllListener }
+}
+
 /** Collection of listeners and the methods to create each type */
-export class Listeners {
-  listen: { [id: string]: TextListener | CustomListener } = {}
-  understand: { [id: string]: NaturalLanguageListener | CustomListener } = {}
-  act: { [id: string]: CatchAllListener } = {}
+export class Listeners implements IListeners {
+  listen: { [id: string]: TextListener | CustomListener }
+  understand: { [id: string]: NaturalLanguageListener | CustomListener }
+  act: { [id: string]: CatchAllListener }
+
+  constructor (listeners?: Listeners | IListeners) {
+    this.listen = (listeners) ? listeners.listen : {}
+    this.understand = (listeners) ? listeners.understand : {}
+    this.act = (listeners) ? listeners.act : {}
+  }
+
+  /** Remove all but forced listeners from collection, return remaining size */
+  forced (collection: 'listen' | 'understand' | 'act') {
+    for (let id in this[collection]) {
+      if (!this[collection][id].force) delete this[collection][id]
+    }
+    return Object.keys(this[collection]).length
+  }
 
   /** Create text listener with provided regex, action and optional meta */
   text (

@@ -8,13 +8,16 @@ import * as bot from '..'
  * - `remember` is included after `receive` or `respond`
  */
 export class Thought {
+  listeners: bot.Listeners
 
   /**
    * Start a new instance of thought processes with an optional set of listeners
    * to process. By default will process global listeners, but can accept an
    * isolated set of listeners for specific conversational context.
    */
-  constructor (public listeners = bot.globalListeners) {}
+  constructor (listeners = bot.globalListeners) {
+    this.listeners = new bot.Listeners(listeners)
+  }
 
   /** Process receipt of message, pass on final context to listen process. */
   async hear (message: bot.Message): Promise<bot.B> {
@@ -33,30 +36,40 @@ export class Thought {
       if (b.done) break
       await this.listeners.listen[id].process(b, bot.middlewares.listen)
     }
-    if (b.done || b.matched) {
+    if ((!b.matched && !b.done) || this.listeners.forced('understand')) {
+      await this.understand(b, done)
+    } else {
       if (b.matched) b.listened = Date.now()
       await done().catch((err) => bot.logger.error(`[thought] listen error: `, err))
-    } else {
-      await this.understand(b, done)
     }
   }
 
   /** Process message unmatched by basic listeners, try to match with NLU */
   async understand (b: bot.B, done: bot.IPieceDone): Promise<void> {
     bot.events.emit('understand', b)
-    if (b.message instanceof bot.TextMessage && bot.adapters.language) {
-      if (!bot.adapters.language.process) console.log(bot.adapters.language.name)
+    if (Object.keys(this.listeners.understand).length === 0) {
+      bot.logger.debug(`[thought] no understand listeners, skipping language processing`)
+    } else if (b.message instanceof bot.TextMessage && bot.adapters.language) {
       bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
-      const nluResultsRaw = await bot.adapters.language.process(b.message)
-      if (nluResultsRaw) b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
-      for (let id in this.listeners.understand) {
-        if (b.done) break
-        await this.listeners.understand[id].process(b, bot.middlewares.understand)
-      }
-      if (b.done || b.matched) {
-        if (b.matched) b.understood = Date.now()
-        await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
-        return
+      if (b.message.toString().trim() === '') {
+        bot.logger.error(`[thought] understand cannot process empty message`)
+      } else {
+        const nluResultsRaw = await bot.adapters.language.process(b.message)
+        if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
+          bot.logger.error(`[thought] language processing returned empty`)
+        } else {
+          bot.logger.debug(`[thought] language processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
+          b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
+          for (let id in this.listeners.understand) {
+            if (b.done) break
+            await this.listeners.understand[id].process(b, bot.middlewares.understand)
+          }
+          if (b.done || b.matched) {
+            if (b.matched) b.understood = Date.now()
+            await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
+            return
+          }
+        }
       }
     }
     await this.act(b, done)
@@ -84,9 +97,8 @@ export class Thought {
     else if (b.envelope) bot.logger.debug(`[thought] respond dispatching envelope ID ${b.envelope.id}`)
     return bot.middlewares.respond.execute(b, async (b, done) => {
       await bot.adapters.message!.dispatch(b.envelope!)
-      await done()
-        .then(() => b.responded = Date.now())
-        .catch((err) => bot.logger.error(`[thought] respond error: `, err))
+      b.responded = Date.now()
+      await done().catch((err) => bot.logger.error(`[thought] respond error: `, err))
     })
   }
 

@@ -84,15 +84,15 @@ describe('nlu', () => {
         nlur.push(...results)
         expect(nlur.match({ id: 'foo', operator: 'in' })).to.eql([results[2], results[0]])
       })
-      it('`eq` operator matches if only a single element matches', () => {
+      it('`is` operator matches if only a single element matches', () => {
         const nlur = new NaturalLanguageResult()
         nlur.push({ id: 'foo', score: .1 })
-        expect(nlur.match({ id: 'foo', operator: 'eq' })).to.eql([{ id: 'foo', score: .1 }])
+        expect(nlur.match({ id: 'foo', operator: 'is' })).to.eql([{ id: 'foo', score: .1 }])
       })
-      it('`eq` operator fails if element matches but other elements exist', () => {
+      it('`is` operator fails if element matches but other elements exist', () => {
         const nlur = new NaturalLanguageResult()
         nlur.push({ id: 'foo', score: .1 }, { id: 'foo', score: .2 })
-        assert.notOk(nlur.match({ id: 'foo', operator: 'eq' }))
+        assert.notOk(nlur.match({ id: 'foo', operator: 'is' }))
       })
       it('`max` operator returns matching item it has largest score', () => {
         const nlur = new NaturalLanguageResult()
@@ -139,18 +139,23 @@ describe('nlu', () => {
         )
         assert.notOk(nlur.match({ id: 'bar', operator: 'min' }))
       })
+      it('`eq` operator returns matching items if score exact match', () => {
+        const nlur = new NaturalLanguageResult()
+        nlur.push({ id: 'foo', score: -0.1 }, { id: 'bar', score: 0 })
+        expect(nlur.match({ score: 0, operator: 'eq' })).to.eql([{ id: 'bar', score: 0 }])
+      })
       it('`gte` operator returns matching items if score higher or equal', () => {
         const nlur = new NaturalLanguageResult()
         const results = [
-          { id: 'foo', score: .1 },
-          { id: 'foo', score: .2 },
-          { id: 'foo', score: .3 },
-          { id: 'bar', score: .4 }
+          { id: 'foo', score: -1 },
+          { id: 'foo', score: 0 },
+          { id: 'foo', score: 1 },
+          { id: 'bar', score: 2 }
         ]
         nlur.push(...results)
-        expect(nlur.match({ id: 'foo', score: .2, operator: 'gte' })).to.eql([
-          { id: 'foo', score: .3 },
-          { id: 'foo', score: .2 }
+        expect(nlur.match({ id: 'foo', score: 0, operator: 'gte' })).to.eql([
+          { id: 'foo', score: 1 },
+          { id: 'foo', score: 0 }
         ])
       })
       it('`gte` operator with only score returns all higher or equal', () => {
@@ -261,12 +266,12 @@ describe('nlu', () => {
       it('matches as `gte` if given score without operator', () => {
         const nlur = new NaturalLanguageResult()
         const results = [
+          { id: 'foo', score: -.1 },
           { id: 'foo', score: .1 },
-          { id: 'bar', score: .2 },
-          { id: 'foo', score: .3 }
+          { id: 'bar', score: .2 }
         ]
         nlur.push(...results)
-        expect(nlur.match({ score: .2, operator: 'gte' })).to.eql([results[2], results[1]])
+        expect(nlur.match({ score: 0 })).to.eql([results[2], results[1]])
       })
     })
     describe('.add', () => {

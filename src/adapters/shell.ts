@@ -26,22 +26,23 @@ export class Shell extends bBot.MessageAdapter {
     await this.prompt()
   }
 
-  /** Route log events to the inquirer UI */
-  log (_transport: string, level: string, msg: string) {
-    let item = `[${level}]${msg}`
-    switch (level) {
-      case 'debug': item = chalk.gray(item)
-        break
-      case 'warn': item = chalk.magenta(item)
-        break
-      case 'error': item = chalk.red(item)
+  /** Route log events to the inquirer UI (only the combined log) */
+  log (transport: any, level: string, msg: string) {
+    if (transport.name === 'combined') {
+      let item = `[${level}]${msg}`
+      switch (level) {
+        case 'debug': item = chalk.gray(item)
+          break
+        case 'warn': item = chalk.magenta(item)
+          break
+        case 'error': item = chalk.red(item)
+      }
+      this.ui.writeLog(item)
     }
-    this.ui.writeLog(item)
   }
 
   /** Register user and room, then render chat with welcome message */
   async start () {
-    this.bot.logger.info('[shell] using Shell as message adapter')
     this.bot.events.on('started', async () => {
       const registration: any = await inquirer.prompt([{
         type: 'input',
@@ -54,14 +55,15 @@ export class Shell extends bBot.MessageAdapter {
         default: 'shell',
         message: 'And what about this "room"?'
       }])
-      this.user = new this.bot.User({ name: registration.username })
-      this.room = { name: registration.room }
       this.bot.logger.remove('console')
       this.bot.logger.on('logging', this.log.bind(this))
+      this.user = new this.bot.User({ name: registration.username })
+      this.room = { name: registration.room }
       const e = new this.bot.Envelope()
-      e.write(`Welcome @${this.user.name}, I'm @${this.bot.name}`)
-      e.write(`Type "exit" to exit, or anything else to keep talking.`)
+      e.write(`Welcome to #${this.room.name} @${this.user.name}, I'm @${this.bot.name}`)
+      e.write(`Type "exit" to exit any time.`)
       await this.dispatch(e)
+      await this.render()
     })
   }
 
@@ -70,7 +72,7 @@ export class Shell extends bBot.MessageAdapter {
     const input: any = await inquirer.prompt({
       type: 'input',
       name: 'message',
-      message: chalk.magenta(`[${this.room.name}]`) + chalk.cyan(' ➤')
+      message: chalk.magenta(`#${this.room.name}`) + chalk.cyan(' ➤')
     })
     if ((input.message as string).toLowerCase() === 'exit') {
       return this.bot.shutdown()
@@ -85,7 +87,6 @@ export class Shell extends bBot.MessageAdapter {
     for (let text of (envelope.strings || [])) {
       this.messages.push([this.bot.name, text])
     }
-    await this.render()
   }
 
   /** Close inquirer UI and exit process when shutdown complete */
