@@ -64,6 +64,13 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Load prompts and render chat in shell, for testing interactions</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -100,15 +107,28 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="shell.html#bot" class="tsd-kind-icon">bot</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="shell.html#line" class="tsd-kind-icon">line</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="shell.html#logs" class="tsd-kind-icon">logs</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="shell.html#messages" class="tsd-kind-icon">messages</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="shell.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="shell.html#ui" class="tsd-kind-icon">ui</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="shell.html#dispatch" class="tsd-kind-icon">dispatch</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="shell.html#log" class="tsd-kind-icon">log</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="shell.html#prompt" class="tsd-kind-icon">prompt</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="shell.html#render" class="tsd-kind-icon">render</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="shell.html#shutdown" class="tsd-kind-icon">shutdown</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="shell.html#start" class="tsd-kind-icon">start</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-class"><a href="shell.html#settings" class="tsd-kind-icon">settings</a></li>
 							</ul>
 						</section>
 					</div>
@@ -127,7 +147,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="adapter.html">Adapter</a>.<a href="adapter.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/adapter-classes/base.ts#L9">lib/adapter-classes/base.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/adapter-classes/base.ts#L9">lib/adapter-classes/base.ts:9</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -162,7 +182,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="adapter.html">Adapter</a>.<a href="adapter.html#bot">bot</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/adapter-classes/base.ts#L17">lib/adapter-classes/base.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/adapter-classes/base.ts#L17">lib/adapter-classes/base.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -171,6 +191,36 @@
 						</div>
 					</div>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="line" class="tsd-anchor"></a>
+					<h3>line</h3>
+					<div class="tsd-signature tsd-kind-icon">line<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Separator</span><span class="tsd-signature-symbol"> =&nbsp;new inquirer.Separator()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L11">adapters/shell.ts:11</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="logs" class="tsd-anchor"></a>
+					<h3>logs</h3>
+					<div class="tsd-signature tsd-kind-icon">logs<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;&#x27;]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L9">adapters/shell.ts:9</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="messages" class="tsd-anchor"></a>
+					<h3>messages</h3>
+					<div class="tsd-signature tsd-kind-icon">messages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L10">adapters/shell.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a name="name" class="tsd-anchor"></a>
 					<h3>name</h3>
@@ -178,7 +228,17 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/adapters/shell.ts#L4">adapters/shell.ts:4</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L7">adapters/shell.ts:7</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ui" class="tsd-anchor"></a>
+					<h3>ui</h3>
+					<div class="tsd-signature tsd-kind-icon">ui<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L8">adapters/shell.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,16 +249,105 @@
 					<a name="dispatch" class="tsd-anchor"></a>
 					<h3>dispatch</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">(</span>envelope<span class="tsd-signature-symbol">: </span><a href="envelope.html" class="tsd-signature-type">Envelope</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#dispatch">dispatch</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/adapters/shell.ts#L14">adapters/shell.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L86">adapters/shell.ts:86</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add outgoing messages and re-render chat</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>envelope: <a href="envelope.html" class="tsd-signature-type">Envelope</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="log" class="tsd-anchor"></a>
+					<h3>log</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">(</span>transport<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, level<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L30">adapters/shell.ts:30</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Route log events to the inquirer UI (only the combined log)</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>transport: <span class="tsd-signature-type">any</span></h5>
+								</li>
+								<li>
+									<h5>level: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>msg: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="prompt" class="tsd-anchor"></a>
+					<h3>prompt</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">prompt<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L71">adapters/shell.ts:71</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Prompt for message input, recursive after each render</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="render" class="tsd-anchor"></a>
+					<h3>render</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">render<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L17">adapters/shell.ts:17</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Update chat window and return to input prompt</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -214,9 +363,14 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#shutdown">shutdown</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/adapters/shell.ts#L10">adapters/shell.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L93">adapters/shell.ts:93</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Close inquirer UI and exit process when shutdown complete</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -232,12 +386,40 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#start">start</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/adapters/shell.ts#L6">adapters/shell.ts:6</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L45">adapters/shell.ts:45</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Register user and room, then render chat with welcome message</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-class">
+					<a name="settings" class="tsd-anchor"></a>
+					<h3>settings</h3>
+					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L12">adapters/shell.ts:12</a></li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="settings.chatsize" class="tsd-anchor"></a>
+						<h3>chat<wbr>Size</h3>
+						<div class="tsd-signature tsd-kind-icon">chat<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;5</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/adapters/shell.ts#L13">adapters/shell.ts:13</a></li>
+							</ul>
+						</aside>
+					</section>
 				</section>
 			</section>
 		</div>
@@ -262,17 +444,41 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="shell.html#bot" class="tsd-kind-icon">bot</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="shell.html#line" class="tsd-kind-icon">line</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="shell.html#logs" class="tsd-kind-icon">logs</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="shell.html#messages" class="tsd-kind-icon">messages</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 								<a href="shell.html#name" class="tsd-kind-icon">name</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="shell.html#ui" class="tsd-kind-icon">ui</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="shell.html#dispatch" class="tsd-kind-icon">dispatch</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="shell.html#log" class="tsd-kind-icon">log</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="shell.html#prompt" class="tsd-kind-icon">prompt</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="shell.html#render" class="tsd-kind-icon">render</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="shell.html#shutdown" class="tsd-kind-icon">shutdown</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="shell.html#start" class="tsd-kind-icon">start</a>
+							</li>
+							<li class=" tsd-kind-object-literal tsd-parent-kind-class">
+								<a href="shell.html#settings" class="tsd-kind-icon">settings</a>
 							</li>
 						</ul>
 					</li>

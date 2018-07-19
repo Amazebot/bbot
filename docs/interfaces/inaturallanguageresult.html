@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>INaturalLanguage | bBot</title>
+	<title>INaturalLanguageResult | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="inaturallanguage.html">INaturalLanguage</a>
+					<a href="inaturallanguageresult.html">INaturalLanguageResult</a>
 				</li>
 			</ul>
-			<h1>Interface INaturalLanguage</h1>
+			<h1>Interface INaturalLanguageResult</h1>
 		</div>
 	</div>
 </header>
@@ -67,31 +67,31 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>NLU attributes interface.</p>
+						<p>Interface for Natural Language Understanding result attributes.</p>
 					</div>
-					<dl class="tsd-comment-tags">
-						<dt>param</dt>
-						<dd><p>A key characterising what the message was about</p>
-						</dd>
-						<dt>param</dt>
-						<dd><p>Additional data inferred from the message or context</p>
-						</dd>
-						<dt>param</dt>
-						<dd><p>Tone or emotional data provided from NLU parsing of text</p>
-						</dd>
-						<dt>param</dt>
-						<dd><p>The level of surety that the NLU provider is correct</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">INaturalLanguage</span>
+						<span class="target">INaturalLanguageResult</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="inaturallanguagecriteria.html" class="tsd-signature-type">INaturalLanguageCriteria</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
+			</section>
+			<section class="tsd-panel tsd-kind-interface">
+				<h3 class="tsd-before-signature">Indexable</h3>
+				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Interface for Natural Language Understanding result attributes.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -100,10 +100,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguage.html#confidence" class="tsd-kind-icon">confidence</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguage.html#entities" class="tsd-kind-icon">entities</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguage.html#intent" class="tsd-kind-icon">intent</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguage.html#sentiment" class="tsd-kind-icon">sentiment</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguageresult.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguageresult.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguageresult.html#score" class="tsd-kind-icon">score</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,50 +111,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="confidence" class="tsd-anchor"></a>
-					<h3>confidence</h3>
-					<div class="tsd-signature tsd-kind-icon">confidence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="id" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/message.ts#L31">lib/message.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/nlu.ts#L8">lib/nlu.ts:8</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="entities" class="tsd-anchor"></a>
-					<h3>entities</h3>
-					<div class="tsd-signature tsd-kind-icon">entities<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/message.ts#L29">lib/message.ts:29</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="intent" class="tsd-anchor"></a>
-					<h3>intent</h3>
-					<div class="tsd-signature tsd-kind-icon">intent<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/message.ts#L28">lib/message.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/nlu.ts#L9">lib/nlu.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sentiment" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sentiment</h3>
-					<div class="tsd-signature tsd-kind-icon">sentiment<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
+					<a name="score" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> score</h3>
+					<div class="tsd-signature tsd-kind-icon">score<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/message.ts#L30">lib/message.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/nlu.ts#L10">lib/nlu.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -174,19 +155,16 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="inaturallanguage.html" class="tsd-kind-icon">INatural<wbr>Language</a>
+						<a href="inaturallanguageresult.html" class="tsd-kind-icon">INatural<wbr>Language<wbr>Result</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguage.html#confidence" class="tsd-kind-icon">confidence</a>
+								<a href="inaturallanguageresult.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguage.html#entities" class="tsd-kind-icon">entities</a>
+								<a href="inaturallanguageresult.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguage.html#intent" class="tsd-kind-icon">intent</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguage.html#sentiment" class="tsd-kind-icon">sentiment</a>
+								<a href="inaturallanguageresult.html#score" class="tsd-kind-icon">score</a>
 							</li>
 						</ul>
 					</li>
