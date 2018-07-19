@@ -112,7 +112,7 @@ For more information, see https://amazebot.github.io/bbot'`
 export const config = getConfig()
 
 /** Make some configs available at module root */
-export const name = config.name
-export const alias = config.alias
+export let name = config.name
+export let alias = config.alias
 
 if (process.platform !== 'win32') process.on('SIGTERM', () => process.exit(0))

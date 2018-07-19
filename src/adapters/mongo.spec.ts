@@ -18,9 +18,9 @@ const testMemory = {
   }
 }
 const testStore = [
-  { id: '001', name: 'Foo' },
-  { id: '002', name: 'Bar' },
-  { id: '003', name: 'Bar' }
+  { id: '001', name: 'Foo', student: { grade: 'C', year: '2018' } },
+  { id: '002', name: 'Bar', student: { grade: 'A', year: '2018' } },
+  { id: '003', name: 'Bar', student: { grade: 'B', year: '2017' } }
 ]
 const clean = async () => {
   const found = await store.model.db.db.listCollections({ name: testCollection }).toArray()
@@ -153,6 +153,14 @@ describe('mongo', () => {
     it('returns sub collection matching params', async () => {
       const result = await store.find('tests', { name: testStore[1].name })
       expect(result).to.eql([ testStore[1], testStore[2] ])
+    })
+    it('returns sub collection matching params using path', async () => {
+      const result = await store.find('tests', { 'student.grade': 'B' })
+      expect(result).to.eql([ testStore[2] ])
+    })
+    it('returns whole collection if no param keys given', async () => {
+      const result = await store.find('tests', {})
+      expect(result).to.eql(testStore)
     })
     it('returns undefined if none match', async () => {
       const result = await store.find('tests', { name: 'NoName' })

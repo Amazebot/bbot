@@ -26,10 +26,10 @@ export class B implements IState {
   done: boolean = false
   message: bot.Message
   listener: bot.Listener
+  envelopes?: bot.Envelope[]
   match?: any
   matched?: boolean
   method?: string
-  envelope?: bot.Envelope
   heard?: number
   listened?: number
   responded?: number
@@ -49,10 +49,21 @@ export class B implements IState {
     return this
   }
 
-  /** Create or return existing envelope, to respond to incoming message */
+  /** Check for an envelope that hasn't been dispatched */
+  pendingEnvelope () {
+    if (!this.envelopes) return
+    return this.envelopes.find((e) => typeof e.responded === 'undefined')
+  }
+
+  /** Create or return pending envelope, to respond to incoming message */
   respondEnvelope (options?: bot.IEnvelope) {
-    if (!this.envelope) this.envelope = new bot.Envelope(options, this)
-    return this.envelope
+    let pending = this.pendingEnvelope()
+    if (!pending) {
+      pending = new bot.Envelope(options, this)
+      if (!this.envelopes) this.envelopes = []
+      this.envelopes.push(pending)
+    }
+    return pending
   }
 
   /** Dispatch the envelope via respond thought process */

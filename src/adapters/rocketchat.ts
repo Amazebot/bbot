@@ -13,10 +13,11 @@ export class Rocketchat extends bot.MessageAdapter {
   api = sdk.api
   settings = sdk.settings
 
+  /** Create Rocket.Chat adapter, configure bot to use username as alias */
   constructor (bot: any) {
     super(bot)
     this.settings.integrationId = 'bBot'
-    this.bot.logger.info('[rocketchat] using Rocket.Chat as message adapter')
+    if (this.settings.username !== this.bot.name) this.bot.alias = this.settings.username
   }
 
   getRoomId = (room: string) => this.driver.getRoomId(room)
@@ -24,11 +25,8 @@ export class Rocketchat extends bot.MessageAdapter {
 
   /** Connect to Rocket.Chat via DDP driver and setup message subscriptions */
   async start () {
-    this.bot.logger.info(`[rocketchat] Rocket.Chat adapter in use`)
-
-    // Print logs with current configs
-    this.bot.logger.info(`[rocketchat] responds to name: ${bot.name}`)
-    if (this.bot.alias) bot.logger.info(`[rocketchat] responds to alias: ${bot.alias}`)
+    this.bot.logger.info(`[rocketchat] responds to name: ${this.bot.name}`)
+    if (this.bot.alias) bot.logger.info(`[rocketchat] responds to alias: ${this.bot.alias}`)
 
     this.driver.useLog(bot.logger)
     await this.driver.connect()
@@ -54,7 +52,7 @@ export class Rocketchat extends bot.MessageAdapter {
       alias: message.alias,
       room: {
         id: message.rid,
-        type: message.roomType,
+        type: meta.roomType,
         name: meta.roomName
       }
     })
@@ -91,20 +89,25 @@ export class Rocketchat extends bot.MessageAdapter {
     return bot.receive(textMessage)
   }
 
+  /** Parse any strings before sending to fix for Rocket.Chat syntaxes */
+  format (input: string) {
+    return input.replace(/((?:^|\s):\w+)-(\w+:(?:$|\s))/g, '$1_$2') // fix emoji key hyphens
+  }
+
   async dispatch (envelope: bot.Envelope) {
     switch (envelope.method) {
       case 'send':
         if (!envelope.strings) throw new Error('Sending without strings')
         if (!envelope.room || !envelope.room.id) throw new Error('Sending without room ID')
-        for (let text in envelope.strings) {
-          await this.driver.sendToRoomId(text, envelope.room.id)
+        for (let text of envelope.strings) {
+          await this.driver.sendToRoomId(this.format(text), envelope.room.id)
         }
         break
       case 'dm':
         if (!envelope.strings) throw new Error('DM without strings')
         if (!envelope.user) throw new Error('DM without user')
-        for (let text in envelope.strings) {
-          await this.driver.sendDirectToUser(text, envelope.user.username)
+        for (let text of envelope.strings) {
+          await this.driver.sendDirectToUser(this.format(text), envelope.user.username)
         }
         break
       case 'reply':
@@ -114,8 +117,8 @@ export class Rocketchat extends bot.MessageAdapter {
         if (envelope.room.id.indexOf(envelope.user.id) === -1) {
           envelope.strings = envelope.strings.map((s) => `@${envelope.user!.username} ${s}`)
         }
-        for (let text in envelope.strings) {
-          await this.driver.sendToRoomId(text, envelope.room.id)
+        for (let text of envelope.strings) {
+          await this.driver.sendToRoomId(this.format(text), envelope.room.id)
         }
         break
       case 'react':

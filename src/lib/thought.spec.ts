@@ -73,23 +73,6 @@ describe('thought', () => {
       await thought.hear(message)
       expect(listens).to.eql(['B', 'C'])
     })
-    it('consecutive listeners receive isolated states', async () => {
-      const listeners = new bot.Listeners()
-      let stateCounts = []
-      listeners.custom(() => true, (b) => {
-        b.count = b.count + 1
-        stateCounts.push(b.count)
-      }, { force: true })
-      listeners.custom(() => true, (b) => {
-        b.count = b.count + 1
-        stateCounts.push(b.count)
-      }, { force: true })
-      const thought = new bot.Thought(listeners)
-      const b = new bot.B({ message })
-      b.count = 0
-      await thought.listen(b, () => Promise.resolve())
-      expect(stateCounts).to.eql([1, 1])
-    })
     it('continues to following listeners after listener responds', async () => {
       const listeners = new bot.Listeners()
       let processed = false
@@ -226,6 +209,14 @@ describe('thought', () => {
         bot.events.on('understand', onUnderstand)
         await bot.thoughts.listen(new bot.B({ message }), () => Promise.resolve())
         sinon.assert.calledOnce(onUnderstand)
+      })
+      it('does not continue when listener finishes state, even if forced', async () => {
+        const onUnderstand = sinon.spy()
+        bot.listenCustom(() => true, (b) => b.finish())
+        bot.understandCustom(() => true, () => null, { force: true })
+        bot.events.on('understand', onUnderstand)
+        await bot.thoughts.listen(new bot.B({ message }), () => Promise.resolve())
+        sinon.assert.notCalled(onUnderstand)
       })
       it('adds timestamp to state', async () => {
         bot.listenCustom(() => true, () => null)
@@ -413,9 +404,9 @@ describe('thought', () => {
       })
       it('calls dispatch on message adapter with envelope', async () => {
         const b = new bot.B({ message })
-        b.respondEnvelope()
+        const envelope = b.respondEnvelope()
         await bot.thoughts.respond(b)
-        sinon.assert.calledWithExactly((mockAdapter.dispatch as sinon.SinonStub), b.envelope)
+        sinon.assert.calledWithExactly((mockAdapter.dispatch as sinon.SinonStub), envelope)
       })
       it('receives state when invoked by state respond', async () => {
         const b = new bot.B({ message })
@@ -450,6 +441,18 @@ describe('thought', () => {
         const b = new bot.B({ message })
         await bot.thoughts.remember(b)
         sinon.assert.calledWithExactly((bot.keep as sinon.SinonStub), 'states', b)
+      })
+      it('remembers only once for multiple responding listeners', async () => {
+        const onRemember = sinon.spy()
+        bot.events.on('remember', onRemember)
+        bot.listenCustom(() => true, (b) => b.respond('A'))
+        bot.listenCustom(() => true, (b) => b.respond('B'), { force: true })
+        const b = await bot.receive(message)
+        sinon.assert.calledOnce(onRemember)
+        expect(onRemember.args[0][0].envelopes).to.have.lengthOf(2)
+        expect(b.envelopes.map((envelope) => envelope.strings)).to.eql([
+          ['A'], ['B']
+        ])
       })
       it('adds timestamp to state', async () => {
         const now = Date.now()
