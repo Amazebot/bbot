@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>INaturalLanguageMatch | bBot</title>
+	<title>IListeners | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,29 +54,28 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="inaturallanguagematch.html">INaturalLanguageMatch</a>
+					<a href="ilisteners.html">IListeners</a>
 				</li>
 			</ul>
-			<h1>Interface INaturalLanguageMatch</h1>
+			<h1>Interface IListeners</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Match object interface for language matchers to populate</p>
-					</div>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">INaturalLanguageMatch</span>
+						<span class="target">IListeners</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/listeners.html" class="tsd-signature-type">Listeners</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -86,10 +85,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguagematch.html#confidence" class="tsd-kind-icon">confidence</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguagematch.html#entities" class="tsd-kind-icon">entities</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguagematch.html#intent" class="tsd-kind-icon">intent</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguagematch.html#sentiment" class="tsd-kind-icon">sentiment</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ilisteners.html#act" class="tsd-kind-icon">act</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ilisteners.html#listen" class="tsd-kind-icon">listen</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ilisteners.html#understand" class="tsd-kind-icon">understand</a></li>
 							</ul>
 						</section>
 					</div>
@@ -98,44 +96,58 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="confidence" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> confidence</h3>
-					<div class="tsd-signature tsd-kind-icon">confidence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="act" class="tsd-anchor"></a>
+					<h3>act</h3>
+					<div class="tsd-signature tsd-kind-icon">act<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/listen.ts#L23">lib/listen.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/listen.ts#L191">lib/listen.ts:191</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../classes/catchalllistener.html" class="tsd-signature-type">CatchAllListener</a></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="entities" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> entities</h3>
-					<div class="tsd-signature tsd-kind-icon">entities<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
+					<a name="listen" class="tsd-anchor"></a>
+					<h3>listen</h3>
+					<div class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/listen.ts#L21">lib/listen.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/listen.ts#L189">lib/listen.ts:189</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../classes/textlistener.html" class="tsd-signature-type">TextListener</a><span class="tsd-signature-symbol"> | </span><a href="../classes/customlistener.html" class="tsd-signature-type">CustomListener</a></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="intent" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> intent</h3>
-					<div class="tsd-signature tsd-kind-icon">intent<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<a name="understand" class="tsd-anchor"></a>
+					<h3>understand</h3>
+					<div class="tsd-signature tsd-kind-icon">understand<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/listen.ts#L20">lib/listen.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/listen.ts#L190">lib/listen.ts:190</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="sentiment" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sentiment</h3>
-					<div class="tsd-signature tsd-kind-icon">sentiment<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/9c99b39/src/lib/listen.ts#L22">lib/listen.ts:22</a></li>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>id: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="../classes/naturallanguagelistener.html" class="tsd-signature-type">NaturalLanguageListener</a><span class="tsd-signature-symbol"> | </span><a href="../classes/customlistener.html" class="tsd-signature-type">CustomListener</a></h5>
+							</li>
 						</ul>
-					</aside>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -152,19 +164,16 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="inaturallanguagematch.html" class="tsd-kind-icon">INatural<wbr>Language<wbr>Match</a>
+						<a href="ilisteners.html" class="tsd-kind-icon">IListeners</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguagematch.html#confidence" class="tsd-kind-icon">confidence</a>
+								<a href="ilisteners.html#act" class="tsd-kind-icon">act</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguagematch.html#entities" class="tsd-kind-icon">entities</a>
+								<a href="ilisteners.html#listen" class="tsd-kind-icon">listen</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguagematch.html#intent" class="tsd-kind-icon">intent</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguagematch.html#sentiment" class="tsd-kind-icon">sentiment</a>
+								<a href="ilisteners.html#understand" class="tsd-kind-icon">understand</a>
 							</li>
 						</ul>
 					</li>
