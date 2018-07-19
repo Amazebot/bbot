@@ -80,7 +80,7 @@ export abstract class Listener {
       b.matched = matched
       const complete: bot.IComplete = (b, done) => {
         bot.logger.debug(`[listen] executing ${this.constructor.name} callback for ID ${this.id}`)
-        return Promise.resolve(this.callback(new bot.B(b))).then(() => done())
+        return Promise.resolve(this.callback(b)).then(() => done())
       }
       const callback: bot.ICallback = (err) => {
         let result = (!err)

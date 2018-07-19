@@ -122,11 +122,15 @@ export class Mongo extends StorageAdapter {
     const doc = await this.model.findOne(query, fields, opts).exec() as IStore
     if (!doc) return undefined
     const matching = doc.data.filter((item: any) => {
+      if (!Object.keys(params).length) return true
       let match = false
-      for (let key in params) match = (item[key] === params[key])
+      for (let key in params) {
+        const valueAtKey = key.split('.').reduce((pre, cur) => pre[cur], item)
+        match = (valueAtKey === params[key])
+      }
       return match
     })
-    this.bot.logger.debug(`[mongo] found matching ${sub}s: ${JSON.stringify(matching)}`)
+    this.bot.logger.debug(`[mongo] found ${matching.length} matching ${sub}s.`)
     return matching
   }
 

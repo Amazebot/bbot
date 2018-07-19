@@ -5,7 +5,7 @@ import chalk from 'chalk'
 /** Load prompts and render chat in shell, for testing interactions */
 export class Shell extends bBot.MessageAdapter {
   name = 'shell-message-adapter'
-  ui = new inquirer.ui.BottomBar()
+  ui: any
   logs: string[] = ['']
   messages: [string, string][] = []
   line = new inquirer.Separator()
@@ -28,7 +28,7 @@ export class Shell extends bBot.MessageAdapter {
 
   /** Route log events to the inquirer UI (only the combined log) */
   log (transport: any, level: string, msg: string) {
-    if (transport.name === 'combined') {
+    if (transport.name === 'console') {
       let item = `[${level}]${msg}`
       switch (level) {
         case 'debug': item = chalk.gray(item)
@@ -37,7 +37,7 @@ export class Shell extends bBot.MessageAdapter {
           break
         case 'error': item = chalk.red(item)
       }
-      this.ui.writeLog(item)
+      if (item.length) this.ui.writeLog(item)
     }
   }
 
@@ -47,20 +47,20 @@ export class Shell extends bBot.MessageAdapter {
       const registration: any = await inquirer.prompt([{
         type: 'input',
         name: 'username',
-        default: 'user',
-        message: 'Welcome! What shall I call you?'
+        message: 'Welcome! What shall I call you?',
+        default: 'user'
       },{
         type: 'input',
         name: 'room',
-        default: 'shell',
-        message: 'And what about this "room"?'
+        message: 'And what about this "room"?',
+        default: 'shell'
       }])
-      this.bot.logger.remove('console')
       this.bot.logger.on('logging', this.log.bind(this))
       this.user = new this.bot.User({ name: registration.username })
       this.room = { name: registration.room }
       const e = new this.bot.Envelope()
-      e.write(`Welcome to #${this.room.name} @${this.user.name}, I'm @${this.bot.name}`)
+      this.ui = new inquirer.ui.BottomBar()
+      e.write(`Hi @${this.user.name}. Welcome to #${this.room.name}, I'm @${this.bot.name}`)
       e.write(`Type "exit" to exit any time.`)
       await this.dispatch(e)
       await this.render()

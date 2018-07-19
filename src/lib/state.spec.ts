@@ -31,11 +31,34 @@ describe('state', () => {
       expect(b.done).to.equal(true)
     })
   })
+  describe('.pendingEnvelope', () => {
+    it('returns existing envelope if not yet responded', () => {
+      const b = new state.B({ message, listener })
+      b.envelopes = []
+      b.envelopes.push(new bot.Envelope())
+      b.envelopes.push(new bot.Envelope())
+      b.envelopes[0].responded = Date.now()
+      expect(b.pendingEnvelope()).to.eql(b.envelopes[1])
+    })
+    it('returns undefined if all envelopes responded', () => {
+      const b = new state.B({ message, listener })
+      b.envelopes = []
+      b.envelopes.push(new bot.Envelope())
+      b.envelopes.push(new bot.Envelope())
+      b.envelopes[0].responded = Date.now()
+      b.envelopes[1].responded = Date.now()
+      expect(typeof b.pendingEnvelope()).to.equal('undefined')
+    })
+    it('returns undefined if no envelopes', () => {
+      const b = new state.B({ message, listener })
+      expect(typeof b.pendingEnvelope()).to.equal('undefined')
+    })
+  })
   describe('.respondEnvelope', () => {
     it('creates new envelope from options, state, defaults', () => {
       const b = new state.B({ message, listener })
       b.respondEnvelope({ strings: ['hello'] })
-      expect(b.envelope).to.deep.include({
+      expect(b.envelopes[0]).to.deep.include({
         message,
         room: message.user.room,
         strings: ['hello'],
@@ -50,6 +73,7 @@ describe('state', () => {
       const b = new state.B({ message, listener })
       b.respond('testing')
       sinon.assert.calledWith(stubs.respond, b)
+      expect(b.envelopes[0].strings).to.eql(['testing'])
     })
   })
   describe('respondVia', () => {
@@ -57,8 +81,8 @@ describe('state', () => {
       const b = new state.B({ message, listener })
       const respond = sinon.stub(b, 'respond')
       b.respondVia('reply', 'hey you')
-      expect(b.envelope.method).to.equal('reply')
       sinon.assert.calledOnce(respond)
+      expect(b.envelopes[0].method).to.equal('reply')
     })
   })
 })

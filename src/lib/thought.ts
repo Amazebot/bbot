@@ -36,7 +36,7 @@ export class Thought {
       if (b.done) break
       await this.listeners.listen[id].process(b, bot.middlewares.listen)
     }
-    if ((!b.matched && !b.done) || this.listeners.forced('understand')) {
+    if (!b.done && (!b.matched || this.listeners.forced('understand'))) {
       await this.understand(b, done)
     } else {
       if (b.matched) b.listened = Date.now()
@@ -92,11 +92,14 @@ export class Thought {
   async respond (b: bot.B | bot.IState): Promise<bot.B> {
     bot.events.emit('respond', b)
     if (!bot.adapters.message) throw new Error('[thought] message adapter not found')
-    if (!b.envelope) throw new Error(`[thought] cannot respond without envelope`)
+    if (!(b instanceof bot.B)) b = new bot.B(b)
+    const envelope = (b as bot.B).pendingEnvelope()
+    if (!envelope) throw new Error(`[thought] cannot respond without envelope`)
     if (b.message) bot.logger.debug(`[thought] responding to message ID ${b.message.id}`)
-    else if (b.envelope) bot.logger.debug(`[thought] respond dispatching envelope ID ${b.envelope.id}`)
+    else if (envelope) bot.logger.debug(`[thought] respond dispatching envelope ID ${envelope.id}`)
     return bot.middlewares.respond.execute(b, async (b, done) => {
-      await bot.adapters.message!.dispatch(b.envelope!)
+      await bot.adapters.message!.dispatch(envelope)
+      envelope.responded = Date.now()
       b.responded = Date.now()
       await done().catch((err) => bot.logger.error(`[thought] respond error: `, err))
     })
@@ -107,8 +110,8 @@ export class Thought {
     bot.events.emit('remember', b)
     if (b.message) {
       bot.logger.debug(`[thought] remember state for incoming message ID ${b.message.id}`)
-    } else if (b.envelope) {
-      bot.logger.debug(`[thought] remember outgoing state for envelope ID ${b.envelope.id}`)
+    } else {
+      bot.logger.debug(`[thought] remember outgoing state for envelope ID`)
     }
     await bot.middlewares.remember.execute(b, async (b, done) => {
       await bot.keep('states', b)
@@ -144,7 +147,7 @@ export async function receive (message: bot.Message, callback?: bot.ICallback): 
  * This is for sending unprompted by a listener. Final state is remembered.
  */
 export async function dispatch (envelope: bot.Envelope, callback?: bot.ICallback): Promise<bot.B> {
-  const b = await thoughts.respond({ envelope })
+  const b = await thoughts.respond({ envelopes: [envelope] })
   if (b.responded) await thoughts.remember(b)
   if (callback) await Promise.resolve(callback())
   return b

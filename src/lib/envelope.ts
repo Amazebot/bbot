@@ -9,7 +9,8 @@ export interface IEnvelope {
   },
   user?: bot.User
   strings?: string[]
-  payload?: any
+  payload?: any,
+  responded?: number
 }
 
 /**
@@ -30,6 +31,7 @@ export class Envelope implements IEnvelope {
   message?: bot.Message
   strings?: string[]
   payload?: any
+  responded?: number
 
   /**
    * Create an envelope to dispatch unprompted or from a listener callback.
