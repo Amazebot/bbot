@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>B | bBot</title>
+	<title>State | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="b.html">B</a>
+					<a href="state.html">State</a>
 				</li>
 			</ul>
-			<h1>Class B</h1>
+			<h1>Class State</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>B is a pseudonym for the internal state handled by the thought process.
+						<p>Generic state, starting point for outgoing dispatches
 							States have access to all bBot modules from the bot property.
 							It has defined properties but can be extended with any key/value pair.
 							Each thought process attaches timestamps if they are actioned.
@@ -79,7 +79,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">B</span>
+						<span class="target">State</span>
 					</li>
 				</ul>
 			</section>
@@ -94,7 +94,7 @@
 				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>B is a pseudonym for the internal state handled by the thought process.
+						<p>Generic state, starting point for outgoing dispatches
 							States have access to all bBot modules from the bot property.
 							It has defined properties but can be extended with any key/value pair.
 							Each thought process attaches timestamps if they are actioned.
@@ -109,34 +109,39 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="b.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="state.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#bot" class="tsd-kind-icon">bot</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#done" class="tsd-kind-icon">done</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#envelopes" class="tsd-kind-icon">envelopes</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#heard" class="tsd-kind-icon">heard</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#listened" class="tsd-kind-icon">listened</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#listener" class="tsd-kind-icon">listener</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#match" class="tsd-kind-icon">match</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#matched" class="tsd-kind-icon">matched</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#message" class="tsd-kind-icon">message</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#method" class="tsd-kind-icon">method</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#remembered" class="tsd-kind-icon">remembered</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="b.html#responded" class="tsd-kind-icon">responded</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#bot" class="tsd-kind-icon">bot</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#done" class="tsd-kind-icon">done</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#envelopes" class="tsd-kind-icon">envelopes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#listeners" class="tsd-kind-icon">listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#message" class="tsd-kind-icon">message</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#method" class="tsd-kind-icon">method</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#processed" class="tsd-kind-icon">processed</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="state.html#match" class="tsd-kind-icon">match</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="state.html#matched" class="tsd-kind-icon">matched</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="b.html#finish" class="tsd-kind-icon">finish</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="b.html#pendingenvelope" class="tsd-kind-icon">pending<wbr>Envelope</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="b.html#respond" class="tsd-kind-icon">respond</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="b.html#respondenvelope" class="tsd-kind-icon">respond<wbr>Envelope</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="b.html#respondvia" class="tsd-kind-icon">respond<wbr>Via</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#dispatchedenvelope" class="tsd-kind-icon">dispatched<wbr>Envelope</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#finish" class="tsd-kind-icon">finish</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#getlistener" class="tsd-kind-icon">get<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#pendingenvelope" class="tsd-kind-icon">pending<wbr>Envelope</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#respond" class="tsd-kind-icon">respond</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#respondenvelope" class="tsd-kind-icon">respond<wbr>Envelope</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#respondvia" class="tsd-kind-icon">respond<wbr>Via</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#setlistener" class="tsd-kind-icon">set<wbr>Listener</a></li>
 							</ul>
 						</section>
 					</div>
@@ -148,13 +153,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new B<span class="tsd-signature-symbol">(</span>startingState<span class="tsd-signature-symbol">: </span><a href="../interfaces/istate.html" class="tsd-signature-type">IState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="b.html" class="tsd-signature-type">B</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>State<span class="tsd-signature-symbol">(</span>startingState<span class="tsd-signature-symbol">: </span><a href="../interfaces/idispatchstate.html" class="tsd-signature-type">IDispatchState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L37">lib/state.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L44">lib/state.ts:44</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -165,10 +170,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>startingState: <a href="../interfaces/istate.html" class="tsd-signature-type">IState</a></h5>
+									<h5>startingState: <a href="../interfaces/idispatchstate.html" class="tsd-signature-type">IDispatchState</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="b.html" class="tsd-signature-type">B</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="state.html" class="tsd-signature-type">State</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -181,7 +186,7 @@
 					<div class="tsd-signature tsd-kind-icon">bot<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span><span class="tsd-signature-symbol"> =&nbsp;bot</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L25">lib/state.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L37">lib/state.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -192,7 +197,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#done">done</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L26">lib/state.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L38">lib/state.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -202,68 +207,27 @@
 					<div class="tsd-signature tsd-kind-icon">envelopes<span class="tsd-signature-symbol">:</span> <a href="envelope.html" class="tsd-signature-type">Envelope</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L29">lib/state.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L42">lib/state.ts:42</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="heard" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> heard</h3>
-					<div class="tsd-signature tsd-kind-icon">heard<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="listeners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">:</span> <a href="listener.html" class="tsd-signature-type">Listener</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L33">lib/state.ts:33</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="listened" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> listened</h3>
-					<div class="tsd-signature tsd-kind-icon">listened<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L34">lib/state.ts:34</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="listener" class="tsd-anchor"></a>
-					<h3>listener</h3>
-					<div class="tsd-signature tsd-kind-icon">listener<span class="tsd-signature-symbol">:</span> <a href="listener.html" class="tsd-signature-type">Listener</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L28">lib/state.ts:28</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="match" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> match</h3>
-					<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L30">lib/state.ts:30</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="matched" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> matched</h3>
-					<div class="tsd-signature tsd-kind-icon">matched<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L31">lib/state.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L41">lib/state.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="message" class="tsd-anchor"></a>
 					<h3>message</h3>
-					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <a href="message.html" class="tsd-signature-type">Message</a></div>
+					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <a href="message.html" class="tsd-signature-type">Message</a><span class="tsd-signature-symbol"> =&nbsp;new bot.NullMessage()</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#message">message</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L27">lib/state.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L40">lib/state.ts:40</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -272,35 +236,106 @@
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> method</h3>
 					<div class="tsd-signature tsd-kind-icon">method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#method">method</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L32">lib/state.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L43">lib/state.ts:43</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="remembered" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> remembered</h3>
-					<div class="tsd-signature tsd-kind-icon">remembered<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<a name="processed" class="tsd-anchor"></a>
+					<h3>processed</h3>
+					<div class="tsd-signature tsd-kind-icon">processed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L36">lib/state.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L39">lib/state.ts:39</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+						</ul>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="responded" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> responded</h3>
-					<div class="tsd-signature tsd-kind-icon">responded<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L35">lib/state.ts:35</a></li>
-						</ul>
-					</aside>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="match" class="tsd-anchor"></a>
+					<h3>match</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> match<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L78">lib/state.ts:78</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Use property getter for last listener match (often the only match).
+										In the context of a listener callback, this provides a shorthand to the
+									listener that was just matched, as opposed to <code>b.getListener(id).match</code>.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="matched" class="tsd-anchor"></a>
+					<h3>matched</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> matched<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L84">lib/state.ts:84</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Use property getting for match state (only matched listeners are kept)</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="dispatchedenvelope" class="tsd-anchor"></a>
+					<h3>dispatched<wbr>Envelope</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">dispatched<wbr>Envelope<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="envelope.html" class="tsd-signature-type">Envelope</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L95">lib/state.ts:95</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return the last dispatched envelope</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<a href="envelope.html" class="tsd-signature-type">Envelope</a>
+							</h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="finish" class="tsd-anchor"></a>
 					<h3>finish</h3>
@@ -311,7 +346,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L47">lib/state.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L52">lib/state.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,6 +355,37 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getlistener" class="tsd-anchor"></a>
+					<h3>get<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Listener<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="listener.html" class="tsd-signature-type">Listener</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L65">lib/state.ts:65</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a matched listener by it&#39;s ID or index (or last matched)</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> id: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<a href="listener.html" class="tsd-signature-type">Listener</a>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -333,12 +399,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L53">lib/state.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L89">lib/state.ts:89</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Check for an envelope that hasn&#39;t been dispatched</p>
+									<p>Check for existing envelope without response</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
@@ -352,13 +418,13 @@
 					<a name="respond" class="tsd-anchor"></a>
 					<h3>respond</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">respond<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">respond<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L70">lib/state.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L112">lib/state.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -372,7 +438,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>content: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -386,7 +452,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L59">lib/state.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L101">lib/state.ts:101</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -408,13 +474,13 @@
 					<a name="respondvia" class="tsd-anchor"></a>
 					<h3>respond<wbr>Via</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">respond<wbr>Via<span class="tsd-signature-symbol">(</span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">respond<wbr>Via<span class="tsd-signature-symbol">(</span>method<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L76">lib/state.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L118">lib/state.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -431,7 +497,35 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>content: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setlistener" class="tsd-anchor"></a>
+					<h3>set<wbr>Listener</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Listener<span class="tsd-signature-symbol">(</span>listener<span class="tsd-signature-symbol">: </span><a href="listener.html" class="tsd-signature-type">Listener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L58">lib/state.ts:58</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Add to or create collection of matched listeners</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>listener: <a href="listener.html" class="tsd-signature-type">Listener</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -450,61 +544,61 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="b.html" class="tsd-kind-icon">B</a>
+						<a href="state.html" class="tsd-kind-icon">State</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="b.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="state.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#bot" class="tsd-kind-icon">bot</a>
+								<a href="state.html#bot" class="tsd-kind-icon">bot</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#done" class="tsd-kind-icon">done</a>
+								<a href="state.html#done" class="tsd-kind-icon">done</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#envelopes" class="tsd-kind-icon">envelopes</a>
+								<a href="state.html#envelopes" class="tsd-kind-icon">envelopes</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#heard" class="tsd-kind-icon">heard</a>
+								<a href="state.html#listeners" class="tsd-kind-icon">listeners</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#listened" class="tsd-kind-icon">listened</a>
+								<a href="state.html#message" class="tsd-kind-icon">message</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#listener" class="tsd-kind-icon">listener</a>
+								<a href="state.html#method" class="tsd-kind-icon">method</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#match" class="tsd-kind-icon">match</a>
+								<a href="state.html#processed" class="tsd-kind-icon">processed</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#matched" class="tsd-kind-icon">matched</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="state.html#match" class="tsd-kind-icon">match</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#message" class="tsd-kind-icon">message</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#method" class="tsd-kind-icon">method</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#remembered" class="tsd-kind-icon">remembered</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="b.html#responded" class="tsd-kind-icon">responded</a>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="state.html#matched" class="tsd-kind-icon">matched</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="b.html#finish" class="tsd-kind-icon">finish</a>
+								<a href="state.html#dispatchedenvelope" class="tsd-kind-icon">dispatched<wbr>Envelope</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="b.html#pendingenvelope" class="tsd-kind-icon">pending<wbr>Envelope</a>
+								<a href="state.html#finish" class="tsd-kind-icon">finish</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="b.html#respond" class="tsd-kind-icon">respond</a>
+								<a href="state.html#getlistener" class="tsd-kind-icon">get<wbr>Listener</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="b.html#respondenvelope" class="tsd-kind-icon">respond<wbr>Envelope</a>
+								<a href="state.html#pendingenvelope" class="tsd-kind-icon">pending<wbr>Envelope</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="b.html#respondvia" class="tsd-kind-icon">respond<wbr>Via</a>
+								<a href="state.html#respond" class="tsd-kind-icon">respond</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="state.html#respondenvelope" class="tsd-kind-icon">respond<wbr>Envelope</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="state.html#respondvia" class="tsd-kind-icon">respond<wbr>Via</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="state.html#setlistener" class="tsd-kind-icon">set<wbr>Listener</a>
 							</li>
 						</ul>
 					</li>

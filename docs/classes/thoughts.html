@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>User | bBot</title>
+	<title>Thoughts | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="user.html">User</a>
+					<a href="thoughts.html">Thoughts</a>
 				</li>
 			</ul>
-			<h1>Class User</h1>
+			<h1>Class Thoughts</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,12 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Represents a participating user in the chat.</p>
+						<p>Collection of processes and listeners to execute with middleware and state.
+							Will use global listeners by default, but can be replaced with custom set.
+							Sequence arrays define orders of named processes, to run consecutively.
+							Default sequences are <code>receive</code> and <code>dispatch</code> to process incoming/outgoing.
+							Each process may have a <code>validate</code> method to run before processing and an
+						<code>action</code> method to run after. Validate returning false will skip the process.</p>
 					</div>
 				</div>
 			</section>
@@ -75,24 +80,9 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">User</span>
+						<span class="target">Thoughts</span>
 					</li>
 				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/iuser.html" class="tsd-signature-type">IUser</a></li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-kind-class">
-				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Represents a participating user in the chat.</p>
-					</div>
-				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -101,15 +91,27 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="user.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="thoughts.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="user.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="user.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="user.html#room" class="tsd-kind-icon">room</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#b" class="tsd-kind-icon">b</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#listeners" class="tsd-kind-icon">listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#processes" class="tsd-kind-icon">processes</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thoughts.html#start" class="tsd-kind-icon">start</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Object literals</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-object-literal tsd-parent-kind-class"><a href="thoughts.html#sequence" class="tsd-kind-icon">sequence</a></li>
 							</ul>
 						</section>
 					</div>
@@ -121,27 +123,32 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>User<span class="tsd-signature-symbol">(</span>meta<span class="tsd-signature-symbol">?: </span><a href="../interfaces/iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Thoughts<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, newListeners<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">bot.Listeners</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thoughts.html" class="tsd-signature-type">Thoughts</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/user.ts#L23">lib/user.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L111">lib/thought.ts:111</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create a User</p>
+									<p>Start a new instance of thought processes with an optional set of listeners
+										to process. By default will process global listeners, but can accept an
+									isolated set of listeners for specific conversational context.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> meta: <a href="../interfaces/iuser.html" class="tsd-signature-type">IUser</a></h5>
+									<h5>state: <a href="state.html" class="tsd-signature-type">State</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> newListeners: <span class="tsd-signature-type">bot.Listeners</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="user.html" class="tsd-signature-type">User</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="thoughts.html" class="tsd-signature-type">Thoughts</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -149,51 +156,116 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="b" class="tsd-anchor"></a>
+					<h3>b</h3>
+					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol"> | </span><a href="state.html" class="tsd-signature-type">State</a></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/iuser.html">IUser</a>.<a href="../interfaces/iuser.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/user.ts#L16">lib/user.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L104">lib/thought.ts:104</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="listeners" class="tsd-anchor"></a>
+					<h3>listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">:</span> <a href="listeners.html" class="tsd-signature-type">Listeners</a><span class="tsd-signature-symbol"> =&nbsp;bot.globalListeners</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/iuser.html">IUser</a>.<a href="../interfaces/iuser.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/user.ts#L22">lib/user.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L105">lib/thought.ts:105</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="room" class="tsd-anchor"></a>
-					<h3>room</h3>
-					<div class="tsd-signature tsd-kind-icon">room<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<a name="processes" class="tsd-anchor"></a>
+					<h3>processes</h3>
+					<div class="tsd-signature tsd-kind-icon">processes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/iuser.html">IUser</a>.<a href="../interfaces/iuser.html#room">room</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/user.ts#L17">lib/user.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L111">lib/thought.ts:111</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
 						<h4>Type declaration</h4>
 						<ul class="tsd-parameters">
-							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> id<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
-							</li>
-							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
-							</li>
-							<li class="tsd-parameter">
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> type<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="thought.html" class="tsd-signature-type">Thought</a></h5>
 							</li>
 						</ul>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="start" class="tsd-anchor"></a>
+					<h3>start</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">(</span>sequence<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L208">lib/thought.ts:208</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Trigger processing each thought in defined sequence.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>sequence: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Object literals</h2>
+				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-class">
+					<a name="sequence" class="tsd-anchor"></a>
+					<h3>sequence</h3>
+					<div class="tsd-signature tsd-kind-icon">sequence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L106">lib/thought.ts:106</a></li>
+						</ul>
+					</aside>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="sequence.dispatch" class="tsd-anchor"></a>
+						<h3>dispatch</h3>
+						<div class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;respond&#x27;, &#x27;remember&#x27;]</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L109">lib/thought.ts:109</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="sequence.receive" class="tsd-anchor"></a>
+						<h3>receive</h3>
+						<div class="tsd-signature tsd-kind-icon">receive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;hear&#x27;, &#x27;listen&#x27;, &#x27;understand&#x27;, &#x27;act&#x27;, &#x27;remember&#x27;]</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L107">lib/thought.ts:107</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="sequence.respond" class="tsd-anchor"></a>
+						<h3>respond</h3>
+						<div class="tsd-signature tsd-kind-icon">respond<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;respond&#x27;]</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L108">lib/thought.ts:108</a></li>
+							</ul>
+						</aside>
+					</section>
 				</section>
 			</section>
 		</div>
@@ -210,19 +282,25 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="user.html" class="tsd-kind-icon">User</a>
+						<a href="thoughts.html" class="tsd-kind-icon">Thoughts</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="user.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="thoughts.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="user.html#id" class="tsd-kind-icon">id</a>
+								<a href="thoughts.html#b" class="tsd-kind-icon">b</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="user.html#name" class="tsd-kind-icon">name</a>
+								<a href="thoughts.html#listeners" class="tsd-kind-icon">listeners</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="user.html#room" class="tsd-kind-icon">room</a>
+								<a href="thoughts.html#processes" class="tsd-kind-icon">processes</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="thoughts.html#start" class="tsd-kind-icon">start</a>
+							</li>
+							<li class=" tsd-kind-object-literal tsd-parent-kind-class">
+								<a href="thoughts.html#sequence" class="tsd-kind-icon">sequence</a>
 							</li>
 						</ul>
 					</li>
