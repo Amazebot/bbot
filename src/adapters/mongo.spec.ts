@@ -139,6 +139,20 @@ describe('mongo', () => {
       }).lean().exec()
       expect(tests.data).to.eql(testStore)
     })
+    it('keeps matches intact for state listeners', async () => {
+      const b = new bot.State({ message: new bot.TextMessage(new bot.User(), '_') })
+      const listeners = [
+        new bot.CustomListener(() => 1, (b) => 1, { id: 'A', force: true }),
+        new bot.CustomListener(() => 2, (b) => 2, { id: 'B', force: true })
+      ]
+      for (let listener of listeners) await listener.process(b)
+      await store.keep('states', b)
+      const states = await store.store.model(testCollection).findOne({
+        sub: 'states',
+        type: 'store'
+      }).lean().exec()
+      expect(states.listeners.map(l => l.match)).to.eql([1, 2])
+    })
   })
   describe('.find', () => {
     beforeEach(async () => {

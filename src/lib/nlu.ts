@@ -36,7 +36,7 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
    * @param index Array index in NLU result set
    * @param criteria NLU criteria or result subset to match on (ignores score)
    */
-  indexIncludes (index: number, criteria: INaturalLanguageCriteria): INaturalLanguageResult | undefined {
+  indexIncludes (index: number, criteria: INaturalLanguageCriteria) {
     if (!Object.keys(criteria).some((key) => {
       return (['id', 'name', 'score'].includes(key))
     })) throw new Error('[nlu] Result matching requires ID, name or score')
@@ -75,7 +75,7 @@ export class NaturalLanguageResult extends Array<INaturalLanguageResult> {
    * given, it matches if the result `has` (includes) the given id and/or name.
    * When comparing score, the array is first filtered against other criteria.
    */
-  match (criteria: INaturalLanguageCriteria): INaturalLanguageResult[] | undefined {
+  match (criteria: INaturalLanguageCriteria) {
     let { score, operator } = criteria
     if (!operator) operator = (typeof score === 'undefined') ? 'in' : 'gte'
     let matching: INaturalLanguageResult | undefined

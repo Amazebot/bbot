@@ -24,10 +24,10 @@ class MockAdapter extends bot.StorageAdapter {
 
 describe('brain', () => {
   before(() => {
-    mockAdapter = sinon.createStubInstance(MockAdapter)
-    mockAdapter.loadMemory.resolves({ test: { foo: 'bar' } })
-    mockAdapter.find.resolves([{ test: 'test' }])
-    mockAdapter.findOne.resolves({ test: 'test' })
+    mockAdapter = sinon.createStubInstance(MockAdapter);
+    (mockAdapter.loadMemory as sinon.SinonStub).resolves({ test: { foo: 'bar' } });
+    (mockAdapter.find as sinon.SinonStub).resolves([{ test: 'test' }]);
+    (mockAdapter.findOne as sinon.SinonStub).resolves({ test: 'test' })
     bot.adapters.storage = mockAdapter
     bot.config.autoSave = false
   })
@@ -35,10 +35,7 @@ describe('brain', () => {
   describe('.clearMemory', () => {
     it('resets to initial memory collections', () => {
       brain.clearMemory()
-      expect(brain.memory).to.eql({
-        users: {},
-        private: {}
-      })
+      expect(brain.memory).to.eql({ users: {}, private: {} })
     })
   })
   describe('.saveMemory', () => {
@@ -127,10 +124,10 @@ describe('brain', () => {
     })
     it('removes bot from kept states', () => {
       let message = new bot.TextMessage(new bot.User(), 'testing')
-      let b = new bot.B({ message: message })
+      let b = new bot.State({ message: message })
       let stub = (mockAdapter.keep as sinon.SinonStub)
       brain.keep('test-state', b)
-      sinon.assert.calledWithExactly(stub, 'test-state', { done: false, message })
+      sinon.assert.calledWithExactly(stub, 'test-state', sinon.match({ message }))
       stub.resetHistory()
     })
     it('does not keep any excluded data keys', () => {

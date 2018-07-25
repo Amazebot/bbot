@@ -12,5 +12,5 @@ export abstract class LanguageAdapter extends Adapter {
   abstract shutdown (): Promise<void>
 
   /** Add NLU results from NLP platform analysis */
-  abstract async process (message: bot.TextMessage): Promise<bot.NaturalLanguageResultsRaw | undefined>
+  abstract process (message: bot.TextMessage): Promise<bot.NaturalLanguageResultsRaw | undefined>
 }

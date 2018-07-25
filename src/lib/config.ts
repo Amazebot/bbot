@@ -20,7 +20,7 @@ export interface IConfig {
  * the main attribute, or use defaults if none assigned. The option values are
  * then assigned to the config object (some are nullable).
  */
-export function getConfig (): IConfig {
+export function getConfig () {
   const argv = yargs
     .usage('\nUsage: $0 [args]')
     .env('BOT')

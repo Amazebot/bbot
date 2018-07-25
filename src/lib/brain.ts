@@ -158,7 +158,7 @@ export function userById (id: string, meta?: any) {
 }
 
 /** Get users by their name. */
-export function usersByName (name: string): bot.User[] {
+export function usersByName (name: string) {
   let users: bot.User[] = []
   for (let id in memory.users) {
     let user: bot.User = memory.users[id]

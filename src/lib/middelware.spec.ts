@@ -24,28 +24,25 @@ describe('middleware', () => {
     it('returns a promise', () => {
       const testMiddleware = new middleware.Middleware('test')
       const piece = (b, next, done) => next()
-      const complete = (b, done) => done()
-      const callback = () => null
+      const complete = (b) => null
       testMiddleware.register(piece)
-      const promise = testMiddleware.execute({ message }, complete, callback)
+      const promise = testMiddleware.execute({ message }, complete)
       expect(promise.then).to.be.a('Function')
       return promise
     })
     it('executes synchronous pieces', () => {
       const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => next())
-      const complete = (b, done) => done()
-      const callback = () => sinon.assert.calledOnce(piece)
+      const complete = (b) => null
       testMiddleware.register(piece)
-      return testMiddleware.execute({ message }, complete, callback)
+      return testMiddleware.execute({ message }, complete)
     })
     it('executes asynchronous pieces', () => {
       const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => process.nextTick(() => next()))
-      const complete = (b, done) => done()
-      const callback = () => sinon.assert.calledOnce(piece)
+      const complete = (b) => null
       testMiddleware.register(piece)
-      testMiddleware.execute({ message }, complete, callback)
+      testMiddleware.execute({ message }, complete)
     })
     it('resolves after asynchronous pieces', async () => {
       const testMiddleware = new middleware.Middleware('test')
@@ -56,27 +53,23 @@ describe('middleware', () => {
         })
       }
       testMiddleware.register(asyncPiece)
-      const b = await testMiddleware.execute({ message }, (b, done) => done())
+      const b = await testMiddleware.execute({ message }, (b) => null)
       expect(b.delayed).to.equal(true)
     })
     it('creates state when given plain object', () => {
       const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => next())
-      const complete = (b, done) => {
-        expect(b).to.be.instanceof(bot.B)
-        done()
+      const complete = (b) => {
+        expect(b).to.be.instanceof(bot.State)
       }
       testMiddleware.register(piece)
       return testMiddleware.execute({ message }, complete)
     })
     it('accepts and processes initialised state', () => {
-      const b = new bot.B({ message })
+      const b = new bot.State({ message })
       const testMiddleware = new middleware.Middleware('test')
       const piece = sinon.spy((b, next, done) => next())
-      const complete = (b, done) => {
-        expect(b).to.eql(b)
-        done()
-      }
+      const complete = (b) => expect(b).to.eql(b)
       testMiddleware.register(piece)
       return testMiddleware.execute({ message }, complete)
     })
@@ -84,13 +77,12 @@ describe('middleware', () => {
       const testMiddleware = new middleware.Middleware('test')
       const pieceA = sinon.spy((b, next, done) => next())
       const pieceB = sinon.spy((b, next, done) => next())
-      const complete = (b, done) => done()
-      const callback = () => sinon.assert.callOrder(pieceA, pieceB)
+      const complete = (b) => null
       testMiddleware.register(pieceA)
       testMiddleware.register(pieceB)
-      testMiddleware.execute({ message }, complete, callback)
+      testMiddleware.execute({ message }, complete)
     })
-    it('executes asynchronous pieces in order', () => {
+    it('executes asynchronous pieces in order', async () => {
       const testMiddleware = new middleware.Middleware('test')
       const pieceA = sinon.spy((b, next, done) => {
         return delay(20).then(() => next())
@@ -98,95 +90,79 @@ describe('middleware', () => {
       const pieceB = sinon.spy((b, next, done) => {
         return delay(10).then(() => next())
       })
-      const complete = (b, done) => done()
-      const callback = () => sinon.assert.callOrder(pieceA, pieceB)
+      const complete = (b) => null
       testMiddleware.register(pieceA)
       testMiddleware.register(pieceB)
-      return testMiddleware.execute({ message }, complete, callback)
+      await testMiddleware.execute({ message }, complete)
+      sinon.assert.callOrder(pieceA, pieceB)
     })
     it('executes the complete function when there are no other pieces', () => {
       const testMiddleware = new middleware.Middleware('test')
-      const complete = sinon.spy((b, done) => done())
-      const callback = () => null
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
+      const complete = sinon.spy()
+      return testMiddleware.execute({ message }, complete).then(() => {
         sinon.assert.calledOnce(complete)
-      })
-    })
-    it('executes the callback when there are no pieces', () => {
-      const testMiddleware = new middleware.Middleware('test')
-      const complete = (b, done) => done()
-      const callback = sinon.spy()
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
-        sinon.assert.calledOnce(callback)
       })
     })
     it('executes the complete function when there are other pieces', () => {
       const testMiddleware = new middleware.Middleware('test')
       const piece = (b, next, done) => next()
-      const complete = sinon.spy((b, done) => done())
-      const callback = () => null
+      const complete = sinon.spy()
       testMiddleware.register(piece)
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
+      return testMiddleware.execute({ message }, complete).then(() => {
         sinon.assert.calledOnce(complete)
       })
     })
-    it('executes the callback after complete function', () => {
-      const testMiddleware = new middleware.Middleware('test')
-      const piece = (b, next, done) => next()
-      const complete = (b, done) => done()
-      const callback = sinon.spy()
+    it('rejects promise if piece throws', () => {
+      const testMiddleware = new middleware.Middleware('failure')
+      const piece = (b, next, done) => {
+        throw new Error('test throw')
+      }
+      const complete = sinon.spy()
       testMiddleware.register(piece)
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
-        sinon.assert.calledOnce(callback)
-      })
+      return testMiddleware.execute({ message }, complete)
+        .then(() => expect(true).to.equal(false))
+        .catch((err) => expect(err).to.be.an('Error'))
     })
     it('does not execute complete function if piece throws', () => {
       const testMiddleware = new middleware.Middleware('failure')
       const piece = (b, next, done) => {
         throw new Error('test throw')
       }
-      const complete = sinon.spy((b, done) => done())
-      const callback = () => null
+      const complete = sinon.spy()
       testMiddleware.register(piece)
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
-        sinon.assert.notCalled(complete)
-      })
+      return testMiddleware.execute({ message }, complete)
+        .then(() => expect(true).to.equal(false))
+        .catch(() => sinon.assert.notCalled(complete))
     })
-    it('executes callback even if piece throws', () => {
-      const testMiddleware = new middleware.Middleware('failure')
-      const piece = (b, next, done) => {
-        throw new Error('test throw')
-      }
-      const complete = (b, done) => done()
-      const callback = sinon.spy(() => null)
+    it('does not execute complete function if piece interrupts', async () => {
+      const testMiddleware = new middleware.Middleware('interrupt')
+      const piece = (_, __, done) => done()
+      const complete = sinon.spy()
       testMiddleware.register(piece)
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
-        sinon.assert.calledOnce(callback)
-      })
+      await testMiddleware.execute({ message }, complete)
+      sinon.assert.notCalled(complete)
     })
-    it('call piece done even if piece throws', () => {
-      const testMiddleware = new middleware.Middleware('failure')
-      const doneA = sinon.spy((done) => done())
-      const pieceA = (b, next, done) => next(() => doneA(done))
-      const pieceB = (b, next, done) => {
-        throw new Error('test throw')
+    it('resolves promise if piece interrupts', () => {
+      const testMiddleware = new middleware.Middleware('interrupt')
+      let tracker = false
+      const piece = (_, __, done) => {
+        tracker = true
+        done()
       }
-      const complete = (b, done) => done()
-      testMiddleware.register(pieceA)
-      testMiddleware.register(pieceB)
-      return testMiddleware.execute({ message }, complete, () => {
-        sinon.assert.calledOnce(doneA)
+      const complete = sinon.spy()
+      testMiddleware.register(piece)
+      return testMiddleware.execute({ message }, complete).then(() => {
+        expect(tracker).to.equal(true)
       })
     })
     it('calls wrapped done functions after complete', () => {
       const testMiddleware = new middleware.Middleware('wrapped')
       const pieceDone = sinon.spy((done) => done())
       const piece = sinon.spy((b, next, done) => next(() => pieceDone(done)))
-      const complete = sinon.spy((b, done) => done())
-      const callback = sinon.spy(() => null)
+      const complete = sinon.spy((b) => null)
       testMiddleware.register(piece)
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
-        sinon.assert.callOrder(piece, complete, pieceDone, callback)
+      return testMiddleware.execute({ message }, complete).then(() => {
+        sinon.assert.callOrder(piece, complete, pieceDone)
       })
     })
     it('calls wrapped done functions in inverse order of pieces', async () => {
@@ -195,15 +171,14 @@ describe('middleware', () => {
       const pieceA = (b, next, done) => next(() => doneA(done))
       const doneB = sinon.spy((done) => done())
       const pieceB = (b, next, done) => next(() => doneB(done))
-      const complete = sinon.spy((b, done) => done())
-      const callback = sinon.spy(() => null)
+      const complete = sinon.spy((b) => null)
       testMiddleware.register(pieceA)
       testMiddleware.register(pieceB)
-      return testMiddleware.execute({ message }, complete, callback).then(() => {
-        sinon.assert.callOrder(complete, doneB, doneA, callback)
+      return testMiddleware.execute({ message }, complete).then(() => {
+        sinon.assert.callOrder(complete, doneB, doneA)
       })
     })
-    it('passes state along with any modifications', () => {
+    it('passes state along with any modifications', async () => {
       const testMiddleware = new middleware.Middleware()
       const b = { message, pieces: [] }
       const pieceA = (b, next, done) => {
@@ -214,25 +189,17 @@ describe('middleware', () => {
         b.pieces.push('B')
         next()
       }
-      const complete = (b, done) => {
-        b.pieces.push('C')
-        done()
-      }
+      const complete = (b) => b.pieces.push('C')
       testMiddleware.register(pieceA)
       testMiddleware.register(pieceB)
-      return testMiddleware.execute(b, complete, () => {
-        expect(b.pieces).to.eql(['A', 'B', 'C'])
-      })
+      await testMiddleware.execute(b, complete)
+      expect(b.pieces).to.eql(['A', 'B', 'C'])
     })
     it('resolves promise with final state', () => {
       const testMiddleware = new middleware.Middleware()
       const b = { message, complete: false }
-      const complete = (b, done) => {
-        b.complete = true
-        done()
-      }
-      const callback = () => null
-      return testMiddleware.execute(b, complete, callback).then((b) => {
+      const complete = (b) => b.complete = true
+      return testMiddleware.execute(b, complete).then((b) => {
         expect(b.complete).to.equal(true)
       })
     })

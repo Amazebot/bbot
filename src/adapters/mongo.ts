@@ -8,7 +8,7 @@ export interface IStore extends mongoose.Document {
 }
 
 const models: { [key: string]: mongoose.Model<mongoose.Document> } = {}
-export function getModel (collection: string): mongoose.Model<mongoose.Document> {
+export function getModel (collection: string) {
   if (!models[collection]) {
     delete mongoose.connection.models[collection] // make sure its gone
     models[collection] = mongoose.model(collection, new mongoose.Schema({
@@ -66,7 +66,7 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Put memory data in documents by sub-collection */
-  async saveMemory (data: any): Promise<void> {
+  async saveMemory (data: any) {
     this.bot.logger.debug(`[mongo] saving memory data to DB`)
     for (let sub in data) {
       const query = { sub, type: 'memory' }
@@ -78,7 +78,7 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Get all the memory document data */
-  async loadMemory (): Promise<any> {
+  async loadMemory () {
     this.bot.logger.debug(`[mongo] loading memory data from DB`)
     const query = { type: 'memory' }
     const fields = { _id: 0, 'data': 1, 'sub': 1 }
@@ -100,7 +100,7 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Add item to serial store data */
-  async keep (sub: string, data: any): Promise<void> {
+  async keep (sub: string, data: any) {
     try {
       this.bot.logger.debug(`[mongo] keep ${sub} value in DB`)
       const query = { sub, type: 'store' }
@@ -114,7 +114,7 @@ export class Mongo extends StorageAdapter {
   }
 
   /** Find certain stuff in Mongo */
-  async find (sub: string, params: any): Promise<any> {
+  async find (sub: string, params: any) {
     this.bot.logger.debug(`[mongo] finding any ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
     const fields = { _id: 0, 'data': 1 }

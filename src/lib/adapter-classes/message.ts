@@ -12,5 +12,5 @@ export abstract class MessageAdapter extends Adapter {
   abstract shutdown (): Promise<void>
 
   /** Take dispatched envelope to action in platform */
-  abstract async dispatch (envelope: bot.Envelope): Promise<any>
+  abstract dispatch (envelope: bot.Envelope): Promise<any>
 }
