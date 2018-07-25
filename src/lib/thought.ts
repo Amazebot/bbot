@@ -1,58 +1,156 @@
 import * as bot from '..'
 
+/** Options for defining thought process. */
+export interface IThought {
+  name: string
+  b: bot.State
+  validate?: () => Promise<boolean> | boolean
+  action?: (success: boolean) => Promise<void> | void
+  listeners?: { [id: string]: bot.Listener }
+  middleware?: bot.Middleware
+}
+
 /**
- * Collection of thought processes.
- * Each can be called manually to create a custom thought process, but usually
- * these methods are only initiated by `bot.receive` or `bot.dispatch`.
- * - `listen`, `understand` and `act` follow after `hear`
- * - `remember` is included after `receive` or `respond`
+ * Defines a process to wrap execution of middleware of the same name.
+ * Validators can prevent a process from running.
+ * Actions can effect the state before the next process validates.
  */
-export class Thought {
-  listeners: bot.Listeners
+export class Thought implements IThought {
+  name: string
+  b: bot.State
+  validate: () => Promise<boolean> | boolean = () => Promise.resolve(true)
+  action: (success: boolean) => Promise<void> | void = (_) => Promise.resolve()
+  middleware: bot.Middleware
+  listeners?: { [id: string]: bot.Listener }
+
+  /**
+   * Create new thought process with optional validate and action functions.
+   * Presence of listeners in options determines how middleware will execute.
+   * Without middleware option, will use "global" middleware of same name.
+   */
+  constructor (options: IThought) {
+    this.name = options.name
+    this.b = options.b
+    if (options.validate) this.validate = options.validate
+    if (options.action) this.action = options.action
+    if (options.listeners) this.listeners = options.listeners
+    if (options.middleware) this.middleware = options.middleware
+    else if (bot.middlewares[this.name]) this.middleware = bot.middlewares[this.name]
+    else throw new Error('[thought] invalid middleware provided')
+  }
+
+  /**
+   * Call validate, execute middleware, possibly listeners, then action.
+   * Will not enter process with empty listeners or if state `done` is true.
+   * Without listeners, execute middleware, resolve on completion.
+   * With listeners, process each listener or until state `done` is true.
+   * Action will be called with the boolean success of the process.
+   * Process succeeds if middleware completed or listeners were matched.
+   * If process succeeds, timestamp is added to state.
+   */
+  async process () {
+    // let isPending = true
+    return new Promise((resolve, reject) => {
+      const { b, name, validate, middleware, listeners } = this
+      if (listeners && Object.keys(listeners).length === 0) {
+        bot.logger.debug(`[thought] skip ${name}, no listeners to process`)
+        return reject()
+      }
+      if (listeners && b.done) {
+        bot.logger.debug(`[thought] skip ${name}, listener processing is done`)
+        return reject()
+      }
+      Promise.resolve(validate())
+        .then(async (valid) => {
+          if (!valid) {
+            bot.logger.debug(`[thought] ${name} validator bypassed process`)
+            return reject()
+          }
+          if (b.message) bot.logger.debug(`[thought] ${name} processing incoming message ID ${b.message.id}`)
+          else if (b.envelopes) bot.logger.debug(`[thought] ${name} processing outgoing envelopes`)
+          if (typeof listeners === 'undefined') return middleware.execute(b, resolve).then(reject)
+          for (let id in listeners) {
+            if (b.done) break
+            await listeners[id].process(b, middleware)
+          }
+          return (b.matched) ? resolve() : reject()
+        })
+        .catch((err) => {
+          bot.logger.debug(`[thought] ${name} validation error ${err.message}`)
+          reject()
+        })
+    })
+      .then(() => {
+        // listener will add timestamp on match, so that it pre-dates response
+        if (!this.b.processed[this.name]) this.b.processed[this.name] = Date.now()
+        return this.action(true)
+      })
+      .catch((err) => {
+        if (err) bot.logger.error(`[thought] ${this.name} error, ${err.message}`)
+        return this.action(false)
+      })
+  }
+}
+
+/**
+ * Collection of processes and listeners to execute with middleware and state.
+ * Will use global listeners by default, but can be replaced with custom set.
+ * Sequence arrays define orders of named processes, to run consecutively.
+ * Default sequences are `receive` and `dispatch` to process incoming/outgoing.
+ * Each process may have a `validate` method to run before processing and an
+ * `action` method to run after. Validate returning false will skip the process.
+ */
+export class Thoughts {
+  b: bot.State | bot.State
+  listeners: bot.Listeners = bot.globalListeners
+  sequence: { [key: string]: string[] } = {
+    receive: ['hear', 'listen', 'understand', 'act', 'remember'],
+    respond: ['respond'],
+    dispatch: ['respond', 'remember']
+  }
+  processes: { [key: string]: bot.Thought }
 
   /**
    * Start a new instance of thought processes with an optional set of listeners
    * to process. By default will process global listeners, but can accept an
    * isolated set of listeners for specific conversational context.
    */
-  constructor (listeners = bot.globalListeners) {
-    this.listeners = new bot.Listeners(listeners)
-  }
+  constructor (
+    state: bot.State,
+    newListeners?: bot.Listeners
+  ) {
+    this.b = state
+    if (newListeners) this.listeners = newListeners
+    const { b, listeners } = this
 
-  /** Process receipt of message, pass on final context to listen process. */
-  async hear (message: bot.Message): Promise<bot.B> {
-    bot.events.emit('hear', message)
-    bot.logger.debug(`[thought] hearing message ID ${message.id}`)
-    const b = await bot.middlewares.hear.execute({ message }, this.listen.bind(this))
-    return b
-  }
-
-  /** Process message that was heard, try matching with basic listeners. */
-  async listen (b: bot.B, done: bot.IPieceDone): Promise<void> {
-    b.heard = Date.now()
-    bot.events.emit('listen', b)
-    bot.logger.debug(`[thought] listening to message ID ${b.message.id}`)
-    for (let id in this.listeners.listen) {
-      if (b.done) break
-      await this.listeners.listen[id].process(b, bot.middlewares.listen)
+    // Define processes with specific validation and post processing actions
+    this.processes = {
+      hear: new bot.Thought({ name: 'hear', b }),
+      listen: new bot.Thought({ name: 'listen', b, listeners: listeners.listen }),
+      understand: new bot.Thought({ name: 'understand', b, listeners: listeners.understand }),
+      act: new bot.Thought({ name: 'act', b, listeners: listeners.act }),
+      respond: new bot.Thought({ name: 'respond', b }),
+      remember: new bot.Thought({ name: 'remember', b })
     }
-    if (!b.done && (!b.matched || this.listeners.forced('understand'))) {
-      await this.understand(b, done)
-    } else {
-      if (b.matched) b.listened = Date.now()
-      await done().catch((err) => bot.logger.error(`[thought] listen error: `, err))
-    }
-  }
 
-  /** Process message unmatched by basic listeners, try to match with NLU */
-  async understand (b: bot.B, done: bot.IPieceDone): Promise<void> {
-    bot.events.emit('understand', b)
-    if (Object.keys(this.listeners.understand).length === 0) {
-      bot.logger.debug(`[thought] no understand listeners, skipping language processing`)
-    } else if (b.message instanceof bot.TextMessage && bot.adapters.language) {
-      bot.logger.debug(`[thought] understanding message ID ${b.message.id}`)
-      if (b.message.toString().trim() === '') {
-        bot.logger.error(`[thought] understand cannot process empty message`)
+    // Ignore all further listeners if hear process interrupted
+    this.processes.hear.action = async (success: boolean) => {
+      if (!success) b.finish()
+    }
+
+    // Only processed forced understand listeners if basic listener matched
+    this.processes.listen.action = async (success: boolean) => {
+      if (success) this.listeners.forced('understand')
+    }
+
+    // Get NLU result before understand listeners and only if required
+    this.processes.understand.validate = async () => {
+      if (!bot.adapters.language) {
+        bot.logger.debug(`[thought] skip understand, no language adapter`)
+      } else if (!(b.message instanceof bot.TextMessage)) {
+        bot.logger.debug(`[thought] skip understand, not a text message`)
+      } else if (b.message.toString().trim() === '') {
+        bot.logger.debug(`[thought] skip understand, message text is empty`)
       } else {
         const nluResultsRaw = await bot.adapters.language.process(b.message)
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
@@ -60,95 +158,80 @@ export class Thought {
         } else {
           bot.logger.debug(`[thought] language processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
           b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
-          for (let id in this.listeners.understand) {
-            if (b.done) break
-            await this.listeners.understand[id].process(b, bot.middlewares.understand)
-          }
-          if (b.done || b.matched) {
-            if (b.matched) b.understood = Date.now()
-            await done().catch((err) => bot.logger.error(`[thought] understand error: `, err))
-            return
-          }
+          return true
         }
       }
+      return false
     }
-    await this.act(b, done)
-  }
 
-  /** Process message as catch all if not already handled */
-  async act (b: bot.B, done: bot.IPieceDone): Promise<void> {
-    bot.events.emit('act', b)
-    bot.logger.debug(`[thought] acting on message ID ${b.message.id}`)
-    b.message = new bot.CatchAllMessage(b.message)
-    for (let id in this.listeners.act) {
-      if (b.done) break
-      await this.listeners.act[id].process(b, bot.middlewares.act)
+    // Wrap message in catch all before processing act listeners
+    this.processes.act.validate = async () => {
+      if (b.matched) return false
+      if (b.message) b.message = new bot.CatchAllMessage(b.message)
+      return true
     }
-    if (b.matched) b.acted = Date.now()
-    await done().catch((err) => bot.logger.error(`[thought] act error: `, err))
-  }
 
-  /** Process outgoing message, setting defaults for method and content */
-  async respond (b: bot.B | bot.IState): Promise<bot.B> {
-    bot.events.emit('respond', b)
-    if (!bot.adapters.message) throw new Error('[thought] message adapter not found')
-    if (!(b instanceof bot.B)) b = new bot.B(b)
-    const envelope = (b as bot.B).pendingEnvelope()
-    if (!envelope) throw new Error(`[thought] cannot respond without envelope`)
-    if (b.message) bot.logger.debug(`[thought] responding to message ID ${b.message.id}`)
-    else if (envelope) bot.logger.debug(`[thought] respond dispatching envelope ID ${envelope.id}`)
-    return bot.middlewares.respond.execute(b, async (b, done) => {
-      await bot.adapters.message!.dispatch(envelope)
-      envelope.responded = Date.now()
-      b.responded = Date.now()
-      await done().catch((err) => bot.logger.error(`[thought] respond error: `, err))
-    })
-  }
-
-  /** Store state via adapter after incoming or outgoing message processed. */
-  async remember (b: bot.B): Promise<void> {
-    bot.events.emit('remember', b)
-    if (b.message) {
-      bot.logger.debug(`[thought] remember state for incoming message ID ${b.message.id}`)
-    } else {
-      bot.logger.debug(`[thought] remember outgoing state for envelope ID`)
+    // Connect response envelope to last listener before processing respond
+    this.processes.respond.validate = async () => {
+      if (!bot.adapters.message) {
+        throw new Error('[thought] message adapter not found')
+      }
+      const envelope = b.pendingEnvelope()
+      if (!envelope) return false
+      const listener = b.getListener()
+      if (listener) envelope.listenerId = listener.id
+      return true
     }
-    await bot.middlewares.remember.execute(b, async (b, done) => {
-      await bot.keep('states', b)
-      b.remembered = Date.now()
-      await done().catch((err) => bot.logger.error(`[thought] remember error: `, err))
-    })
-  }
-}
 
-/** Interface for calling processes from bot without constructor */
-export const thoughts: { [key: string]: any } = {
-  hear: (message: bot.Message) => new Thought().hear(message),
-  listen: (b: bot.B, done: bot.IPieceDone) => new Thought().listen(b, done),
-  understand: (b: bot.B, done: bot.IPieceDone) => new Thought().understand(b, done),
-  act: (b: bot.B, done: bot.IPieceDone) => new Thought().act(b, done),
-  respond: (b: bot.B | bot.IState) => new Thought().respond(b),
-  remember: (b: bot.B) => new Thought().remember(b)
+    // Don't respond unless middleware completed (timestamped) with envelope
+    this.processes.respond.action = async (success: boolean) => {
+      if (success) {
+        const envelope = b.respondEnvelope()
+        await bot.adapters.message!.dispatch(envelope)
+        envelope.responded = Date.now()
+      }
+    }
+
+    // Don't remember states with unmatched messages
+    this.processes.remember.validate = async () => {
+      if (!b.matched && !b.dispatchedEnvelope()) return false
+      return (typeof bot.adapters.storage !== 'undefined')
+    }
+
+    // Don't remember unless middleware completed (timestamped)
+    this.processes.remember.action = async (success) => {
+      if (success) await bot.keep('states', b)
+    }
+  }
+
+  /** Trigger processing each thought in defined sequence. */
+  async start (sequence: string) {
+    if (!this.sequence[sequence]) throw new Error('[thought] invalid sequence')
+    for (let process of this.sequence[sequence]) await this.processes[process].process()
+    return this.b
+  }
 }
 
 /**
- * Initiate chain of thought processes for an incoming message.
+ * Initiate sequence of thought processes for an incoming message.
  * Listener callbacks may also respond. Final state is remembered.
  */
-export async function receive (message: bot.Message, callback?: bot.ICallback): Promise<bot.B> {
-  const b = await thoughts.hear(message)
-  if (b.heard) await thoughts.remember(b)
-  if (callback) await Promise.resolve(callback())
-  return b
+export async function receive (message: bot.Message) {
+  return new Thoughts(new bot.State({ message })).start('receive')
+}
+
+/**
+ * Initiate a response from an existing state. Sequence does not remember
+ * because it will usually by triggered from within the `receive` sequence.
+ */
+export async function respond (b: bot.State) {
+  return new Thoughts(b).start('respond')
 }
 
 /**
  * Initiate chain of thought processes for an outgoing envelope.
  * This is for sending unprompted by a listener. Final state is remembered.
  */
-export async function dispatch (envelope: bot.Envelope, callback?: bot.ICallback): Promise<bot.B> {
-  const b = await thoughts.respond({ envelopes: [envelope] })
-  if (b.responded) await thoughts.remember(b)
-  if (callback) await Promise.resolve(callback())
-  return b
+export async function dispatch (envelope: bot.Envelope) {
+  return new Thoughts(new bot.State({ envelopes: [envelope] })).start('dispatch')
 }

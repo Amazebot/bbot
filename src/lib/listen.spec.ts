@@ -1,31 +1,30 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect, assert } from 'chai'
-import * as listen from './listen'
 import * as bot from '..'
 
 let mockUser: bot.User
-let b: bot.B
+let b: bot.State
 let middleware: bot.Middleware
 let callback: sinon.SinonSpy
 let matcher: sinon.SinonSpy
 let piece: sinon.SinonSpy
 let execute: sinon.SinonSpy
-let listener: listen.Listener
+let listener: bot.Listener
 
 const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
-class MockListener extends listen.Listener {
+class MockListener extends bot.Listener {
   async matcher (message) {
     return /test/.test(message.toString())
   }
 }
-class BoolListener extends listen.Listener {
+class BoolListener extends bot.Listener {
   constructor (
     public result: boolean,
-    callback: listen.IListenerCallback,
-    meta?: listen.IListenerMeta
+    callback: bot.IListenerCallback,
+    options?: bot.IListener
   ) {
-    super(callback, meta)
+    super(callback, options)
   }
   async matcher () {
     return this.result
@@ -38,7 +37,7 @@ describe('listen', () => {
   })
   describe('Listener', () => {
     beforeEach(() => {
-      b = new bot.B({ message: new bot.TextMessage(mockUser, 'test') })
+      b = new bot.State({ message: new bot.TextMessage(mockUser, 'test') })
       callback = sinon.spy()
       piece = sinon.spy()
       middleware = new bot.Middleware('mock')
@@ -54,9 +53,9 @@ describe('listen', () => {
       const bitListener = new MockListener('BIT_ID')
       expect(listener.callback).to.be.a('function')
     })
-    it('accepts additional properties as meta', () => {
+    it('accepts additional properties as options', () => {
       const metaListener = new MockListener(() => null, { foo: 'bar' })
-      expect(metaListener.meta.foo).to.equal('bar')
+      expect(metaListener.foo).to.equal('bar')
     })
     it('assigns an ID counter', () => {
       const noIdListener = new MockListener(() => null)
@@ -107,16 +106,33 @@ describe('listen', () => {
         await listener.process(b, middleware)
         sinon.assert.calledWith(piece, sinon.match(b))
       })
-      it('calls callback with match if given', async () => {
-        const callback = sinon.spy()
-        await listener.process(b, middleware, callback)
-        sinon.assert.calledWith(callback, true)
+      it('calls done with match status if given', async () => {
+        const done = sinon.spy()
+        await listener.process(b, middleware, done)
+        sinon.assert.calledWith(done, true)
       })
-      it('calls callback even when unmatched', async () => {
-        const callback = sinon.spy()
-        const badB = new bot.B({ message: new bot.TextMessage(mockUser, 'no match') })
-        await listener.process(badB, middleware, callback)
-        sinon.assert.calledWith(callback, false)
+      it('calls done even when unmatched', async () => {
+        const done = sinon.spy()
+        const badB = new bot.State({ message: new bot.TextMessage(mockUser, 'no match') })
+        await listener.process(badB, middleware, done)
+        sinon.assert.calledWith(done, false)
+      })
+      it('if done returns promise, process waits for resolution', async () => {
+        let done: number
+        await listener.process(b, middleware, () => {
+          done = Date.now()
+          return delay(20)
+        })
+        expect(Date.now()).to.be.gte(done)
+      })
+      it('if middleware rejected, done is called with false', () => {
+        const badMiddleware = new bot.Middleware('fail')
+        badMiddleware.register(() => {
+          throw new Error('(╯°□°）╯︵ ┻━┻')
+        })
+        return listener.process(b, badMiddleware, (result) => {
+          expect(result).to.equal(false)
+        })
       })
       it('state is changed by reference', async () => {
         await listener.process(b, middleware)
@@ -131,14 +147,31 @@ describe('listen', () => {
         await listener.process(b, middleware)
         expect(b.modified).to.equal(2)
       })
+      it('state collects matching listeners and match results', async () => {
+        const b = new bot.State({ message: new bot.TextMessage(mockUser, 'foo') })
+        const listeners = [
+          new bot.CustomListener(() => 1, (b) => {
+            expect(b.match).to.equal(1)
+          }, { id: 'A', force: true }),
+          new bot.CustomListener(() => 2, (b) => {
+            expect(b.match).to.equal(2)
+          }, { id: 'B', force: true }),
+          new bot.CustomListener(() => 3, (b) => {
+            expect(b.match).to.equal(3)
+          }, { id: 'C', force: true })
+        ]
+        for (let listener of listeners) await listener.process(b)
+        expect(b.match).to.equal(3)
+        expect(b.matched).to.equal(true)
+      })
     })
   })
   describe('TextListener', () => {
     it('.process adds matcher result to state', () => {
-      const fooListener = new listen.TextListener(/foo/, (state) => {
+      const fooListener = new bot.TextListener(/foo/, (state) => {
         expect(state.match).to.eql('foo'.match(/foo/))
       })
-      return fooListener.process(new bot.B({
+      return fooListener.process(new bot.State({
         message: new bot.TextMessage(mockUser, 'foo')
       }))
     })
@@ -148,8 +181,8 @@ describe('listen', () => {
       const fooMatcher = sinon.spy((message) => {
         return /foo/.test(message.toString())
       })
-      const fooListener = new listen.CustomListener(fooMatcher, () => null)
-      await fooListener.process(new bot.B({
+      const fooListener = new bot.CustomListener(fooMatcher, () => null)
+      await fooListener.process(new bot.State({
         message: new bot.TextMessage(mockUser, 'foo')
       }))
       sinon.assert.calledOnce(fooMatcher)
@@ -159,8 +192,8 @@ describe('listen', () => {
         await delay(20)
         return 'delayed'
       }
-      const asyncListener = new listen.CustomListener(asyncMatcher, () => null)
-      const result = await asyncListener.process(new bot.B({
+      const asyncListener = new bot.CustomListener(asyncMatcher, () => null)
+      const result = await asyncListener.process(new bot.State({
         message: new bot.TextMessage(mockUser, '')
       }))
       expect(result.match).to.equal('delayed')
@@ -168,7 +201,7 @@ describe('listen', () => {
   })
   describe('NaturalLanguageListener', () => {
     it('.process returns state with truthy match for matching results', async () => {
-      const nluListener = new listen.NaturalLanguageListener({
+      const nluListener = new bot.NaturalLanguageListener({
         intent: { id: 'foo' }
       }, (state) => {
         expect(state.match).to.eql({
@@ -177,72 +210,100 @@ describe('listen', () => {
       })
       const message = new bot.TextMessage(mockUser, 'foo')
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
-      const b = await nluListener.process(new bot.B({ message }))
+      const b = await nluListener.process(new bot.State({ message }))
       assert.isOk(b.match)
       assert.isTrue(b.matched)
     })
     it('.process returns state with falsy match if below score threshold', async () => {
-      const nluListener = new listen.NaturalLanguageListener({
+      const nluListener = new bot.NaturalLanguageListener({
         intent: { id: 'foo', score: .8 }
       }, () => null)
       const message = new bot.TextMessage(mockUser, 'foo')
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', score: .7 })
-      const b = await nluListener.process(new bot.B({ message }))
+      const b = await nluListener.process(new bot.State({ message }))
+      assert.notOk(b.match)
+      assert.isFalse(b.matched)
+    })
+  })
+  describe('NaturalLanguageDirectListener', () => {
+    it('.process returns true for matches with bot prefix', async () => {
+      const nluListener = new bot.NaturalLanguageListenerDirect({
+        intent: { id: 'foo' }
+      }, () => null)
+      const message = new bot.TextMessage(mockUser, `${bot.name} foo`)
+      message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
+      const b = await nluListener.process(new bot.State({ message }))
+      assert.isOk(b.match)
+      assert.isTrue(b.matched)
+    })
+    it('.process returns false for message without bot prefixed', async () => {
+      const nluListener = new bot.NaturalLanguageListenerDirect({
+        intent: { id: 'foo' }
+      }, () => null)
+      const message = new bot.TextMessage(mockUser, `foo`)
+      message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
+      const b = await nluListener.process(new bot.State({ message }))
       assert.notOk(b.match)
       assert.isFalse(b.matched)
     })
   })
   describe('.listenText', () => {
     it('adds text listener to collection, returning ID', () => {
-      const id = listen.listenText(/test/, () => null)
-      expect(listen.globalListeners.listen[id]).to.be.instanceof(listen.TextListener)
+      const id = bot.listenText(/test/, () => null)
+      expect(bot.globalListeners.listen[id]).to.be.instanceof(bot.TextListener)
     })
   })
   describe('.listenDirect', () => {
     it('adds text listener to collection, returning ID', () => {
-      const id = listen.listenDirect(/test/, () => null)
-      expect(listen.globalListeners.listen[id]).to.be.instanceof(listen.TextListener)
+      const id = bot.listenDirect(/test/, () => null)
+      expect(bot.globalListeners.listen[id]).to.be.instanceof(bot.TextListener)
     })
   })
   describe('.listenCustom', () => {
-    const id = listen.listenCustom(() => null, () => null)
-    expect(listen.globalListeners.listen[id]).to.be.instanceof(listen.CustomListener)
+    const id = bot.listenCustom(() => null, () => null)
+    expect(bot.globalListeners.listen[id]).to.be.instanceof(bot.CustomListener)
   })
   describe('.understand', () => {
     it('adds NLU listener to NLU collection, returning ID', () => {
-      const id = listen.understandText({ intent: { id: 'test' } }, () => null)
-      expect(listen.globalListeners.understand[id]).to.be.instanceof(listen.NaturalLanguageListener)
+      const id = bot.understandText({ intent: { id: 'test' } }, () => null)
+      expect(bot.globalListeners.understand[id]).to.be.instanceof(bot.NaturalLanguageListener)
+    })
+  })
+  describe('.understandDirect', () => {
+    it('adds NLU direct listener to NLU collection, returning ID', () => {
+      const id = bot.understandDirect({ intent: { id: 'test' } }, () => null)
+      expect(bot.globalListeners.understand[id]).to.be.instanceof(bot.NaturalLanguageListenerDirect)
     })
   })
   describe('.understandCustom', () => {
     it('adds custom listener to NLU collection, returning ID', () => {
-      const id = listen.understandCustom(() => null, () => null)
-      expect(listen.globalListeners.understand[id]).to.be.instanceof(listen.CustomListener)
+      const id = bot.understandCustom(() => null, () => null)
+      expect(bot.globalListeners.understand[id]).to.be.instanceof(bot.CustomListener)
     })
   })
   describe('.directPattern', () => {
     it('creates new regex for bot name prefixed to original', () => {
-      const direct = listen.directPattern(/test/)
+      const direct = bot.directPattern(/test/)
       expect(direct.toString()).to.include(bot.name).and.include('test')
     })
     it('matches when bot name is prefixed', async () => {
-      const direct = listen.directPattern(/test/)
+      const direct = bot.directPattern(/test/)
       expect(direct.test(`${bot.name} test`)).to.equal(true)
     })
     it('matches when bot alias is prefixed', async () => {
-      const direct = listen.directPattern(/test/)
+      const direct = bot.directPattern(/test/)
       expect(direct.test(`${bot.alias} test`)).to.equal(true)
     })
     it('matches when bot alias is prefixed with @ symbol', async () => {
-      const direct = listen.directPattern(/test/)
+      const direct = bot.directPattern(/test/)
       expect(direct.test(`@${bot.name} test`)).to.equal(true)
     })
     it('does not match on name unless otherwise matched', async () => {
-      const direct = listen.directPattern(/test/)
+      const direct = bot.directPattern(/test/)
       expect(direct.test(`${bot.name}`)).to.equal(false)
     })
     it('does not match unless bot name is prefixed', async () => {
-      const direct = listen.directPattern(/test/)
+      const direct = bot.directPattern(/test/)
       expect(direct.test(`test`)).to.equal(false)
     })
   })
@@ -250,8 +311,8 @@ describe('listen', () => {
     it('.process calls callback on enter messages', async () => {
       const callback = sinon.spy()
       const message = new bot.EnterMessage(mockUser)
-      const id = listen.listenEnter(callback)
-      await listen.globalListeners.listen[id].process(new bot.B({ message }))
+      const id = bot.listenEnter(callback)
+      await bot.globalListeners.listen[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -259,8 +320,8 @@ describe('listen', () => {
     it('.process calls callback on leave messages', async () => {
       const callback = sinon.spy()
       const message = new bot.LeaveMessage(mockUser)
-      const id = listen.listenLeave(callback)
-      await listen.globalListeners.listen[id].process(new bot.B({ message }))
+      const id = bot.listenLeave(callback)
+      await bot.globalListeners.listen[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -268,8 +329,8 @@ describe('listen', () => {
     it('.process calls callback on topic messages', async () => {
       const callback = sinon.spy()
       const message = new bot.TopicMessage(mockUser)
-      const id = listen.listenTopic(callback)
-      await listen.globalListeners.listen[id].process(new bot.B({ message }))
+      const id = bot.listenTopic(callback)
+      await bot.globalListeners.listen[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
@@ -277,20 +338,20 @@ describe('listen', () => {
     it('.process calls callback on catchAll messages', async () => {
       const callback = sinon.spy()
       const message = new bot.CatchAllMessage(new bot.TextMessage(mockUser, ''))
-      const id = listen.listenCatchAll(callback)
-      await listen.globalListeners.act[id].process(new bot.B({ message }))
+      const id = bot.listenCatchAll(callback)
+      await bot.globalListeners.act[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
     })
   })
   describe('.unloadListeners', () => {
     it('clears all listeners from collection', () => {
-      listen.listenCatchAll(() => null)
-      listen.listenText(/.*/, () => null)
-      listen.understandText({}, () => null)
-      listen.understandCustom(() => null, () => null)
-      listen.unloadListeners()
-      expect(listen.globalListeners.listen).to.eql({})
-      expect(listen.globalListeners.understand).to.eql({})
+      bot.listenCatchAll(() => null)
+      bot.listenText(/.*/, () => null)
+      bot.understandText({}, () => null)
+      bot.understandCustom(() => null, () => null)
+      bot.unloadListeners()
+      expect(bot.globalListeners.listen).to.eql({})
+      expect(bot.globalListeners.understand).to.eql({})
     })
   })
 })

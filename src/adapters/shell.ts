@@ -37,7 +37,7 @@ export class Shell extends bBot.MessageAdapter {
           break
         case 'error': item = chalk.red(item)
       }
-      if (item.length) this.ui.writeLog(item)
+      this.ui.writeLog(item)
     }
   }
 
@@ -91,7 +91,7 @@ export class Shell extends bBot.MessageAdapter {
 
   /** Close inquirer UI and exit process when shutdown complete */
   async shutdown () {
-    this.ui.close()
+    if (this.ui) this.ui.close()
     this.bot.events.on('shutdown', () => process.exit(0))
   }
 }

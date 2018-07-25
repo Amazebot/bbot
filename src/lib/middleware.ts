@@ -15,7 +15,7 @@ export const middlewares: { [key: string]: Middleware } = {}
  */
 export interface IPiece {
   (
-    state: bot.B,
+    state: bot.State,
     next: (done?: IPieceDone) => Promise<void>,
     done: IPieceDone
   ): Promise<any> | any
@@ -27,24 +27,15 @@ export interface IPiece {
  * executing the chain of completion functions.
  */
 export interface IPieceDone {
-  (newDone?: IPieceDone): Promise<void>
+  (newDone?: IPieceDone): any
 }
 
 /**
  * Middleware complete function, handles successful processing and final state
- * after middleware stack completes, before the callback.
+ * after middleware stack completes uninterrupted.
  */
 export interface IComplete {
-  (state: bot.B, done: IPieceDone): any
-}
-
-/**
- * A callback to fire when middleware finished executing, regardless of success.
- * Can return a promise for middleware executor to wait before continuing to
- * other operations. May be given an error if a middleware piece throws.
- */
-export interface ICallback {
-  (err?: Error): Promise<void> | void
+  (state: bot.State): any
 }
 
 /**
@@ -57,9 +48,8 @@ export interface ICallback {
  * If all middleware continues, a `complete` function is called to handle the
  * final state.
  *
- * Middleware may wrap the done callback to allow executing code in the second
- * half of the process (after `complete` has been executed or a deeper piece
- * of middleware has interrupted).
+ * Middleware may wrap the `done` function to allow executing code in the second
+ * half of the process (after `complete` has been executed).
  *
  * Different kinds of middleware may receive different information in the state
  * object. For more details, see the API for each type of middleware.
@@ -72,7 +62,7 @@ export class Middleware {
   constructor (public type: string = 'default') {}
 
   /** Add a piece to the pipeline */
-  register (piece: IPiece): void {
+  register (piece: IPiece) {
     this.stack.push(piece)
   }
 
@@ -80,18 +70,12 @@ export class Middleware {
    * Execute middleware in order, following by chained completion handlers.
    * State to process can be an object with state properties or existing state.
    */
-  execute (initState: bot.IState | bot.B, complete: IComplete, callback?: ICallback): Promise<bot.B> {
+  execute (state: bot.State | bot.IState, complete: IComplete) {
+    const b = (state instanceof bot.State) ? state : new bot.State(state)
+    let isPending = true
     return new Promise((resolve, reject) => {
       if (this.stack.length) {
         bot.logger.debug(`[middleware] executing ${this.type} middleware (size: ${this.stack.length})`)
-      }
-
-      const state: bot.B = (initState instanceof bot.B) ? initState : new bot.B(initState)
-
-      /** The initial completion handler that may be wrapped by iterations. */
-      const initDone: IPieceDone = () => {
-        const resolver = (callback) ? callback() : undefined
-        return Promise.resolve(resolver).then(() => resolve(state))
       }
 
       /**
@@ -101,45 +85,42 @@ export class Middleware {
       const executePiece = async (done: IPieceDone, piece: IPiece, cb: Function) => {
         const next: IPieceDone = (newDone?: IPieceDone) => cb(newDone || done)
         try {
-          await Promise.resolve(piece(state, next, done))
+          await Promise.resolve(piece(b, next, done))
         } catch (err) {
-          err.state = state
+          err.state = b
           err.middleware = this.type
           bot.logger.error(err)
-          done().catch()
           throw err
         }
       }
 
       /**
-       * Called when async reduce completes all iterations, to run `complete`
-       * piece then the success callback.
-       */
-      const finished = (err: Error | null, done: IPieceDone): void => {
-        if (err) reject(err)
-        else Promise.resolve(complete(state, done)).then(() => resolve(state)).catch()
-      }
-
-      /**
        * Async reduction loop, passes the `done` from one piece to the next.
-       * Calls `finished` at the end, or if an error occurs.
+       * Calls completion function if promise not already resolved by middleware
+       * piece calling `done` to interrupt completion.
        */
-      const reduceStack = async (): Promise<void> => {
-        let done: IPieceDone = initDone
+      const reduceStack = async () => {
+        let done: IPieceDone = () => resolve(b)
         try {
           for (let piece of this.stack) {
             await executePiece(done, piece, (newDone: IPieceDone) => {
               done = newDone
             })
           }
-          finished(null, done)
+          if (isPending) {
+            await Promise.resolve(complete(b))
+            await Promise.resolve(done())
+          }
         } catch (err) {
-          finished(err, done)
+          reject(err)
         }
       }
 
       // Start running the stack at the end of current Node event loop
       process.nextTick(() => reduceStack())
+    }).then(() => {
+      isPending = false // lets internal reduction know if resolved early
+      return b
     })
   }
 }

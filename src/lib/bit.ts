@@ -78,7 +78,7 @@ export class Bit implements IBit {
   /**
    * Do stuff with current bot state (e.g. send replies and/or call callbacks)
    */
-  async execute (b: bot.B): Promise<any> {
+  async execute (b: bot.State) {
     if (this.callback) await Promise.resolve(this.callback(b))
   }
 }
@@ -91,7 +91,7 @@ export function setupBit (options: IBit) {
 }
 
 /** Execute a bit using its ID, providing current bot state */
-export async function doBit (id: string, b: bot.B): Promise<void> {
+export async function doBit (id: string, b: bot.State) {
   const bit = bits[id]
   if (!bit) {
     bot.logger.error('[bit] attempted to do bit with unknown ID')

@@ -3,6 +3,7 @@ import * as bot from '..'
 /** Represents an incoming message from the chat. */
 export abstract class Message {
   user: bot.User
+  nlu?: bot.NLU
 
   /**
    * Create a message.
@@ -17,10 +18,18 @@ export abstract class Message {
   abstract toString (): string
 }
 
+/** An empty message for outgoings without original input */
+export class NullMessage extends Message {
+  constructor () {
+    super(new bot.User({ id: 'null-user' }))
+  }
+  toString () {
+    return ''
+  }
+}
+
 /** A plain text/string message type. */
 export class TextMessage extends Message {
-  nlu?: bot.NLU
-
   /**
    * Create a text message.
    * @param user The user who sent the message

@@ -22,7 +22,7 @@ describe('bit', () => {
     describe('.execute', () => {
       it('calls bit callback with state', async () => {
         const callback = sinon.spy()
-        const b = new bot.B({ message })
+        const b = new bot.State({ message })
         const aBit = new bit.Bit({ callback })
         await aBit.execute(b)
         sinon.assert.calledWith(callback, b)
@@ -38,14 +38,14 @@ describe('bit', () => {
   describe('.doBit', () => {
     it('executes the bit by ID', async () => {
       const bitId = bit.setupBit({})
-      const b = new bot.B({ message })
+      const b = new bot.State({ message })
       const execute = sinon.spy(bit.bits[bitId], 'execute')
       await bit.doBit(bitId, b)
       sinon.assert.calledWith(execute, b)
     })
     it('logs error if bit ID does not exist', async () => {
       const error = sinon.spy(bot.logger, 'error')
-      await bit.doBit('404bit', new bot.B({ message }))
+      await bit.doBit('404bit', new bot.State({ message }))
       sinon.assert.calledWithMatch(error, /unknown/)
     })
   })

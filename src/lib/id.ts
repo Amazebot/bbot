@@ -9,7 +9,7 @@ const counts: { [key: string]: number } = { 'uid': 0 }
  * Get the next value in global counter
  * @param prefix Key for counter, prepend to return value
  */
-export function counter (prefix: string = 'uid'): string {
+export function counter (prefix: string = 'uid') {
   if (!Object.keys(counts).includes(prefix)) counts[prefix] = 0
   counts[prefix]++
   return `${prefix}_${counts[prefix]}`
@@ -19,7 +19,7 @@ export function counter (prefix: string = 'uid'): string {
  * Generate a random unique ID value
  * @param prefix Optionally prepend ID type
  */
-export function random (prefix?: string): string {
+export function random (prefix?: string) {
   const id = crypto.randomBytes(16).toString('hex')
   if (prefix) return `${prefix}_${id}`
   else return id

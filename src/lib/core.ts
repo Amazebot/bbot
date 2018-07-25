@@ -22,7 +22,7 @@ function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'starte
 }
 
 /** Find out where the loading or shutdown process is at. */
-export function getStatus (): string {
+export function getStatus () {
   for (let key of Object.keys(status)) if (status[key] === 1) return key
   return 'broken' // should never get here
 }
@@ -31,7 +31,7 @@ export function getStatus (): string {
  * Load all components.
  * Extensions/adapters can interrupt or modify the stack before start.
  */
-export async function load (): Promise<void> {
+export async function load () {
   bot.logger.level = bot.config.logLevel // in case config changed after init
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
@@ -50,7 +50,7 @@ export async function load (): Promise<void> {
  *  import * as bbot from 'bbot'
  *  bbot.start()
  */
-export async function start (): Promise<void> {
+export async function start () {
   if (getStatus() !== 'loaded') await load()
   setStatus('starting')
   await bot.startAdapters()
@@ -68,7 +68,7 @@ export async function start (): Promise<void> {
  *  import * as bbot from 'bbot'
  *  bbot.shutdown()
  */
-export async function shutdown (): Promise<void> {
+export async function shutdown () {
   const status = getStatus()
   if (status === 'shutdown') return
   if (status === 'loading') {
@@ -88,7 +88,7 @@ export async function shutdown (): Promise<void> {
  * Stop temporarily.
  * Allow start to be called again without reloading
  */
-export async function pause (): Promise<void> {
+export async function pause () {
   await shutdown()
   await eventDelay()
   setStatus('loaded')
@@ -99,7 +99,7 @@ export async function pause (): Promise<void> {
  * Scrub it clean!
  * Would allow redefining classes before calling start again, mostly for tests.
  */
-export async function reset (): Promise<void> {
+export async function reset () {
   const status = getStatus()
   if (status === 'waiting') return
   if (status !== 'shutdown') await shutdown()
