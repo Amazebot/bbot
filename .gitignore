@@ -65,5 +65,8 @@ typings/
 # compiled source, published to NPM, but not required in repository
 dist/
 
+# compiled docs, used for clone-in-clone gh-pages branch
+docs/
+
 # node cache for debug compiled source
 /.ts-node
