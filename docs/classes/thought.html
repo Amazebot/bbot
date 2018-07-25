@@ -67,13 +67,9 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Collection of thought processes.
-							Each can be called manually to create a custom thought process, but usually
-						these methods are only initiated by <code>bot.receive</code> or <code>bot.dispatch</code>.</p>
-						<ul>
-							<li><code>listen</code>, <code>understand</code> and <code>act</code> follow after <code>hear</code></li>
-							<li><code>remember</code> is included after <code>receive</code> or <code>respond</code></li>
-						</ul>
+						<p>Defines a process to wrap execution of middleware of the same name.
+							Validators can prevent a process from running.
+						Actions can effect the state before the next process validates.</p>
 					</div>
 				</div>
 			</section>
@@ -83,6 +79,12 @@
 					<li>
 						<span class="target">Thought</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -98,18 +100,18 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#b" class="tsd-kind-icon">b</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#listeners" class="tsd-kind-icon">listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#middleware" class="tsd-kind-icon">middleware</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#name" class="tsd-kind-icon">name</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#act" class="tsd-kind-icon">act</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#hear" class="tsd-kind-icon">hear</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#listen" class="tsd-kind-icon">listen</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#remember" class="tsd-kind-icon">remember</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#respond" class="tsd-kind-icon">respond</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#understand" class="tsd-kind-icon">understand</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#action" class="tsd-kind-icon">action</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#process" class="tsd-kind-icon">process</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#validate" class="tsd-kind-icon">validate</a></li>
 							</ul>
 						</section>
 					</div>
@@ -121,26 +123,26 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Thought<span class="tsd-signature-symbol">(</span>listeners<span class="tsd-signature-symbol">?: </span><a href="listeners.html" class="tsd-signature-type">Listeners</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thought.html" class="tsd-signature-type">Thought</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Thought<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thought.html" class="tsd-signature-type">Thought</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L11">lib/thought.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L24">lib/thought.ts:24</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Start a new instance of thought processes with an optional set of listeners
-										to process. By default will process global listeners, but can accept an
-									isolated set of listeners for specific conversational context.</p>
+									<p>Create new thought process with optional validate and action functions.
+										Presence of listeners in options determines how middleware will execute.
+									Without middleware option, will use &quot;global&quot; middleware of same name.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> listeners: <a href="listeners.html" class="tsd-signature-type">Listeners</a><span class="tsd-signature-symbol"> =&nbsp;bot.globalListeners</span></h5>
+									<h5>options: <a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="thought.html" class="tsd-signature-type">Thought</a></h4>
@@ -151,12 +153,46 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="listeners" class="tsd-anchor"></a>
-					<h3>listeners</h3>
-					<div class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">:</span> <a href="listeners.html" class="tsd-signature-type">Listeners</a></div>
+					<a name="b" class="tsd-anchor"></a>
+					<h3>b</h3>
+					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <a href="state.html" class="tsd-signature-type">State</a></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#b">b</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L11">lib/thought.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L20">lib/thought.ts:20</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="listeners" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> listeners</h3>
+					<div class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#listeners">listeners</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L24">lib/thought.ts:24</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="middleware" class="tsd-anchor"></a>
+					<h3>middleware</h3>
+					<div class="tsd-signature tsd-kind-icon">middleware<span class="tsd-signature-symbol">:</span> <a href="middleware.html" class="tsd-signature-type">Middleware</a></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#middleware">middleware</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L23">lib/thought.ts:23</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="name" class="tsd-anchor"></a>
+					<h3>name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#name">name</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L19">lib/thought.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -164,30 +200,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="act" class="tsd-anchor"></a>
-					<h3>act</h3>
+					<a name="action" class="tsd-anchor"></a>
+					<h3>action</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">act<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="b.html" class="tsd-signature-type">B</a>, done<span class="tsd-signature-symbol">: </span><a href="../interfaces/ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">action<span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L79">lib/thought.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L22">lib/thought.ts:22</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Process message as catch all if not already handled</p>
-								</div>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>b: <a href="b.html" class="tsd-signature-type">B</a></h5>
-								</li>
-								<li>
-									<h5>done: <a href="../interfaces/ipiecedone.html" class="tsd-signature-type">IPieceDone</a></h5>
+									<h5>_: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -195,148 +223,47 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="hear" class="tsd-anchor"></a>
-					<h3>hear</h3>
+					<a name="process" class="tsd-anchor"></a>
+					<h3>process</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">hear<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="message.html" class="tsd-signature-type">Message</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L23">lib/thought.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L51">lib/thought.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Process receipt of message, pass on final context to listen process.</p>
+									<p>Call validate, execute middleware, possibly listeners, then action.
+										Will not enter process with empty listeners or if state <code>done</code> is true.
+										Without listeners, execute middleware, resolve on completion.
+										With listeners, process each listener or until state <code>done</code> is true.
+										Action will be called with the boolean success of the process.
+										Process succeeds if middleware completed or listeners were matched.
+									If process succeeds, timestamp is added to state.</p>
 								</div>
 							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>message: <a href="message.html" class="tsd-signature-type">Message</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="listen" class="tsd-anchor"></a>
-					<h3>listen</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="b.html" class="tsd-signature-type">B</a>, done<span class="tsd-signature-symbol">: </span><a href="../interfaces/ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L31">lib/thought.ts:31</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Process message that was heard, try matching with basic listeners.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>b: <a href="b.html" class="tsd-signature-type">B</a></h5>
-								</li>
-								<li>
-									<h5>done: <a href="../interfaces/ipiecedone.html" class="tsd-signature-type">IPieceDone</a></h5>
-								</li>
-							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="remember" class="tsd-anchor"></a>
-					<h3>remember</h3>
+					<a name="validate" class="tsd-anchor"></a>
+					<h3>validate</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">remember<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L109">lib/thought.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/thought.ts#L21">lib/thought.ts:21</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Store state via adapter after incoming or outgoing message processed.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>b: <a href="b.html" class="tsd-signature-type">B</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="respond" class="tsd-anchor"></a>
-					<h3>respond</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">respond<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/istate.html" class="tsd-signature-type">IState</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L92">lib/thought.ts:92</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Process outgoing message, setting defaults for method and content</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>b: <a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/istate.html" class="tsd-signature-type">IState</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="b.html" class="tsd-signature-type">B</a><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="understand" class="tsd-anchor"></a>
-					<h3>understand</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">understand<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="b.html" class="tsd-signature-type">B</a>, done<span class="tsd-signature-symbol">: </span><a href="../interfaces/ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/thought.ts#L48">lib/thought.ts:48</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Process message unmatched by basic listeners, try to match with NLU</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>b: <a href="b.html" class="tsd-signature-type">B</a></h5>
-								</li>
-								<li>
-									<h5>done: <a href="../interfaces/ipiecedone.html" class="tsd-signature-type">IPieceDone</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -361,25 +288,25 @@
 								<a href="thought.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="thought.html#b" class="tsd-kind-icon">b</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="thought.html#listeners" class="tsd-kind-icon">listeners</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#act" class="tsd-kind-icon">act</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="thought.html#middleware" class="tsd-kind-icon">middleware</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="thought.html#name" class="tsd-kind-icon">name</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#hear" class="tsd-kind-icon">hear</a>
+								<a href="thought.html#action" class="tsd-kind-icon">action</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#listen" class="tsd-kind-icon">listen</a>
+								<a href="thought.html#process" class="tsd-kind-icon">process</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#remember" class="tsd-kind-icon">remember</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#respond" class="tsd-kind-icon">respond</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#understand" class="tsd-kind-icon">understand</a>
+								<a href="thought.html#validate" class="tsd-kind-icon">validate</a>
 							</li>
 						</ul>
 					</li>

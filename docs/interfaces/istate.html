@@ -69,7 +69,6 @@
 					<div class="lead">
 						<p>States accept some known common properties, but can accept any key/value pair
 							that is needed for a specific type of listener or middleware.
-							Will always be created with at least a message object (can be empty).
 						The <code>done</code> property tells middleware not to continue processing state.</p>
 					</div>
 				</div>
@@ -79,13 +78,21 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<span class="target">IState</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="ireceivestate.html" class="tsd-signature-type">IReceiveState</a>
+							</li>
+							<li>
+								<a href="idispatchstate.html" class="tsd-signature-type">IDispatchState</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../classes/b.html" class="tsd-signature-type">B</a></li>
+					<li><a href="../classes/state.html" class="tsd-signature-type">State</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-interface">
@@ -95,7 +102,6 @@
 					<div class="lead">
 						<p>States accept some known common properties, but can accept any key/value pair
 							that is needed for a specific type of listener or middleware.
-							Will always be created with at least a message object (can be empty).
 						The <code>done</code> property tells middleware not to continue processing state.</p>
 					</div>
 				</div>
@@ -108,9 +114,6 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="istate.html#done" class="tsd-kind-icon">done</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="istate.html#envelope" class="tsd-kind-icon">envelope</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="istate.html#message" class="tsd-kind-icon">message</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="istate.html#method" class="tsd-kind-icon">method</a></li>
 							</ul>
 						</section>
 					</div>
@@ -124,37 +127,7 @@
 					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L13">lib/state.ts:13</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="envelope" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> envelope</h3>
-					<div class="tsd-signature tsd-kind-icon">envelope<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.Envelope</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L12">lib/state.ts:12</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="message" class="tsd-anchor"></a>
-					<h3>message</h3>
-					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <a href="../classes/message.html" class="tsd-signature-type">Message</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L10">lib/state.ts:10</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="method" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> method</h3>
-					<div class="tsd-signature tsd-kind-icon">method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/state.ts#L11">lib/state.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L9">lib/state.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,15 +150,6 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="istate.html#done" class="tsd-kind-icon">done</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="istate.html#envelope" class="tsd-kind-icon">envelope</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="istate.html#message" class="tsd-kind-icon">message</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="istate.html#method" class="tsd-kind-icon">method</a>
 							</li>
 						</ul>
 					</li>

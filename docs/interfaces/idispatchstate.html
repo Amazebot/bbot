@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IListenerMeta | bBot</title>
+	<title>IDispatchState | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="ilistenermeta.html">IListenerMeta</a>
+					<a href="idispatchstate.html">IDispatchState</a>
 				</li>
 			</ul>
-			<h1>Interface IListenerMeta</h1>
+			<h1>Interface IDispatchState</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Hold extra key/value data for extensions to use, such as ID</p>
+						<p>Dispatching states don&#39;t have an originating message, so they will be
+						processed via the attributes of the outgoing envelope/s.</p>
 					</div>
 				</div>
 			</section>
@@ -75,7 +76,12 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IListenerMeta</span>
+						<a href="istate.html" class="tsd-signature-type">IState</a>
+						<ul class="tsd-hierarchy">
+							<li>
+								<span class="target">IDispatchState</span>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -84,7 +90,8 @@
 				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Hold extra key/value data for extensions to use, such as ID</p>
+						<p>Dispatching states don&#39;t have an originating message, so they will be
+						processed via the attributes of the outgoing envelope/s.</p>
 					</div>
 				</div>
 			</section>
@@ -95,8 +102,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ilistenermeta.html#force" class="tsd-kind-icon">force</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ilistenermeta.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="idispatchstate.html#done" class="tsd-kind-icon">done</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="idispatchstate.html#envelopes" class="tsd-kind-icon">envelopes</a></li>
 							</ul>
 						</section>
 					</div>
@@ -104,23 +111,24 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="force" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> force</h3>
-					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="done" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> done</h3>
+					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
+						<p>Inherited from <a href="istate.html">IState</a>.<a href="istate.html#done">done</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/listen.ts#L21">lib/listen.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L9">lib/state.ts:9</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="envelopes" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> envelopes</h3>
+					<div class="tsd-signature tsd-kind-icon">envelopes<span class="tsd-signature-symbol">:</span> <a href="../classes/envelope.html" class="tsd-signature-type">Envelope</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4e82c3d/src/lib/listen.ts#L20">lib/listen.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/38491fe/src/lib/state.ts#L26">lib/state.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -139,13 +147,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="ilistenermeta.html" class="tsd-kind-icon">IListener<wbr>Meta</a>
+						<a href="idispatchstate.html" class="tsd-kind-icon">IDispatch<wbr>State</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ilistenermeta.html#force" class="tsd-kind-icon">force</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="idispatchstate.html#done" class="tsd-kind-icon">done</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ilistenermeta.html#id" class="tsd-kind-icon">id</a>
+								<a href="idispatchstate.html#envelopes" class="tsd-kind-icon">envelopes</a>
 							</li>
 						</ul>
 					</li>
