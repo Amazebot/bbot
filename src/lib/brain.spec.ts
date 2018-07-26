@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import * as bot from '..'
 import * as brain from './brain'
 
-const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 let mockAdapter: bot.StorageAdapter
 const mockUsers = {
   'u1': new bot.User({ id: 'u1', name: 'test-1' }),
@@ -116,31 +116,31 @@ describe('brain', () => {
     })
   })
   describe('.keep', () => {
-    it('passes args to storage adapter keep', () => {
+    it('passes args to storage adapter keep', async () => {
       let stub = (mockAdapter.keep as sinon.SinonStub)
-      brain.keep('tests', { a: 'b' })
+      await brain.keep('tests', { a: 'b' })
       sinon.assert.calledWithExactly(stub, 'tests', { a: 'b' })
       stub.resetHistory()
     })
-    it('removes bot from kept states', () => {
+    it('removes bot from kept states', async () => {
       let message = new bot.TextMessage(new bot.User(), 'testing')
       let b = new bot.State({ message: message })
       let stub = (mockAdapter.keep as sinon.SinonStub)
-      brain.keep('test-state', b)
+      await brain.keep('test-state', b)
       sinon.assert.calledWithExactly(stub, 'test-state', sinon.match({ message }))
       stub.resetHistory()
     })
-    it('does not keep any excluded data keys', () => {
+    it('does not keep any excluded data keys', async () => {
       brain.keepExcludes.push('foo')
       let stub = (mockAdapter.keep as sinon.SinonStub)
-      brain.keep('tests', { foo: 'foo', bar: 'bar' })
+      await brain.keep('tests', { foo: 'foo', bar: 'bar' })
       sinon.assert.calledWithExactly(stub, 'tests', { bar: 'bar' })
       stub.resetHistory()
     })
   })
   describe('.find', () => {
-    it('passes args to storage adapter keep', () => {
-      brain.find('tests', { a: 'b' })
+    it('passes args to storage adapter keep', async () => {
+      await brain.find('tests', { a: 'b' })
       let stub = (mockAdapter.find as sinon.SinonStub)
       sinon.assert.calledWithExactly(stub, 'tests', { a: 'b' })
       stub.resetHistory()
@@ -151,8 +151,8 @@ describe('brain', () => {
     })
   })
   describe('.findOne', () => {
-    it('passes args to storage adapter keep', () => {
-      brain.findOne('tests', { a: 'b' })
+    it('passes args to storage adapter keep', async () => {
+      await brain.findOne('tests', { a: 'b' })
       let stub = (mockAdapter.findOne as sinon.SinonStub)
       sinon.assert.calledWithExactly(stub, 'tests', { a: 'b' })
       stub.resetHistory()
@@ -163,8 +163,8 @@ describe('brain', () => {
     })
   })
   describe('.lose', () => {
-    it('passes args to storage adapter keep', () => {
-      brain.lose('tests', { a: 'b' })
+    it('passes args to storage adapter keep', async () => {
+      await brain.lose('tests', { a: 'b' })
       let stub = (mockAdapter.lose as sinon.SinonStub)
       sinon.assert.calledWithExactly(stub, 'tests', { a: 'b' })
       stub.resetHistory()

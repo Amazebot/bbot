@@ -29,9 +29,10 @@ export function getModel (collection: string) {
  */
 export class Mongo extends StorageAdapter {
   name = 'mongo-storage-adapter'
+  url = process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/bbot-brain'
   config = {
-    url: process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/bbot-brain',
     connection: {
+      useNewUrlParser: true,
       autoIndex: true, // Build indexes
       reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
       reconnectInterval: 500, // Reconnect every 500ms
@@ -48,13 +49,13 @@ export class Mongo extends StorageAdapter {
     super(bot)
     this.model = getModel(this.config.collection)
     this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
-    this.bot.logger.debug(`[mongo] storing to '${this.config.collection}' collection at ${this.config.url}`)
+    this.bot.logger.debug(`[mongo] storing to '${this.config.collection}' collection at ${this.url}`)
   }
 
   /** Connect to Mongo */
   async start () {
-    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.config.url}`)
-    this.store = await mongoose.connect(this.config.url, this.config.connection)
+    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.url}`)
+    this.store = await mongoose.connect(this.url, this.config.connection)
     this.bot.logger.debug(`[mongo] connected to Mongo DB`)
     return
   }
@@ -105,8 +106,8 @@ export class Mongo extends StorageAdapter {
       this.bot.logger.debug(`[mongo] keep ${sub} value in DB`)
       const query = { sub, type: 'store' }
       const update = { $push: { data } }
-      const options = { upsert: true, lean: true }
-      await this.model.findOneAndUpdate(query, update, options).exec()
+      const options: mongoose.ModelFindOneAndUpdateOptions = { upsert: true }
+      await this.model.findOneAndUpdate(query, update, options).lean().exec()
       this.bot.logger.debug(`[mongo] kept ${sub}: ${JSON.stringify(update)}`)
     } catch (err) {
       this.bot.logger.error(`[mongo] keep error for ${sub}`, err)
@@ -118,8 +119,7 @@ export class Mongo extends StorageAdapter {
     this.bot.logger.debug(`[mongo] finding any ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
     const fields = { _id: 0, 'data': 1 }
-    const opts = { lean: true }
-    const doc = await this.model.findOne(query, fields, opts).exec() as IStore
+    const doc = await this.model.findOne(query, fields).lean().exec() as IStore
     if (!doc) return undefined
     const matching = doc.data.filter((item: any) => {
       if (!Object.keys(params).length) return true
@@ -139,8 +139,7 @@ export class Mongo extends StorageAdapter {
     this.bot.logger.debug(`[mongo] finding a ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
     const fields = { _id: 0, 'data.$': 1 }
-    const opts = { lean: true }
-    const doc = await this.model.findOne(query, fields, opts).exec() as IStore
+    const doc = await this.model.findOne(query, fields).lean().exec() as IStore
     if (!doc) return undefined
     this.bot.logger.debug(`[mongo] found a ${sub}: ${JSON.stringify(doc.data[0])}`)
     return doc.data[0]
@@ -151,8 +150,8 @@ export class Mongo extends StorageAdapter {
     this.bot.logger.debug(`[mongo] losing a ${sub} matching ${params}`)
     const query = { sub, type: 'store' }
     const update = { $pull: { data: params } }
-    const options = { upsert: true, lean: true }
-    await this.model.findOneAndUpdate(query, update, options).exec()
+    const options: mongoose.ModelFindOneAndUpdateOptions = { upsert: true }
+    await this.model.findOneAndUpdate(query, update, options).lean().exec()
   }
 }
 

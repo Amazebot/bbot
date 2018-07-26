@@ -62,16 +62,16 @@ describe('adapter', () => {
     })
   })
   describe('.startAdapters', () => {
-    it('starts all configured adapters', () => {
+    it('starts all configured adapters', async () => {
       bot.config.languageAdapter = './lib/adapter.spec'
       bot.config.webhookAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
-      adapter.startAdapters()
+      await adapter.startAdapters()
       sinon.assert.calledTwice(start)
     })
   })
   describe('.unloadAdapters', () => {
-    it('clears all configured adapters', () => {
+    it('clears all configured adapters', async () => {
       bot.config.languageAdapter = './lib/adapter.spec'
       bot.config.webhookAdapter = './lib/adapter.spec'
       adapter.loadAdapters()

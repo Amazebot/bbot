@@ -121,7 +121,7 @@ describe('state', () => {
     it('creates new envelope from options, state, defaults', () => {
       const b = new bot.State({ message })
       b.respondEnvelope({ strings: ['hello'] })
-      expect(b.envelopes[0]).to.deep.include({
+      expect(b.envelopes![0]).to.deep.include({
         message,
         room: message.user.room,
         strings: ['hello'],
@@ -132,20 +132,20 @@ describe('state', () => {
   describe('respond', () => {
     beforeEach(() => stubs.respond = sinon.stub(bot, 'respond'))
     afterEach(() => stubs.respond.restore())
-    it('calls respond thought process with the current state', () => {
+    it('calls respond thought process with the current state', async () => {
       const b = new bot.State({ message })
-      b.respond('testing')
+      await b.respond('testing')
       sinon.assert.calledWith(stubs.respond, b)
-      expect(b.envelopes[0].strings).to.eql(['testing'])
+      expect(b.envelopes![0].strings).to.eql(['testing'])
     })
   })
   describe('respondVia', () => {
-    it('updates state method before calling respond', () => {
+    it('updates state method before calling respond', async () => {
       const b = new bot.State({ message })
       const respond = sinon.stub(b, 'respond')
-      b.respondVia('reply', 'hey you')
+      await b.respondVia('reply', 'hey you')
       sinon.assert.calledOnce(respond)
-      expect(b.envelopes[0].method).to.equal('reply')
+      expect(b.envelopes![0].method).to.equal('reply')
     })
   })
 })

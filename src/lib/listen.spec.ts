@@ -3,18 +3,12 @@ import sinon from 'sinon'
 import { expect, assert } from 'chai'
 import * as bot from '..'
 
-let mockUser: bot.User
-let b: bot.State
-let middleware: bot.Middleware
-let callback: sinon.SinonSpy
-let matcher: sinon.SinonSpy
-let piece: sinon.SinonSpy
-let execute: sinon.SinonSpy
-let listener: bot.Listener
-
-const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
+const user = new bot.User({ id: 'TEST_ID', name: 'testy' })
+const message = new bot.TextMessage(user, 'test')
+const middleware = new bot.Middleware('mock')
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 class MockListener extends bot.Listener {
-  async matcher (message) {
+  async matcher (message: bot.Message) {
     return /test/.test(message.toString())
   }
 }
@@ -32,26 +26,15 @@ class BoolListener extends bot.Listener {
 }
 
 describe('listen', () => {
-  before(() => {
-    mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' })
-  })
   describe('Listener', () => {
-    beforeEach(() => {
-      b = new bot.State({ message: new bot.TextMessage(mockUser, 'test') })
-      callback = sinon.spy()
-      piece = sinon.spy()
-      middleware = new bot.Middleware('mock')
-      middleware.register(piece)
-      execute = sinon.spy(middleware, 'execute')
-      listener = new MockListener(callback, { id: 'mock-listener' })
-      matcher = sinon.spy(listener, 'matcher')
-    })
     it('accepts and stores callback function', () => {
+      const callback = sinon.spy()
+      const listener = new MockListener(callback)
       expect(listener.callback).to.eql(callback)
     })
     it('accepts bit ID to create callback', () => {
       const bitListener = new MockListener('BIT_ID')
-      expect(listener.callback).to.be.a('function')
+      expect(bitListener.callback).to.be.a('function')
     })
     it('accepts additional properties as options', () => {
       const metaListener = new MockListener(() => null, { foo: 'bar' })
@@ -66,27 +49,44 @@ describe('listen', () => {
       expect(idListener.id).to.equal('TEST_ID')
     })
     describe('.process', () => {
-      it('calls matcher with message from state', () => {
-        listener.process(b)
+      beforeEach(() => middleware.stack.splice(0, middleware.stack.length))
+      it('calls matcher with message from state', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
+        const matcher = sinon.spy(listener, 'matcher')
+        await listener.process(b)
         sinon.assert.calledWith(matcher, b.message)
       })
       it('executes middleware if given', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
+        const execute = sinon.spy(middleware, 'execute')
         await listener.process(b, middleware)
         sinon.assert.calledOnce(execute)
+        execute.restore()
       })
       it('executes only once by default', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
+        const execute = sinon.spy(middleware, 'execute')
         await listener.process(b, middleware)
         await listener.process(b, middleware)
         sinon.assert.calledOnce(execute)
+        execute.restore()
       })
       it('executes multiple times when forced', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
+        const execute = sinon.spy(middleware, 'execute')
         listener.force = true
         await listener.process(b, middleware)
         await listener.process(b, middleware)
         sinon.assert.calledTwice(execute)
+        execute.restore()
       })
       it('executes when forced, after prior listener fails', async () => {
-        let processed = []
+        const b = new bot.State({ message })
+        let processed: string[] = []
         const A = new BoolListener(true, () => processed.push('A'))
         const B = new BoolListener(false, () => processed.push('B'))
         const C = new BoolListener(true, () => processed.push('C'), { force: true })
@@ -96,36 +96,49 @@ describe('listen', () => {
         expect(processed).to.eql(['A', 'C'])
       })
       it('executes bit if ID used as callback', async () => {
+        const b = new bot.State({ message })
         const callback = sinon.spy()
-        const mockBitId = bot.setupBit({ id: 'listen-test', callback: callback })
+        bot.setupBit({ id: 'listen-test', callback: callback })
         const bitListener = new MockListener('listen-test')
         await bitListener.process(b)
         sinon.assert.calledOnce(callback)
       })
-      it('gives message in state to middleware pieces', async () => {
+      it('gives state to middleware pieces', async () => {
+        const b = new bot.State({ message })
+        const piece = sinon.spy()
+        middleware.register(piece)
+        const listener = new MockListener(() => null)
         await listener.process(b, middleware)
-        sinon.assert.calledWith(piece, sinon.match(b))
+        sinon.assert.calledWith(piece, b)
       })
       it('calls done with match status if given', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
         const done = sinon.spy()
         await listener.process(b, middleware, done)
         sinon.assert.calledWith(done, true)
       })
       it('calls done even when unmatched', async () => {
         const done = sinon.spy()
-        const badB = new bot.State({ message: new bot.TextMessage(mockUser, 'no match') })
+        const badB = new bot.State({ message: new bot.TextMessage(user, 'no match') })
+        const listener = new MockListener(() => null)
         await listener.process(badB, middleware, done)
         sinon.assert.calledWith(done, false)
       })
       it('if done returns promise, process waits for resolution', async () => {
         let done: number
-        await listener.process(b, middleware, () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
+        return listener.process(b, middleware, () => {
           done = Date.now()
           return delay(20)
+        }).then(() => {
+          expect(Date.now()).to.be.gte(done)
         })
-        expect(Date.now()).to.be.gte(done)
       })
       it('if middleware rejected, done is called with false', () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
         const badMiddleware = new bot.Middleware('fail')
         badMiddleware.register(() => {
           throw new Error('(╯°□°）╯︵ ┻━┻')
@@ -135,10 +148,14 @@ describe('listen', () => {
         })
       })
       it('state is changed by reference', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
         await listener.process(b, middleware)
         expect(b.matched).to.equal(true)
       })
       it('consecutive listeners share state changes', async () => {
+        const b = new bot.State({ message })
+        const listener = new MockListener(() => null)
         listener.force = true
         middleware.register((b) => {
           b.modified = (!b.modified) ? 1 : b.modified + 1
@@ -148,7 +165,7 @@ describe('listen', () => {
         expect(b.modified).to.equal(2)
       })
       it('state collects matching listeners and match results', async () => {
-        const b = new bot.State({ message: new bot.TextMessage(mockUser, 'foo') })
+        const b = new bot.State({ message: new bot.TextMessage(user, 'foo') })
         const listeners = [
           new bot.CustomListener(() => 1, (b) => {
             expect(b.match).to.equal(1)
@@ -172,29 +189,29 @@ describe('listen', () => {
         expect(state.match).to.eql('foo'.match(/foo/))
       })
       return fooListener.process(new bot.State({
-        message: new bot.TextMessage(mockUser, 'foo')
+        message: new bot.TextMessage(user, 'foo')
       }))
     })
   })
   describe('CustomListener', () => {
     it('.process runs custom matcher', async () => {
-      const fooMatcher = sinon.spy((message) => {
+      const fooMatcher = sinon.spy((message: bot.Message) => {
         return /foo/.test(message.toString())
       })
       const fooListener = new bot.CustomListener(fooMatcher, () => null)
       await fooListener.process(new bot.State({
-        message: new bot.TextMessage(mockUser, 'foo')
+        message: new bot.TextMessage(user, 'foo')
       }))
       sinon.assert.calledOnce(fooMatcher)
     })
     it('.process resolves state with async matcher result', async () => {
-      const asyncMatcher = async (message) => {
+      const asyncMatcher = async () => {
         await delay(20)
         return 'delayed'
       }
       const asyncListener = new bot.CustomListener(asyncMatcher, () => null)
       const result = await asyncListener.process(new bot.State({
-        message: new bot.TextMessage(mockUser, '')
+        message: new bot.TextMessage(user, '')
       }))
       expect(result.match).to.equal('delayed')
     })
@@ -208,7 +225,7 @@ describe('listen', () => {
           intent: [{ id: 'foo', name: 'Test Foo' }]
         })
       })
-      const message = new bot.TextMessage(mockUser, 'foo')
+      const message = new bot.TextMessage(user, 'foo')
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
       const b = await nluListener.process(new bot.State({ message }))
       assert.isOk(b.match)
@@ -218,7 +235,7 @@ describe('listen', () => {
       const nluListener = new bot.NaturalLanguageListener({
         intent: { id: 'foo', score: .8 }
       }, () => null)
-      const message = new bot.TextMessage(mockUser, 'foo')
+      const message = new bot.TextMessage(user, 'foo')
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', score: .7 })
       const b = await nluListener.process(new bot.State({ message }))
       assert.notOk(b.match)
@@ -230,7 +247,7 @@ describe('listen', () => {
       const nluListener = new bot.NaturalLanguageListenerDirect({
         intent: { id: 'foo' }
       }, () => null)
-      const message = new bot.TextMessage(mockUser, `${bot.name} foo`)
+      const message = new bot.TextMessage(user, `${bot.name} foo`)
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
       const b = await nluListener.process(new bot.State({ message }))
       assert.isOk(b.match)
@@ -240,7 +257,7 @@ describe('listen', () => {
       const nluListener = new bot.NaturalLanguageListenerDirect({
         intent: { id: 'foo' }
       }, () => null)
-      const message = new bot.TextMessage(mockUser, `foo`)
+      const message = new bot.TextMessage(user, `foo`)
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
       const b = await nluListener.process(new bot.State({ message }))
       assert.notOk(b.match)
@@ -310,7 +327,7 @@ describe('listen', () => {
   describe('.listenEnter', () => {
     it('.process calls callback on enter messages', async () => {
       const callback = sinon.spy()
-      const message = new bot.EnterMessage(mockUser)
+      const message = new bot.EnterMessage(user)
       const id = bot.listenEnter(callback)
       await bot.globalListeners.listen[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
@@ -319,7 +336,7 @@ describe('listen', () => {
   describe('.listenLeave', () => {
     it('.process calls callback on leave messages', async () => {
       const callback = sinon.spy()
-      const message = new bot.LeaveMessage(mockUser)
+      const message = new bot.LeaveMessage(user)
       const id = bot.listenLeave(callback)
       await bot.globalListeners.listen[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
@@ -328,7 +345,7 @@ describe('listen', () => {
   describe('.listenTopic', () => {
     it('.process calls callback on topic messages', async () => {
       const callback = sinon.spy()
-      const message = new bot.TopicMessage(mockUser)
+      const message = new bot.TopicMessage(user)
       const id = bot.listenTopic(callback)
       await bot.globalListeners.listen[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)
@@ -337,7 +354,7 @@ describe('listen', () => {
   describe('.listenCatchAll', () => {
     it('.process calls callback on catchAll messages', async () => {
       const callback = sinon.spy()
-      const message = new bot.CatchAllMessage(new bot.TextMessage(mockUser, ''))
+      const message = new bot.CatchAllMessage(new bot.TextMessage(user, ''))
       const id = bot.listenCatchAll(callback)
       await bot.globalListeners.act[id].process(new bot.State({ message }))
       sinon.assert.calledOnce(callback)

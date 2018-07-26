@@ -38,7 +38,7 @@ export class Rocketchat extends bot.MessageAdapter {
 
   /** Cancel subscriptions and disconnect from Rocket.Chat */
   async shutdown () {
-    this.driver.disconnect()
+    await this.driver.disconnect()
   }
 
   /** Collect attributes to receive every incoming message in subscription */

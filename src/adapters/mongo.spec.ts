@@ -23,11 +23,11 @@ const testStore = [
   { id: '003', name: 'Bar', student: { grade: 'B', year: '2017' } }
 ]
 const clean = async () => {
-  const found = await store.model.db.db.listCollections({ name: testCollection }).toArray()
-  if (found.length) await store.model.collection.drop()
+  if (!adapter.model.db.db) return
+  const found = await adapter.model.db.db.listCollections({ name: testCollection }).toArray()
+  if (found.length) await adapter.model.collection.drop()
 }
-
-let store: mongo.Mongo
+let adapter: mongo.Mongo
 
 describe('mongo', () => {
   before(() => {
@@ -35,58 +35,50 @@ describe('mongo', () => {
     process.env.MONGODB_URL = testMongo
     process.env.BRAIN_COLLECTION = testCollection
   })
+  beforeEach(() => adapter = mongo.use(bot))
   after(() => {
     process.env = initEnv
   })
   describe('.use', () => {
-    beforeEach(() => store = undefined)
     it('returns adapter instance', () => {
-      store = mongo.use(bot)
-      expect(store).to.be.instanceof(bot.Adapter)
+      expect(adapter).to.be.instanceof(bot.Adapter)
     })
     it('config inherits env settings', () => {
-      store = mongo.use(bot)
-      expect(store.config.collection).to.equal(testCollection)
+      expect(adapter.config.collection).to.equal(testCollection)
     })
     it('creates mongoose model for configured collection', () => {
-      store = mongo.use(bot)
-      expect(store.model.collection.name).to.equal(testCollection)
+      expect(adapter.model.collection.name).to.equal(testCollection)
     })
   })
   describe('.start', () => {
-    beforeEach(() => store = undefined)
     it('creates connection to database', async () => {
-      store = mongo.use(bot)
-      store.config.url = testMongo
-      await store.start()
-      const stats = await store.store.connection.db.stats()
-      expect(store.store.connection.readyState).to.equal(1)
+      adapter.url = testMongo
+      await adapter.start()
+      const stats = await adapter.store!.connection.db.stats()
+      expect(adapter.store!.connection.readyState).to.equal(1)
       expect(stats.db).to.equal(testDB)
-      await store.shutdown()
+      await adapter.shutdown()
     })
   })
   describe('.shutdown', async () => {
-    beforeEach(() => store = undefined)
     it('closes the database connection', async () => {
-      store = mongo.use(bot)
-      store.config.url = testMongo
-      await store.start()
-      await store.shutdown()
-      expect(store.store.connection.readyState).to.equal(0)
+      adapter.url = testMongo
+      await adapter.start()
+      await adapter.shutdown()
+      expect(adapter.store!.connection.readyState).to.equal(0)
     })
   })
   describe('.saveMemory', () => {
     beforeEach(async () => {
-      store = mongo.use(bot)
-      await store.start()
+      await adapter.start()
       await clean()
     })
     afterEach(async () => {
-      await store.shutdown()
+      await adapter.shutdown()
     })
     it('stores each memory sub-collection', async () => {
-      await store.saveMemory(testMemory)
-      const found = await store.store.model(testCollection).find({
+      await adapter.saveMemory(testMemory)
+      const found = await mongo.getModel(testCollection).find({
         type: 'memory'
       }, { _id: 0, data: 1, sub: 1 }).lean().exec()
       expect(found).to.eql([
@@ -96,44 +88,40 @@ describe('mongo', () => {
     })
   })
   describe('.loadMemory', () => {
+    before(() => adapter.start())
     beforeEach(async () => {
-      store = mongo.use(bot)
-      await store.start()
       await clean()
-      await store.saveMemory(testMemory)
+      await adapter.saveMemory(testMemory)
     })
-    afterEach(async () => {
-      await store.shutdown()
-    })
+    after(async () => adapter.shutdown())
     it('loads each memory back to sub-collections', async () => {
-      const memory = await store.loadMemory()
+      const memory = await adapter.loadMemory()
       expect(memory).to.eql(testMemory)
     })
     it('loads each value with its original type', async () => {
-      const memory = await store.loadMemory()
+      const memory = await adapter.loadMemory()
       expect(memory.users['test-user-1']).to.be.instanceof(bot.User)
     })
   })
   describe('.keep', () => {
     beforeEach(async () => {
-      store = mongo.use(bot)
-      await store.start()
+      await adapter.start()
       await clean()
     })
     afterEach(async () => {
-      await store.shutdown()
+      await adapter.shutdown()
     })
     it('adds data to collection series', async () => {
-      await store.keep('tests', testStore[0])
-      const tests = await store.store.model(testCollection).findOne({
+      await adapter.keep('tests', testStore[0])
+      const tests = await mongo.getModel(testCollection).findOne({
         sub: 'tests',
         type: 'store'
       }).lean().exec()
       expect(tests.data).to.eql([testStore[0]])
     })
     it('subsequent calls append to collection', async () => {
-      for (let test of testStore) await store.keep('tests', test)
-      const tests = await store.store.model(testCollection).findOne({
+      for (let test of testStore) await adapter.keep('tests', test)
+      const tests = await mongo.getModel(testCollection).findOne({
         sub: 'tests',
         type: 'store'
       }).lean().exec()
@@ -142,85 +130,82 @@ describe('mongo', () => {
     it('keeps matches intact for state listeners', async () => {
       const b = new bot.State({ message: new bot.TextMessage(new bot.User(), '_') })
       const listeners = [
-        new bot.CustomListener(() => 1, (b) => 1, { id: 'A', force: true }),
-        new bot.CustomListener(() => 2, (b) => 2, { id: 'B', force: true })
+        new bot.CustomListener(() => 1, () => 1, { id: 'A', force: true }),
+        new bot.CustomListener(() => 2, () => 2, { id: 'B', force: true })
       ]
       for (let listener of listeners) await listener.process(b)
-      await store.keep('states', b)
-      const states = await store.store.model(testCollection).findOne({
+      await adapter.keep('states', bot.convertInstance(b))
+      const states = await mongo.getModel(testCollection).findOne({
         sub: 'states',
         type: 'store'
       }).lean().exec()
-      expect(states.listeners.map(l => l.match)).to.eql([1, 2])
+      expect(states.data[0].listeners.map((l: any) => l.match)).to.eql([1, 2])
     })
   })
   describe('.find', () => {
     beforeEach(async () => {
-      store = mongo.use(bot)
-      await store.start()
+      await adapter.start()
       await clean()
-      for (let test of testStore) await store.keep('tests', test)
+      for (let test of testStore) await adapter.keep('tests', test)
     })
     afterEach(async () => {
-      await store.shutdown()
+      await adapter.shutdown()
     })
     it('returns sub collection matching params', async () => {
-      const result = await store.find('tests', { name: testStore[1].name })
+      const result = await adapter.find('tests', { name: testStore[1].name })
       expect(result).to.eql([ testStore[1], testStore[2] ])
     })
     it('returns sub collection matching params using path', async () => {
-      const result = await store.find('tests', { 'student.grade': 'B' })
+      const result = await adapter.find('tests', { 'student.grade': 'B' })
       expect(result).to.eql([ testStore[2] ])
     })
     it('returns whole collection if no param keys given', async () => {
-      const result = await store.find('tests', {})
+      const result = await adapter.find('tests', {})
       expect(result).to.eql(testStore)
     })
     it('returns undefined if none match', async () => {
-      const result = await store.find('tests', { name: 'NoName' })
+      const result = await adapter.find('tests', { name: 'NoName' })
       expect(result).to.equal(undefined)
     })
   })
   describe('.find', () => {
     beforeEach(async () => {
-      store = mongo.use(bot)
-      await store.start()
+      await adapter.start()
       await clean()
-      for (let test of testStore) await store.keep('tests', test)
+      for (let test of testStore) await adapter.keep('tests', test)
     })
     afterEach(async () => {
-      await store.shutdown()
+      await adapter.shutdown()
     })
     it('returns item from sub collection matching params', async () => {
-      const result = await store.findOne('tests', { name: testStore[1].name })
+      const result = await adapter.findOne('tests', { name: testStore[1].name })
       expect(result).to.eql(testStore[1])
     })
     it('returns undefined if none match', async () => {
-      const result = await store.findOne('tests', { name: 'NoName' })
+      const result = await adapter.findOne('tests', { name: 'NoName' })
       expect(result).to.equal(undefined)
     })
   })
   describe('.lose', () => {
     beforeEach(async () => {
-      store = mongo.use(bot)
-      await store.start()
+      await adapter.start()
       await clean()
-      for (let test of testStore) await store.keep('tests', test)
+      for (let test of testStore) await adapter.keep('tests', test)
     })
     afterEach(async () => {
-      await store.shutdown()
+      await adapter.shutdown()
     })
     it('removes items matching params from sub collection', async () => {
-      await store.lose('tests', { name: testStore[1].name })
-      const remaining = await store.store.model(testCollection).findOne({
+      await adapter.lose('tests', { name: testStore[1].name })
+      const remaining = await mongo.getModel(testCollection).findOne({
         type: 'store',
         sub: 'tests'
       }, { _id: 0, data: 1 }).lean().exec()
       expect(remaining.data).to.eql([ testStore[0] ])
     })
     it('removes only matching items from sub collection', async () => {
-      await store.lose('tests', { name: testStore[0].name })
-      const remaining = await store.store.model(testCollection).findOne({
+      await adapter.lose('tests', { name: testStore[0].name })
+      const remaining = await mongo.getModel(testCollection).findOne({
         type: 'store',
         sub: 'tests'
       }, { _id: 0, data: 1 }).lean().exec()

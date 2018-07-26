@@ -84,9 +84,8 @@ export function unset (key: string, collection: string = 'private') {
   return bot
 }
 
-/** Keep serial data in collection, via adapter (converted to plain objects) */
-export async function keep (collection: string, data: any) {
-  if (!bot.adapters.storage) return
+/** Convert instance to plain object for storage */
+export function convertInstance (data: any) {
   if (typeof data === 'object') {
     data = deepClone(Object.keys(data)
       .filter((key) => !keepExcludes.includes(key))
@@ -96,7 +95,13 @@ export async function keep (collection: string, data: any) {
       }, {})
     )
   }
-  await bot.adapters.storage.keep(collection, data)
+  return data
+}
+
+/** Keep serial data in collection, via adapter (converted to plain objects) */
+export async function keep (collection: string, data: any) {
+  if (!bot.adapters.storage) return
+  await bot.adapters.storage.keep(collection, convertInstance(data))
 }
 
 /** Query store for subset matching params, via adapter */

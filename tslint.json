@@ -1,16 +1,17 @@
 {
-  "extends": "tslint-config-standard",
-  "linterOptions": {
-    "exclude": [
-      "**/*.json"
-    ]
-  },
-  "rules": {
-    "no-unused-expression": true,
-    "no-unused-variable": true,
-    "semicolon": [
-      true,
-      "never"
-    ]
-  }
+    "defaultSeverity": "error",
+    "extends": [
+        // "tslint:recommended",
+        "tslint-config-standard"
+    ],
+    "jsRules": {},
+    "rules": {
+        "no-unused-variable": false,
+        "no-use-before-declare": false,
+        "semicolon": [
+            true,
+            "never"
+          ]
+    },
+    "rulesDirectory": []
 }

@@ -1,10 +1,5 @@
 import * as winston from 'winston'
-
-/**
- * Allows extensions to create new logs
- * @link https://github.com/winstonjs/winston/tree/2.x
- */
-export class Logger extends winston.Logger {}
+const { combine, timestamp, json, prettyPrint, colorize } = winston.format
 
 /**
  * Winston logger provides a logging interface common to many Node apps, with
@@ -20,33 +15,24 @@ export class Logger extends winston.Logger {}
  *  logger.level = 'silent'
  *  logger.transports.errors.level = 'error'
  */
-export const logger = new Logger({
+export const logger = winston.createLogger({
   level: process.env.BOT_LOG_LEVEL,
-  handleExceptions: true,
-  exitOnError: (err) => ((err as any).middleware === undefined),
+  exitOnError: (err: Error) => ((err as any).middleware === undefined),
   transports: [
     new winston.transports.File({
-      name: 'errors',
       filename: 'error.log',
       level: 'error',
       maxsize: 500000,
-      timestamp: true,
-      json: true
+      format: combine(timestamp(), json())
     }),
     new winston.transports.File({
-      name: 'combined',
       filename: 'combined.log',
       level: 'debug',
       maxsize: 500000,
-      timestamp: true,
-      json: true
+      format: combine(timestamp(), json())
     }),
     new winston.transports.Console({
-      name: 'console',
-      prettyPrint: true,
-      colorize: true,
-      timestamp: true,
-      humanReadableUnhandledException: true
+      format: combine(timestamp(), prettyPrint(), colorize())
     })
   ]
 })
