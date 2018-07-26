@@ -67,6 +67,7 @@ dist/
 
 # compiled docs, used for clone-in-clone gh-pages branch
 docs/
+gh-pages/
 
 # node cache for debug compiled source
 /.ts-node
