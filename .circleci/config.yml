@@ -17,16 +17,25 @@ jobs:
 
       - restore_cache:
           keys:
+          - yarn-packages-{{ checksum "yarn.lock" }}
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies-
 
       - run: yarn install
 
       - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-        
+
       - run: yarn build
-      - run: -[[ "${CIRCLE_BRANCH}" == "master" ]] && yarn test:coverage
-      - run: -[[ "${CIRCLE_BRANCH}" == "master" ]] && yarn docs:publish
+      - run: yarn test:coverage
+      - run: |
+          if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+            yarn docs:publish
+          fi
