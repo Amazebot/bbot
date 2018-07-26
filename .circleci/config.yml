@@ -1,6 +1,9 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
+branches:
+  ignore:
+    - gh-pages
 jobs:
   build:
     docker:
@@ -25,3 +28,5 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       - run: yarn test
+      - run: yarn test:coverage
+      - run: yarn docs:publish
