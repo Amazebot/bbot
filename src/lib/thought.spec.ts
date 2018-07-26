@@ -3,8 +3,7 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 
-const now = Date.now()
-const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms))
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 let message: bot.TextMessage
 class MockMessenger extends bot.MessageAdapter {
   name = 'mock-messenger'
@@ -14,7 +13,7 @@ class MockMessenger extends bot.MessageAdapter {
 }
 class MockLanguage extends bot.LanguageAdapter {
   name = 'mock-language'
-  async process (message: bot.TextMessage) {
+  async process () {
     return {
       intent: [{ id: 'test', score: 1 }],
       entities: [{ id: 'testing' }],
@@ -88,7 +87,7 @@ describe('thought', () => {
       it('adds timestamp if middleware complete', async () => {
         const b = new bot.State({ message })
         const name = 'test'
-        const middlewarePiece = (_, next, __) => next()
+        const middlewarePiece = (_: any, next: any) => next()
         const middleware = new bot.Middleware('test')
         middleware.register(middlewarePiece)
         await new bot.Thought({ name, b, middleware }).process()
@@ -98,7 +97,7 @@ describe('thought', () => {
         const action = sinon.spy()
         const b = new bot.State({ message })
         const name = 'test'
-        const middlewarePiece = (_, next, __) => next()
+        const middlewarePiece = (_: any, next: any) => next()
         const middleware = new bot.Middleware('test')
         middleware.register(middlewarePiece)
         await new bot.Thought({ name, b, middleware, action }).process()
@@ -107,7 +106,7 @@ describe('thought', () => {
       it('no timestamp if middleware incomplete', async () => {
         const b = new bot.State({ message })
         const name = 'test'
-        const middlewarePiece = (_, __, done) => done()
+        const middlewarePiece = (_: any, __: any, done: any) => done()
         const middleware = new bot.Middleware('test')
         middleware.register(middlewarePiece)
         await new bot.Thought({ name, b, middleware }).process()
@@ -223,7 +222,7 @@ describe('thought', () => {
     })
     it('with listeners, processes listeners', async () => {
       const listeners = new bot.Listeners()
-      let listens = []
+      let listens: string[] = []
       listeners.custom(() => true, () => listens.push('A'), { force: true })
       listeners.custom(() => true, () => listens.push('B'), { force: true })
       await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
@@ -231,7 +230,7 @@ describe('thought', () => {
     })
     it('with listeners, ignores global listeners', async () => {
       const listeners = new bot.Listeners()
-      let listens = []
+      let listens: string[] = []
       bot.listenCustom(() => true, () => listens.push('A'), { force: true })
       listeners.custom(() => true, () => listens.push('B'), { force: true })
       listeners.custom(() => true, () => listens.push('C'), { force: true })
@@ -242,29 +241,29 @@ describe('thought', () => {
       const listeners = new bot.Listeners()
       let processed = false
       listeners.custom(() => true, (b) => b.respond('foo'))
-      listeners.custom(() => true, (b) => (processed = true), { force: true })
+      listeners.custom(() => true, () => (processed = true), { force: true })
       await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
       expect(processed).to.equal(true)
     })
     it('continues to following listeners after async callback', async () => {
       const listeners = new bot.Listeners()
       let processed = false
-      listeners.custom(() => true, (b) => delay(50))
-      listeners.custom(() => true, (b) => (processed = true), { force: true })
+      listeners.custom(() => true, () => delay(50))
+      listeners.custom(() => true, () => (processed = true), { force: true })
       await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
       expect(processed).to.equal(true)
     })
     it('continues to following listeners after async matcher', async () => {
       const listeners = new bot.Listeners()
       let processed = false
-      listeners.custom(() => delay(50).then(() => true), (b) => null)
-      listeners.custom(() => true, (b) => (processed = true), { force: true })
+      listeners.custom(() => delay(50).then(() => true), () => null)
+      listeners.custom(() => true, () => (processed = true), { force: true })
       await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
       expect(processed).to.equal(true)
     })
     it('without listeners, uses global listeners', async () => {
       const listeners = new bot.Listeners()
-      let listens = []
+      let listens: string[] = []
       bot.listenCustom(() => true, () => listens.push('A'), { force: true })
       listeners.custom(() => true, () => listens.push('B'), { force: true })
       listeners.custom(() => true, () => listens.push('C'), { force: true })
@@ -298,20 +297,20 @@ describe('thought', () => {
       expect(b.processed).to.include.keys('understand')
     })
     it('understand passes message to language adapter', async () => {
-      bot.adapters.language.process = sinon.spy()
+      bot.adapters.language!.process = sinon.spy()
       bot.understandCustom(() => true, () => null)
       const b = new bot.State({ message })
       await new bot.Thoughts(b).start('receive')
-      sinon.assert.calledWithExactly((bot.adapters.language.process as sinon.SinonSpy), message)
+      sinon.assert.calledWithExactly((bot.adapters.language!.process as sinon.SinonSpy), message)
     })
     it('understand listeners include NLU results from adapter', async () => {
-      bot.adapters.language.process = async () => {
+      bot.adapters.language!.process = async () => {
         return { intent: new bot.NaturalLanguageResult().add({ id: 'test' }) }
       }
       bot.understandCustom(() => true, () => null)
       const b = new bot.State({ message })
       await new bot.Thoughts(b).start('receive')
-      expect(b.message.nlu.results.intent).to.eql([{ id: 'test' }])
+      expect(b.message.nlu!.results.intent).to.eql([{ id: 'test' }])
     })
     it('does not understand without adapter', async () => {
       bot.listenCustom(() => false, () => null)
@@ -329,12 +328,12 @@ describe('thought', () => {
       expect(b.processed).to.not.include.keys('understand')
     })
     it('does not understand when message text is empty', async () => {
-      bot.adapters.language.process = sinon.spy()
+      bot.adapters.language!.process = sinon.spy()
       bot.understandCustom(() => true, () => null)
       const empty = new bot.TextMessage(new bot.User(), '                   ')
       const b = new bot.State({ message: empty })
       await new bot.Thoughts(b).start('receive')
-      sinon.assert.notCalled((bot.adapters.language.process as sinon.SinonSpy))
+      sinon.assert.notCalled((bot.adapters.language!.process as sinon.SinonSpy))
     })
     it('does not understand when hear interrupted', async () => {
       bot.understandCustom(() => true, () => null)
@@ -394,14 +393,14 @@ describe('thought', () => {
       bot.listenCustom(() => true, (b) => b.respond('test'), { id: 'test' })
       const b = new bot.State({ message })
       await new bot.Thoughts(b).start('receive')
-      expect(b.envelopes[0].listenerId).to.equal('test')
+      expect(b.envelopes![0].listenerId).to.equal('test')
     })
     it('respond passes message to language adapter', async () => {
       bot.listenCustom(() => true, (b) => b.respond('test'))
       const b = new bot.State({ message })
       await new bot.Thoughts(b).start('receive')
-      const envelope = b.envelopes[0]
-      sinon.assert.calledWithExactly((bot.adapters.message.dispatch as sinon.SinonStub), envelope)
+      const envelope = b.envelopes![0]
+      sinon.assert.calledWithExactly((bot.adapters.message!.dispatch as sinon.SinonStub), envelope)
     })
     it('does remember when listeners matched', async () => {
       bot.listenCustom(() => true, () => null)
@@ -450,17 +449,17 @@ describe('thought', () => {
       bot.listenCustom(() => true, () => null)
       const b = new bot.State({ message })
       await new bot.Thoughts(b).start('receive')
-      sinon.assert.calledWithExactly((bot.adapters.storage.keep as sinon.SinonStub), 'states', sinon.match({ message }))
+      sinon.assert.calledWithExactly((bot.adapters.storage!.keep as sinon.SinonStub), 'states', sinon.match({ message }))
     })
     it('remember only once with multiple responses', async () => {
       bot.listenCustom(() => true, (b) => b.respond('A'))
       bot.listenCustom(() => true, (b) => b.respond('B'), { force: true })
       const b = new bot.State({ message })
       await new bot.Thoughts(b).start('receive')
-      expect(b.envelopes.map((envelope) => envelope.strings)).to.eql([
+      expect(b.envelopes!.map((envelope) => envelope.strings)).to.eql([
         ['A'], ['B']
       ])
-      sinon.assert.calledOnce((bot.adapters.storage.keep as sinon.SinonStub))
+      sinon.assert.calledOnce((bot.adapters.storage!.keep as sinon.SinonStub))
     })
     describe('receive', () => {
       it('timestamps all actioned processes', async () => {
@@ -476,7 +475,6 @@ describe('thought', () => {
     })
     describe('respond', () => {
       it('timestamps all actioned processes', async () => {
-        const now = Date.now()
         const b = new bot.State({ message })
         b.respondEnvelope().write('ping')
         await bot.respond(b)

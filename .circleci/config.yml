@@ -27,6 +27,6 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
         
-      - run: yarn test
-      - run: yarn test:coverage
-      - run: yarn docs:publish
+      - run: yarn build
+      - run: -[[ "${CIRCLE_BRANCH}" == "master" ]] && yarn test:coverage
+      - run: -[[ "${CIRCLE_BRANCH}" == "master" ]] && yarn docs:publish

@@ -4,7 +4,6 @@ import { expect, assert } from 'chai'
 import {
   NaturalLanguageResult,
   NaturalLanguageResults,
-  NaturalLanguageResultsRaw,
   NLU
 } from './nlu'
 
@@ -31,44 +30,44 @@ describe('nlu', () => {
     })
     describe('.indexIncludes', () => {
       it('returns falsy when not in results', () => {
-        assert.isNotOk(results.phrases.indexIncludes(0, { id: 'test' }))
+        assert.isNotOk(results.phrases!.indexIncludes(0, { id: 'test' }))
       })
       it('returns falsy if not matching id at index', () => {
-        assert.isNotOk(results.intent.indexIncludes(0, { id: 'unit' }))
+        assert.isNotOk(results.intent!.indexIncludes(0, { id: 'unit' }))
       })
       it('returns falsy if not matching both id and name at index', () => {
-        assert.isNotOk(results.act.indexIncludes(0, { id: 'assert', name: 'nope' }))
+        assert.isNotOk(results.act!.indexIncludes(0, { id: 'assert', name: 'nope' }))
       })
       it('returns falsy if not matching score at index', () => {
-        assert.isNotOk(results.sentiment.indexIncludes(0, { score: 1 }))
+        assert.isNotOk(results.sentiment!.indexIncludes(0, { score: 1 }))
       })
       it('returns falsy if matching score, but not matching id at index', () => {
-        assert.isNotOk(results.intent.indexIncludes(1, { score: .5, id: 'nope' }))
+        assert.isNotOk(results.intent!.indexIncludes(1, { score: .5, id: 'nope' }))
       })
       it('returns element if matching id at index', () => {
-        expect(results.intent.indexIncludes(0, { id: 'test' })).to.eql(results.intent[0])
+        expect(results.intent!.indexIncludes(0, { id: 'test' })).to.eql(results.intent![0])
       })
       it('returns element if matching score at index', () => {
-        expect(results.intent.indexIncludes(1, { score: .5 })).to.eql(results.intent[1])
+        expect(results.intent!.indexIncludes(1, { score: .5 })).to.eql(results.intent![1])
       })
       it('returns element if matching id but not score at index', () => {
-        expect(results.intent.indexIncludes(0, { id: 'test', score: 0 })).to.eql(results.intent[0])
+        expect(results.intent!.indexIncludes(0, { id: 'test', score: 0 })).to.eql(results.intent![0])
       })
       it('returns element if matching name but not score at index', () => {
-        expect(results.language.indexIncludes(0, { name: 'english', score: 0 })).to.eql(results.language[0])
+        expect(results.language!.indexIncludes(0, { name: 'english', score: 0 })).to.eql(results.language![0])
       })
     })
     describe('.sortByScore', () => {
       it('sorts results by score, descending', () => {
-        results.tone.sortByScore()
-        expect(results.tone[0].score).to.be.gt(results.tone[1].score)
+        results.tone!.sortByScore()
+        expect(results.tone![0].score).to.be.gt(results.tone![1].score!)
       })
       it('sorts items without score first', () => {
-        results.act.sortByScore()
-        expect(results.act[0].id).to.equal('statement')
+        results.act!.sortByScore()
+        expect(results.act![0].id).to.equal('statement')
       })
       it('leaves items without score in order', () => {
-        results.entities.sortByScore()
+        results.entities!.sortByScore()
         expect(results.entities).to.eql([{ id: 'foo' }, { id: 'bar' }])
       })
     })
@@ -289,18 +288,18 @@ describe('nlu', () => {
       it('adds result set args to new results attribute at key', () => {
         const nlu = new NLU().addResult('intent', { id: 'foo' }, { id: 'bar' })
         expect(nlu.results.intent).to.be.instanceof(NaturalLanguageResult)
-        expect(Array.from(nlu.results.intent)).to.eql([{ id: 'foo' }, { id: 'bar' }])
+        expect(Array.from(nlu.results.intent!)).to.eql([{ id: 'foo' }, { id: 'bar' }])
       })
       it('adds to result set if already exists', () => {
         const nlu = new NLU().addResult('act', { id: 'foo' }, { id: 'bar' })
         nlu.addResult('act', { id: 'baz' })
-        expect(Array.from(nlu.results.act)).to.eql([{ id: 'foo' }, { id: 'bar' }, { id: 'baz' }])
+        expect(Array.from(nlu.results.act!)).to.eql([{ id: 'foo' }, { id: 'bar' }, { id: 'baz' }])
       })
     })
     describe('.matchCriteria', () => {
       it('returns matches from match call on NLU results', () => {
         const nlu = new NLU().addResult('act', { id: 'foo' }, { id: 'bar' })
-        const match = sinon.spy(nlu.results.act, 'match')
+        const match = sinon.spy(nlu.results.act!, 'match')
         const result = nlu.matchCriteria('act', { id: 'foo' })
         expect(result).to.eql(match.returnValues[0])
       })
@@ -311,8 +310,8 @@ describe('nlu', () => {
           act: [{ id: 'foo' }, { id: 'bar' }],
           intent: [{ id: 'baz' }, { id: 'qux' }]
         })
-        const matchAct = sinon.spy(nlu.results.act, 'match')
-        const matchIntent = sinon.spy(nlu.results.intent, 'match')
+        const matchAct = sinon.spy(nlu.results.act!, 'match')
+        const matchIntent = sinon.spy(nlu.results.intent!, 'match')
         const result = nlu.matchAllCriteria({
           act: { id: 'foo' },
           intent: { id: 'qux' }

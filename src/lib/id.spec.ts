@@ -1,5 +1,4 @@
 import 'mocha'
-import sinon from 'sinon'
 import { expect } from 'chai'
 import * as id from './id'
 
@@ -19,8 +18,8 @@ describe('id', () => {
     it('returns sequential IDs', () => {
       const id1 = id.counter('prefix')
       const id2 = id.counter('prefix')
-      const id1Num = parseInt(id1.match(/prefix_(\d)/)[1], 10)
-      const id2Num = parseInt(id2.match(/prefix_(\d)/)[1], 10)
+      const id1Num = parseInt(id1.match(/prefix_(\d)/)![1], 10)
+      const id2Num = parseInt(id2.match(/prefix_(\d)/)![1], 10)
       expect(id2Num).to.equal(id1Num + 1)
     })
   })
