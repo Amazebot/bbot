@@ -17,16 +17,27 @@ jobs:
 
       - restore_cache:
           keys:
+          - yarn-packages-{{ checksum "yarn.lock" }}
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies-
 
       - run: yarn install
 
       - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+      - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-        
-      - run: yarn test
+
+      - run: yarn build
       - run: yarn test:coverage
-      - run: yarn docs:publish
+      - run: |
+          if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
+            git config --global user.email $GH_EMAIL
+            git config --global user.name $GH_NAME
+            yarn docs:publish
+          fi
