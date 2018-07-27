@@ -1,5 +1,5 @@
 import * as winston from 'winston'
-const { combine, timestamp, json, prettyPrint, colorize } = winston.format
+const { combine, timestamp, json, colorize, align } = winston.format
 
 /**
  * Winston logger provides a logging interface common to many Node apps, with
@@ -32,7 +32,9 @@ export const logger = winston.createLogger({
       format: combine(timestamp(), json())
     }),
     new winston.transports.Console({
-      format: combine(timestamp(), prettyPrint(), colorize())
+      format: combine(colorize(), align(), winston.format.printf((nfo: any) => {
+        return `${nfo.level}: ${nfo.message}`
+      }))
     })
   ]
 })

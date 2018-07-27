@@ -1,6 +1,9 @@
 import * as bBot from '..'
+import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
+
+class ShellTransport extends Transport {}
 
 /** Load prompts and render chat in shell, for testing interactions */
 export class Shell extends bBot.MessageAdapter {
@@ -15,7 +18,7 @@ export class Shell extends bBot.MessageAdapter {
 
   /** Update chat window and return to input prompt */
   async render () {
-    let _ = '\n'
+    let _ = '\n\n'
     let n = '           '
     _ += chalk.cyan('╔═════════════════════════════════════════════════════════▶') + '\n'
     for (let m of this.messages.slice(-this.settings.chatSize)) {
@@ -27,9 +30,10 @@ export class Shell extends bBot.MessageAdapter {
   }
 
   /** Route log events to the inquirer UI (only the combined log) */
-  log (transport: any, level: string, msg: string) {
-    if (transport.name === 'console') {
-      let item = `[${level}]${msg}`
+  log (logEvent: any, callback: any) {
+    if (this.ui) {
+      const { message, level } = logEvent
+      let item = `${level}: ${message}`
       switch (level) {
         case 'debug': item = chalk.gray(item)
           break
@@ -37,8 +41,9 @@ export class Shell extends bBot.MessageAdapter {
           break
         case 'error': item = chalk.red(item)
       }
-      this.ui.writeLog(item)
+      this.ui.log.write(item.trim())
     }
+    callback()
   }
 
   /** Register user and room, then render chat with welcome message */
@@ -55,7 +60,6 @@ export class Shell extends bBot.MessageAdapter {
         message: 'And what about this "room"?',
         default: 'shell'
       }])
-      this.bot.logger.on('logging', this.log.bind(this))
       this.user = new this.bot.User({ name: registration.username })
       this.room = { name: registration.room }
       const e = new this.bot.Envelope()
@@ -96,4 +100,10 @@ export class Shell extends bBot.MessageAdapter {
   }
 }
 
-export const use = (bot: typeof bBot) => new Shell(bot)
+export const use = (bot: typeof bBot) => {
+  const shell = new Shell(bot)
+  const transport = new ShellTransport()
+  transport.log = shell.log.bind(shell)
+  bot.logger.add(transport)
+  return shell
+}
