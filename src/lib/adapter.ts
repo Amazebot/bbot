@@ -34,10 +34,11 @@ export function loadAdapter (adapterPath?: string) {
   if (!isPath) adapterPath = `./adapters/${adapterPath}`
   bot.logger.debug(`[adapter] loading adapter by path: ${adapterPath}`)
   let sourcePath = 'src'
+  let distPath = 'dist'
   let modulePath = 'node_modules/bbot/dist'
   let currentPath = process.cwd()
   let currentModule = path.resolve(currentPath, modulePath)
-  let resolver = { paths: [ sourcePath, currentPath, currentModule ] }
+  let resolver = { paths: [ sourcePath, distPath, currentPath, currentModule ] }
   if (require.main) resolver.paths = resolver.paths.concat(...require.main.paths)
   try {
     adapterPath = require.resolve(adapterPath, resolver)
