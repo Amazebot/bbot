@@ -2,16 +2,58 @@ import 'dotenv/config'
 import * as yargs from 'yargs'
 import { packageJSON } from './json'
 
-export interface IConfig {
-  name: string,
-  alias?: string,
-  logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent',
-  autoSave?: boolean,
-  messageAdapter?: string,
-  languageAdapter?: string,
-  storageAdapter?: string,
-  webhookAdapter?: string,
-  analyticsAdapter?: string
+/** Initial array of config options, can be extended prior to load. */
+export const options: { [key: string]: yargs.Options } = {
+  'name': {
+    type: 'string',
+    describe: 'Name of the bot in chat. Prepending any command with the name will trigger respond listeners.',
+    alias: 'n',
+    default: 'bot'
+  },
+  'alias': {
+    type: 'string',
+    describe: 'Alternate name for the bot.'
+  },
+  'log-level': {
+    type: 'string',
+    describe: 'The starting minimum level for logging events (silent|debug|info|warn|error).',
+    default: 'info'
+  },
+  'auto-save': {
+    type: 'boolean',
+    describe: 'Save data in the brain every 5 seconds (defaults true).',
+    default: true
+  },
+  'message-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as message platform adapter',
+    alias: 'm',
+    default: './adapters/shell'
+  },
+  'language-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as message platform adapter',
+    alias: 'l',
+    default: null
+  },
+  'storage-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as storage engine adapter',
+    alias: 's',
+    default: null
+  },
+  'webhook-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as webhook provider adapter',
+    alias: 'w',
+    default: null
+  },
+  'analytics-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as analytics provider adapter',
+    alias: 'a',
+    default: null
+  }
 }
 
 /**
@@ -21,60 +63,11 @@ export interface IConfig {
  * then assigned to the config object (some are nullable).
  */
 export function getConfig () {
-  const argv = yargs
+  for (let key in options) yargs.option(key, options[key])
+  return yargs
     .usage('\nUsage: $0 [args]')
     .env('BOT')
     .pkgConf('bot')
-    .option('name', {
-      alias: 'n',
-      type: 'string',
-      describe: 'Name of the bot in chat. Prepending any command with the name will trigger respond listeners.\n',
-      default: 'bot'
-    })
-    .option('alias', {
-      type: 'string',
-      describe: 'Alternate name for the bot.\n'
-    })
-    .option('log-level', {
-      type: 'string',
-      describe: 'The starting minimum level for logging events (silent|debug|info|warn|error).',
-      default: 'info'
-    })
-    .option('auto-save', {
-      type: 'boolean',
-      describe: 'Save data in the brain every 5 seconds (defaults true).',
-      default: true
-    })
-    .option('message-adapter', {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as message platform adapter',
-      alias: 'm',
-      default: './adapters/shell'
-    })
-    .option('language-adapter', {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as message platform adapter',
-      alias: 'l',
-      default: null
-    })
-    .option('storage-adapter', {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as storage engine adapter',
-      alias: 's',
-      default: null
-    })
-    .option('webhook-adapter', {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as webhook provider adapter',
-      alias: 'w',
-      default: null
-    })
-    .option('analytics-adapter', {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as analytics provider adapter',
-      alias: 'a',
-      default: null
-    })
     .config()
     .alias('config', 'c')
     .example('config', 'bin/bbot -c bot-config.json')
@@ -94,18 +87,6 @@ For more information, see https://amazebot.github.io/bbot'`
       process.exit(1)
     })
     .argv
-  const config: IConfig = {
-    name: argv.name,
-    alias: argv.alias,
-    logLevel: argv.logLevel,
-    messageAdapter: argv.messageAdapter,
-    languageAdapter: argv.languageAdapter,
-    storageAdapter: argv.storageAdapter,
-    webhookAdapter: argv.webhookAdapter,
-    analyticsAdapter: argv.analyticsAdapter,
-    autoSave: argv.autoSave
-  }
-  return config
 }
 
 /** Access all settings from argv, env, package.json and custom config file */
