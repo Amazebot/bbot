@@ -3,8 +3,6 @@ import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
 
-class ShellTransport extends Transport {}
-
 /** Load prompts and render chat in shell, for testing interactions */
 export class Shell extends bBot.MessageAdapter {
   name = 'shell-message-adapter'
@@ -15,10 +13,12 @@ export class Shell extends bBot.MessageAdapter {
   settings = {
     chatSize: 5
   }
+  userName = process.env.BOT_SHELL_USER
+  roomName = process.env.BOT_SHELL_ROOM
 
   /** Update chat window and return to input prompt */
   async render () {
-    let _ = '\n\n'
+    let _ = '\n'
     let n = '           '
     _ += chalk.cyan('╔═════════════════════════════════════════════════════════▶') + '\n'
     for (let m of this.messages.slice(-this.settings.chatSize)) {
@@ -29,16 +29,25 @@ export class Shell extends bBot.MessageAdapter {
     await this.prompt()
   }
 
-  /** Route log events to the inquirer UI (only the combined log) */
+  /** Re-route console transport to shell's own logger */
+  logSetup () {
+    this.bot.logger.debug('[shell] Re-routing logs to shell UI from here...')
+    class ShellTransport extends Transport {}
+    this.transport = new ShellTransport()
+    this.transport.log = this.log.bind(this)
+    const consoleLogger = this.bot.logger.transports.find((t: any) => t.name === 'console')
+    if (consoleLogger) this.bot.logger.remove(consoleLogger)
+    this.bot.logger.add(this.transport)
+  }
+
+  /** Write log events to the inquirer UI */
   log (logEvent: any, callback: any) {
     if (this.ui) {
       const { message, level } = logEvent
       let item = `${level}: ${message}`
       switch (level) {
-        case 'debug': item = chalk.gray(item)
-          break
-        case 'warn': item = chalk.magenta(item)
-          break
+        case 'debug': item = chalk.gray(item); break
+        case 'warn': item = chalk.magenta(item); break
         case 'error': item = chalk.red(item)
       }
       this.ui.log.write(item.trim())
@@ -46,9 +55,12 @@ export class Shell extends bBot.MessageAdapter {
     callback()
   }
 
-  /** Register user and room, then render chat with welcome message */
-  async start () {
-    this.bot.events.on('started', async () => {
+  /** Write prompt to collect room and user name, or take from env settings */
+  async roomSetup () {
+    if (this.userName && this.roomName) {
+      this.user = new this.bot.User({ name: this.userName })
+      this.room = { name: this.roomName }
+    } else {
       const registration: any = await inquirer.prompt([{
         type: 'input',
         name: 'username',
@@ -62,11 +74,21 @@ export class Shell extends bBot.MessageAdapter {
       }])
       this.user = new this.bot.User({ name: registration.username })
       this.room = { name: registration.room }
-      const e = new this.bot.Envelope()
-      this.ui = new inquirer.ui.BottomBar()
-      e.write(`Hi @${this.user.name}. Welcome to #${this.room.name}, I'm @${this.bot.name}`)
-      e.write(`Type "exit" to exit any time.`)
-      await this.dispatch(e)
+    }
+  }
+
+  /** Register user and room, then render chat with welcome message */
+  async start () {
+    this.ui = new inquirer.ui.BottomBar()
+    this.bot.listenEnter((b) => b.respond(
+      `@${this.user.name} Welcome to #${this.room.name}, I'm @${b.bot.name}`,
+      `Type "exit" to exit any time.`
+    ))
+    this.bot.listenText(/^exit$/i, (b) => b.bot.shutdown())
+    this.bot.events.on('started', async () => {
+      this.logSetup()
+      await this.roomSetup()
+      await this.bot.receive(new this.bot.EnterMessage(this.user))
       await this.render()
     })
   }
@@ -78,9 +100,6 @@ export class Shell extends bBot.MessageAdapter {
       name: 'message',
       message: chalk.magenta(`#${this.room.name}`) + chalk.cyan(' ➤')
     })
-    if ((input.message as string).toLowerCase() === 'exit') {
-      return this.bot.shutdown()
-    }
     this.messages.push([this.user.name, input.message])
     await this.bot.receive(new this.bot.TextMessage(this.user, input.message))
     return this.render()
@@ -100,10 +119,4 @@ export class Shell extends bBot.MessageAdapter {
   }
 }
 
-export const use = (bot: typeof bBot) => {
-  const shell = new Shell(bot)
-  const transport = new ShellTransport()
-  transport.log = shell.log.bind(shell)
-  bot.logger.add(transport)
-  return shell
-}
+export const use = (bot: typeof bBot) => new Shell(bot)

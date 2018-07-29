@@ -43,8 +43,8 @@ export function loadAdapter (adapterPath?: string) {
   try {
     adapterPath = require.resolve(adapterPath, resolver)
     return require(adapterPath).use(bot)
-  } catch (e) {
-    bot.logger.error(`[adapter] loading failed`, e)
+  } catch (err) {
+    bot.logger.error(`[adapter] loading failed: ${err.message}`)
     throw new Error(`[adapter] could not load from ${adapterPath}`)
   }
 }
