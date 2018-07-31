@@ -49,16 +49,21 @@ export class Thought implements IThought {
    * If process succeeds, timestamp is added to state.
    */
   async process () {
-    // let isPending = true
+    if (this.b.exit) {
+      bot.logger.debug(`[thought] state ignored, exit processing`)
+      return Promise.resolve()
+    }
     return new Promise((resolve, reject) => {
       const { b, name, validate, middleware, listeners } = this
-      if (listeners && Object.keys(listeners).length === 0) {
-        bot.logger.debug(`[thought] skip ${name}, no listeners to process`)
-        return reject()
-      }
-      if (listeners && b.done) {
-        bot.logger.debug(`[thought] skip ${name}, listener processing is done`)
-        return reject()
+      if (typeof listeners !== 'undefined') {
+        if (Object.keys(listeners).length === 0) {
+          bot.logger.debug(`[thought] skip ${name}, no listeners to process`)
+          return reject()
+        }
+        if (b.done) {
+          bot.logger.debug(`[thought] skip ${name}, listener processing is done`)
+          return reject()
+        }
       }
       Promise.resolve(validate())
         .then(async (valid) => {

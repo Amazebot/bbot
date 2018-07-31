@@ -7,6 +7,7 @@ import * as bot from '..'
  */
 export interface IState {
   done?: boolean
+  exit?: boolean
   [key: string]: any
 }
 
@@ -41,11 +42,18 @@ export class State implements IState {
   listeners?: bot.Listener[]
   envelopes?: bot.Envelope[]
   method?: string
+  exit?: boolean
   [key: string]: any
 
   /** Create new state, usually assigned as `b` in middleware callbacks. */
   constructor (startingState: IDispatchState) {
     for (let key in startingState) this[key] = startingState[key]
+  }
+
+  /** Indicate that no more thought processes should look at this state */
+  ignore () {
+    this.exit = true
+    return this
   }
 
   /** Indicate that no other listener should be called for the state */

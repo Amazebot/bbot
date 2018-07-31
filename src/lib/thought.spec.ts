@@ -289,6 +289,33 @@ describe('thought', () => {
       await new bot.Thoughts(b).start('receive')
       expect(b.processed).to.not.include.keys('listen')
     })
+    it('calls post-process action if interrupted, not ignored', async () => {
+      bot.hearMiddleware((_: any, __: any, done: any) => {
+        done()
+      })
+      const b = new bot.State({ message })
+      const thoughts = new bot.Thoughts(b)
+      let listenActioned = false
+      thoughts.processes.listen.action = async function () {
+        listenActioned = true
+      }
+      await thoughts.start('receive')
+      expect(listenActioned).to.equal(true)
+    })
+    it('exits before post-process action if ignored', async () => {
+      bot.hearMiddleware((_: any, __: any, done: any) => {
+        b.ignore()
+        done()
+      })
+      const b = new bot.State({ message })
+      const thoughts = new bot.Thoughts(b)
+      let listenActioned = false
+      thoughts.processes.listen.action = async function () {
+        listenActioned = true
+      }
+      await thoughts.start('receive')
+      expect(listenActioned).to.equal(false)
+    })
     it('does understand when listeners unmatched', async () => {
       bot.listenCustom(() => false, () => null)
       bot.understandCustom(() => true, () => null)
