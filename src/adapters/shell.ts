@@ -83,8 +83,8 @@ export class Shell extends bBot.MessageAdapter {
     this.bot.listenEnter((b) => b.respond(
       `@${this.user.name} Welcome to #${this.room.name}, I'm @${b.bot.name}`,
       `Type "exit" to exit any time.`
-    ))
-    this.bot.listenText(/^exit$/i, (b) => b.bot.shutdown())
+    ), { id: 'shell-enter' })
+    this.bot.listenText(/^exit$/i, (b) => b.bot.shutdown(), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       this.logSetup()
       await this.roomSetup()
