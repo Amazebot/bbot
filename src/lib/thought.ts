@@ -49,10 +49,7 @@ export class Thought implements IThought {
    * If process succeeds, timestamp is added to state.
    */
   async process () {
-    if (this.b.exit) {
-      bot.logger.debug(`[thought] state ignored, exit processing`)
-      return Promise.resolve()
-    }
+    if (this.b.exit) return Promise.resolve()
     return new Promise((resolve, reject) => {
       const { b, name, validate, middleware, listeners } = this
       if (typeof listeners !== 'undefined') {
@@ -107,7 +104,7 @@ export class Thought implements IThought {
  */
 export class Thoughts {
   b: bot.State | bot.State
-  listeners: bot.Listeners = bot.globalListeners
+  listeners: bot.Listeners
   sequence: { [key: string]: string[] } = {
     receive: ['hear', 'listen', 'understand', 'act', 'remember'],
     respond: ['respond'],
@@ -122,18 +119,18 @@ export class Thoughts {
    */
   constructor (
     state: bot.State,
-    newListeners?: bot.Listeners
+    listeners?: bot.Listeners
   ) {
     this.b = state
-    if (newListeners) this.listeners = newListeners
-    const { b, listeners } = this
+    this.listeners = (listeners) ? listeners : bot.globalListeners
+    const { b } = this
 
     // Define processes with specific validation and post processing actions
     this.processes = {
       hear: new bot.Thought({ name: 'hear', b }),
-      listen: new bot.Thought({ name: 'listen', b, listeners: listeners.listen }),
-      understand: new bot.Thought({ name: 'understand', b, listeners: listeners.understand }),
-      act: new bot.Thought({ name: 'act', b, listeners: listeners.act }),
+      listen: new bot.Thought({ name: 'listen', b, listeners: this.listeners.listen }),
+      understand: new bot.Thought({ name: 'understand', b, listeners: this.listeners.understand }),
+      act: new bot.Thought({ name: 'act', b, listeners: this.listeners.act }),
       respond: new bot.Thought({ name: 'respond', b }),
       remember: new bot.Thought({ name: 'remember', b })
     }
@@ -209,10 +206,14 @@ export class Thoughts {
     }
   }
 
-  /** Trigger processing each thought in defined sequence. */
+  /** Begin processing each thought in defined sequence. */
   async start (sequence: string) {
     if (!this.sequence[sequence]) throw new Error('[thought] invalid sequence')
-    for (let process of this.sequence[sequence]) await this.processes[process].process()
+    if (!this.b.sequence) this.b.sequence = sequence
+    if (!this.b.scope) this.b.scope = this.listeners.scope
+    for (let process of this.sequence[sequence]) {
+      await this.processes[process].process()
+    }
     return this.b
   }
 }
@@ -221,8 +222,8 @@ export class Thoughts {
  * Initiate sequence of thought processes for an incoming message.
  * Listener callbacks may also respond. Final state is remembered.
  */
-export async function receive (message: bot.Message) {
-  return new Thoughts(new bot.State({ message })).start('receive')
+export async function receive (message: bot.Message, listeners?: bot.Listeners) {
+  return new Thoughts(new bot.State({ message }), listeners).start('receive')
 }
 
 /**

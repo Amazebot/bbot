@@ -8,6 +8,8 @@ import * as bot from '..'
 export interface IState {
   done?: boolean
   exit?: boolean
+  sequence?: string
+  scope?: string
   [key: string]: any
 }
 
@@ -41,6 +43,8 @@ export class State implements IState {
   message: bot.Message = new bot.NullMessage()
   listeners?: bot.Listener[]
   envelopes?: bot.Envelope[]
+  sequence?: string
+  scope?: string
   method?: string
   exit?: boolean
   [key: string]: any
@@ -50,8 +54,21 @@ export class State implements IState {
     for (let key in startingState) this[key] = startingState[key]
   }
 
+  /** Initialise a new state from this one's attribute. */
+  clone () {
+    return new State(this)
+  }
+
+  /** Get a pretty-printed view of the state without all the bot attributes. */
+  inspect () {
+    const clone = Object.assign({}, this)
+    delete clone.bot
+    return JSON.stringify(clone, null, 2)
+  }
+
   /** Indicate that no more thought processes should look at this state */
   ignore () {
+    bot.logger.debug(`[state] ignored by further thought processes`)
     this.exit = true
     return this
   }
