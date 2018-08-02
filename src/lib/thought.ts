@@ -6,7 +6,7 @@ export interface IThought {
   b: bot.State
   validate?: () => Promise<boolean> | boolean
   action?: (success: boolean) => Promise<void> | void
-  listeners?: { [id: string]: bot.Listener }
+  branches?: { [id: string]: bot.Branch }
   middleware?: bot.Middleware
 }
 
@@ -21,69 +21,72 @@ export class Thought implements IThought {
   validate: () => Promise<boolean> | boolean = () => Promise.resolve(true)
   action: (success: boolean) => Promise<void> | void = (_) => Promise.resolve()
   middleware: bot.Middleware
-  listeners?: { [id: string]: bot.Listener }
+  branches?: { [id: string]: bot.Branch }
 
   /**
    * Create new thought process with optional validate and action functions.
-   * Presence of listeners in options determines how middleware will execute.
-   * Without middleware option, will use "global" middleware of same name.
+   * Presence of branches in options determines how middleware will execute.
+   * Without middleware option, will the middleware of same name as the thought.
    */
   constructor (options: IThought) {
     this.name = options.name
     this.b = options.b
     if (options.validate) this.validate = options.validate
     if (options.action) this.action = options.action
-    if (options.listeners) this.listeners = options.listeners
+    if (options.branches) this.branches = options.branches
     if (options.middleware) this.middleware = options.middleware
     else if (bot.middlewares[this.name]) this.middleware = bot.middlewares[this.name]
     else throw new Error('[thought] invalid middleware provided')
   }
 
   /**
-   * Call validate, execute middleware, possibly listeners, then action.
-   * Will not enter process with empty listeners or if state `done` is true.
-   * Without listeners, execute middleware, resolve on completion.
-   * With listeners, process each listener or until state `done` is true.
+   * Call validate, execute middleware, possibly branches, then action.
+   * Will not enter process with empty branches or if state `done` is true.
+   * Without branches, execute middleware, resolve on completion.
+   * With branches, process each branch or until state `done` is true.
    * Action will be called with the boolean success of the process.
-   * Process succeeds if middleware completed or listeners were matched.
+   * Process succeeds if middleware completed or branches were matched.
    * If process succeeds, timestamp is added to state.
    */
   async process () {
     if (this.b.exit) return Promise.resolve()
     return new Promise((resolve, reject) => {
-      const { b, name, validate, middleware, listeners } = this
-      if (typeof listeners !== 'undefined') {
-        if (Object.keys(listeners).length === 0) {
-          bot.logger.debug(`[thought] skip ${name}, no listeners to process`)
+      const { b, name, validate, middleware, branches } = this
+      if (typeof branches !== 'undefined') {
+        if (Object.keys(branches).length === 0) {
+          bot.logger.debug(`[thought] skip ${name}, no branches to process`)
           return reject()
         }
         if (b.done) {
-          bot.logger.debug(`[thought] skip ${name}, listener processing is done`)
+          bot.logger.debug(`[thought] skip ${name}, branch processing is done`)
           return reject()
         }
       }
       Promise.resolve(validate())
         .then(async (valid) => {
           if (!valid) {
-            bot.logger.debug(`[thought] ${name} validator bypassed process`)
+            bot.logger.debug(`[thought] ${b.scope} ${name} validator bypassed process`)
             return reject()
           }
-          if (b.message) bot.logger.debug(`[thought] ${name} processing incoming message ID ${b.message.id}`)
-          else if (b.envelopes) bot.logger.debug(`[thought] ${name} processing outgoing envelopes`)
-          if (typeof listeners === 'undefined') return middleware.execute(b, resolve).then(reject)
-          for (let id in listeners) {
+          if (b.message) {
+            bot.logger.debug(`[thought] ${b.scope} ${name} processing incoming message ID ${b.message.id}`)
+          } else if (b.envelopes) {
+            bot.logger.debug(`[thought] ${b.scope} ${name} processing outgoing envelopes`)
+          }
+          if (typeof branches === 'undefined') return middleware.execute(b, resolve).then(reject)
+          for (let id in branches) {
             if (b.done) break
-            await listeners[id].process(b, middleware)
+            await branches[id].process(b, middleware)
           }
           return (b.matched) ? resolve() : reject()
         })
         .catch((err) => {
           bot.logger.debug(`[thought] ${name} validation error ${err.message}`)
-          reject()
+          reject(err)
         })
     })
       .then(() => {
-        // listener will add timestamp on match, so that it pre-dates response
+        // branch will add timestamp on match, so that it pre-dates response
         if (!this.b.processed[this.name]) this.b.processed[this.name] = Date.now()
         return this.action(true)
       })
@@ -95,8 +98,8 @@ export class Thought implements IThought {
 }
 
 /**
- * Collection of processes and listeners to execute with middleware and state.
- * Will use global listeners by default, but can be replaced with custom set.
+ * Collection of processes and branches to execute with middleware and state.
+ * Will use global path by default, but can be replaced with custom set.
  * Sequence arrays define orders of named processes, to run consecutively.
  * Default sequences are `receive` and `dispatch` to process incoming/outgoing.
  * Each process may have a `validate` method to run before processing and an
@@ -104,7 +107,7 @@ export class Thought implements IThought {
  */
 export class Thoughts {
   b: bot.State | bot.State
-  listeners: bot.Listeners
+  path: bot.Path
   sequence: { [key: string]: string[] } = {
     receive: ['hear', 'listen', 'understand', 'act', 'remember'],
     respond: ['respond'],
@@ -113,39 +116,39 @@ export class Thoughts {
   processes: { [key: string]: bot.Thought }
 
   /**
-   * Start a new instance of thought processes with an optional set of listeners
-   * to process. By default will process global listeners, but can accept an
-   * isolated set of listeners for specific conversational context.
+   * Start a new instance of thought processes with an optional path to process.
+   * By default will process global path, but can accept an isolated path for
+   * specific conversational context.
    */
   constructor (
     state: bot.State,
-    listeners?: bot.Listeners
+    path?: bot.Path
   ) {
     this.b = state
-    this.listeners = (listeners) ? listeners : bot.globalListeners
+    this.path = (path) ? path : bot.global
     const { b } = this
 
-    // Define processes with specific validation and post processing actions
+    // Define processes with validation and post processing actions
     this.processes = {
       hear: new bot.Thought({ name: 'hear', b }),
-      listen: new bot.Thought({ name: 'listen', b, listeners: this.listeners.listen }),
-      understand: new bot.Thought({ name: 'understand', b, listeners: this.listeners.understand }),
-      act: new bot.Thought({ name: 'act', b, listeners: this.listeners.act }),
+      listen: new bot.Thought({ name: 'listen', b, branches: this.path.listen }),
+      understand: new bot.Thought({ name: 'understand', b, branches: this.path.understand }),
+      act: new bot.Thought({ name: 'act', b, branches: this.path.act }),
       respond: new bot.Thought({ name: 'respond', b }),
       remember: new bot.Thought({ name: 'remember', b })
     }
 
-    // Ignore all further listeners if hear process interrupted
+    // Ignore all further branches if hear process interrupted
     this.processes.hear.action = async (success: boolean) => {
       if (!success) b.finish()
     }
 
-    // Only processed forced understand listeners if basic listener matched
+    // Only processed forced understand branches if listen branches matched
     this.processes.listen.action = async (success: boolean) => {
-      if (success) this.listeners.forced('understand')
+      if (success) this.path.forced('understand')
     }
 
-    // Get NLU result before understand listeners and only if required
+    // Get NLU result before processing NLU branches and only if required
     this.processes.understand.validate = async () => {
       if (!bot.adapters.language) {
         bot.logger.debug(`[thought] skip understand, no language adapter`)
@@ -166,22 +169,22 @@ export class Thoughts {
       return false
     }
 
-    // Wrap message in catch all before processing act listeners
+    // Wrap message in catch all before processing act branches
     this.processes.act.validate = async () => {
       if (b.matched) return false
       if (b.message) b.message = new bot.CatchAllMessage(b.message)
       return true
     }
 
-    // Connect response envelope to last listener before processing respond
+    // Connect response envelope to last branch before processing respond
     this.processes.respond.validate = async () => {
       if (!bot.adapters.message) {
         throw new Error('[thought] message adapter not found')
       }
       const envelope = b.pendingEnvelope()
       if (!envelope) return false
-      const listener = b.getListener()
-      if (listener) envelope.listenerId = listener.id
+      const branch = b.getBranch()
+      if (branch) envelope.branchId = branch.id
       return true
     }
 
@@ -210,7 +213,7 @@ export class Thoughts {
   async start (sequence: string) {
     if (!this.sequence[sequence]) throw new Error('[thought] invalid sequence')
     if (!this.b.sequence) this.b.sequence = sequence
-    if (!this.b.scope) this.b.scope = this.listeners.scope
+    if (!this.b.scope) this.b.scope = this.path.scope
     for (let process of this.sequence[sequence]) {
       await this.processes[process].process()
     }
@@ -220,10 +223,10 @@ export class Thoughts {
 
 /**
  * Initiate sequence of thought processes for an incoming message.
- * Listener callbacks may also respond. Final state is remembered.
+ * Branch callbacks may also respond. Final state is remembered.
  */
-export async function receive (message: bot.Message, listeners?: bot.Listeners) {
-  return new Thoughts(new bot.State({ message }), listeners).start('receive')
+export async function receive (message: bot.Message, path?: bot.Path) {
+  return new Thoughts(new bot.State({ message }), path).start('receive')
 }
 
 /**
@@ -236,7 +239,7 @@ export async function respond (b: bot.State) {
 
 /**
  * Initiate chain of thought processes for an outgoing envelope.
- * This is for sending unprompted by a listener. Final state is remembered.
+ * This is for sending unprompted by a branch. Final state is remembered.
  */
 export async function dispatch (envelope: bot.Envelope) {
   return new Thoughts(new bot.State({ envelopes: [envelope] })).start('dispatch')

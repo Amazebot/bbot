@@ -153,7 +153,7 @@ export function hearMiddleware (middlewarePiece: IPiece) {
   middlewares.hear.register(middlewarePiece)
 }
 
-/** Register middleware piece to execute after listener match */
+/** Register middleware piece to execute after branch match */
 export function listenMiddleware (middlewarePiece: IPiece) {
   middlewares.listen.register(middlewarePiece)
 }

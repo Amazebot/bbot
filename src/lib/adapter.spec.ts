@@ -14,7 +14,7 @@ class MockAdapter extends bot.Adapter {
   async dispatch () { /* mock dispatch */ }
 }
 
-describe('adapter', () => {
+describe('[adapter]', () => {
   before(() => {
     mockAdapter = new MockAdapter(bot)
     start = sinon.spy(mockAdapter, 'start')

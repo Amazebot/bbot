@@ -29,7 +29,7 @@ const clean = async () => {
 }
 let adapter: mongo.Mongo
 
-describe('mongo', () => {
+describe('[adapter-mongo]', () => {
   before(() => {
     initEnv = process.env
     process.env.MONGODB_URL = testMongo
@@ -127,19 +127,19 @@ describe('mongo', () => {
       }).lean().exec()
       expect(tests.data).to.eql(testStore)
     })
-    it('keeps matches intact for state listeners', async () => {
+    it('keeps matches intact for state branches', async () => {
       const b = new bot.State({ message: new bot.TextMessage(new bot.User(), '_') })
-      const listeners = [
-        new bot.CustomListener(() => 1, () => 1, { id: 'A', force: true }),
-        new bot.CustomListener(() => 2, () => 2, { id: 'B', force: true })
+      const branches = [
+        new bot.CustomBranch(() => 1, () => 1, { id: 'A', force: true }),
+        new bot.CustomBranch(() => 2, () => 2, { id: 'B', force: true })
       ]
-      for (let listener of listeners) await listener.process(b)
+      for (let branch of branches) await branch.process(b, new bot.Middleware('test'))
       await adapter.keep('states', bot.convertInstance(b))
       const states = await mongo.getModel(testCollection).findOne({
         sub: 'states',
         type: 'store'
       }).lean().exec()
-      expect(states.data[0].listeners.map((l: any) => l.match)).to.eql([1, 2])
+      expect(states.data[0].branches.map((l: any) => l.match)).to.eql([1, 2])
     })
   })
   describe('.find', () => {

@@ -7,7 +7,7 @@ import { StorageAdapter } from './storage'
 let log: sinon.SinonSpy
 let mockAdapter: bot.StorageAdapter
 
-describe('storage adapter', () => {
+describe('[adapter-storage]', () => {
   before(() => {
     class MockAdapter extends bot.StorageAdapter {
       name = 'mock-storage'
@@ -25,7 +25,7 @@ describe('storage adapter', () => {
   })
   beforeEach(() => log.resetHistory())
   after(() => log.restore())
-  describe('constructor', () => {
+  describe('StorageAdapter', () => {
     it('allows extending', () => {
       expect(mockAdapter).to.be.instanceof(StorageAdapter)
     })

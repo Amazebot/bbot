@@ -6,7 +6,7 @@ import * as bot from '..'
 
 let message: bot.TextMessage
 
-describe('bit', () => {
+describe('[bit]', () => {
   before(() => {
     message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
   })

@@ -80,11 +80,11 @@ export class Shell extends bBot.MessageAdapter {
   /** Register user and room, then render chat with welcome message */
   async start () {
     this.ui = new inquirer.ui.BottomBar()
-    this.bot.listenEnter((b) => b.respond(
+    this.bot.global.enter((b) => b.respond(
       `@${this.user.name} Welcome to #${this.room.name}, I'm @${b.bot.name}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-enter' })
-    this.bot.listenText(/^exit$/i, (b) => b.bot.shutdown(), { id: 'shell-exit' })
+    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       this.logSetup()
       await this.roomSetup()

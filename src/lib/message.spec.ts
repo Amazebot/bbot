@@ -5,7 +5,7 @@ import * as message from './message'
 
 let mockUser: bot.User
 
-describe('message', () => {
+describe('[message]', () => {
   before(() => mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' }))
   describe('Message', () => {
     it('allows extending', () => {

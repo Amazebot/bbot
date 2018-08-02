@@ -7,7 +7,7 @@ import { MessageAdapter } from './message'
 let log: sinon.SinonSpy
 let mockAdapter: bot.MessageAdapter
 
-describe('message adapter', () => {
+describe('[adapter-message]', () => {
   before(() => {
     log = sinon.spy(bot.logger, 'debug')
     class MockAdapter extends MessageAdapter {
@@ -20,7 +20,7 @@ describe('message adapter', () => {
   })
   beforeEach(() => log.resetHistory())
   after(() => log.restore())
-  describe('constructor', () => {
+  describe('MessageAdapter', () => {
     it('allows extending', () => {
       expect(mockAdapter).to.be.instanceof(MessageAdapter)
     })

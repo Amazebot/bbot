@@ -10,7 +10,7 @@ export interface IEnvelope {
   user?: bot.User
   strings?: string[]
   payload?: any
-  listenerId?: string
+  branchId?: string
   responded?: number
 }
 
@@ -32,11 +32,11 @@ export class Envelope implements IEnvelope {
   message?: bot.Message
   strings?: string[]
   payload?: any
-  listenerId?: string
+  branchId?: string
   responded?: number
 
   /**
-   * Create an envelope to dispatch unprompted or from a listener callback.
+   * Create an envelope to dispatch unprompted or from a branch callback.
    * - Addresses to a message's origin from a processed state if given
    * - Provide address and content as options (overriding those in state)
    * - Address to user's room if user given. If room given, will override user

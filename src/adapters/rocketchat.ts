@@ -3,7 +3,7 @@ import * as sdk from '@rocket.chat/sdk'
 
 /**
  * Rocket.Chat adapter processes incoming message stream, providing the
- * their this modules as attributes for advanced listener callbacks to use.
+ * their this modules as attributes for advanced branch callbacks to use.
  * Provides member alias to some SDK methods, to support legacy Hubot scripts.
  */
 export class Rocketchat extends bot.MessageAdapter {

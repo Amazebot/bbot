@@ -22,7 +22,7 @@ class MockAdapter extends bot.StorageAdapter {
   async lose () { return }
 }
 
-describe('brain', () => {
+describe('[brain]', () => {
   before(() => {
     mockAdapter = sinon.createStubInstance(MockAdapter);
     (mockAdapter.loadMemory as sinon.SinonStub).resolves({ test: { foo: 'bar' } });

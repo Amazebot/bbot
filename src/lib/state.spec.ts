@@ -6,7 +6,7 @@ import * as bot from '..'
 let message: bot.TextMessage
 let stubs: { [key: string]: sinon.SinonStub }
 
-describe('state', () => {
+describe('[state]', () => {
   before(() => {
     stubs = {}
     message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
@@ -28,69 +28,69 @@ describe('state', () => {
       expect(b.done).to.equal(true)
     })
   })
-  describe('.setListener', () => {
-    it('starts collection of matching listeners', () => {
+  describe('.setBranch', () => {
+    it('starts collection of matching branches', () => {
       const b = new bot.State({ message })
-      const listener = new bot.CustomListener(() => true, () => null)
-      listener.matched = true
-      b.setListener(listener)
-      expect(b.listeners).to.eql([listener])
+      const branch = new bot.CustomBranch(() => true, () => null)
+      branch.matched = true
+      b.setBranch(branch)
+      expect(b.branches).to.eql([branch])
     })
-    it('adds to collection if existing matched listeners', () => {
+    it('adds to collection if existing matched branches', () => {
       const b = new bot.State({ message })
-      const listenerA = new bot.CustomListener(() => true, () => null)
-      const listenerB = new bot.CustomListener(() => true, () => null)
-      listenerA.matched = true
-      listenerB.matched = true
-      b.listeners = [listenerA]
-      b.setListener(listenerB)
-      expect(b.listeners).to.eql([listenerA, listenerB])
+      const branchA = new bot.CustomBranch(() => true, () => null)
+      const branchB = new bot.CustomBranch(() => true, () => null)
+      branchA.matched = true
+      branchB.matched = true
+      b.branches = [branchA]
+      b.setBranch(branchB)
+      expect(b.branches).to.eql([branchA, branchB])
     })
-    it('rejects listeners that did not match', () => {
+    it('rejects branches that did not match', () => {
       const b = new bot.State({ message })
-      const listener = new bot.CustomListener(() => true, () => null)
-      b.setListener(listener)
-      expect(typeof b.listeners).to.equal('undefined')
+      const branch = new bot.CustomBranch(() => true, () => null)
+      b.setBranch(branch)
+      expect(typeof b.branches).to.equal('undefined')
     })
   })
-  describe('.getListener', () => {
-    it('returns undefined when no listeners in state', () => {
+  describe('.getBranch', () => {
+    it('returns undefined when no branches in state', () => {
       const b = new bot.State({ message })
-      expect(typeof b.getListener()).to.equal('undefined')
+      expect(typeof b.getBranch()).to.equal('undefined')
     })
     it('returns undefined when given ID not in state', () => {
       const b = new bot.State({ message })
-      const listener = new bot.CustomListener(() => 'A', () => null, { id: 'A' })
-      b.listeners = [listener]
-      expect(b.getListener('B')).to.equal(undefined)
+      const branch = new bot.CustomBranch(() => 'A', () => null, { id: 'A' })
+      b.branches = [branch]
+      expect(b.getBranch('B')).to.equal(undefined)
     })
     it('returns undefined when given index not in state', () => {
       const b = new bot.State({ message })
-      const listener = new bot.CustomListener(() => 'A', () => null, { id: 'A' })
-      b.listeners = [listener]
-      expect(b.getListener(1)).to.equal(undefined)
+      const branch = new bot.CustomBranch(() => 'A', () => null, { id: 'A' })
+      b.branches = [branch]
+      expect(b.getBranch(1)).to.equal(undefined)
     })
-    it('returns listener by ID in state', () => {
+    it('returns branch by ID in state', () => {
       const b = new bot.State({ message })
-      const listener = new bot.CustomListener(() => 'A', () => null, { id: 'A' })
-      b.listeners = [listener]
-      expect(b.getListener('A')).to.eql(listener)
+      const branch = new bot.CustomBranch(() => 'A', () => null, { id: 'A' })
+      b.branches = [branch]
+      expect(b.getBranch('A')).to.eql(branch)
     })
-    it('returns listener by index in state', () => {
+    it('returns branch by index in state', () => {
       const b = new bot.State({ message })
-      const listener = new bot.CustomListener(() => 'A', () => null, { id: 'A' })
-      b.listeners = [listener]
-      expect(b.getListener(0)).to.eql(listener)
+      const branch = new bot.CustomBranch(() => 'A', () => null, { id: 'A' })
+      b.branches = [branch]
+      expect(b.getBranch(0)).to.eql(branch)
     })
   })
   describe('.match', () => {
-    it('returns match of last listener', async () => {
-      const listeners = [
-        new bot.CustomListener(() => 'A', () => null, { id: 'A', force: true }),
-        new bot.CustomListener(() => 'B', () => null, { id: 'B', force: true })
+    it('returns match of last branch', async () => {
+      const branches = [
+        new bot.CustomBranch(() => 'A', () => null, { id: 'A', force: true }),
+        new bot.CustomBranch(() => 'B', () => null, { id: 'B', force: true })
       ]
       const b = new bot.State({ message })
-      for (let listener of listeners) await listener.process(b)
+      for (let branch of branches) await branch.process(b, new bot.Middleware('test'))
       expect(b.match).to.eql('B')
     })
     it('returns undefined if nothing matched', () => {
@@ -99,12 +99,12 @@ describe('state', () => {
     })
   })
   describe('.matched', () => {
-    it('returns true if any listeners added', () => {
+    it('returns true if any branches added', () => {
       const b = new bot.State({ message })
-      b.listeners = [new bot.CustomListener(() => 'B', () => null)]
+      b.branches = [new bot.CustomBranch(() => 'B', () => null)]
       expect(b.matched).to.equal(true)
     })
-    it('returns false if no listeners added', () => {
+    it('returns false if no branches added', () => {
       const b = new bot.State({ message })
       expect(b.matched).to.equal(false)
     })
@@ -129,7 +129,7 @@ describe('state', () => {
       })
     })
   })
-  describe('respond', () => {
+  describe('.respond', () => {
     beforeEach(() => stubs.respond = sinon.stub(bot, 'respond'))
     afterEach(() => stubs.respond.restore())
     it('calls respond thought process with the current state', async () => {
@@ -139,7 +139,7 @@ describe('state', () => {
       expect(b.envelopes![0].strings).to.eql(['testing'])
     })
   })
-  describe('respondVia', () => {
+  describe('.respondVia', () => {
     it('updates state method before calling respond', async () => {
       const b = new bot.State({ message })
       const respond = sinon.stub(b, 'respond')

@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 
-describe('bot', () => {
+describe('[core]', () => {
   afterEach(() => bot.reset())
   describe('.load', () => {
     it('returns a promise', () => {

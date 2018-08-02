@@ -105,7 +105,7 @@ export async function reset () {
   if (status !== 'shutdown') await shutdown()
   bot.unloadAdapters()
   bot.unloadMiddleware()
-  bot.unloadListeners()
+  bot.global.reset()
   // unloadServer()
   await eventDelay()
   setStatus('waiting')
