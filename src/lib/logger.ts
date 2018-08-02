@@ -17,7 +17,6 @@ const { combine, timestamp, json, colorize, align } = winston.format
  */
 export const logger = winston.createLogger({
   level: process.env.BOT_LOG_LEVEL,
-  exitOnError: (err: Error) => ((err as any).middleware === undefined),
   transports: [
     new winston.transports.File({
       filename: 'error.log',
@@ -36,5 +35,9 @@ export const logger = winston.createLogger({
         return `${nfo.level}: ${nfo.message}`
       }))
     })
-  ]
+  ],
+  exceptionHandlers: [
+    new winston.transports.File({ filename: 'exceptions.log' })
+  ],
+  exitOnError: (err: Error) => (typeof (err as any).middleware === 'undefined')
 })

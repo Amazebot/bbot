@@ -45,7 +45,7 @@ export function loadAdapter (adapterPath?: string) {
     return require(adapterPath).use(bot)
   } catch (err) {
     bot.logger.error(`[adapter] loading failed: ${err.message}`)
-    throw new Error(`[adapter] could not load from ${adapterPath}`)
+    throw err
   }
 }
 
@@ -69,7 +69,10 @@ export function startAdapters () {
     let adapter = adapters[type]
     if (adapter) {
       bot.logger.debug(`[adapter] starting ${type} adapter: ${adapter.name}`)
-      return Promise.resolve(adapter.start())
+      return Promise.resolve(adapter.start()).catch((err) => {
+        bot.logger.error(`[adapter] startup failed: ${err.message}`)
+        throw err
+      })
     } else {
       bot.logger.debug(`[adapter] no ${type} type adapter defined`)
     }
