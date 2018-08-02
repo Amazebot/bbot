@@ -195,21 +195,24 @@ export class NaturalLanguageListenerDirect extends NaturalLanguageListener {
 }
 
 export interface IListeners {
-  listen: { [id: string]: TextListener | CustomListener }
-  understand: { [id: string]: NaturalLanguageListener | CustomListener }
-  act: { [id: string]: CatchAllListener }
+  scope?: string
+  listen?: { [id: string]: TextListener | CustomListener }
+  understand?: { [id: string]: NaturalLanguageListener | CustomListener }
+  act?: { [id: string]: CatchAllListener }
 }
 
 /** Collection of listeners and the methods to create each type */
 export class Listeners implements IListeners {
+  scope: string
   listen: { [id: string]: TextListener | CustomListener }
   understand: { [id: string]: NaturalLanguageListener | CustomListener }
   act: { [id: string]: CatchAllListener }
 
-  constructor (listeners?: Listeners | IListeners) {
-    this.listen = (listeners) ? listeners.listen : {}
-    this.understand = (listeners) ? listeners.understand : {}
-    this.act = (listeners) ? listeners.act : {}
+  constructor (listeners: Listeners | IListeners = {}) {
+    this.scope = (listeners.scope) ? listeners.scope : 'global'
+    this.listen = (listeners.listen) ? listeners.listen : {}
+    this.understand = (listeners.understand) ? listeners.understand : {}
+    this.act = (listeners.act) ? listeners.act : {}
   }
 
   /** Remove all but forced listeners from collection, return remaining size */

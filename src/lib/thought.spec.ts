@@ -220,13 +220,35 @@ describe('thought', () => {
       delete bot.adapters.language
       delete bot.adapters.storage
     })
+    it('receive records initiating sequence and listeners scope', async () => {
+      const b = await new bot.Thoughts(new bot.State({ message }))
+        .start('receive')
+      expect(b.sequence).to.equal('receive')
+      expect(b.scope).to.equal('global')
+    })
     it('with listeners, processes listeners', async () => {
       const listeners = new bot.Listeners()
       let listens: string[] = []
       listeners.custom(() => true, () => listens.push('A'), { force: true })
       listeners.custom(() => true, () => listens.push('B'), { force: true })
-      await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
+      await new bot.Thoughts(new bot.State({ message }), listeners)
+        .start('receive')
       expect(listens).to.eql(['A', 'B'])
+    })
+    it('receive records initiating sequence and listeners scope', async () => {
+      const b = await new bot.Thoughts(new bot.State({ message }))
+        .start('respond')
+      expect(b.sequence).to.equal('respond')
+      expect(b.scope).to.equal('global')
+    })
+    it('with listeners, respond keeps initial sequence and scope', async () => {
+      const listeners = new bot.Listeners({ scope: 'testing' })
+      listeners.custom(() => true, (b) => b.respond('test'))
+      const b = await new bot.Thoughts(new bot.State({ message }), listeners)
+        .start('receive')
+      expect(b.sequence).to.equal('receive')
+      expect(b.scope).to.equal('testing')
+      expect(b.processed).to.include.keys('respond')
     })
     it('with listeners, ignores global listeners', async () => {
       const listeners = new bot.Listeners()
@@ -234,7 +256,8 @@ describe('thought', () => {
       bot.listenCustom(() => true, () => listens.push('A'), { force: true })
       listeners.custom(() => true, () => listens.push('B'), { force: true })
       listeners.custom(() => true, () => listens.push('C'), { force: true })
-      await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
+      await new bot.Thoughts(new bot.State({ message }), listeners)
+        .start('receive')
       expect(listens).to.eql(['B', 'C'])
     })
     it('continues to following listeners after listener responds', async () => {
@@ -242,7 +265,8 @@ describe('thought', () => {
       let processed = false
       listeners.custom(() => true, (b) => b.respond('foo'))
       listeners.custom(() => true, () => (processed = true), { force: true })
-      await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
+      await new bot.Thoughts(new bot.State({ message }), listeners)
+        .start('receive')
       expect(processed).to.equal(true)
     })
     it('continues to following listeners after async callback', async () => {
@@ -250,7 +274,8 @@ describe('thought', () => {
       let processed = false
       listeners.custom(() => true, () => delay(50))
       listeners.custom(() => true, () => (processed = true), { force: true })
-      await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
+      await new bot.Thoughts(new bot.State({ message }), listeners)
+        .start('receive')
       expect(processed).to.equal(true)
     })
     it('continues to following listeners after async matcher', async () => {
@@ -258,7 +283,8 @@ describe('thought', () => {
       let processed = false
       listeners.custom(() => delay(50).then(() => true), () => null)
       listeners.custom(() => true, () => (processed = true), { force: true })
-      await new bot.Thoughts(new bot.State({ message }), listeners).start('receive')
+      await new bot.Thoughts(new bot.State({ message }), listeners)
+        .start('receive')
       expect(processed).to.equal(true)
     })
     it('without listeners, uses global listeners', async () => {
@@ -499,6 +525,11 @@ describe('thought', () => {
         expect(b.processed.respond, 'responded gte listened').to.be.gte(b.processed.listen)
         expect(b.processed.remember, 'remembered gte responded').to.be.gte(b.processed.respond)
       })
+      it('records initiating sequence and listener scope', async () => {
+        const b = await bot.receive(message)
+        expect(b.sequence).to.equal('receive')
+        expect(b.scope).to.equal('global')
+      })
     })
     describe('respond', () => {
       it('timestamps all actioned processes', async () => {
@@ -506,6 +537,12 @@ describe('thought', () => {
         b.respondEnvelope().write('ping')
         await bot.respond(b)
         expect(b.processed).to.have.all.keys('respond')
+      })
+      it('records initiating sequence and listener scope', async () => {
+        const b = new bot.State({ message })
+        await bot.respond(b)
+        expect(b.sequence).to.equal('respond')
+        expect(b.scope).to.equal('global')
       })
     })
     describe('dispatch', () => {
@@ -516,6 +553,12 @@ describe('thought', () => {
         expect(b.processed).to.have.all.keys('respond', 'remember')
         expect(b.processed.respond, 'responded gte now').to.be.gte(now)
         expect(b.processed.remember, 'remembered gte responded').to.be.gte(b.processed.respond)
+      })
+      it('records initiating sequence and listener scope', async () => {
+        const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')
+        const b = await bot.dispatch(envelope)
+        expect(b.sequence).to.equal('dispatch')
+        expect(b.scope).to.equal('global')
       })
     })
   })
