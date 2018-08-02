@@ -68,7 +68,7 @@ export async function start () {
  *  import * as bbot from 'bbot'
  *  bbot.shutdown()
  */
-export async function shutdown () {
+export async function shutdown (exit = 0) {
   const status = getStatus()
   if (status === 'shutdown') return
   if (status === 'loading') {
@@ -82,6 +82,7 @@ export async function shutdown () {
   await eventDelay()
   setStatus('shutdown')
   bot.events.emit('shutdown')
+  if (exit) process.exit(exit)
 }
 
 /**
