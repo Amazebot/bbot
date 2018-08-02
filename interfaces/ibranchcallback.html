@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IListenerDone | bBot</title>
+	<title>IBranchCallback | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="ilistenerdone.html">IListenerDone</a>
+					<a href="ibranchcallback.html">IBranchCallback</a>
 				</li>
 			</ul>
-			<h1>Interface IListenerDone</h1>
+			<h1>Interface IBranchCallback</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Called at the end of middleware with status of match</p>
+						<p>Branch callback interface, called if the message matched.</p>
 					</div>
 				</div>
 			</section>
@@ -75,34 +75,34 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IListenerDone</span>
+						<span class="target">IBranchCallback</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3 class="tsd-before-signature">Callable</h3>
 				<ul class="tsd-signatures tsd-kind-interface">
-					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>matched<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="../classes/state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L14">lib/listen.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L9">lib/branch.ts:9</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Called at the end of middleware with status of match</p>
+								<p>Branch callback interface, called if the message matched.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>matched: <span class="tsd-signature-type">boolean</span></h5>
+								<h5>b: <a href="../classes/state.html" class="tsd-signature-type">State</a></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -120,7 +120,7 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="ilistenerdone.html" class="tsd-kind-icon">IListener<wbr>Done</a>
+						<a href="ibranchcallback.html" class="tsd-kind-icon">IBranch<wbr>Callback</a>
 					</li>
 				</ul>
 				<ul class="after-current">

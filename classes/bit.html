@@ -115,10 +115,8 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#condition" class="tsd-kind-icon">condition</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#intent" class="tsd-kind-icon">intent</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#listen" class="tsd-kind-icon">listen</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#next" class="tsd-kind-icon">next</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#options" class="tsd-kind-icon">options</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#scope" class="tsd-kind-icon">scope</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="bit.html#send" class="tsd-kind-icon">send</a></li>
 							</ul>
 						</section>
@@ -143,13 +141,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L57">lib/bit.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L52">lib/bit.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Define a <code>condition</code> or <code>intent</code> that executes the bit, consecutively from
-										a prior bit, or with a <code>listen</code> attribute to become a &quot;global&quot; entry point
+										a prior bit, or with a <code>scope</code> attribute to become a &quot;global&quot; entry point
 									to a one time interaction or continuing scene.</p>
 								</div>
 								<p>A subsequent bit can even lead back to its own parent or any other bit,
@@ -174,11 +172,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="callback" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> callback</h3>
-					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IListenerCallback</span></div>
+					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IBranchCallback</span></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#callback">callback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L41">lib/bit.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L40">lib/bit.ts:40</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -194,28 +192,28 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#catch">catch</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L39">lib/bit.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L38">lib/bit.ts:38</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>To send if response unmatched by listeners</p>
+							<p>To send if response unmatched by branch</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="catchcallback" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> catch<wbr>Callback</h3>
-					<div class="tsd-signature tsd-kind-icon">catch<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IListenerCallback</span></div>
+					<div class="tsd-signature tsd-kind-icon">catch<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IBranchCallback</span></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#catchcallback">catchCallback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L43">lib/bit.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L42">lib/bit.ts:42</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Function to call when response unmatched by listeners</p>
+							<p>Function to call when response unmatched by branch</p>
 						</div>
 					</div>
 				</section>
@@ -226,12 +224,12 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#condition">condition</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L45">lib/bit.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L44">lib/bit.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Regex or string converted to regex for listener to trigger bit</p>
+							<p>Regex or string converted to regex for branch to trigger bit</p>
 						</div>
 					</div>
 				</section>
@@ -242,12 +240,12 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L35">lib/bit.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L34">lib/bit.ts:34</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>For scene and/or dialogue, listener running the bit (required)</p>
+							<p>For scene and/or dialogue, branch running the bit (required)</p>
 						</div>
 					</div>
 				</section>
@@ -258,28 +256,12 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#intent">intent</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L47">lib/bit.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L46">lib/bit.ts:46</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Key for language processed intent to match for execution</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="listen" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> listen</h3>
-					<div class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#listen">listen</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L49">lib/bit.ts:49</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Type of listener (hear/respond) for scene entry bit</p>
 						</div>
 					</div>
 				</section>
@@ -290,7 +272,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#next">next</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L53">lib/bit.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L48">lib/bit.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -306,28 +288,12 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#options">options</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L55">lib/bit.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L50">lib/bit.ts:50</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Key/val options for scene and/or dialogue config</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="scope" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> scope</h3>
-					<div class="tsd-signature tsd-kind-icon">scope<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#scope">scope</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L51">lib/bit.ts:51</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Type for scene (used if it has a listen type), or omit to not do scene</p>
 						</div>
 					</div>
 				</section>
@@ -338,7 +304,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#send">send</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L37">lib/bit.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L36">lib/bit.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -360,7 +326,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/bit.ts#L81">lib/bit.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/bit.ts#L76">lib/bit.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -417,16 +383,10 @@
 								<a href="bit.html#intent" class="tsd-kind-icon">intent</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="bit.html#listen" class="tsd-kind-icon">listen</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="bit.html#next" class="tsd-kind-icon">next</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="bit.html#options" class="tsd-kind-icon">options</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="bit.html#scope" class="tsd-kind-icon">scope</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="bit.html#send" class="tsd-kind-icon">send</a>

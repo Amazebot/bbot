@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TextListener | bBot</title>
+	<title>NaturalLanguageBranch | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="textlistener.html">TextListener</a>
+					<a href="naturallanguagebranch.html">NaturalLanguageBranch</a>
 				</li>
 			</ul>
-			<h1>Class TextListener</h1>
+			<h1>Class NaturalLanguageBranch</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Text listeners use basic regex matching</p>
+						<p>Natural language branch uses NLU result to match on intent, entities and/or
+						sentiment of optional score threshold. NLU must be trained to provide intent.</p>
 					</div>
 				</div>
 			</section>
@@ -75,10 +76,15 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="listener.html" class="tsd-signature-type">Listener</a>
+						<a href="branch.html" class="tsd-signature-type">Branch</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">TextListener</span>
+								<span class="target">NaturalLanguageBranch</span>
+								<ul class="tsd-hierarchy">
+									<li>
+										<a href="naturallanguagedirectbranch.html" class="tsd-signature-type">NaturalLanguageDirectBranch</a>
+									</li>
+								</ul>
 							</li>
 						</ul>
 					</li>
@@ -89,7 +95,8 @@
 				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Text listeners use basic regex matching</p>
+						<p>Natural language branch uses NLU result to match on intent, entities and/or
+						sentiment of optional score threshold. NLU must be trained to provide intent.</p>
 					</div>
 				</div>
 			</section>
@@ -100,25 +107,25 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="textlistener.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="naturallanguagebranch.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textlistener.html#callback" class="tsd-kind-icon">callback</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textlistener.html#force" class="tsd-kind-icon">force</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textlistener.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textlistener.html#match" class="tsd-kind-icon">match</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textlistener.html#matched" class="tsd-kind-icon">matched</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="textlistener.html#regex" class="tsd-kind-icon">regex</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="naturallanguagebranch.html#callback" class="tsd-kind-icon">callback</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="naturallanguagebranch.html#criteria" class="tsd-kind-icon">criteria</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="naturallanguagebranch.html#force" class="tsd-kind-icon">force</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="naturallanguagebranch.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="naturallanguagebranch.html#match" class="tsd-kind-icon">match</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="naturallanguagebranch.html#matched" class="tsd-kind-icon">matched</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="textlistener.html#matcher" class="tsd-kind-icon">matcher</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="textlistener.html#process" class="tsd-kind-icon">process</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="naturallanguagebranch.html#matcher" class="tsd-kind-icon">matcher</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="naturallanguagebranch.html#process" class="tsd-kind-icon">process</a></li>
 							</ul>
 						</section>
 					</div>
@@ -130,34 +137,34 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Text<wbr>Listener<span class="tsd-signature-symbol">(</span>regex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RegExp</span>, callback<span class="tsd-signature-symbol">: </span><a href="../interfaces/ilistenercallback.html" class="tsd-signature-type">IListenerCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ilistener.html" class="tsd-signature-type">IListener</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="textlistener.html" class="tsd-signature-type">TextListener</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Natural<wbr>Language<wbr>Branch<span class="tsd-signature-symbol">(</span>criteria<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">bot.NaturalLanguageCriteria</span>, callback<span class="tsd-signature-symbol">: </span><a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="naturallanguagebranch.html" class="tsd-signature-type">NaturalLanguageBranch</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="listener.html">Listener</a>.<a href="listener.html#constructor">constructor</a></p>
+								<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L135">lib/listen.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L173">lib/branch.ts:173</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create text listener for regex pattern</p>
+									<p>Create natural language branch for NLU matching.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>regex: <span class="tsd-signature-type">RegExp</span></h5>
+									<h5>criteria: <span class="tsd-signature-type">bot.NaturalLanguageCriteria</span></h5>
 								</li>
 								<li>
-									<h5>callback: <a href="../interfaces/ilistenercallback.html" class="tsd-signature-type">IListenerCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5>callback: <a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/ilistener.html" class="tsd-signature-type">IListener</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="textlistener.html" class="tsd-signature-type">TextListener</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="naturallanguagebranch.html" class="tsd-signature-type">NaturalLanguageBranch</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -167,11 +174,21 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="callback" class="tsd-anchor"></a>
 					<h3>callback</h3>
-					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ilistenercallback.html" class="tsd-signature-type">IListenerCallback</a></div>
+					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="listener.html">Listener</a>.<a href="listener.html#callback">callback</a></p>
+						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#callback">callback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L33">lib/listen.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L33">lib/branch.ts:33</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="criteria" class="tsd-anchor"></a>
+					<h3>criteria</h3>
+					<div class="tsd-signature tsd-kind-icon">criteria<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.NaturalLanguageCriteria</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L177">lib/branch.ts:177</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -180,9 +197,9 @@
 					<h3>force</h3>
 					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="listener.html">Listener</a>.<a href="listener.html#force">force</a></p>
+						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#force">force</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L34">lib/listen.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L34">lib/branch.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -191,20 +208,20 @@
 					<h3>id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="listener.html">Listener</a>.<a href="listener.html#id">id</a></p>
+						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L32">lib/listen.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L32">lib/branch.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
 					<a name="match" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> match</h3>
-					<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
+					<h3>match</h3>
+					<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.NaturalLanguageResultsRaw</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="listener.html">Listener</a>.<a href="listener.html#match">match</a></p>
+						<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#match">match</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L35">lib/listen.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L173">lib/branch.ts:173</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -213,19 +230,9 @@
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> matched</h3>
 					<div class="tsd-signature tsd-kind-icon">matched<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="listener.html">Listener</a>.<a href="listener.html#matched">matched</a></p>
+						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#matched">matched</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L36">lib/listen.ts:36</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="regex" class="tsd-anchor"></a>
-					<h3>regex</h3>
-					<div class="tsd-signature tsd-kind-icon">regex<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L138">lib/listen.ts:138</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L36">lib/branch.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -236,28 +243,28 @@
 					<a name="matcher" class="tsd-anchor"></a>
 					<h3>matcher</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">matcher<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="message.html" class="tsd-signature-type">Message</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">matcher<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="textmessage.html" class="tsd-signature-type">TextMessage</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="listener.html">Listener</a>.<a href="listener.html#matcher">matcher</a></p>
+								<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#matcher">matcher</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L146">lib/listen.ts:146</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L185">lib/branch.ts:185</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Use async because matchers must return a promise</p>
+									<p>Match on message&#39;s NLU attributes</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>message: <a href="message.html" class="tsd-signature-type">Message</a></h5>
+									<h5>message: <a href="textmessage.html" class="tsd-signature-type">TextMessage</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -265,22 +272,22 @@
 					<a name="process" class="tsd-anchor"></a>
 					<h3>process</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, middleware<span class="tsd-signature-symbol">?: </span><a href="middleware.html" class="tsd-signature-type">Middleware</a>, done<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ilistenerdone.html" class="tsd-signature-type">IListenerDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, middleware<span class="tsd-signature-symbol">: </span><a href="middleware.html" class="tsd-signature-type">Middleware</a>, done<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranchdone.html" class="tsd-signature-type">IBranchDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="listener.html">Listener</a>.<a href="listener.html#process">process</a></p>
+								<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#process">process</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/listen.ts#L67">lib/listen.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/3920aef/src/lib/branch.ts#L67">lib/branch.ts:67</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Runs the matcher, then middleware and callback if matched.
 										Middleware can intercept and prevent the callback from executing.
-										If the state has already matched on prior listener, it will not match again
-									unless forced to, with the listener&#39;s <code>force</code> property.</p>
+										If the state has already matched on prior branch, it will not match again
+									unless forced to, with the branch&#39;s <code>force</code> property.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -288,17 +295,17 @@
 								<li>
 									<h5>b: <a href="state.html" class="tsd-signature-type">State</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>State containing message to listen on, from hear process</p>
+										<p>State containing message to process</p>
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> middleware: <a href="middleware.html" class="tsd-signature-type">Middleware</a><span class="tsd-signature-symbol"> =&nbsp;new bot.Middleware(&#x27;listener&#x27;)</span></h5>
+									<h5>middleware: <a href="middleware.html" class="tsd-signature-type">Middleware</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>Executes before the listener callback</p>
+										<p>Executes before the branch callback if matched</p>
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> done: <a href="../interfaces/ilistenerdone.html" class="tsd-signature-type">IListenerDone</a><span class="tsd-signature-symbol"> =&nbsp;() &#x3D;&gt; null</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> done: <a href="../interfaces/ibranchdone.html" class="tsd-signature-type">IBranchDone</a><span class="tsd-signature-symbol"> =&nbsp;() &#x3D;&gt; null</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Called after middleware (optional), with match status</p>
 									</div>
@@ -323,34 +330,34 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="textlistener.html" class="tsd-kind-icon">Text<wbr>Listener</a>
+						<a href="naturallanguagebranch.html" class="tsd-kind-icon">Natural<wbr>Language<wbr>Branch</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="textlistener.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="naturallanguagebranch.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="textlistener.html#callback" class="tsd-kind-icon">callback</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="textlistener.html#force" class="tsd-kind-icon">force</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="textlistener.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="textlistener.html#match" class="tsd-kind-icon">match</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="textlistener.html#matched" class="tsd-kind-icon">matched</a>
+								<a href="naturallanguagebranch.html#callback" class="tsd-kind-icon">callback</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="textlistener.html#regex" class="tsd-kind-icon">regex</a>
+								<a href="naturallanguagebranch.html#criteria" class="tsd-kind-icon">criteria</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="naturallanguagebranch.html#force" class="tsd-kind-icon">force</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="naturallanguagebranch.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+								<a href="naturallanguagebranch.html#match" class="tsd-kind-icon">match</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="naturallanguagebranch.html#matched" class="tsd-kind-icon">matched</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="textlistener.html#matcher" class="tsd-kind-icon">matcher</a>
+								<a href="naturallanguagebranch.html#matcher" class="tsd-kind-icon">matcher</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="textlistener.html#process" class="tsd-kind-icon">process</a>
+								<a href="naturallanguagebranch.html#process" class="tsd-kind-icon">process</a>
 							</li>
 						</ul>
 					</li>
