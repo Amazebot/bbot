@@ -6,7 +6,7 @@ import { packageJSON } from './json'
 export const options: { [key: string]: yargs.Options } = {
   'name': {
     type: 'string',
-    describe: 'Name of the bot in chat. Prepending any command with the name will trigger respond listeners.',
+    describe: 'Name of the bot in chat. Prepending any command with the name will trigger `direct` branches.',
     alias: 'n',
     default: 'bot'
   },

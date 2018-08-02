@@ -7,7 +7,7 @@ import * as bot from '..'
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 let message: bot.TextMessage
 
-describe('middleware', () => {
+describe('[middleware]', () => {
   before(() => {
     message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
   })

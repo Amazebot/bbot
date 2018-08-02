@@ -13,8 +13,8 @@ const testRoomDM = {
 }
 const testUser = new bot.User({ name: 'tester', room: testRoomDM })
 
-describe('envelope', () => {
-  describe('constructor', () => {
+describe('[envelope]', () => {
+  describe('Envelope', () => {
     it('defaults provide method, id and blank room', () => {
       const envelope = new bot.Envelope()
       expect(Object.keys(envelope)).to.eql(['id', 'method', 'room'])

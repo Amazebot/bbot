@@ -2,13 +2,13 @@ import 'mocha'
 import { expect } from 'chai'
 import * as id from './id'
 
-describe('id', () => {
+describe('[id]', () => {
   describe('random', () => {
     it('creates 32 char hash', () => {
       expect(id.random()).to.be.a('string').and.to.have.lengthOf(32)
     })
   })
-  describe('counter', () => {
+  describe('.counter', () => {
     it('returns a uid with a number', () => {
       expect(id.counter()).to.match(/uid_\d/)
     })

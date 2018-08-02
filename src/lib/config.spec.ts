@@ -6,7 +6,7 @@ import { expect } from 'chai'
 import * as yargs from 'yargs'
 import * as config from './config'
 
-describe('config', () => {
+describe('[config]', () => {
   beforeEach(() => delete process.env.BOT_NAME)
   after(() => process.env = initEnv)
   describe('.config', () => {

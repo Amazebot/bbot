@@ -6,7 +6,7 @@ export const bits: {
 } = {}
 
 /**
- * A collection of attributes for setting up listeners, paths, dialogues, scenes
+ * A collection of attributes for setting up branches, paths, dialogues, scenes
  * and directors. All the related controllers for what causes a bit to execute
  * and what happens next.
  */
@@ -14,11 +14,10 @@ export interface IBit {
   id?: string,
   send?: string | string[],
   catch?: string,
-  callback?: bot.IListenerCallback,
-  catchCallback?: bot.IListenerCallback,
+  callback?: bot.IBranchCallback,
+  catchCallback?: bot.IBranchCallback,
   condition?: RegExp | string,
   intent?: string,
-  listen?: string,
   scope?: string,
   next?: string | string[],
   options?: string,
@@ -31,24 +30,20 @@ export interface IBit {
  * connecting line of dialogue.
  */
 export class Bit implements IBit {
-  /** For scene and/or dialogue, listener running the bit (required) */
+  /** For scene and/or dialogue, branch running the bit (required) */
   id: string
   /** String/s to send when doing bit (must have this or callback) */
   send?: string | string[]
-  /** To send if response unmatched by listeners */
+  /** To send if response unmatched by branch */
   catch?: string
   /** Function to call when executing bit (after any defined sends) */
-  callback?: bot.IListenerCallback
-  /** Function to call when response unmatched by listeners */
-  catchCallback?: bot.IListenerCallback
-  /** Regex or string converted to regex for listener to trigger bit */
+  callback?: bot.IBranchCallback
+  /** Function to call when response unmatched by branch */
+  catchCallback?: bot.IBranchCallback
+  /** Regex or string converted to regex for branch to trigger bit */
   condition?: RegExp | string
   /** Key for language processed intent to match for execution */
   intent?: string
-  /** Type of listener (hear/respond) for scene entry bit */
-  listen?: string
-  /** Type for scene (used if it has a listen type), or omit to not do scene */
-  scope?: string
   /** Key/s (strings) for consecutive bits (implicitly creates scene) */
   next?: string | string[]
   /** Key/val options for scene and/or dialogue config */
@@ -57,7 +52,7 @@ export class Bit implements IBit {
   [key: string]: any
   /**
    * Define a `condition` or `intent` that executes the bit, consecutively from
-   * a prior bit, or with a `listen` attribute to become a "global" entry point
+   * a prior bit, or with a `scope` attribute to become a "global" entry point
    * to a one time interaction or continuing scene.
    *
    * A subsequent bit can even lead back to its own parent or any other bit,

@@ -9,7 +9,7 @@ import {
 
 let results: NaturalLanguageResults
 
-describe('nlu', () => {
+describe('[nlu]', () => {
   describe('NaturalLanguageResult', () => {
     beforeEach(() => {
       results = {

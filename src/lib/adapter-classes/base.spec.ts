@@ -9,8 +9,8 @@ class MockAdapter extends Adapter {
   async shutdown () { /* mock shutdown */ }
 }
 
-describe('base adapter', () => {
-  describe('constructor', () => {
+describe('[adapter-base]', () => {
+  describe('Adapter', () => {
     it('allows extending', () => {
       const mockAdapter = new MockAdapter(bot)
       expect(mockAdapter).to.be.instanceof(Adapter)

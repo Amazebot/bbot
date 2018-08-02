@@ -2,7 +2,7 @@ import * as bot from '..'
 
 /**
  * States accept some known common properties, but can accept any key/value pair
- * that is needed for a specific type of listener or middleware.
+ * that is needed for a specific type of branch or middleware.
  * The `done` property tells middleware not to continue processing state.
  */
 export interface IState {
@@ -41,7 +41,7 @@ export class State implements IState {
   done: boolean = false
   processed: { [key: string]: number } = {}
   message: bot.Message = new bot.NullMessage()
-  listeners?: bot.Listener[]
+  branches?: bot.Branch[]
   envelopes?: bot.Envelope[]
   sequence?: string
   scope?: string
@@ -73,41 +73,41 @@ export class State implements IState {
     return this
   }
 
-  /** Indicate that no other listener should be called for the state */
+  /** Indicate that no other branch should process this state */
   finish () {
     this.done = true
     return this
   }
 
-  /** Add to or create collection of matched listeners */
-  setListener (listener: bot.Listener) {
-    if (!listener.matched) return
-    if (!this.listeners) this.listeners = []
-    this.listeners.push(listener)
+  /** Add to or create collection of matched branches */
+  setBranch (branch: bot.Branch) {
+    if (!branch.matched) return
+    if (!this.branches) this.branches = []
+    this.branches.push(branch)
   }
 
-  /** Get a matched listener by it's ID or index (or last matched) */
-  getListener (id?: number | string) {
-    if (!this.listeners) return undefined
-    if (!id) id = this.listeners.length - 1
-    return (typeof id === 'number' && this.listeners.length > id)
-      ? this.listeners[id]
-      : this.listeners.find((listener) => listener.id === id)
+  /** Get a matched branch by it's ID or index (or last matched) */
+  getBranch (id?: number | string) {
+    if (!this.branches) return undefined
+    if (!id) id = this.branches.length - 1
+    return (typeof id === 'number' && this.branches.length > id)
+      ? this.branches[id]
+      : this.branches.find((branch) => branch.id === id)
   }
 
   /**
-   * Use property getter for last listener match (often the only match).
-   * In the context of a listener callback, this provides a shorthand to the
-   * listener that was just matched, as opposed to `b.getListener(id).match`.
+   * Use property getter for last branch match (often the only match).
+   * In the context of a branch callback, this provides a shorthand to the
+   * branch that was just matched, as opposed to `b.getBranch(id).match`.
    */
   get match () {
-    const listener = this.getListener()
-    if (listener) return listener.match
+    const branch = this.getBranch()
+    if (branch) return branch.match
   }
 
-  /** Use property getting for match state (only matched listeners are kept) */
+  /** Use property getting for match state (only matched branches are kept) */
   get matched () {
-    return (this.listeners && this.listeners.length) ? true : false
+    return (this.branches && this.branches.length) ? true : false
   }
 
   /** Check for existing envelope without response */
