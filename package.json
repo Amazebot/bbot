@@ -1,6 +1,6 @@
 {
   "name": "bbot",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An adaptable chatbot framework with a conversational core.",
   "homepage": "http://bbot.chat",
   "main": "dist/index.js",
