@@ -1,11 +1,12 @@
 # Javascript Node CircleCI 2.0 configuration file
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 version: 2
-branches:
-  ignore:
-    - gh-pages
 jobs:
   build:
+    branches:
+      ignore:
+        - gh-pages
+
     docker:
       - image: circleci/node:8.11
       - image: circleci/mongo:4-ram

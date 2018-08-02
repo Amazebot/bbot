@@ -118,10 +118,13 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#bot" class="tsd-kind-icon">bot</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#done" class="tsd-kind-icon">done</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#envelopes" class="tsd-kind-icon">envelopes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#exit" class="tsd-kind-icon">exit</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#listeners" class="tsd-kind-icon">listeners</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#message" class="tsd-kind-icon">message</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#method" class="tsd-kind-icon">method</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#processed" class="tsd-kind-icon">processed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#scope" class="tsd-kind-icon">scope</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="state.html#sequence" class="tsd-kind-icon">sequence</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -134,9 +137,12 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#clone" class="tsd-kind-icon">clone</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#dispatchedenvelope" class="tsd-kind-icon">dispatched<wbr>Envelope</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#finish" class="tsd-kind-icon">finish</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#getlistener" class="tsd-kind-icon">get<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#ignore" class="tsd-kind-icon">ignore</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#inspect" class="tsd-kind-icon">inspect</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#pendingenvelope" class="tsd-kind-icon">pending<wbr>Envelope</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#respond" class="tsd-kind-icon">respond</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="state.html#respondenvelope" class="tsd-kind-icon">respond<wbr>Envelope</a></li>
@@ -159,7 +165,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L44">lib/state.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L50">lib/state.ts:50</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -186,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">bot<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/circleci/repo/src/index&quot;</span><span class="tsd-signature-symbol"> =&nbsp;bot</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L37">lib/state.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L40">lib/state.ts:40</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -197,7 +203,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#done">done</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L38">lib/state.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L41">lib/state.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -207,7 +213,18 @@
 					<div class="tsd-signature tsd-kind-icon">envelopes<span class="tsd-signature-symbol">:</span> <a href="envelope.html" class="tsd-signature-type">Envelope</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L42">lib/state.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L45">lib/state.ts:45</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="exit" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> exit</h3>
+					<div class="tsd-signature tsd-kind-icon">exit<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#exit">exit</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L49">lib/state.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -217,7 +234,7 @@
 					<div class="tsd-signature tsd-kind-icon">listeners<span class="tsd-signature-symbol">:</span> <a href="listener.html" class="tsd-signature-type">Listener</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L41">lib/state.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L44">lib/state.ts:44</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -227,7 +244,7 @@
 					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <a href="message.html" class="tsd-signature-type">Message</a><span class="tsd-signature-symbol"> =&nbsp;new bot.NullMessage()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L40">lib/state.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L43">lib/state.ts:43</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,7 +254,7 @@
 					<div class="tsd-signature tsd-kind-icon">method<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L43">lib/state.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L48">lib/state.ts:48</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -247,7 +264,7 @@
 					<div class="tsd-signature tsd-kind-icon">processed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L39">lib/state.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L42">lib/state.ts:42</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -258,6 +275,28 @@
 							</li>
 						</ul>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="scope" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> scope</h3>
+					<div class="tsd-signature tsd-kind-icon">scope<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#scope">scope</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L47">lib/state.ts:47</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="sequence" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> sequence</h3>
+					<div class="tsd-signature tsd-kind-icon">sequence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/istate.html">IState</a>.<a href="../interfaces/istate.html#sequence">sequence</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L46">lib/state.ts:46</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -272,7 +311,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L78">lib/state.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L103">lib/state.ts:103</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -296,7 +335,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L84">lib/state.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L109">lib/state.ts:109</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -312,6 +351,28 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="clone" class="tsd-anchor"></a>
+					<h3>clone</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">clone<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L58">lib/state.ts:58</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Initialise a new state from this one&#39;s attribute.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="state.html" class="tsd-signature-type">State</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="dispatchedenvelope" class="tsd-anchor"></a>
 					<h3>dispatched<wbr>Envelope</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -321,7 +382,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L95">lib/state.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L120">lib/state.ts:120</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -346,7 +407,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L52">lib/state.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L77">lib/state.ts:77</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -368,7 +429,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L65">lib/state.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L90">lib/state.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -390,6 +451,50 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="ignore" class="tsd-anchor"></a>
+					<h3>ignore</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">ignore<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L70">lib/state.ts:70</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Indicate that no more thought processes should look at this state</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="inspect" class="tsd-anchor"></a>
+					<h3>inspect</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">inspect<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L63">lib/state.ts:63</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get a pretty-printed view of the state without all the bot attributes.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="pendingenvelope" class="tsd-anchor"></a>
 					<h3>pending<wbr>Envelope</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -399,7 +504,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L89">lib/state.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L114">lib/state.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -424,7 +529,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L112">lib/state.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L137">lib/state.ts:137</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -452,7 +557,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L101">lib/state.ts:101</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L126">lib/state.ts:126</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -480,7 +585,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L118">lib/state.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L143">lib/state.ts:143</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -511,7 +616,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/4c69cf0/src/lib/state.ts#L58">lib/state.ts:58</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/d1e2de0/src/lib/state.ts#L83">lib/state.ts:83</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -559,6 +664,9 @@
 								<a href="state.html#envelopes" class="tsd-kind-icon">envelopes</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="state.html#exit" class="tsd-kind-icon">exit</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="state.html#listeners" class="tsd-kind-icon">listeners</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -570,11 +678,20 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="state.html#processed" class="tsd-kind-icon">processed</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="state.html#scope" class="tsd-kind-icon">scope</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="state.html#sequence" class="tsd-kind-icon">sequence</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="state.html#match" class="tsd-kind-icon">match</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="state.html#matched" class="tsd-kind-icon">matched</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="state.html#clone" class="tsd-kind-icon">clone</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="state.html#dispatchedenvelope" class="tsd-kind-icon">dispatched<wbr>Envelope</a>
@@ -584,6 +701,12 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="state.html#getlistener" class="tsd-kind-icon">get<wbr>Listener</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="state.html#ignore" class="tsd-kind-icon">ignore</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="state.html#inspect" class="tsd-kind-icon">inspect</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="state.html#pendingenvelope" class="tsd-kind-icon">pending<wbr>Envelope</a>
