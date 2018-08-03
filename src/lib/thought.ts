@@ -64,10 +64,7 @@ export class Thought implements IThought {
       }
       Promise.resolve(validate())
         .then(async (valid) => {
-          if (!valid) {
-            bot.logger.debug(`[thought] ${b.scope} ${name} validator bypassed process`)
-            return reject()
-          }
+          if (!valid) return reject()
           if (b.message) {
             bot.logger.debug(`[thought] ${b.scope} ${name} processing incoming message ID ${b.message.id}`)
           } else if (b.envelopes) {
@@ -91,7 +88,10 @@ export class Thought implements IThought {
         return this.action(true)
       })
       .catch((err) => {
-        if (err) bot.logger.error(`[thought] ${this.name} error, ${err.message}`)
+        if (err instanceof Error) {
+          bot.logger.error(`[thought] ${this.name} error, ${err.message}`)
+          throw err
+        }
         return this.action(false)
       })
   }
@@ -199,8 +199,14 @@ export class Thoughts {
 
     // Don't remember states with unmatched messages
     this.processes.remember.validate = async () => {
-      if (!b.matched && !b.dispatchedEnvelope()) return false
-      return (typeof bot.adapters.storage !== 'undefined')
+      if (!bot.adapters.storage) {
+        bot.logger.debug(`[thought] skip remember, no storage adapter`)
+      } else if (!b.matched && !b.dispatchedEnvelope()) {
+        bot.logger.debug(`[thought] skip remember on outgoing`)
+      } else {
+        return true
+      }
+      return false
     }
 
     // Don't remember unless middleware completed (timestamped)
