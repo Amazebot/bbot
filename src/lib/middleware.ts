@@ -150,30 +150,36 @@ export function unloadMiddleware () {
 
 /** Register middleware piece to execute before any matching */
 export function hearMiddleware (middlewarePiece: IPiece) {
+  if (!middlewares.hear) middlewares.hear = new Middleware('hear')
   middlewares.hear.register(middlewarePiece)
 }
 
 /** Register middleware piece to execute after branch match */
 export function listenMiddleware (middlewarePiece: IPiece) {
+  if (!middlewares.listen) middlewares.listen = new Middleware('listen')
   middlewares.listen.register(middlewarePiece)
 }
 
 /** Register middleware piece to execute with NLU before intent match */
 export function understandMiddleware (middlewarePiece: IPiece) {
+  if (!middlewares.understand) middlewares.understand = new Middleware('understand')
   middlewares.understand.register(middlewarePiece)
 }
 
 /** Register middleware piece to execute with catch-all match */
 export function actMiddleware (middlewarePiece: IPiece) {
+  if (!middlewares.act) middlewares.act = new Middleware('act')
   middlewares.act.register(middlewarePiece)
 }
 
 /** Register middleware piece to execute before sending any response */
 export function respondMiddleware (middlewarePiece: IPiece) {
+  if (!middlewares.respond) middlewares.respond = new Middleware('respond')
   middlewares.respond.register(middlewarePiece)
 }
 
 /** Register middleware piece to execute before storing data */
 export function rememberMiddleware (middlewarePiece: IPiece) {
+  if (!middlewares.remember) middlewares.remember = new Middleware('remember')
   middlewares.remember.register(middlewarePiece)
 }
