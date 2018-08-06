@@ -2,8 +2,8 @@ import { Adapter } from './base'
 import * as bot from '../..'
 
 /** NLU adapter class, extended to connect bBot with NLU platform. */
-export abstract class LanguageAdapter extends Adapter {
-  name = 'language-adapter'
+export abstract class NLUAdapter extends Adapter {
+  name = 'nlu-adapter'
 
   /** Open connection to messaging platform */
   abstract start (): Promise<void>

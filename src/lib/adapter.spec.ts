@@ -22,7 +22,7 @@ describe('[adapter]', () => {
   afterEach(() => {
     for (let key in adapter.adapters) delete adapter.adapters[key]
     delete bot.config.messageAdapter
-    delete bot.config.languageAdapter
+    delete bot.config.nluAdapter
     delete bot.config.storageAdapter
     delete bot.config.webhookAdapter
     delete bot.config.analyticsAdapter
@@ -54,7 +54,7 @@ describe('[adapter]', () => {
       bot.config.messageAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       expect(adapter.adapters.message).to.be.instanceof(bot.Adapter)
-      expect(typeof adapter.adapters.language).to.equal('undefined')
+      expect(typeof adapter.adapters.nlu).to.equal('undefined')
     })
     it('can load shell adapter extending message adapter', () => {
       bot.config.messageAdapter = './adapters/shell'
@@ -63,7 +63,7 @@ describe('[adapter]', () => {
   })
   describe('.startAdapters', () => {
     it('starts all configured adapters', async () => {
-      bot.config.languageAdapter = './lib/adapter.spec'
+      bot.config.nluAdapter = './lib/adapter.spec'
       bot.config.webhookAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       await adapter.startAdapters()
@@ -72,7 +72,7 @@ describe('[adapter]', () => {
   })
   describe('.unloadAdapters', () => {
     it('clears all configured adapters', async () => {
-      bot.config.languageAdapter = './lib/adapter.spec'
+      bot.config.nluAdapter = './lib/adapter.spec'
       bot.config.webhookAdapter = './lib/adapter.spec'
       adapter.loadAdapters()
       adapter.unloadAdapters()
