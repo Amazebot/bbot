@@ -11,8 +11,8 @@ class MockMessenger extends bot.MessageAdapter {
   async start () { return }
   async shutdown () { return }
 }
-class MockLanguage extends bot.LanguageAdapter {
-  name = 'mock-language'
+class MockNLU extends bot.NLUAdapter {
+  name = 'mock-nlu'
   async process () {
     return {
       intent: [{ id: 'test', score: 1 }],
@@ -213,11 +213,11 @@ describe('[thought]', () => {
   })
   describe('Thoughts', () => {
     beforeEach(() => {
-      bot.adapters.language = new MockLanguage(bot)
+      bot.adapters.nlu = new MockNLU(bot)
       bot.adapters.storage = sinon.createStubInstance(MockStorage)
     })
     afterEach(() => {
-      delete bot.adapters.language
+      delete bot.adapters.nlu
       delete bot.adapters.storage
     })
     describe('.start', () => {
@@ -350,15 +350,15 @@ describe('[thought]', () => {
         await new bot.Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('understand')
       })
-      it('understand passes message to language adapter', async () => {
-        bot.adapters.language!.process = sinon.spy()
+      it('understand passes message to NLU adapter', async () => {
+        bot.adapters.nlu!.process = sinon.spy()
         bot.global.customNLU(() => true, () => null)
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
-        sinon.assert.calledWithExactly((bot.adapters.language!.process as sinon.SinonSpy), message)
+        sinon.assert.calledWithExactly((bot.adapters.nlu!.process as sinon.SinonSpy), message)
       })
       it('understand branches include NLU results from adapter', async () => {
-        bot.adapters.language!.process = async () => {
+        bot.adapters.nlu!.process = async () => {
           return { intent: new bot.NaturalLanguageResult().add({ id: 'test' }) }
         }
         bot.global.customNLU(() => true, () => null)
@@ -369,7 +369,7 @@ describe('[thought]', () => {
       it('does not understand without adapter', async () => {
         bot.global.custom(() => false, () => null)
         bot.global.customNLU(() => true, () => null)
-        delete bot.adapters.language
+        delete bot.adapters.nlu
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
@@ -382,12 +382,12 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when message text is empty', async () => {
-        bot.adapters.language!.process = sinon.spy()
+        bot.adapters.nlu!.process = sinon.spy()
         bot.global.customNLU(() => true, () => null)
         const empty = new bot.TextMessage(new bot.User(), '                   ')
         const b = new bot.State({ message: empty })
         await new bot.Thoughts(b).start('receive')
-        sinon.assert.notCalled((bot.adapters.language!.process as sinon.SinonSpy))
+        sinon.assert.notCalled((bot.adapters.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when hear interrupted', async () => {
         bot.global.customNLU(() => true, () => null)
@@ -449,7 +449,7 @@ describe('[thought]', () => {
         await new bot.Thoughts(b).start('receive')
         expect(b.envelopes![0].branchId).to.equal('test')
       })
-      it('respond passes message to language adapter', async () => {
+      it('respond passes message to nlu adapter', async () => {
         bot.global.custom(() => true, (b) => b.respond('test'))
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')

@@ -2,9 +2,6 @@ import * as bBot from '../..'
 
 /** Base Adapter class, extending to create different types of adapters. */
 export abstract class Adapter {
-  /** Index signature allows methods method to get methods */
-  [key: string]: any
-
   /** Name of adapter, used for logs */
   name = 'base-adapter'
 

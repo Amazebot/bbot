@@ -150,18 +150,18 @@ export class Thoughts {
 
     // Get NLU result before processing NLU branches and only if required
     this.processes.understand.validate = async () => {
-      if (!bot.adapters.language) {
-        bot.logger.debug(`[thought] skip understand, no language adapter`)
+      if (!bot.adapters.nlu) {
+        bot.logger.debug(`[thought] skip understand, no nlu adapter`)
       } else if (!(b.message instanceof bot.TextMessage)) {
         bot.logger.debug(`[thought] skip understand, not a text message`)
       } else if (b.message.toString().trim() === '') {
         bot.logger.debug(`[thought] skip understand, message text is empty`)
       } else {
-        const nluResultsRaw = await bot.adapters.language.process(b.message)
+        const nluResultsRaw = await bot.adapters.nlu.process(b.message)
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
-          bot.logger.error(`[thought] language processing returned empty`)
+          bot.logger.error(`[thought] nlu processing returned empty`)
         } else {
-          bot.logger.debug(`[thought] language processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
+          bot.logger.debug(`[thought] nlu processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
           b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
           return true
         }

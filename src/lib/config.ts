@@ -30,7 +30,7 @@ export const options: { [key: string]: yargs.Options } = {
     alias: 'm',
     default: './adapters/shell'
   },
-  'language-adapter': {
+  'nlu-adapter': {
     type: 'string',
     describe: 'Local path or NPM package name to require as message platform adapter',
     alias: 'l',
