@@ -217,11 +217,11 @@ export function directPattern (regex: RegExp) {
   regexWithoutModifiers.shift()
   const modifiers = regexWithoutModifiers.pop()
   const pattern = regexWithoutModifiers.join('/')
-  const botName = bot.name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-  if (!bot.alias) {
+  const botName = bot.settings.name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  if (!bot.settings.alias) {
     return new RegExp(`^\\s*[@]?${botName}[:,]?\\s*(?:${pattern})`, modifiers)
   }
-  const botAlias = bot.alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  const botAlias = bot.settings.alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
   if (botName.length > botAlias.length) {
     return new RegExp(`^\\s*[@]?(?:${botName}[:,]?|${botAlias}[:,]?)\\s*(?:${pattern})`, modifiers)
   }

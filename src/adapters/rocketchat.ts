@@ -17,7 +17,7 @@ export class Rocketchat extends bot.MessageAdapter {
   constructor (bot: any) {
     super(bot)
     this.settings.integrationId = 'bBot'
-    if (this.settings.username !== this.bot.name) this.bot.alias = this.settings.username
+    if (this.settings.username !== this.bot.settings.name) this.bot.settings.alias = this.settings.username
   }
 
   getRoomId = (room: string) => this.driver.getRoomId(room)
@@ -25,8 +25,8 @@ export class Rocketchat extends bot.MessageAdapter {
 
   /** Connect to Rocket.Chat via DDP driver and setup message subscriptions */
   async start () {
-    this.bot.logger.info(`[rocketchat] responds to name: ${this.bot.name}`)
-    if (this.bot.alias) bot.logger.info(`[rocketchat] responds to alias: ${this.bot.alias}`)
+    this.bot.logger.info(`[rocketchat] responds to name: ${this.bot.settings.name}`)
+    if (this.bot.settings.alias) bot.logger.info(`[rocketchat] responds to alias: ${this.bot.settings.alias}`)
 
     this.driver.useLog(bot.logger)
     await this.driver.connect()
@@ -71,8 +71,8 @@ export class Rocketchat extends bot.MessageAdapter {
 
     // Direct messages prepend bot's name so bBot can respond directly
     const startOfText = (message.msg.indexOf('@') === 0) ? 1 : 0
-    const robotIsNamed = message.msg.indexOf(bot.name) === startOfText || message.msg.indexOf(bot.alias) === startOfText
-    if ((isDM || isLC) && !robotIsNamed) message.msg = `${bot.name} ${message.msg}`
+    const robotIsNamed = message.msg.indexOf(bot.settings.name) === startOfText || message.msg.indexOf(bot.settings.alias) === startOfText
+    if ((isDM || isLC) && !robotIsNamed) message.msg = `${bot.settings.name} ${message.msg}`
 
     // Attachments, format properties as payload for bBot rich message type
     if (Array.isArray(message.attachments) && message.attachments.length) {

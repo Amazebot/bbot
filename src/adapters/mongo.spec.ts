@@ -32,27 +32,30 @@ let adapter: mongo.Mongo
 describe('[adapter-mongo]', () => {
   before(() => {
     initEnv = process.env
-    process.env.MONGODB_URL = testMongo
-    process.env.BRAIN_COLLECTION = testCollection
+    process.env.BOT_DB_URL = testMongo
+    process.env.BOT_DB_COLLECTION = testCollection
   })
   beforeEach(() => adapter = mongo.use(bot))
-  after(() => {
-    process.env = initEnv
-  })
+  after(() => process.env = initEnv)
   describe('.use', () => {
     it('returns adapter instance', () => {
       expect(adapter).to.be.instanceof(bot.Adapter)
     })
-    it('config inherits env settings', () => {
-      expect(adapter.config.collection).to.equal(testCollection)
+    it('adds env settings for DB to bot settings', () => {
+      expect(bot.settings.get('db-collection')).to.equal(testCollection)
     })
     it('creates mongoose model for configured collection', () => {
       expect(adapter.model.collection.name).to.equal(testCollection)
     })
+    it('uses bot name for mongo url if no env setting', () => {
+      delete process.env.DB_URL
+      bot.settings.set('name', 'mongo-test')
+      adapter = mongo.use(bot)
+    })
   })
   describe('.start', () => {
     it('creates connection to database', async () => {
-      adapter.url = testMongo
+      bot.settings.set('db-url', testMongo)
       await adapter.start()
       const stats = await adapter.store!.connection.db.stats()
       expect(adapter.store!.connection.readyState).to.equal(1)
@@ -62,7 +65,7 @@ describe('[adapter-mongo]', () => {
   })
   describe('.shutdown', async () => {
     it('closes the database connection', async () => {
-      adapter.url = testMongo
+      bot.settings.set('db-url', testMongo)
       await adapter.start()
       await adapter.shutdown()
       expect(adapter.store!.connection.readyState).to.equal(0)

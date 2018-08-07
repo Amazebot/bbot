@@ -51,7 +51,7 @@ export async function loadMemory () {
 /** Save brain memory every x milliseconds */
 export function setSaveInterval (newInterval?: number) {
   if (newInterval) saveIntervalValue = newInterval
-  if (!bot.adapters.storage || !bot.config.autoSave) return
+  if (!bot.adapters.storage || !bot.settings.get('autoSave')) return
   saveInterval = setInterval(() => bot.saveMemory(), saveIntervalValue)
 }
 

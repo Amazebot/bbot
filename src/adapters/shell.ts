@@ -84,7 +84,7 @@ export class Shell extends bBot.MessageAdapter {
   async start () {
     this.ui = new inquirer.ui.BottomBar()
     this.bot.global.enter((b) => b.respond(
-      `@${this.user!.name} Welcome to #${this.room!.name}, I'm @${b.bot.name}`,
+      `@${this.user!.name} Welcome to #${this.room!.name}, I'm @${b.bot.settings.name}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-enter' })
     this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(), { id: 'shell-exit' })
@@ -111,7 +111,7 @@ export class Shell extends bBot.MessageAdapter {
   /** Add outgoing messages and re-render chat */
   async dispatch (envelope: bBot.Envelope) {
     for (let text of (envelope.strings || [])) {
-      this.messages.push([this.bot.name, text])
+      this.messages.push([this.bot.settings.name, text])
     }
   }
 
