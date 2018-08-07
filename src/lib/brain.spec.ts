@@ -29,7 +29,7 @@ describe('[brain]', () => {
     (mockAdapter.find as sinon.SinonStub).resolves([{ test: 'test' }]);
     (mockAdapter.findOne as sinon.SinonStub).resolves({ test: 'test' })
     bot.adapters.storage = mockAdapter
-    bot.config.autoSave = false
+    bot.settings.set('autoSave', false)
   })
   after(() => delete bot.adapters.storage)
   describe('.clearMemory', () => {
@@ -75,11 +75,11 @@ describe('[brain]', () => {
     beforeEach(() => sinon.spy(bot, 'saveMemory'))
     afterEach(() => (bot.saveMemory as sinon.SinonSpy).restore())
     it('calls saveMemory after interval', async () => {
-      bot.config.autoSave = true
+      bot.settings.set('autoSave', true)
       brain.setSaveInterval(20)
       await delay(50)
       sinon.assert.calledTwice(bot.saveMemory as sinon.SinonSpy)
-      bot.config.autoSave = false
+      bot.settings.set('autoSave', false)
       clearInterval(brain.saveInterval)
     })
   })
@@ -87,13 +87,13 @@ describe('[brain]', () => {
     beforeEach(() => sinon.spy(bot, 'saveMemory'))
     afterEach(() => (bot.saveMemory as sinon.SinonSpy).restore())
     it('stops saveMemory from calling', async () => {
-      bot.config.autoSave = true
+      bot.settings.set('autoSave', true)
       brain.setSaveInterval(100)
       expect((brain.saveInterval as any)._idleTimeout).to.equal(100)
       brain.clearSaveInterval()
       expect((brain.saveInterval as any)._idleTimeout).to.equal(-1)
       sinon.assert.notCalled(bot.saveMemory as sinon.SinonSpy)
-      bot.config.autoSave = false
+      bot.settings.set('autoSave', false)
     })
   })
   describe('.set', () => {

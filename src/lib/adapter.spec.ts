@@ -21,11 +21,11 @@ describe('[adapter]', () => {
   })
   afterEach(() => {
     for (let key in adapter.adapters) delete adapter.adapters[key]
-    delete bot.config.messageAdapter
-    delete bot.config.nluAdapter
-    delete bot.config.storageAdapter
-    delete bot.config.webhookAdapter
-    delete bot.config.analyticsAdapter
+    bot.settings.unset('messageAdapter')
+    bot.settings.unset('nluAdapter')
+    bot.settings.unset('storageAdapter')
+    bot.settings.unset('webhookAdapter')
+    bot.settings.unset('analyticsAdapter')
     use.resetHistory()
     start.resetHistory()
   })
@@ -41,30 +41,30 @@ describe('[adapter]', () => {
       expect(() => adapter.loadAdapters()).to.not.throw()
     })
     it('throws if bad path in config for adapter', () => {
-      bot.config.messageAdapter = 'foo',
+      bot.settings.set('messageAdapter', 'foo'),
       expect(() => adapter.loadAdapters()).to.throw()
     })
     it('loads all configured adapters at valid path', () => {
-      bot.config.storageAdapter = './lib/adapter.spec'
-      bot.config.analyticsAdapter = './lib/adapter.spec'
+      bot.settings.set('storageAdapter', './lib/adapter.spec')
+      bot.settings.set('analyticsAdapter', './lib/adapter.spec')
       adapter.loadAdapters()
       sinon.assert.calledTwice(use)
     })
     it('keeps loaded adapters in collection', () => {
-      bot.config.messageAdapter = './lib/adapter.spec'
+      bot.settings.set('messageAdapter', './lib/adapter.spec')
       adapter.loadAdapters()
       expect(adapter.adapters.message).to.be.instanceof(bot.Adapter)
       expect(typeof adapter.adapters.nlu).to.equal('undefined')
     })
     it('can load shell adapter extending message adapter', () => {
-      bot.config.messageAdapter = './adapters/shell'
+      bot.settings.set('messageAdapter', './adapters/shell')
       adapter.loadAdapters()
     })
   })
   describe('.startAdapters', () => {
     it('starts all configured adapters', async () => {
-      bot.config.nluAdapter = './lib/adapter.spec'
-      bot.config.webhookAdapter = './lib/adapter.spec'
+      bot.settings.set('nluAdapter', './lib/adapter.spec')
+      bot.settings.set('webhookAdapter', './lib/adapter.spec')
       adapter.loadAdapters()
       await adapter.startAdapters()
       sinon.assert.calledTwice(start)
@@ -72,8 +72,8 @@ describe('[adapter]', () => {
   })
   describe('.unloadAdapters', () => {
     it('clears all configured adapters', async () => {
-      bot.config.nluAdapter = './lib/adapter.spec'
-      bot.config.webhookAdapter = './lib/adapter.spec'
+      bot.settings.set('nluAdapter', './lib/adapter.spec')
+      bot.settings.set('webhookAdapter', './lib/adapter.spec')
       adapter.loadAdapters()
       adapter.unloadAdapters()
       expect(adapter.adapters).to.eql({})

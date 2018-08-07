@@ -247,7 +247,7 @@ describe('[branch]', () => {
       const nluBranch = new bot.NaturalLanguageDirectBranch({
         intent: { id: 'foo' }
       }, () => null)
-      const message = new bot.TextMessage(user, `${bot.name} foo`)
+      const message = new bot.TextMessage(user, `${bot.settings.name} foo`)
       message.nlu = new bot.NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
       const b = await nluBranch.process(new bot.State({ message }), middleware)
       assert.isOk(b.match)

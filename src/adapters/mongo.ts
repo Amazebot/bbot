@@ -29,17 +29,13 @@ export function getModel (collection: string) {
  */
 export class Mongo extends StorageAdapter {
   name = 'mongo-storage-adapter'
-  url = process.env.MONGODB_URL || 'mongodb://127.0.0.1:27017/bbot-brain'
   config = {
-    connection: {
-      useNewUrlParser: true,
-      autoIndex: true, // Build indexes
-      reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
-      reconnectInterval: 500, // Reconnect every 500ms
-      poolSize: 10, // Maintain up to 10 socket connections
-      keepAlive: 120
-    },
-    collection: process.env.BRAIN_COLLECTION || 'brain'
+    useNewUrlParser: true,
+    autoIndex: true, // Build indexes
+    reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+    reconnectInterval: 500, // Reconnect every 500ms
+    poolSize: 10, // Maintain up to 10 socket connections
+    keepAlive: 120
   }
   model: mongoose.Model<mongoose.Document>
   store?: mongoose.Mongoose
@@ -47,15 +43,29 @@ export class Mongo extends StorageAdapter {
   /** Create adapter instance with ref to bot instance */
   constructor (bot: any) {
     super(bot)
-    this.model = getModel(this.config.collection)
+    this.bot.settings.extend({
+      'db-url': {
+        type: 'string',
+        alias: 'mongodb-url',
+        description: 'Storage adapter address for mongo database',
+        default: `mongodb://127.0.0.1:27017/${bot.settings.name}-brain`
+      },
+      'db-collection': {
+        type: 'string',
+        alias: 'brain-collection',
+        description: 'Collection in DB for the bot brain and state data',
+        default: `brain`
+      }
+    })
+    this.model = getModel(this.bot.settings.get('db-collection'))
     this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
-    this.bot.logger.debug(`[mongo] storing to '${this.config.collection}' collection at ${this.url}`)
+    this.bot.logger.debug(`[mongo] storing to '${this.bot.settings.get('db-collection')}' collection at ${this.bot.settings.get('db-url')}`)
   }
 
   /** Connect to Mongo */
   async start () {
-    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.url}`)
-    this.store = await mongoose.connect(this.url, this.config.connection)
+    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.bot.settings.get('db-url')}`)
+    this.store = await mongoose.connect(this.bot.settings.get('db-url'), this.config)
     this.bot.logger.debug(`[mongo] connected to Mongo DB`)
     return
   }
