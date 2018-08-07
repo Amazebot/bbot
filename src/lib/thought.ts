@@ -64,10 +64,7 @@ export class Thought implements IThought {
       }
       Promise.resolve(validate())
         .then(async (valid) => {
-          if (!valid) {
-            bot.logger.debug(`[thought] ${b.scope} ${name} validator bypassed process`)
-            return reject()
-          }
+          if (!valid) return reject()
           if (b.message) {
             bot.logger.debug(`[thought] ${b.scope} ${name} processing incoming message ID ${b.message.id}`)
           } else if (b.envelopes) {
@@ -91,7 +88,10 @@ export class Thought implements IThought {
         return this.action(true)
       })
       .catch((err) => {
-        if (err) bot.logger.error(`[thought] ${this.name} error, ${err.message}`)
+        if (err instanceof Error) {
+          bot.logger.error(`[thought] ${this.name} error, ${err.message}`)
+          throw err
+        }
         return this.action(false)
       })
   }
@@ -150,18 +150,18 @@ export class Thoughts {
 
     // Get NLU result before processing NLU branches and only if required
     this.processes.understand.validate = async () => {
-      if (!bot.adapters.language) {
-        bot.logger.debug(`[thought] skip understand, no language adapter`)
+      if (!bot.adapters.nlu) {
+        bot.logger.debug(`[thought] skip understand, no nlu adapter`)
       } else if (!(b.message instanceof bot.TextMessage)) {
         bot.logger.debug(`[thought] skip understand, not a text message`)
       } else if (b.message.toString().trim() === '') {
         bot.logger.debug(`[thought] skip understand, message text is empty`)
       } else {
-        const nluResultsRaw = await bot.adapters.language.process(b.message)
+        const nluResultsRaw = await bot.adapters.nlu.process(b.message)
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
-          bot.logger.error(`[thought] language processing returned empty`)
+          bot.logger.error(`[thought] nlu processing returned empty`)
         } else {
-          bot.logger.debug(`[thought] language processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
+          bot.logger.debug(`[thought] nlu processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
           b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
           return true
         }
@@ -199,8 +199,14 @@ export class Thoughts {
 
     // Don't remember states with unmatched messages
     this.processes.remember.validate = async () => {
-      if (!b.matched && !b.dispatchedEnvelope()) return false
-      return (typeof bot.adapters.storage !== 'undefined')
+      if (!bot.adapters.storage) {
+        bot.logger.debug(`[thought] skip remember, no storage adapter`)
+      } else if (!b.matched && !b.dispatchedEnvelope()) {
+        bot.logger.debug(`[thought] skip remember on outgoing`)
+      } else {
+        return true
+      }
+      return false
     }
 
     // Don't remember unless middleware completed (timestamped)

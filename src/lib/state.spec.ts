@@ -139,6 +139,19 @@ describe('[state]', () => {
       expect(b.envelopes![0].strings).to.eql(['testing'])
     })
   })
+  describe('.reply', () => {
+    it('prefixes all strings with @user from message', async () => {
+      const b = new bot.State({ message })
+      const respond = sinon.stub(b, 'respond')
+      await b.reply('one', { foo: 'bar' }, 'two')
+      sinon.assert.calledWithExactly(
+        respond,
+        '@test-user one',
+        { foo: 'bar' },
+        '@test-user two'
+      )
+    })
+  })
   describe('.respondVia', () => {
     it('updates state method before calling respond', async () => {
       const b = new bot.State({ message })

@@ -4,5 +4,5 @@
  * script directly from command line.
  */
 
-import * as bBot from './'
+import * as bBot from '.'
 module.exports = bBot.start().then(() => bBot)

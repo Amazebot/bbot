@@ -15,6 +15,9 @@ export class Shell extends bBot.MessageAdapter {
   }
   userName = process.env.BOT_SHELL_USER
   roomName = process.env.BOT_SHELL_ROOM
+  transport?: Transport
+  user?: bBot.User
+  room?: { id?: string, name?: string }
 
   /** Update chat window and return to input prompt */
   async render () {
@@ -81,14 +84,14 @@ export class Shell extends bBot.MessageAdapter {
   async start () {
     this.ui = new inquirer.ui.BottomBar()
     this.bot.global.enter((b) => b.respond(
-      `@${this.user.name} Welcome to #${this.room.name}, I'm @${b.bot.name}`,
+      `@${this.user!.name} Welcome to #${this.room!.name}, I'm @${b.bot.settings.name}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-enter' })
     this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       this.logSetup()
       await this.roomSetup()
-      await this.bot.receive(new this.bot.EnterMessage(this.user))
+      await this.bot.receive(new this.bot.EnterMessage(this.user!))
       await this.render()
     })
   }
@@ -98,17 +101,17 @@ export class Shell extends bBot.MessageAdapter {
     const input: any = await inquirer.prompt({
       type: 'input',
       name: 'message',
-      message: chalk.magenta(`#${this.room.name}`) + chalk.cyan(' ➤')
+      message: chalk.magenta(`#${this.room!.name}`) + chalk.cyan(' ➤')
     })
-    this.messages.push([this.user.name, input.message])
-    await this.bot.receive(new this.bot.TextMessage(this.user, input.message))
+    this.messages.push([this.user!.name!, input.message])
+    await this.bot.receive(new this.bot.TextMessage(this.user!, input.message))
     return this.render()
   }
 
   /** Add outgoing messages and re-render chat */
   async dispatch (envelope: bBot.Envelope) {
     for (let text of (envelope.strings || [])) {
-      this.messages.push([this.bot.name, text])
+      this.messages.push([this.bot.settings.name, text])
     }
   }
 

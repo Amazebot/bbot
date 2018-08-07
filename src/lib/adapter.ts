@@ -4,7 +4,7 @@ import * as bot from '..'
 /** Collection of adapter types and their loaded adapter. */
 export const adapters: {
   message?: bot.MessageAdapter | undefined
-  language?: bot.LanguageAdapter | undefined
+  nlu?: bot.NLUAdapter | undefined
   storage?: bot.StorageAdapter | undefined
   [key: string]: bot.Adapter | undefined
 } = {}
@@ -52,11 +52,11 @@ export function loadAdapter (adapterPath?: string) {
 /** Load all adapters, but don't yet start them. */
 export function loadAdapters () {
   try {
-    if (!adapters.message) adapters.message = loadAdapter(bot.config.messageAdapter)
-    if (!adapters.language) adapters.language = loadAdapter(bot.config.languageAdapter)
-    if (!adapters.storage) adapters.storage = loadAdapter(bot.config.storageAdapter)
-    if (!adapters.webhook) adapters.webhook = loadAdapter(bot.config.webhookAdapter)
-    if (!adapters.analytics) adapters.analytics = loadAdapter(bot.config.analyticsAdapter)
+    if (!adapters.message) adapters.message = loadAdapter(bot.settings.get('messageAdapter'))
+    if (!adapters.nlu) adapters.nlu = loadAdapter(bot.settings.get('nluAdapter'))
+    if (!adapters.storage) adapters.storage = loadAdapter(bot.settings.get('storageAdapter'))
+    if (!adapters.webhook) adapters.webhook = loadAdapter(bot.settings.get('webhookAdapter'))
+    if (!adapters.analytics) adapters.analytics = loadAdapter(bot.settings.get('analyticsAdapter'))
   } catch (e) {
     bot.logger.error(e)
     throw new Error(`[adapter] failed to load all adapters`)
@@ -95,7 +95,7 @@ export function shutdownAdapters () {
 /** Unload adapters for resetting bot */
 export function unloadAdapters () {
   delete adapters.message
-  delete adapters.language
+  delete adapters.nlu
   delete adapters.storage
   delete adapters.webhook
   delete adapters.analytics

@@ -14,7 +14,7 @@ describe('[adapter-message]', () => {
       name = 'mock-message-adapter'
       async start () { return }
       async shutdown () { return }
-      async dispatch (envelope: bot.Envelope) { console.log(envelope) }
+      async dispatch (envelope: bot.Envelope) { console.info(envelope) }
     }
     mockAdapter = new MockAdapter(bot)
   })
