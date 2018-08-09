@@ -24,7 +24,7 @@ describe('[adapter-base]', () => {
       const mockAdapter = new MockAdapter(bot)
       expect(mockAdapter.bot).to.include.all.keys([
         'events',
-        'config',
+        'settings',
         'logger',
         'middlewares',
         'adapters',
