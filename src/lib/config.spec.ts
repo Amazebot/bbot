@@ -59,6 +59,23 @@ describe('[config]', () => {
         expect(config.settings.config.alias).to.equal('foo2')
       })
     })
+    describe('.set', () => {
+      it('assigns the given setting and all alias settings', () => {
+        config.settings.extend({
+          'foo-bar': {
+            type: 'string',
+            describe: 'A test setting',
+            alias: 'fb'
+          }
+        })
+        config.settings.set('fooBar', 'foo')
+        expect(config.settings.get('fooBar')).to.equal('foo')
+        expect(config.settings.get('foo-bar')).to.equal('foo')
+        config.settings.set('foo-bar', 'bar')
+        expect(config.settings.get('fooBar')).to.equal('bar')
+        expect(config.settings.get('foo-bar')).to.equal('bar')
+      })
+    })
   })
   describe('.config', () => {
     beforeEach(() => config.settings.reloadConfig())

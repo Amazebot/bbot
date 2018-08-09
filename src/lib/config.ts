@@ -14,6 +14,15 @@ const argsError = (msg: string, err: Error) => {
   process.exit(1)
 }
 
+/** Utility for converting option keys, from fooBar to foo-bar */
+export function hyphenate (str: string) {
+  return str.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`)
+}
+/** Utility for converting option keys, from foo-bar to fooBar */
+export function camelCase (str: string) {
+  return str.replace(/-([a-z])/gi, (g) => g[1].toUpperCase())
+}
+
 /** Config class adds setter and getter logic to validate certain settings */
 export class Settings {
   /** Initial array of config options, can be extended prior and post load. */
@@ -99,8 +108,7 @@ export class Settings {
       .fail(argsError)
       .argv
     for (let key of Object.keys(config)) {
-      const hyphenKey = key.replace(/([A-Z])/g, (g) => `-${g[0].toLowerCase()}`)
-      if (Object.keys(this.options).indexOf(hyphenKey) < 0) delete config[key]
+      if (Object.keys(this.options).indexOf(hyphenate(key)) < 0) delete config[key]
     }
     return config
   }
@@ -130,9 +138,11 @@ export class Settings {
     return this.config[key]
   }
 
-  /** Generic config setter */
+  /** Generic config setter (@todo this is kinda whack) */
   set (key: string, value: any) {
     this.config[key] = value
+    if (key === hyphenate(key)) this.config[camelCase(key)] = value
+    else if (key === camelCase(key)) this.config[hyphenate(key)] = value
   }
 
   /** Generic config clear */
