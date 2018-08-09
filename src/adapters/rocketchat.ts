@@ -47,15 +47,11 @@ export class Rocketchat extends bot.MessageAdapter {
     this.bot.logger.info('[rocketchat] filters passed, will hear message')
     const isDM = (meta.roomType === 'd')
     const isLC = (meta.roomType === 'l')
-    const user = bot.userById(message.u._id, {
-      name: message.u.username,
-      alias: message.alias,
-      room: {
-        id: message.rid,
-        type: meta.roomType,
-        name: meta.roomName
-      }
-    })
+    const user = bot.userById(message.u._id, { room: {
+      id: message.rid,
+      type: meta.roomType,
+      name: meta.roomName
+    } })
 
     // Room joins, hear without further detail
     if (message.t === 'uj') {

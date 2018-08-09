@@ -456,6 +456,20 @@ describe('[thought]', () => {
         const envelope = b.envelopes![0]
         sinon.assert.calledWithExactly((bot.adapters.message!.dispatch as sinon.SinonStub), envelope)
       })
+      it('remembers user when branch matched', async () => {
+        bot.memory.users = {}
+        bot.global.custom(() => true, () => null)
+        const b = new bot.State({ message })
+        await new bot.Thoughts(b).start('receive')
+        expect(bot.memory.users[b.message.user.id]).to.eql(message.user)
+      })
+      it('remembers user when branch matched', async () => {
+        bot.memory.users = {}
+        bot.global.custom(() => false, () => null)
+        const b = new bot.State({ message })
+        await new bot.Thoughts(b).start('receive')
+        expect(typeof bot.memory.users[b.message.user.id]).to.equal('undefined')
+      })
       it('does remember when branch matched', async () => {
         bot.global.custom(() => true, () => null)
         const b = new bot.State({ message })
