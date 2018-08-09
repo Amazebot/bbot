@@ -32,15 +32,20 @@ export function getStatus () {
  * Extensions/adapters can interrupt or modify the stack before start.
  */
 export async function load () {
-  bot.logger.level = bot.settings.get('logLevel') // in case config changed after init
+  bot.logger.level = bot.settings.get('log-level') // may change after init
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
-  bot.loadMiddleware()
-  bot.loadAdapters()
-  // loadServer()
-  await eventDelay()
-  setStatus('loaded')
-  bot.events.emit('loaded')
+  try {
+    bot.loadMiddleware()
+    bot.loadAdapters()
+    // loadServer()
+    await eventDelay()
+    setStatus('loaded')
+    bot.events.emit('loaded')
+  } catch (err) {
+    bot.logger.error('[core] failed to load')
+    await bot.shutdown(1).catch()
+  }
 }
 
 /**
@@ -52,8 +57,13 @@ export async function load () {
 export async function start () {
   if (getStatus() !== 'loaded') await load()
   setStatus('starting')
-  await bot.startAdapters()
-  // await startSever()
+  try {
+    await bot.startAdapters()
+    // await startSever()
+  } catch (err) {
+    bot.logger.error('[core] failed to start')
+    await bot.shutdown(1).catch()
+  }
   await eventDelay()
   setStatus('started')
   bot.events.emit('started')
