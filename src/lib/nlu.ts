@@ -201,4 +201,22 @@ export class NLU {
     if (Object.keys(matched).length) return matched
     return undefined
   }
+
+  /** Logging utility for displaying easy to read NLU results */
+  printResults () {
+    const outputs: string[] = []
+    for (let key of Object.keys(this.results)) {
+      const items = this.results[(key as NLUKeys)]
+      if (items && items.length) {
+        let details = items.map((item) => {
+          const score = (typeof item.score !== 'undefined')
+            ? ` ${item.score.toFixed(2)}`
+            : ''
+          return `${item.name || item.id}${score}`
+        }).join(', ')
+        outputs.push(`${key} (${details})`)
+      }
+    }
+    return outputs.join(', ')
+  }
 }
