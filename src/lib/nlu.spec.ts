@@ -322,5 +322,15 @@ describe('[nlu]', () => {
         })
       })
     })
+    describe('.printResults', () => {
+      it('formats NLU results for readability', () => {
+        const nlu = new NLU().addResults({
+          sentiment: [{ id: 'fooS', score: -.1234 }],
+          act: [{ id: 'fooA' }, { id: 'bar' }],
+          phrases: []
+        })
+        expect(nlu.printResults()).to.equal('sentiment (fooS -0.12), act (fooA, bar)')
+      })
+    })
   })
 })

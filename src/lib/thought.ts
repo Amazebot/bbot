@@ -161,8 +161,8 @@ export class Thoughts {
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
           bot.logger.error(`[thought] nlu processing returned empty`)
         } else {
-          bot.logger.debug(`[thought] nlu processing returned keys [${Object.keys(nluResultsRaw).join(', ')}]`)
           b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
+          bot.logger.debug(`[thought] nlu processed ${b.message.nlu.printResults()}`)
           return true
         }
       }
