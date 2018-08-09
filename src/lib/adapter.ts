@@ -27,8 +27,13 @@ export function loadAdapter (adapterPath?: string) {
           paths: require.main.paths
         })).use(bot)
       } else return require(adapterPath)
-    } catch (e) {
-      bot.logger.debug(`[adapter] failed to load module, will try from path`)
+    } catch (err) {
+      if (/cannot find/i.test(err.message)) {
+        bot.logger.debug(`[adapter] failed to load module, will try from path`)
+      } else {
+        bot.logger.error('[adapter] failed loading due to internal error')
+        throw err
+      }
     }
   }
   if (!isPath) adapterPath = `./adapters/${adapterPath}`
@@ -57,8 +62,8 @@ export function loadAdapters () {
     if (!adapters.storage) adapters.storage = loadAdapter(bot.settings.get('storageAdapter'))
     if (!adapters.webhook) adapters.webhook = loadAdapter(bot.settings.get('webhookAdapter'))
     if (!adapters.analytics) adapters.analytics = loadAdapter(bot.settings.get('analyticsAdapter'))
-  } catch (e) {
-    bot.logger.error(e)
+  } catch (err) {
+    bot.logger.error(err.message)
     throw new Error(`[adapter] failed to load all adapters`)
   }
 }
