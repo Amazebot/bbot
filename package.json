@@ -35,7 +35,7 @@
   "scripts": {
     "lint": "tslint -p .",
     "pretest": "yarn lint",
-    "test": "nyc mocha ./src/**/*.spec.ts",
+    "test": "nyc mocha **/*.spec.ts",
     "test:debug": "mocha --inspect --debug-brk src/**/*.spec.ts",
     "test:coverage": "set -o allexport; source .env; set +o allexport; codecov",
     "docs": "rimraf ./docs && typedoc --options ./typedoc.json ./src",

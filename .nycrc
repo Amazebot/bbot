@@ -5,10 +5,9 @@
   "require": [
     "ts-node/register"
   ],
-  "include": [
-    "src/lib/**/*.ts"
-  ],
   "exclude": [
+    "test/",
+    "src/index.ts",
     "**/*.d.ts",
     "**/*.spec.ts"
   ],
@@ -16,5 +15,5 @@
     "lcovonly",
     "text"
   ],
-  "all": true
+  "cache": false
 }
