@@ -3,12 +3,9 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 
-class NLUAdapter extends bot.NLUAdapter {
-  async start () { /* mock start */ }
-  async shutdown () { /* mock shutdown */ }
-  async process () { return {} }
-}
-class StorageAdapter extends bot.StorageAdapter {
+/** Mock Adapter class has methods to imitate all different types */
+class MockAdapter extends bot.Adapter {
+  name = 'mock-adapter'
   async start () { /* mock start */ }
   async shutdown () { /* mock shutdown */ }
   async findOne () { /* mock findOne */ }
@@ -17,11 +14,7 @@ class StorageAdapter extends bot.StorageAdapter {
   async lose () { /* mock lose */ }
   async loadMemory () { /* mock loadMemory */ }
   async saveMemory () { /* mock saveMemory */ }
-}
-class MockAdapter extends bot.Adapter {
-  name = 'mock-adapter'
-  async start () { /* mock start */ }
-  async shutdown () { /* mock shutdown */ }
+  async process () { return {} }
 }
 export const use = sinon.spy(() => new MockAdapter(bot)) // use spec as module
 
@@ -58,8 +51,8 @@ describe('[adapter]', () => {
   })
   describe('.startAdapters', () => {
     it('starts all loaded adapters', async () => {
-      bot.adapters.storage = new StorageAdapter(bot)
-      bot.adapters.nlu = new NLUAdapter(bot)
+      bot.adapters.storage = new MockAdapter(bot)
+      bot.adapters.nlu = new MockAdapter(bot)
       const startStorage = sinon.spy(bot.adapters.storage, 'start')
       const startNLU = sinon.spy(bot.adapters.nlu, 'start')
       await bot.startAdapters()
@@ -69,8 +62,8 @@ describe('[adapter]', () => {
   })
   describe('.shutdownAdapters', () => {
     it('shuts down all loaded adapters', async () => {
-      bot.adapters.storage = new StorageAdapter(bot)
-      bot.adapters.nlu = new NLUAdapter(bot)
+      bot.adapters.storage = new MockAdapter(bot)
+      bot.adapters.nlu = new MockAdapter(bot)
       const shutdownStorage = sinon.spy(bot.adapters.storage, 'shutdown')
       const shutdownNLU = sinon.spy(bot.adapters.nlu, 'shutdown')
       await bot.shutdownAdapters()
