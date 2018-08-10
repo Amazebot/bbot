@@ -29,8 +29,56 @@ describe('[config]', () => {
         settings.reloadConfig()
         expect(typeof settings.config.isFoo).to.equal('boolean')
       })
+      it('retains manually assigned configs as default', () => {
+        const settings = new config.Settings()
+        settings.set('name', 'foo')
+        settings.reloadConfig()
+        expect(settings.config.name).to.equal('foo')
+      })
+      it('retains added options and their config', () => {
+        const settings = new config.Settings()
+        settings.options['is-foo'] = {
+          type: 'boolean',
+          description: 'testing a new option',
+          default: false
+        }
+        settings.config = settings.loadConfig()
+        settings.set('is-foo', true)
+        settings.set('name', 'foo')
+        settings.reloadConfig()
+        expect(settings.config.isFoo).to.equal(true)
+        expect(settings.config.name).to.equal('foo')
+      })
+    })
+    describe('.resetConfig', () => {
+      it('overwrites assigned configs with option defaults', () => {
+        const settings = new config.Settings()
+        settings.options['is-foo'] = {
+          type: 'boolean',
+          description: 'testing a new option',
+          default: false
+        }
+        settings.config = settings.loadConfig()
+        settings.set('is-foo', true)
+        settings.resetConfig()
+        expect(settings.config.isFoo).to.equal(false)
+      })
+      it('returns assigned config to its original default', () => {
+        const settings = new config.Settings()
+        settings.set('name', 'foo')
+        settings.resetConfig()
+        expect(settings.config.name).to.equal('bot')
+      })
+      it('nothing inherited after reload', () => {
+        const settings = new config.Settings()
+        settings.set('name', 'foo')
+        settings.reloadConfig()
+        settings.resetConfig()
+        expect(settings.config.name).to.equal('bot')
+      })
     })
     describe('.extend', () => {
+      beforeEach(() => config.settings.resetConfig())
       it('allows defining new options after load', () => {
         process.env.BOT_FOO = 'bar'
         const settings = new config.Settings()
@@ -40,6 +88,7 @@ describe('[config]', () => {
       })
     })
     describe('.name', () => {
+      beforeEach(() => config.settings.resetConfig())
       it('provides shortcut to name from config', () => {
         config.settings.name = 'foo1'
         expect(config.settings.config.name).to.equal('foo1')
@@ -50,6 +99,7 @@ describe('[config]', () => {
       })
     })
     describe('.alias', () => {
+      beforeEach(() => config.settings.resetConfig())
       it('provides shortcut to alias from config', () => {
         config.settings.alias = 'foo1'
         expect(config.settings.config.alias).to.equal('foo1')
@@ -60,6 +110,7 @@ describe('[config]', () => {
       })
     })
     describe('.set', () => {
+      beforeEach(() => config.settings.resetConfig())
       it('assigns the given setting and all alias settings', () => {
         config.settings.extend({
           'foo-bar': {
@@ -78,13 +129,13 @@ describe('[config]', () => {
     })
   })
   describe('.config', () => {
-    beforeEach(() => config.settings.reloadConfig())
+    beforeEach(() => config.settings.resetConfig())
     it('contains arguments collection, with defaults', () => {
       expect(config.settings).to.have.property('name', 'bot')
     })
   })
   describe('.getConfig', () => {
-    beforeEach(() => config.settings.reloadConfig())
+    beforeEach(() => config.settings.resetConfig())
     it('loads config from process.config', () => {
       yargs.parse(['--name', 'hao']) // overwrite config
       expect(config.getConfig()).to.have.property('name', 'hao')
