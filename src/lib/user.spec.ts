@@ -9,6 +9,10 @@ describe('[user]', () => {
         const testUser = new user.User()
         expect(testUser.id).to.have.lengthOf(32)
       })
+      it('assigns ID if given undefined attribute', () => {
+        const testUser = new user.User({ id: undefined })
+        expect(testUser.id).to.have.lengthOf(32)
+      })
       it('accepts ID if given', () => {
         const testUser = new user.User({ id: 'TEST_ID' })
         expect(testUser.id).to.equal('TEST_ID')

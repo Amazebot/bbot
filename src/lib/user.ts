@@ -23,10 +23,15 @@ export class User implements IUser {
   [key: string]: any
 
   /** Create a User */
-  constructor (meta?: IUser) {
-    this.id = (meta && meta.id) ? meta.id : bot.random()
-    if (meta) Object.keys(meta).forEach((key: string) => this[key] = meta[key])
+  constructor (meta: IUser = {}) {
+    this.id = meta.id || bot.random()
+    Object.keys(meta).forEach((key: string) => {
+      if (typeof(meta[key] !== 'undefined') && meta[key] !== null) {
+        this[key] = meta[key]
+      }
+    })
     this.room = (meta && meta.room) ? meta.room : {}
+    if (!this.id) this.id = bot.random()
     if (!this.name) this.name = this.id
   }
 }

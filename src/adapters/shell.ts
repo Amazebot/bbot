@@ -13,7 +13,9 @@ export class Shell extends bBot.MessageAdapter {
   settings = {
     chatSize: 5
   }
-  userName = process.env.BOT_SHELL_USER
+  // @todo extend bot settings instead...
+  userName = process.env.BOT_SHELL_USER_NAME
+  userId = process.env.BOT_SHELL_USER_ID
   roomName = process.env.BOT_SHELL_ROOM
   transport?: Transport
   user?: bBot.User
@@ -61,7 +63,7 @@ export class Shell extends bBot.MessageAdapter {
   /** Write prompt to collect room and user name, or take from env settings */
   async roomSetup () {
     if (this.userName && this.roomName) {
-      this.user = new this.bot.User({ name: this.userName })
+      this.user = new this.bot.User({ name: this.userName, id: this.userId })
       this.room = { name: this.roomName }
     } else {
       const registration: any = await inquirer.prompt([{
@@ -71,11 +73,20 @@ export class Shell extends bBot.MessageAdapter {
         default: 'user'
       },{
         type: 'input',
+        name: 'userId',
+        message: 'Use ID for user, or generate random?',
+        default: 'random'
+      },{
+        type: 'input',
         name: 'room',
         message: 'And what about this "room"?',
         default: 'shell'
       }])
-      this.user = new this.bot.User({ name: registration.username })
+      if (registration.userId !== 'random') this.userId = registration.userId
+      this.user = new this.bot.User({
+        name: registration.username,
+        id: this.userId
+      })
       this.room = { name: registration.room }
     }
   }
