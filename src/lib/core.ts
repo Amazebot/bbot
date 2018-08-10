@@ -111,12 +111,17 @@ export async function pause () {
  */
 export async function reset () {
   const status = getStatus()
-  if (status === 'waiting') return
   if (status !== 'shutdown') await shutdown()
-  bot.unloadAdapters()
-  bot.unloadMiddleware()
-  bot.global.reset()
-  // unloadServer()
+  try {
+    bot.unloadAdapters()
+    bot.unloadMiddleware()
+    // unloadServer()
+    bot.global.reset()
+    bot.settings.resetConfig()
+  } catch (err) {
+    bot.logger.error('[core] failed to reset')
+    await bot.shutdown(1).catch()
+  }
   await eventDelay()
   setStatus('waiting')
   bot.events.emit('waiting')

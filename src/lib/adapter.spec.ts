@@ -2,81 +2,89 @@ import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
-import * as adapter from './adapter'
 
-let mockAdapter: bot.Adapter
-let start: sinon.SinonSpy
-export const use = sinon.spy(() => mockAdapter) // allows spec to run as module
+class NLUAdapter extends bot.NLUAdapter {
+  async start () { /* mock start */ }
+  async shutdown () { /* mock shutdown */ }
+  async process () { return {} }
+}
+class StorageAdapter extends bot.StorageAdapter {
+  async start () { /* mock start */ }
+  async shutdown () { /* mock shutdown */ }
+  async findOne () { /* mock findOne */ }
+  async find () { /* mock find */ }
+  async keep () { /* mock keep */ }
+  async lose () { /* mock lose */ }
+  async loadMemory () { /* mock loadMemory */ }
+  async saveMemory () { /* mock saveMemory */ }
+}
 class MockAdapter extends bot.Adapter {
   name = 'mock-adapter'
   async start () { /* mock start */ }
   async shutdown () { /* mock shutdown */ }
-  async dispatch () { /* mock dispatch */ }
 }
+export const use = sinon.spy(() => new MockAdapter(bot)) // use spec as module
 
 describe('[adapter]', () => {
-  before(() => {
-    mockAdapter = new MockAdapter(bot)
-    start = sinon.spy(mockAdapter, 'start')
-  })
-  afterEach(() => {
-    for (let key in adapter.adapters) delete adapter.adapters[key]
-    bot.settings.unset('messageAdapter')
-    bot.settings.unset('nluAdapter')
-    bot.settings.unset('storageAdapter')
-    bot.settings.unset('webhookAdapter')
-    bot.settings.unset('analyticsAdapter')
-    use.resetHistory()
-    start.resetHistory()
-  })
+  beforeEach(() => bot.reset())
+  afterEach(() => use.resetHistory())
   describe('.loadAdapter', () => {
     it('loads adapter exported at path', () => {
-      const test = adapter.loadAdapter('./lib/adapter.spec')
+      const test = bot.loadAdapter('./lib/adapter.spec')
       expect(test).to.be.an.instanceof(bot.Adapter)
       sinon.assert.calledOnce(use)
     })
   })
   describe('.loadAdapters', () => {
     it('loads nothing if none configured', () => {
-      expect(() => adapter.loadAdapters()).to.not.throw()
+      expect(() => bot.loadAdapters()).to.not.throw()
     })
     it('throws if bad path in config for adapter', () => {
       bot.settings.set('messageAdapter', 'foo'),
-      expect(() => adapter.loadAdapters()).to.throw()
+      expect(() => bot.loadAdapters()).to.throw()
     })
     it('loads all configured adapters at valid path', () => {
       bot.settings.set('storageAdapter', './lib/adapter.spec')
-      bot.settings.set('analyticsAdapter', './lib/adapter.spec')
-      adapter.loadAdapters()
+      bot.settings.set('nluAdapter', './lib/adapter.spec')
+      bot.loadAdapters()
       sinon.assert.calledTwice(use)
     })
     it('keeps loaded adapters in collection', () => {
       bot.settings.set('messageAdapter', './lib/adapter.spec')
-      adapter.loadAdapters()
-      expect(adapter.adapters.message).to.be.instanceof(bot.Adapter)
-      expect(typeof adapter.adapters.nlu).to.equal('undefined')
-    })
-    it('can load shell adapter extending message adapter', () => {
-      bot.settings.set('messageAdapter', './adapters/shell')
-      adapter.loadAdapters()
+      bot.loadAdapters()
+      expect(bot.adapters.message).to.be.instanceof(bot.Adapter)
+      expect(typeof bot.adapters.nlu).to.equal('undefined')
     })
   })
   describe('.startAdapters', () => {
-    it('starts all configured adapters', async () => {
-      bot.settings.set('nluAdapter', './lib/adapter.spec')
-      bot.settings.set('webhookAdapter', './lib/adapter.spec')
-      adapter.loadAdapters()
-      await adapter.startAdapters()
-      sinon.assert.calledTwice(start)
+    it('starts all loaded adapters', async () => {
+      bot.adapters.storage = new StorageAdapter(bot)
+      bot.adapters.nlu = new NLUAdapter(bot)
+      const startStorage = sinon.spy(bot.adapters.storage, 'start')
+      const startNLU = sinon.spy(bot.adapters.nlu, 'start')
+      await bot.startAdapters()
+      sinon.assert.calledOnce(startStorage)
+      sinon.assert.calledOnce(startNLU)
+    })
+  })
+  describe('.shutdownAdapters', () => {
+    it('shuts down all loaded adapters', async () => {
+      bot.adapters.storage = new StorageAdapter(bot)
+      bot.adapters.nlu = new NLUAdapter(bot)
+      const shutdownStorage = sinon.spy(bot.adapters.storage, 'shutdown')
+      const shutdownNLU = sinon.spy(bot.adapters.nlu, 'shutdown')
+      await bot.shutdownAdapters()
+      sinon.assert.calledOnce(shutdownStorage)
+      sinon.assert.calledOnce(shutdownNLU)
     })
   })
   describe('.unloadAdapters', () => {
     it('clears all configured adapters', async () => {
-      bot.settings.set('nluAdapter', './lib/adapter.spec')
-      bot.settings.set('webhookAdapter', './lib/adapter.spec')
-      adapter.loadAdapters()
-      adapter.unloadAdapters()
-      expect(adapter.adapters).to.eql({})
+      bot.adapters.message = bot.loadAdapter('./lib/adapter.spec')
+      bot.adapters.nlu = bot.loadAdapter('./lib/adapter.spec')
+      bot.adapters.storage = bot.loadAdapter('./lib/adapter.spec')
+      bot.unloadAdapters()
+      expect(bot.adapters).to.eql({})
     })
   })
 })

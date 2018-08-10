@@ -87,7 +87,7 @@ export class Shell extends bBot.MessageAdapter {
       `@${this.user!.name} Welcome to #${this.room!.name}, I'm @${b.bot.settings.name}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-enter' })
-    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(), { id: 'shell-exit' })
+    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       this.logSetup()
       await this.roomSetup()
@@ -118,7 +118,6 @@ export class Shell extends bBot.MessageAdapter {
   /** Close inquirer UI and exit process when shutdown complete */
   async shutdown () {
     if (this.ui) this.ui.close()
-    this.bot.events.on('shutdown', () => process.exit(0))
   }
 }
 

@@ -1,11 +1,15 @@
-const initEnv = process.env
-delete process.env.BOT_NAME
 import 'mocha'
 import { expect } from 'chai'
 import * as yargs from 'yargs'
 import * as config from './config'
 
+let initEnv: any
+
 describe('[config]', () => {
+  before(() => {
+    initEnv = process.env
+    delete process.env.BOT_NAME
+  })
   beforeEach(() => delete process.env.BOT_NAME)
   after(() => process.env = initEnv)
   describe('Settings', () => {
@@ -51,23 +55,18 @@ describe('[config]', () => {
       })
     })
     describe('.resetConfig', () => {
-      it('overwrites assigned configs with option defaults', () => {
-        const settings = new config.Settings()
-        settings.options['is-foo'] = {
-          type: 'boolean',
-          description: 'testing a new option',
-          default: false
-        }
-        settings.config = settings.loadConfig()
-        settings.set('is-foo', true)
-        settings.resetConfig()
-        expect(settings.config.isFoo).to.equal(false)
-      })
       it('returns assigned config to its original default', () => {
         const settings = new config.Settings()
         settings.set('name', 'foo')
         settings.resetConfig()
         expect(settings.config.name).to.equal('bot')
+      })
+      it('re-assigns environment default overrides', () => {
+        process.env.BOT_NAME = 'bar'
+        const settings = new config.Settings()
+        settings.set('name', 'foo')
+        settings.resetConfig()
+        expect(settings.config.name).to.equal('bar')
       })
       it('nothing inherited after reload', () => {
         const settings = new config.Settings()
@@ -75,6 +74,14 @@ describe('[config]', () => {
         settings.reloadConfig()
         settings.resetConfig()
         expect(settings.config.name).to.equal('bot')
+      })
+      it('inherits original defaults', () => {
+        delete process.env['BOT_MESSAGE_ADAPTER']
+        const settings = new config.Settings()
+        const defaultM = settings.options['message-adapter'].default
+        settings.set('message-adapter', '')
+        settings.resetConfig()
+        expect(settings.config['message-adapter']).to.equal(defaultM)
       })
     })
     describe('.extend', () => {
