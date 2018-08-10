@@ -3,28 +3,33 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 
+let initEnv: any
+
+class MessageAdapter extends bot.MessageAdapter {
+  name = 'mock-adapter'
+  async start () { /* mock start */ }
+  async shutdown () { /* mock shutdown */ }
+  async dispatch () { /* mock dispatch */ }
+}
+export const use = sinon.spy(() => new MessageAdapter(bot)) // use spec as module
+
 describe('[core]', () => {
-  afterEach(() => bot.reset())
+  before(() => {
+    initEnv = process.env
+    process.env.BOT_MESSAGE_ADAPTER = './lib/core.spec'
+  })
+  after(() => process.env = initEnv)
   describe('.load', () => {
-    it('returns a promise', () => {
-      const loading = bot.load()
-      expect(loading.then).to.be.a('function')
-      return loading
-    })
     it('loads middleware', async () => {
       await bot.load()
       expect(Object.keys(bot.middlewares)).have.length.gt(0)
     })
     it('loads adapters', async () => {
-      const bot = require('..')
       await bot.load()
       expect(Object.keys(bot.adapters)).have.length.gt(0)
     })
   })
   describe('.start', () => {
-    it('returns a promise', () => {
-      expect(bot.start().then).to.be.a('function')
-    })
     it('emits ready event', async () => {
       const spy = sinon.spy()
       bot.events.on('started', spy)
@@ -32,28 +37,7 @@ describe('[core]', () => {
       expect(spy.calledOnce).to.equal(true)
     })
   })
-  describe('.shutdown', () => {
-    it('returns a promise', () => {
-      const shutdown = bot.shutdown()
-      expect(shutdown.then).to.be.a('function')
-      return shutdown
-    })
-    // nothing to test yet
-  })
-  describe('.pause', () => {
-    it('returns a promise', () => {
-      const pause = bot.pause()
-      expect(pause.then).to.be.a('function')
-      return pause
-    })
-    // nothing to test yet
-  })
   describe('.reset', () => {
-    it('returns a promise', () => {
-      const reset = bot.reset()
-      expect(reset.then).to.be.a('function')
-      return reset
-    })
     it('clears middleware', async () => {
       await bot.start()
       await bot.reset()

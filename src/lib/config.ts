@@ -23,61 +23,63 @@ export function camelCase (str: string) {
   return str.replace(/-([a-z])/gi, (g) => g[1].toUpperCase())
 }
 
+/** Initial array of config options, can be extended prior and post load. */
+const initOptions: { [key: string]: yargs.Options } = {
+  'name': {
+    type: 'string',
+    describe: 'Name of the bot in chat. Prepending any command with the name will trigger `direct` branches.',
+    alias: 'n',
+    default: 'bot'
+  },
+  'alias': {
+    type: 'string',
+    describe: 'Alternate name for the bot.'
+  },
+  'log-level': {
+    type: 'string',
+    describe: 'The starting minimum level for logging events (silent|debug|info|warn|error).',
+    default: 'info'
+  },
+  'auto-save': {
+    type: 'boolean',
+    describe: 'Save data in the brain every 5 seconds (defaults true).',
+    default: true
+  },
+  'message-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as message platform adapter',
+    alias: 'm',
+    default: './adapters/shell'
+  },
+  'nlu-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as message platform adapter',
+    alias: 'l',
+    default: null
+  },
+  'storage-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as storage engine adapter',
+    alias: 's',
+    default: null
+  },
+  'webhook-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as webhook provider adapter',
+    alias: 'w',
+    default: null
+  },
+  'analytics-adapter': {
+    type: 'string',
+    describe: 'Local path or NPM package name to require as analytics provider adapter',
+    alias: 'a',
+    default: null
+  }
+}
+
 /** Config class adds setter and getter logic to validate certain settings */
 export class Settings {
-  /** Initial array of config options, can be extended prior and post load. */
-  options: { [key: string]: yargs.Options } = {
-    'name': {
-      type: 'string',
-      describe: 'Name of the bot in chat. Prepending any command with the name will trigger `direct` branches.',
-      alias: 'n',
-      default: 'bot'
-    },
-    'alias': {
-      type: 'string',
-      describe: 'Alternate name for the bot.'
-    },
-    'log-level': {
-      type: 'string',
-      describe: 'The starting minimum level for logging events (silent|debug|info|warn|error).',
-      default: 'info'
-    },
-    'auto-save': {
-      type: 'boolean',
-      describe: 'Save data in the brain every 5 seconds (defaults true).',
-      default: true
-    },
-    'message-adapter': {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as message platform adapter',
-      alias: 'm',
-      default: './adapters/shell'
-    },
-    'nlu-adapter': {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as message platform adapter',
-      alias: 'l',
-      default: null
-    },
-    'storage-adapter': {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as storage engine adapter',
-      alias: 's',
-      default: null
-    },
-    'webhook-adapter': {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as webhook provider adapter',
-      alias: 'w',
-      default: null
-    },
-    'analytics-adapter': {
-      type: 'string',
-      describe: 'Local path or NPM package name to require as analytics provider adapter',
-      alias: 'a',
-      default: null
-    }
-  }
+  options = Object.assign({}, initOptions)
 
   /** Access all settings from argv, env, package.json and custom config file */
   config: yargs.Arguments = this.loadConfig(true)
@@ -126,6 +128,7 @@ export class Settings {
 
   /** Reload config without taking on existing */
   resetConfig () {
+    this.options = Object.assign({}, initOptions)
     this.config = this.loadConfig(true)
   }
 

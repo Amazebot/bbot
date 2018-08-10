@@ -1,12 +1,15 @@
 import path from 'path'
 import * as bot from '..'
 
+/** Collection of allowed adapter types for loading. */
+const adapterTypes = ['message', 'nlu', 'storage']
+
 /** Collection of adapter types and their loaded adapter. */
 export const adapters: {
+  [key: string]: bot.Adapter | undefined
   message?: bot.MessageAdapter | undefined
   nlu?: bot.NLUAdapter | undefined
   storage?: bot.StorageAdapter | undefined
-  [key: string]: bot.Adapter | undefined
 } = {}
 
 /**
@@ -56,15 +59,17 @@ export function loadAdapter (adapterPath?: string) {
 
 /** Load all adapters, but don't yet start them. */
 export function loadAdapters () {
-  try {
-    if (!adapters.message) adapters.message = loadAdapter(bot.settings.get('messageAdapter'))
-    if (!adapters.nlu) adapters.nlu = loadAdapter(bot.settings.get('nluAdapter'))
-    if (!adapters.storage) adapters.storage = loadAdapter(bot.settings.get('storageAdapter'))
-    if (!adapters.webhook) adapters.webhook = loadAdapter(bot.settings.get('webhookAdapter'))
-    if (!adapters.analytics) adapters.analytics = loadAdapter(bot.settings.get('analyticsAdapter'))
-  } catch (err) {
-    bot.logger.error(err.message)
-    throw new Error(`[adapter] failed to load all adapters`)
+  bot.unloadAdapters()
+  for (let type of adapterTypes) {
+    const adapterPath = bot.settings.get(`${type}-adapter`)
+    if (adapterPath && adapterPath !== '' && !adapters[type]) {
+      try {
+        adapters[type] = loadAdapter(adapterPath)
+      } catch (err) {
+        bot.logger.error(err.message)
+        throw new Error(`[adapter] failed to load all adapters`)
+      }
+    }
   }
 }
 
@@ -99,9 +104,5 @@ export function shutdownAdapters () {
 
 /** Unload adapters for resetting bot */
 export function unloadAdapters () {
-  delete adapters.message
-  delete adapters.nlu
-  delete adapters.storage
-  delete adapters.webhook
-  delete adapters.analytics
+  for (let type of adapterTypes) delete adapters[type]
 }
