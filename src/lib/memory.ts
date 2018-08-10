@@ -4,13 +4,17 @@ import * as bot from '..'
 const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 /** Save tracking vars */
-export let saveInterval: NodeJS.Timer
-export let saveIntervalValue: number = 5000
+export const intervals: {
+  save: {
+    timer: NodeJS.Timer | undefined,
+    value: number
+  }
+} = { save: { value: 5000, timer: undefined } }
 
 /** Set keys to remove from data before keep */
 export const keepExcludes = ['bot']
 
-/** Internal storage for brain data, can hold any key/value collection */
+/** Internal storage for data, can hold any key/value collection */
 export const memory: {
   [key: string]: any
   users: { [id: string]: bot.User },
@@ -20,7 +24,7 @@ export const memory: {
   private: {} // any misc data added without specifying collection
 }
 
-/** Empty the brain and start fresh with minimal empty collections */
+/** Empty memory and start fresh with minimal empty collections */
 export function clearMemory () {
   for (let key in memory) delete memory[key]
   memory.users = {}
@@ -39,7 +43,7 @@ export async function saveMemory () {
 /** Update internal memory with any data set (mostly used on load) */
 export async function loadMemory () {
   if (!bot.adapters.storage) {
-    bot.logger.warn(`[brain] cannot load or persist data without storage adapter.`)
+    bot.logger.warn(`[memory] cannot load or persist data without storage adapter.`)
     return
   }
   const loaded = await bot.adapters.storage.loadMemory()
@@ -48,16 +52,16 @@ export async function loadMemory () {
   }
 }
 
-/** Save brain memory every x milliseconds */
+/** Save memory every x milliseconds */
 export function setSaveInterval (newInterval?: number) {
-  if (newInterval) saveIntervalValue = newInterval
+  if (newInterval) intervals.save.value = newInterval
   if (!bot.adapters.storage || !bot.settings.get('autoSave')) return
-  saveInterval = setInterval(() => bot.saveMemory(), saveIntervalValue)
+  intervals.save.timer = setInterval(() => bot.saveMemory(), intervals.save.value)
 }
 
-/** Stop saving brain data */
+/** Stop saving data */
 export function clearSaveInterval () {
-  if (saveInterval) clearInterval(saveInterval)
+  if (intervals.save.timer) clearInterval(intervals.save.timer)
 }
 
 /**
@@ -129,18 +133,16 @@ export async function lose (collection: string, params: any) {
 }
 
 /** Populate brian with temporal data from storage adapter and get started */
-export async function loadBrain () {
+export async function startMemory () {
   if (!bot.adapters.storage) return
-  await bot.adapters.storage.start()
   await bot.loadMemory()
   bot.setSaveInterval()
 }
 
 /** Save data and disconnect storage adapter */
-export async function unloadBrain () {
+export async function shutdownMemory () {
   await bot.saveMemory()
   bot.clearSaveInterval()
-  if (bot.adapters.storage) await bot.adapters.storage.shutdown()
 }
 
 /** Shortcut to get the user collection from memory */

@@ -38,7 +38,6 @@ export async function load () {
   try {
     bot.loadMiddleware()
     bot.loadAdapters()
-    // loadServer()
     await eventDelay()
     setStatus('loaded')
     bot.events.emit('loaded')
@@ -59,7 +58,7 @@ export async function start () {
   setStatus('starting')
   try {
     await bot.startAdapters()
-    // await startSever()
+    await bot.startMemory()
   } catch (err) {
     bot.logger.error('[core] failed to start')
     await bot.shutdown(1).catch()
@@ -86,8 +85,7 @@ export async function shutdown (exit = 0) {
     await new Promise((resolve) => bot.events.on('started', () => resolve()))
   }
   await bot.shutdownAdapters()
-  // shutdown server
-  // stop thought process
+  await bot.shutdownMemory()
   await eventDelay()
   setStatus('shutdown')
   bot.events.emit('shutdown')
@@ -115,7 +113,6 @@ export async function reset () {
   try {
     bot.unloadAdapters()
     bot.unloadMiddleware()
-    // unloadServer()
     bot.global.reset()
     bot.settings.resetConfig()
   } catch (err) {

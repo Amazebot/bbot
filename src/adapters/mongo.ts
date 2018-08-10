@@ -78,7 +78,6 @@ export class Mongo extends StorageAdapter {
 
   /** Put memory data in documents by sub-collection */
   async saveMemory (data: any) {
-    this.bot.logger.debug(`[mongo] saving memory data to DB`)
     for (let sub in data) {
       const query = { sub, type: 'memory' }
       const doc = { data: data[sub] }
