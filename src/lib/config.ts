@@ -80,7 +80,7 @@ export class Settings {
   }
 
   /** Access all settings from argv, env, package.json and custom config file */
-  config: yargs.Arguments = this.loadConfig()
+  config: yargs.Arguments = this.loadConfig(true)
 
   /**
    * Combine and load config from command line, environment and JSON if provided.
@@ -88,10 +88,16 @@ export class Settings {
    * the main attribute, or use defaults if none assigned. The option values are
    * then assigned to the config object (some are nullable).
    */
-  loadConfig () {
+  loadConfig (reset = false) {
     for (let key in this.options) {
-      this.options[key].global = false
-      yargs.option(key, this.options[key])
+      const opt = Object.assign({}, this.options[key])
+      if (this.config) {
+        if (typeof opt.global === 'undefined') opt.global = false
+        if (!reset && typeof this.config[key] !== 'undefined') {
+          opt.default = this.config[key]
+        }
+      }
+      yargs.option(key, opt)
     }
     const config = yargs
       .usage('\nUsage: $0 [args]')
@@ -113,29 +119,34 @@ export class Settings {
     return config
   }
 
-  /** Force reloading config after options update */
+  /** Allow reloading config after options update */
   reloadConfig () {
-    this.config = this.loadConfig()
+    this.config = this.loadConfig(false)
+  }
+
+  /** Reload config without taking on existing */
+  resetConfig () {
+    this.config = this.loadConfig(true)
   }
 
   /** Validate name, stripping special characters */
   safeName (name: string) { return name.replace(/[^a-z0-9_-]/ig, '') }
 
   /** Shortcut to loaded bot name config */
-  get name () { return this.config.name }
+  get name () { return this.get('name') }
 
   /** Shortcut to setting name with validation */
-  set name (name: string) { this.config.name = this.safeName(name) }
+  set name (name: string) { this.set('name', this.safeName(name)) }
 
   /** Shortcut to loaded bot alias config */
-  get alias () { return this.config.alias }
+  get alias () { return this.get('alias') }
 
   /** Shortcut to setting alias with validation */
-  set alias (name: string) { this.config.alias = this.safeName(name) }
+  set alias (name: string) { this.set('alias', this.safeName(name)) }
 
   /** Generic config getter */
   get (key: string) {
-    return this.config[key]
+    return (this.config) ? this.config[key] : undefined
   }
 
   /** Generic config setter (@todo this is kinda whack) */
