@@ -246,6 +246,19 @@ describe('[memory]', () => {
       const reUser = bot.userById('u1')
       expect(reUser.foo).to.equal('foo')
     })
+    it('merges data from sequential lookups', () => {
+      const add1 = (u: any) => u.count = (u.count) ? u.count + 1 : 1
+      bot.memory.users = mockUsers
+      add1(bot.userById('u1', { foo: 'foo' }))
+      add1(bot.userById('u1', { bar: 'bar' }))
+      expect(bot.userById('u1')).to.include({
+        id: 'u1',
+        name: 'test-1',
+        foo: 'foo',
+        bar: 'bar',
+        count: 2
+      })
+    })
   })
   describe('.usersByName', () => {
     beforeEach(() => {
