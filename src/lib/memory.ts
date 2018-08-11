@@ -164,10 +164,9 @@ export function users () {
  */
 export function userById (id: string, meta?: any) {
   let user: bot.User = memory.users[id]
-  if (!user || meta) {
-    user = new bot.User(Object.assign({}, { id }, meta))
-    memory.users[id] = user
-  }
+  if (!user) user = new bot.User(Object.assign({}, { id }, meta))
+  if (meta) for (let key of Object.keys(meta)) user[key] = meta[key]
+  memory.users[id] = user
   return user
 }
 
