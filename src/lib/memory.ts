@@ -6,10 +6,10 @@ const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 /** Save tracking vars */
 export const intervals: {
   save: {
-    timer: NodeJS.Timer | undefined,
+    timer?: NodeJS.Timer,
     value: number
   }
-} = { save: { value: 5000, timer: undefined } }
+} = { save: { value: 5000 } }
 
 /** Set keys to remove from data before keep */
 export const keepExcludes = ['bot']
@@ -34,7 +34,6 @@ export function clearMemory () {
 /** Save internal memory back to storage adapter (as `memory` type) */
 export async function saveMemory () {
   if (!bot.adapters.storage) return
-  bot.events.emit('save', memory)
   bot.clearSaveInterval() // don't save while saving
   await bot.adapters.storage.saveMemory(memory)
   bot.setSaveInterval() // start saving again
@@ -56,12 +55,15 @@ export async function loadMemory () {
 export function setSaveInterval (newInterval?: number) {
   if (newInterval) intervals.save.value = newInterval
   if (!bot.adapters.storage || !bot.settings.get('autoSave')) return
-  intervals.save.timer = setInterval(() => bot.saveMemory(), intervals.save.value)
+  intervals.save.timer = global.setInterval(
+    () => bot.saveMemory(),
+    intervals.save.value
+  )
 }
 
 /** Stop saving data */
 export function clearSaveInterval () {
-  if (intervals.save.timer) clearInterval(intervals.save.timer)
+  if (intervals.save.timer) global.clearInterval(intervals.save.timer)
 }
 
 /**
@@ -137,12 +139,17 @@ export async function startMemory () {
   if (!bot.adapters.storage) return
   await bot.loadMemory()
   bot.setSaveInterval()
+  if (bot.settings.get('auto-save')) {
+    const sec = (intervals.save.value / 1000).toFixed(2)
+    bot.logger.info(`[memory] auto save is enabled, every ${sec} seconds.`)
+  }
 }
 
 /** Save data and disconnect storage adapter */
 export async function shutdownMemory () {
   await bot.saveMemory()
   bot.clearSaveInterval()
+  bot.logger.info(`[memory] saving is disabled`)
 }
 
 /** Shortcut to get the user collection from memory */

@@ -1,5 +1,7 @@
---recursive
---reporter list
---exit
 --require ts-node/register
 --require test/mocha.env.js
+--recursive
+--full-trace
+--bail
+--exit
+--reporter list

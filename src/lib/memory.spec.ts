@@ -38,12 +38,6 @@ describe('[memory]', () => {
     })
   })
   describe('.saveMemory', () => {
-    it('emits event with current memory', async () => {
-      const save = sinon.spy()
-      bot.events.on('save', (memory) => save(memory))
-      await bot.saveMemory()
-      sinon.assert.calledWithExactly(save, bot.memory)
-    })
     it('stops and restarts the save interval', async () => {
       const clearSaveInterval = sinon.spy(bot, 'clearSaveInterval')
       const setSaveInterval = sinon.spy(bot, 'setSaveInterval')
@@ -79,7 +73,9 @@ describe('[memory]', () => {
       await delay(50)
       sinon.assert.calledTwice(bot.saveMemory as sinon.SinonSpy)
       bot.settings.set('autoSave', false)
-      clearInterval(bot.intervals.save.timer)
+      if (bot.intervals.save.timer) {
+        global.clearInterval(bot.intervals.save.timer)
+      }
     })
   })
   describe('.clearSaveInterval', () => {
@@ -170,7 +166,11 @@ describe('[memory]', () => {
     })
   })
   describe('.startMemory', () => {
-    afterEach(() => clearInterval(bot.intervals.save.timer))
+    afterEach(() => {
+      if (bot.intervals.save.timer) {
+        global.clearInterval(bot.intervals.save.timer)
+      }
+    })
     it('loads brain from store', async () => {
       bot.clearMemory()
       await bot.startMemory()
@@ -184,7 +184,9 @@ describe('[memory]', () => {
       await bot.startMemory()
       sinon.assert.calledOnce(setSaveInterval)
       setSaveInterval.restore()
-      clearInterval(bot.intervals.save.timer)
+      if (bot.intervals.save.timer) {
+        global.clearInterval(bot.intervals.save.timer)
+      }
     })
   })
   describe('.shutdownMemory', () => {
@@ -236,6 +238,13 @@ describe('[memory]', () => {
       bot.memory.users = mockUsers
       const u2Update = new bot.User({ id: 'u2', name: 'newName' })
       expect(bot.userById('u2', u2Update)).to.eql(u2Update)
+    })
+    it('updates user by reference', () => {
+      bot.memory.users = mockUsers
+      const user = bot.userById('u1')
+      user.foo = 'foo'
+      const reUser = bot.userById('u1')
+      expect(reUser.foo).to.equal('foo')
     })
   })
   describe('.usersByName', () => {
