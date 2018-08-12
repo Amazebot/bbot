@@ -156,6 +156,11 @@ export class Thoughts {
         bot.logger.debug(`[thought] skip understand, not a text message`)
       } else if (b.message.toString().trim() === '') {
         bot.logger.debug(`[thought] skip understand, message text is empty`)
+      } else if (
+        bot.settings.get('nlu-min-length') &&
+        b.message.toString().trim().length < bot.settings.get('nlu-min-length')
+      ) {
+        bot.logger.debug(`[thought] skip understand, message text too short`)
       } else {
         const nluResultsRaw = await bot.adapters.nlu.process(b.message)
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
