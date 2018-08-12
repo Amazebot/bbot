@@ -134,6 +134,19 @@ describe('[config]', () => {
         expect(config.settings.get('foo-bar')).to.equal('bar')
       })
     })
+    describe('.unset', () => {
+      beforeEach(() => config.settings.resetConfig())
+      it('removes settings from config', () => {
+        config.settings.set('foo', 'foo')
+        config.settings.unset('foo')
+        expect(typeof config.settings.config['foo']).to.equal('undefined')
+      })
+      it('restores defaults for options', () => {
+        config.settings.set('name', 'foo')
+        config.settings.unset('name')
+        expect(config.settings.config.name).to.equal('bot')
+      })
+    })
   })
   describe('.config', () => {
     beforeEach(() => config.settings.resetConfig())

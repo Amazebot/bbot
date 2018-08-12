@@ -36,7 +36,10 @@ class MockStorage extends bot.StorageAdapter {
 }
 describe('[thought]', () => {
   before(() => {
-    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+    message = new bot.TextMessage(
+      new bot.User({ id: 'test-user' }),
+      `Where there a foo, there's a bar. And with you, there's always a bar.`
+    )
   })
   beforeEach(async () => {
     await bot.reset()
@@ -387,6 +390,15 @@ describe('[thought]', () => {
         const empty = new bot.TextMessage(new bot.User(), '                   ')
         const b = new bot.State({ message: empty })
         await new bot.Thoughts(b).start('receive')
+        sinon.assert.notCalled((bot.adapters.nlu!.process as sinon.SinonSpy))
+      })
+      it('does not understand when message too short', async () => {
+        bot.adapters.nlu!.process = sinon.spy()
+        bot.settings.set('nlu-min-length', 99)
+        bot.global.customNLU(() => true, () => null)
+        const b = new bot.State({ message })
+        await new bot.Thoughts(b).start('receive')
+        bot.settings.unset('nlu-min-length')
         sinon.assert.notCalled((bot.adapters.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when hear interrupted', async () => {

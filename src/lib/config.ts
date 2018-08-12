@@ -63,17 +63,22 @@ const initOptions: { [key: string]: yargs.Options } = {
     alias: 's',
     default: null
   },
-  'webhook-adapter': {
-    type: 'string',
-    describe: 'Local path or NPM package name to require as webhook provider adapter',
-    alias: 'w',
-    default: null
-  },
-  'analytics-adapter': {
-    type: 'string',
-    describe: 'Local path or NPM package name to require as analytics provider adapter',
-    alias: 'a',
-    default: null
+  // 'webhook-adapter': {
+  //   type: 'string',
+  //   describe: 'Local path or NPM package name to require as webhook provider adapter',
+  //   alias: 'w',
+  //   default: null
+  // },
+  // 'analytics-adapter': {
+  //   type: 'string',
+  //   describe: 'Local path or NPM package name to require as analytics provider adapter',
+  //   alias: 'a',
+  //   default: null
+  // },
+  'nlu-min-length': {
+    type: 'number',
+    describe: 'Minimum string length for NLU parsing to apply on message',
+    default: 15
   }
 }
 
@@ -162,6 +167,7 @@ export class Settings {
   /** Generic config clear */
   unset (key: string) {
     delete this.config[key]
+    this.reloadConfig()
   }
 
   /** Add more options after load */
