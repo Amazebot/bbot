@@ -87,6 +87,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="settings.html#config" class="tsd-kind-icon">config</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="settings.html#options" class="tsd-kind-icon">options</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -103,15 +104,10 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#get" class="tsd-kind-icon">get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#loadconfig" class="tsd-kind-icon">load<wbr>Config</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#reloadconfig" class="tsd-kind-icon">reload<wbr>Config</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#resetconfig" class="tsd-kind-icon">reset<wbr>Config</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#safename" class="tsd-kind-icon">safe<wbr>Name</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#set" class="tsd-kind-icon">set</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="settings.html#unset" class="tsd-kind-icon">unset</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Object literals</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-object-literal tsd-parent-kind-class"><a href="settings.html#options" class="tsd-kind-icon">options</a></li>
 							</ul>
 						</section>
 					</div>
@@ -122,16 +118,34 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="config" class="tsd-anchor"></a>
 					<h3>config</h3>
-					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Arguments</span><span class="tsd-signature-symbol"> =&nbsp;this.loadConfig()</span></div>
+					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Arguments</span><span class="tsd-signature-symbol"> =&nbsp;this.loadConfig(true)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L74">lib/config.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L90">lib/config.ts:90</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Access all settings from argv, env, package.json and custom config file</p>
 						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="options" class="tsd-anchor"></a>
+					<h3>options</h3>
+					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span><span class="tsd-signature-symbol"> =&nbsp;Object.assign({}, initOptions)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L87">lib/config.ts:87</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">Options</span></h5>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>
@@ -148,7 +162,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L123">lib/config.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L150">lib/config.ts:150</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -161,7 +175,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L126">lib/config.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L153">lib/config.ts:153</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -190,7 +204,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L117">lib/config.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L144">lib/config.ts:144</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -203,7 +217,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L120">lib/config.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L147">lib/config.ts:147</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -234,7 +248,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L144">lib/config.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L174">lib/config.ts:174</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -267,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L129">lib/config.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L156">lib/config.ts:156</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -289,13 +303,13 @@
 					<a name="loadconfig" class="tsd-anchor"></a>
 					<h3>load<wbr>Config</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">load<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Arguments</span></li>
+						<li class="tsd-signature tsd-kind-icon">load<wbr>Config<span class="tsd-signature-symbol">(</span>reset<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Arguments</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L82">lib/config.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L98">lib/config.ts:98</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -306,6 +320,12 @@
 									then assigned to the config object (some are nullable).</p>
 								</div>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> reset: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Arguments</span></h4>
 						</li>
 					</ul>
@@ -320,12 +340,34 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L109">lib/config.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L130">lib/config.ts:130</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Force reloading config after options update</p>
+									<p>Allow reloading config after options update</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="resetconfig" class="tsd-anchor"></a>
+					<h3>reset<wbr>Config</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">reset<wbr>Config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L135">lib/config.ts:135</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Reload config without taking on existing</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -342,7 +384,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L114">lib/config.ts:114</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L141">lib/config.ts:141</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -370,12 +412,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L134">lib/config.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L161">lib/config.ts:161</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Generic config setter</p>
+									<p>Generic config setter (@todo this is kinda whack)</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +443,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L139">lib/config.ts:139</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1d9e606/src/lib/config.ts#L168">lib/config.ts:168</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -418,434 +460,6 @@
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Object literals</h2>
-				<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-class">
-					<a name="options" class="tsd-anchor"></a>
-					<h3>options</h3>
-					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L20">lib/config.ts:20</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Initial array of config options, can be extended prior and post load.</p>
-						</div>
-					</div>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.alias-1" class="tsd-anchor"></a>
-						<h3>alias</h3>
-						<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L27">lib/config.ts:27</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.alias-1.describe" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Alternate name for the bot.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L29">lib/config.ts:29</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.alias-1.type" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L28">lib/config.ts:28</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.analytics_adapter" class="tsd-anchor"></a>
-						<h3>analytics-<wbr>adapter</h3>
-						<div class="tsd-signature tsd-kind-icon">analytics-<wbr>adapter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L65">lib/config.ts:65</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.analytics_adapter.alias-2" class="tsd-anchor"></a>
-							<h3>alias</h3>
-							<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;a&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L68">lib/config.ts:68</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.analytics_adapter.default" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L69">lib/config.ts:69</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.analytics_adapter.describe-1" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Local path or NPM package name to require as analytics provider adapter&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L67">lib/config.ts:67</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.analytics_adapter.type-1" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L66">lib/config.ts:66</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.auto_save" class="tsd-anchor"></a>
-						<h3>auto-<wbr>save</h3>
-						<div class="tsd-signature tsd-kind-icon">auto-<wbr>save<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L36">lib/config.ts:36</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.auto_save.default-1" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L39">lib/config.ts:39</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.auto_save.describe-2" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Save data in the brain every 5 seconds (defaults true).&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L38">lib/config.ts:38</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.auto_save.type-2" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"boolean"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;boolean&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L37">lib/config.ts:37</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.log_level" class="tsd-anchor"></a>
-						<h3>log-<wbr>level</h3>
-						<div class="tsd-signature tsd-kind-icon">log-<wbr>level<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L31">lib/config.ts:31</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.log_level.default-2" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;info&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L34">lib/config.ts:34</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.log_level.describe-3" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;The starting minimum level for logging events (silent|debug|info|warn|error).&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L33">lib/config.ts:33</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.log_level.type-3" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L32">lib/config.ts:32</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.message_adapter" class="tsd-anchor"></a>
-						<h3>message-<wbr>adapter</h3>
-						<div class="tsd-signature tsd-kind-icon">message-<wbr>adapter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L41">lib/config.ts:41</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.message_adapter.alias-3" class="tsd-anchor"></a>
-							<h3>alias</h3>
-							<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;m&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L44">lib/config.ts:44</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.message_adapter.default-3" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;./adapters/shell&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L45">lib/config.ts:45</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.message_adapter.describe-4" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Local path or NPM package name to require as message platform adapter&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L43">lib/config.ts:43</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.message_adapter.type-4" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L42">lib/config.ts:42</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.name-1" class="tsd-anchor"></a>
-						<h3>name</h3>
-						<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L21">lib/config.ts:21</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.name-1.alias-4" class="tsd-anchor"></a>
-							<h3>alias</h3>
-							<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;n&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L24">lib/config.ts:24</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.name-1.default-4" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;bot&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L25">lib/config.ts:25</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.name-1.describe-5" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Name of the bot in chat. Prepending any command with the name will trigger &#x60;direct&#x60; branches.&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L23">lib/config.ts:23</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.name-1.type-5" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L22">lib/config.ts:22</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.nlu_adapter" class="tsd-anchor"></a>
-						<h3>nlu-<wbr>adapter</h3>
-						<div class="tsd-signature tsd-kind-icon">nlu-<wbr>adapter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L47">lib/config.ts:47</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.nlu_adapter.alias-5" class="tsd-anchor"></a>
-							<h3>alias</h3>
-							<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;l&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L50">lib/config.ts:50</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.nlu_adapter.default-5" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L51">lib/config.ts:51</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.nlu_adapter.describe-6" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Local path or NPM package name to require as message platform adapter&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L49">lib/config.ts:49</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.nlu_adapter.type-6" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L48">lib/config.ts:48</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.storage_adapter" class="tsd-anchor"></a>
-						<h3>storage-<wbr>adapter</h3>
-						<div class="tsd-signature tsd-kind-icon">storage-<wbr>adapter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L53">lib/config.ts:53</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.storage_adapter.alias-6" class="tsd-anchor"></a>
-							<h3>alias</h3>
-							<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;s&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L56">lib/config.ts:56</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.storage_adapter.default-6" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L57">lib/config.ts:57</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.storage_adapter.describe-7" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Local path or NPM package name to require as storage engine adapter&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L55">lib/config.ts:55</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.storage_adapter.type-7" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L54">lib/config.ts:54</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
-					<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-parent-kind-object-literal">
-						<a name="options.webhook_adapter" class="tsd-anchor"></a>
-						<h3>webhook-<wbr>adapter</h3>
-						<div class="tsd-signature tsd-kind-icon">webhook-<wbr>adapter<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L59">lib/config.ts:59</a></li>
-							</ul>
-						</aside>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.webhook_adapter.alias-7" class="tsd-anchor"></a>
-							<h3>alias</h3>
-							<div class="tsd-signature tsd-kind-icon">alias<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;w&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L62">lib/config.ts:62</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.webhook_adapter.default-7" class="tsd-anchor"></a>
-							<h3>default</h3>
-							<div class="tsd-signature tsd-kind-icon">default<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> =&nbsp;null</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L63">lib/config.ts:63</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.webhook_adapter.describe-8" class="tsd-anchor"></a>
-							<h3>describe</h3>
-							<div class="tsd-signature tsd-kind-icon">describe<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;Local path or NPM package name to require as webhook provider adapter&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L61">lib/config.ts:61</a></li>
-								</ul>
-							</aside>
-						</section>
-						<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
-							<a name="options.webhook_adapter.type-8" class="tsd-anchor"></a>
-							<h3>type</h3>
-							<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"string"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;string&quot;</span></div>
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/097e2f8/src/lib/config.ts#L60">lib/config.ts:60</a></li>
-								</ul>
-							</aside>
-						</section>
-					</section>
 				</section>
 			</section>
 		</div>
@@ -867,6 +481,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="settings.html#config" class="tsd-kind-icon">config</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="settings.html#options" class="tsd-kind-icon">options</a>
+							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class">
 								<a href="settings.html#alias" class="tsd-kind-icon">alias</a>
 							</li>
@@ -886,6 +503,9 @@
 								<a href="settings.html#reloadconfig" class="tsd-kind-icon">reload<wbr>Config</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="settings.html#resetconfig" class="tsd-kind-icon">reset<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="settings.html#safename" class="tsd-kind-icon">safe<wbr>Name</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -893,9 +513,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="settings.html#unset" class="tsd-kind-icon">unset</a>
-							</li>
-							<li class=" tsd-kind-object-literal tsd-parent-kind-class">
-								<a href="settings.html#options" class="tsd-kind-icon">options</a>
 							</li>
 						</ul>
 					</li>
