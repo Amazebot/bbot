@@ -2,6 +2,5 @@
 --require test/mocha.env.js
 --recursive
 --full-trace
---bail
 --exit
 --reporter list
