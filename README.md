@@ -65,3 +65,65 @@ Test and compile with `yarn build` before commits. Use `yarn commit` for the [co
 
 ❓  
 Looking for somewhere to get started? Review our [basic](https://github.com/Amazebot/bbot/labels/BASIC) and [help](https://github.com/Amazebot/bbot/labels/HELP) wanted issues.
+
+## Development
+
+Use package scripts for dev workflow:
+- `yarn test` to check changes for error
+- `yarn test:watch` to auto-test changes
+- `yarn build` to test and compile
+- `yarn build:watch` to auto-compile changes
+- `yarn link` to use as local dependency
+- `yarn stage` to stage all changes
+- `yarn commit` to run commit wizard
+- `yarn local` to run bot from source
+- `yarn start` to run bot from dist
+
+### Clone Project
+
+System requirements (osx):
+
+| Requirement     | Command                                             |
+| --------------- | --------------------------------------------------- |
+| Homebrew        | `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"` |
+| Node.js         | `brew install node` |
+| Yarn            | `npm install -g yarn` |
+
+Install and run bBot:
+
+| Step            | Command                                             |
+| --------------- | --------------------------------------------------- |
+| Clone bBot      | `git clone https://github.com/Amazebot/bbot.git bbot` |
+| Enter path      | `cd bbot` |
+| Install deps    | `yarn install` |
+| Run shell chat  | `yarn local` |
+
+### Chat in Rocket.Chat
+
+System requirements (osx):
+
+| Requirement     | Command                                             |
+| --------------- | --------------------------------------------------- |
+| Homebrew        | `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"` |
+| Meteor          | `curl https://install.meteor.com/ | sh` |
+| MongoDB         | `brew install mongodb` |
+| Mongo service   | `ln -sfv /usr/local/opt/mongodb/*.plist ~/Library/LaunchAgents` |
+
+Run Rocket.Chat instance (outside bBot path):
+
+| Step            | Command                                             |
+| --------------- | --------------------------------------------------- |
+| Clone Rocket.Chat | `git clone https://github.com/RocketChat/Rocket.Chat.git rocketchat-bbot` |
+| Enter path        | `cd rocketchat-bbot` |
+| Install deps      | `meteor npm install` |
+| Run Rocket.Chat   | `export MONGO_URL='mongodb://localhost:27017/rc-bbot'; meteor` |
+| Create bot user   | https://rocket.chat/docs/bots/creating-bot-users/ |
+
+Run bBot with Rocket.Chat (from bBot path):
+
+| Step            | Command                                             |
+| --------------- | --------------------------------------------------- |
+| Create .env     | `touch .env` |
+| Edit .env       | `open .env` |
+| Add configuration | <code>ROCKETCHAT_USER="mybot"<br>ROCKETCHAT_PASSWORD="mybotpassword"<br>LISTEN_ON_ALL_PUBLIC=true<br>RESPOND_TO_DM=true<br>RESPOND_TO_EDITED=true</code> |
+| Run from source | `yarn local -m rocketchat` |
