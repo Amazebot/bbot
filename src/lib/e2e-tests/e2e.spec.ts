@@ -9,7 +9,7 @@ class MockMessenger extends bot.MessageAdapter {
   async start () { return }
   async shutdown () { return }
 }
-const sandbox = sinon.sandbox.create()
+const sandbox = sinon.createSandbox()
 
 describe('[E2E]', () => {
   beforeEach(() => {
