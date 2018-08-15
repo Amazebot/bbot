@@ -90,40 +90,78 @@ export class Rocketchat extends bot.MessageAdapter {
     return input.replace(/((?:^|\s):\w+)-(\w+:(?:$|\s))/g, '$1_$2') // fix emoji key hyphens
   }
 
+  /** Parsing envelope content to an array of Rocket.Chat message schemas */
+  parseEnvelope (envelope: bot.Envelope, roomId?: string) {
+    const messages = []
+    if (envelope.strings) {
+      for (let text of envelope.strings) {
+        messages.push(this.driver.prepareMessage(this.format(text), roomId))
+      }
+    }
+    if (envelope.payload.attachments) {
+      const attachments = []
+      for (let attachment of envelope.payload.attachments) {
+        attachments.push({
+          fields: attachment.fields,
+          color: attachment.color,
+          text: attachment.pretext,
+          thumb_url: attachment.thumbUrl,
+          collapsed: attachment.collapsed,
+          author_name: (attachment.author) ? attachment.author.name : undefined,
+          author_link: (attachment.author) ? attachment.author.link : undefined,
+          author_icon: (attachment.author) ? attachment.author.icon : undefined,
+          title: (attachment.title) ? attachment.title.text : undefined,
+          title_link: (attachment.title) ? attachment.title.link : undefined,
+          image_url: attachment.image,
+          audio_url: attachment.audio,
+          video_url: attachment.video
+        })
+      }
+      if (attachments.length) {
+        messages.push(this.driver.prepareMessage({
+          rid: roomId || envelope.room.id || null,
+          attachments
+        }, roomId))
+      }
+    }
+    return messages
+  }
+
+  /** Dispatch envelope content, mapped to Rocket.Chat SDK methods */
   async dispatch (envelope: bot.Envelope) {
     switch (envelope.method) {
       case 'send':
-        if (!envelope.strings) throw new Error('Sending without strings')
-        if (!envelope.room || !envelope.room.id) throw new Error('Sending without room ID')
-        for (let text of envelope.strings) {
-          await this.driver.sendToRoomId(this.format(text), envelope.room.id)
+        if (!envelope.room || !envelope.room.id) {
+          throw new Error('Sending without room ID')
+        }
+        for (let message of this.parseEnvelope(envelope)) {
+          await this.driver.sendToRoomId(message, envelope.room.id)
         }
         break
       case 'dm':
         if (!envelope.strings) throw new Error('DM without strings')
         if (!envelope.user) throw new Error('DM without user')
-        for (let text of envelope.strings) {
-          await this.driver.sendDirectToUser(this.format(text), envelope.user.username)
+        for (let message of this.parseEnvelope(envelope)) {
+          await this.driver.sendDirectToUser(message, envelope.user.username)
         }
         break
       case 'reply':
-        if (!envelope.strings) throw new Error('Reply without strings')
         if (!envelope.user) throw new Error('Reply without user')
         if (!envelope.room || !envelope.room.id) throw new Error('Reply without room ID')
-        if (envelope.room.id.indexOf(envelope.user.id) === -1) {
+        if (envelope.room.id.indexOf(envelope.user.id) === -1 && envelope.strings) {
           envelope.strings = envelope.strings.map((s) => `@${envelope.user!.username} ${s}`)
         }
-        for (let text of envelope.strings) {
-          await this.driver.sendToRoomId(this.format(text), envelope.room.id)
+        for (let message of this.parseEnvelope(envelope)) {
+          await this.driver.sendToRoomId(message, envelope.room.id)
         }
         break
       case 'react':
-        if (!envelope.strings) throw new Error('React without strings')
+        if (!envelope.strings) throw new Error('React without string')
         if (!envelope.message) throw new Error('React without message')
         for (let reaction of envelope.strings) {
           if (!reaction.startsWith(':')) reaction = `:${reaction}`
           if (!reaction.endsWith(':')) reaction = `${reaction}:`
-          reaction = reaction.replace('-', '_') // Rocket.Chat syntax
+          reaction = reaction.replace('-', '_') // Rocket.Chat emoji syntax
           await this.driver.setReaction(reaction, envelope.message.id)
         }
         break

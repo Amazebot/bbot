@@ -37,12 +37,12 @@ describe('[envelope]', () => {
     it('given content, keeps those properties', () => {
       const envelope = new bot.Envelope({
         strings: ['waves hello'],
-        payload: { emoji: ':wave:' },
+        payload: { attachments: [{ fallback: 'I am an attachment' }] },
         method: 'emote'
       })
       expect(envelope).to.deep.include({
         strings: ['waves hello'],
-        payload: { emoji: ':wave:' },
+        payload: { attachments: [{ fallback: 'I am an attachment' }] },
         method: 'emote'
       })
     })
@@ -85,15 +85,19 @@ describe('[envelope]', () => {
     })
   })
   describe('.attach', () => {
-    it('adds payload content to envelope', () => {
-      const envelope = new bot.Envelope().attach({ foo: 'bar' })
-      expect(envelope.payload).to.eql({ foo: 'bar' })
+    it('adds attachment to envelope payload', () => {
+      const envelope = new bot.Envelope().attach({ fallback: 'foo' })
+      expect(envelope.payload.toObject()).to.eql({
+        attachments: [{ fallback: 'foo' }]
+      })
     })
     it('can build payload with cumulative calls', () => {
       const envelope = new bot.Envelope()
-      envelope.attach({ foo: 'bar' })
-      envelope.attach({ baz: 'qux' })
-      expect(envelope.payload).to.eql({ foo: 'bar', baz: 'qux' })
+      envelope.attach({ fallback: 'bar' })
+      envelope.attach({ fallback: 'qux' })
+      expect(envelope.payload.toObject()).to.eql({
+        attachments: [{ fallback: 'bar' }, { fallback: 'qux' }]
+      })
     })
   })
   describe('.compose', () => {
@@ -101,9 +105,9 @@ describe('[envelope]', () => {
       const envelope = new bot.Envelope()
       const write = sinon.spy(envelope, 'write')
       const attach = sinon.spy(envelope, 'attach')
-      envelope.compose('hello', { emoji: ':wave:' }, 'world')
+      envelope.compose('hello', { fallback: 'foo' }, 'world')
       expect(write.args).to.eql([['hello'], ['world']])
-      expect(attach.args).to.eql([[{ emoji: ':wave:' }]])
+      expect(attach.args).to.eql([[{ fallback: 'foo' }]])
     })
   })
   describe('.via', () => {

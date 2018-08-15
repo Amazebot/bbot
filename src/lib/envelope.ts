@@ -9,7 +9,7 @@ export interface IEnvelope {
   }
   user?: bot.User
   strings?: string[]
-  payload?: any
+  payload?: bot.IPayload
   branchId?: string
   responded?: number
 }
@@ -17,8 +17,10 @@ export interface IEnvelope {
 /**
  * Envelopes are the outgoing equivalent of a message. They can be created to
  * respond to a received message, or initialised to send unprompted by input.
- * The envelope contains address details and the content (strings or payload
- * data) for a variety of response methods through the message adapter.
+ * The envelope contains address details and the content (strings or payload)
+ * for a variety of response methods through the message adapter.
+ * Helpers provide simple interface for adding strings and attachments, but the
+ * payload property can be used to access additional helpers for rich content.
  */
 export class Envelope implements IEnvelope {
   id: string = bot.random()
@@ -31,9 +33,9 @@ export class Envelope implements IEnvelope {
   user?: bot.User
   message?: bot.Message
   strings?: string[]
-  payload?: any
   branchId?: string
   responded?: number
+  _payload?: bot.Payload
 
   /**
    * Create an envelope to dispatch unprompted or from a branch callback.
@@ -52,7 +54,7 @@ export class Envelope implements IEnvelope {
       if (options.room) this.room = options.room
       else if (options.user) this.room = options.user.room
       if (options.strings) this.strings = options.strings
-      if (options.payload) this.payload = options.payload
+      if (options.payload) this._payload = new bot.Payload(options.payload)
       if (options.method) this.method = options.method
     }
   }
@@ -85,19 +87,23 @@ export class Envelope implements IEnvelope {
     return this
   }
 
-  /** Add multi-media attachments to a message, could be buttons or files etc */
-  attach (payload: any) {
-    if (!this.payload) this.payload = {}
-    Object.assign(this.payload, payload)
+  /** Accessor for payload instance creates if it doesn't exist */
+  get payload () {
+    if (!this._payload) this._payload = new bot.Payload()
+    return this._payload
+  }
+
+  /** Add multi-media attachments to a message via payload handlers */
+  attach (attachment: bot.IAttachment) {
+    this.payload.attachment(attachment)
     return this
   }
 
   /** Helper for attaching or writing depending on a dynamic array of items */
-  compose (...content: any[]) {
+  compose (...content: Array<string | bot.IAttachment>) {
     for (let part of content) {
       if (typeof part === 'string') this.write(part)
-      else if (typeof part === 'object') this.attach(part)
-      else bot.logger.error(`[envelope] unrecognised content: ${part}`)
+      else this.attach(part)
     }
     return this
   }
