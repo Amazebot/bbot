@@ -124,6 +124,9 @@ export class Shell extends bBot.MessageAdapter {
     for (let text of (envelope.strings || [])) {
       this.messages.push([this.bot.settings.name, text])
     }
+    for (let attachment of (envelope.payload.attachments || [])) {
+      this.messages.push([this.bot.settings.name, attachment.fallback])
+    }
   }
 
   /** Close inquirer UI and exit process when shutdown complete */
