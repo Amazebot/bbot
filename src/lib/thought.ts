@@ -167,7 +167,7 @@ export class Thoughts {
           bot.logger.error(`[thought] nlu processing returned empty`)
         } else {
           b.message.nlu = new bot.NLU().addResults(nluResultsRaw)
-          bot.logger.debug(`[thought] nlu processed ${b.message.nlu.printResults()}`)
+          bot.logger.info(`[thought] nlu processed ${b.message.nlu.printResults()}`)
           return true
         }
       }
@@ -238,6 +238,7 @@ export class Thoughts {
  * Branch callbacks may also respond. Final state is remembered.
  */
 export async function receive (message: bot.Message, path?: bot.Path) {
+  bot.logger.info(`[thought] receive message ID ${message.id}`)
   return new Thoughts(new bot.State({ message }), path).start('receive')
 }
 
@@ -246,6 +247,7 @@ export async function receive (message: bot.Message, path?: bot.Path) {
  * because it will usually by triggered from within the `receive` sequence.
  */
 export async function respond (b: bot.State) {
+  bot.logger.info(`[thought] respond to matched branch ${b.getBranch()!.id}`)
   return new Thoughts(b).start('respond')
 }
 
@@ -254,5 +256,6 @@ export async function respond (b: bot.State) {
  * This is for sending unprompted by a branch. Final state is remembered.
  */
 export async function dispatch (envelope: bot.Envelope) {
+  bot.logger.info(`[thought] dispatch envelope ${envelope.id}`)
   return new Thoughts(new bot.State({ envelopes: [envelope] })).start('dispatch')
 }
