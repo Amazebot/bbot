@@ -80,7 +80,7 @@
     "typescript": "^2.9.0"
   },
   "dependencies": {
-    "@rocket.chat/sdk": "^0.2.3",
+    "@rocket.chat/sdk": "^0.2.6",
     "@types/inquirer": "^0.0.42",
     "@types/mongoose": "^5.2.0",
     "@types/node": "^10.0.0",
