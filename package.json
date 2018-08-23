@@ -5,7 +5,7 @@
   "homepage": "http://bbot.chat",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "https://github.com/Amazebot/bbot.git",
+  "repository": "git@github.com:Amazebot/bbot.git",
   "author": "Tim Kinnane <tim.kinnane@amazebot.chat>",
   "license": "MIT",
   "private": false,

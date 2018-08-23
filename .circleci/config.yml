@@ -57,6 +57,7 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: |
+          mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
           git config --global push.default simple
           git config --global user.email $GH_EMAIL
           git config --global user.name $GH_NAME
@@ -72,7 +73,15 @@ workflows:
               only: /^v.*/
             branches:
               ignore: gh-pages
-      - publish:
+      # - publish:
+      #     requires:
+      #       - build
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         only: master
+      - docs:
           requires:
             - build
           filters:
@@ -80,6 +89,3 @@ workflows:
               only: /^v.*/
             branches:
               only: master
-      - docs:
-          requires:
-            - publish
