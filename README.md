@@ -125,5 +125,5 @@ Run bBot with Rocket.Chat (from bBot path):
 | --------------- | --------------------------------------------------- |
 | Create .env     | `touch .env` |
 | Edit .env       | `open .env` |
-| Add configuration | <code>ROCKETCHAT_USER="mybot"<br>ROCKETCHAT_PASSWORD="mybotpassword"<br>LISTEN_ON_ALL_PUBLIC=true<br>RESPOND_TO_DM=true<br>RESPOND_TO_EDITED=true</code> |
+| Configure |<code>ROCKETCHAT_USER="mybot"<br>ROCKETCHAT_PASSWORD="mybotpassword"<br>LISTEN_ON_ALL_PUBLIC=true<br>RESPOND_TO_DM=true<br>RESPOND_TO_EDITED=true</code>|
 | Run from source | `yarn local -m rocketchat` |

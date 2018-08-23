@@ -95,7 +95,7 @@ export class Shell extends bBot.MessageAdapter {
   async start () {
     this.ui = new inquirer.ui.BottomBar()
     this.bot.global.enter((b) => b.respond(
-      `@${this.user!.name} Welcome to #${this.room!.name}, I'm @${b.bot.settings.name}`,
+      `${this.user!.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.name}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-enter' })
     this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
