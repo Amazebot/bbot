@@ -10,6 +10,7 @@ export interface IState {
   exit?: boolean
   sequence?: string
   scope?: string
+  branch?: bot.Branch
   [key: string]: any
 }
 
@@ -66,33 +67,43 @@ export class State implements IState {
     return JSON.stringify(clone, null, 2)
   }
 
-  /** Indicate that no more thought processes should look at this state */
+  /** Indicate that no more thought processes should look at this state. */
   ignore () {
     bot.logger.debug(`[state] ignored by further thought processes`)
     this.exit = true
     return this
   }
 
-  /** Indicate that no other branch should process this state */
+  /** Indicate that no other branch should process this state. */
   finish () {
     this.done = true
     return this
   }
 
-  /** Add to or create collection of matched branches */
+  /** Add to or create collection of matched branches. */
   setBranch (branch: bot.Branch) {
     if (!branch.matched) return
     if (!this.branches) this.branches = []
     this.branches.push(branch)
   }
 
-  /** Get a matched branch by it's ID or index (or last matched) */
+  /** Add to the branches collection form the branch property. */
+  set branch (branch: bot.Branch | undefined) {
+    if (branch) this.setBranch(branch)
+  }
+
+  /** Get a matched branch by it's ID or index (or last matched). */
   getBranch (id?: number | string) {
     if (!this.branches) return undefined
     if (!id) id = this.branches.length - 1
     return (typeof id === 'number' && this.branches.length > id)
       ? this.branches[id]
       : this.branches.find((branch) => branch.id === id)
+  }
+
+  /** Provide the last matched branch as an property. */
+  get branch () {
+    return this.getBranch()
   }
 
   /**
@@ -105,24 +116,24 @@ export class State implements IState {
     if (branch) return branch.match
   }
 
-  /** Use property getting for match state (only matched branches are kept) */
+  /** Use property getting for match state (only matched branches are kept). */
   get matched () {
     return (this.branches && this.branches.length) ? true : false
   }
 
-  /** Check for existing envelope without response */
+  /** Check for existing envelope without response. */
   pendingEnvelope () {
     if (!this.envelopes) return
     return this.envelopes.find((e) => typeof e.responded === 'undefined')
   }
 
-  /** Return the last dispatched envelope */
+  /** Return the last dispatched envelope. */
   dispatchedEnvelope () {
     if (!this.envelopes) return
     return this.envelopes.find((e) => typeof e.responded !== 'undefined')
   }
 
-  /** Create or return pending envelope, to respond to incoming message */
+  /** Create or return pending envelope, to respond to incoming message. */
   respondEnvelope (options?: bot.IEnvelope) {
     let pending = this.pendingEnvelope()
     if (!pending) {
@@ -133,13 +144,18 @@ export class State implements IState {
     return pending
   }
 
-  /** Dispatch the envelope via respond thought process */
+  /** Get an envelope for responding with, either pending or newly created. */
+  get envelope () {
+    return this.respondEnvelope()
+  }
+
+  /** Dispatch the envelope via respond thought process. */
   respond (...content: any[]) {
     this.respondEnvelope().compose(...content)
     return bot.respond(this)
   }
 
-  /** Respond with the incoming message's user name prefixed */
+  /** Respond with the incoming message's user name prefixed. */
   reply (...content: any[]) {
     for (let i in content) {
       if (typeof content[i] === 'string') {
@@ -149,7 +165,7 @@ export class State implements IState {
     return this.respond(...content)
   }
 
-  /** Set method for dispatching envelope responding to state */
+  /** Set method for dispatching envelope responding to state. */
   respondVia (method: string, ...content: any[]) {
     this.respondEnvelope().via(method)
     return this.respond(...content)
