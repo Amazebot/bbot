@@ -1,8 +1,5 @@
 import * as bot from '..'
 
-/** Collection of middleware types and their stacks. */
-export const middlewares: { [key: string]: Middleware } = {}
-
 /**
  * A generic middleware pipeline function that can either continue the pipeline
  * or interrupt it. Can return a promise to wait on before next piece executed.
@@ -125,61 +122,48 @@ export class Middleware {
   }
 }
 
+/** Collection of allowed middleware types for loading. */
+const middlewareTypes = [
+  'hear', 'listen', 'understand', 'act', 'respond', 'remember'
+]
+
 /**
- * Thought process middleware collection.
+ * Thought process middleware collection, types and their stacks.
  * Contains pieces for async execution at each stage of input processing loop.
  */
-export function loadMiddleware () {
-  if (!middlewares.hear) middlewares.hear = new Middleware('hear')
-  if (!middlewares.listen) middlewares.listen = new Middleware('listen')
-  if (!middlewares.understand) middlewares.understand = new Middleware('understand')
-  if (!middlewares.act) middlewares.act = new Middleware('act')
-  if (!middlewares.respond) middlewares.respond = new Middleware('respond')
-  if (!middlewares.remember) middlewares.remember = new Middleware('remember')
+export class Middlewares {
+  [key: string]: any
+  message?: Middleware
+  nlu?: Middleware
+  storage?: Middleware
+
+  constructor () {
+    // Nothing to see here, move along.
+  }
+
+  load () {
+    for (let type of middlewareTypes) {
+      if (!this[type]) this[type] = new Middleware(type)
+    }
+  }
+
+  /** Remove all middleware for reset */
+  unload () {
+    for (let type of middlewareTypes) delete this[type]
+  }
 }
 
-/** Remove all middleware for reset */
-export function unloadMiddleware () {
-  delete middlewares.hear
-  delete middlewares.listen
-  delete middlewares.understand
-  delete middlewares.act
-  delete middlewares.respond
-  delete middlewares.remember
-}
+export const middlewares = new Middlewares()
 
-/** Register middleware piece to execute before any matching */
-export function hearMiddleware (middlewarePiece: IPiece) {
-  if (!middlewares.hear) middlewares.hear = new Middleware('hear')
-  middlewares.hear.register(middlewarePiece)
-}
+export interface IRegisterMiddleware { (middlewarePiece: IPiece): void }
 
-/** Register middleware piece to execute after branch match */
-export function listenMiddleware (middlewarePiece: IPiece) {
-  if (!middlewares.listen) middlewares.listen = new Middleware('listen')
-  middlewares.listen.register(middlewarePiece)
-}
+export const middleware: {
+  [type: string]: IRegisterMiddleware
+} = {}
 
-/** Register middleware piece to execute with NLU before intent match */
-export function understandMiddleware (middlewarePiece: IPiece) {
-  if (!middlewares.understand) middlewares.understand = new Middleware('understand')
-  middlewares.understand.register(middlewarePiece)
-}
-
-/** Register middleware piece to execute with catch-all match */
-export function actMiddleware (middlewarePiece: IPiece) {
-  if (!middlewares.act) middlewares.act = new Middleware('act')
-  middlewares.act.register(middlewarePiece)
-}
-
-/** Register middleware piece to execute before sending any response */
-export function respondMiddleware (middlewarePiece: IPiece) {
-  if (!middlewares.respond) middlewares.respond = new Middleware('respond')
-  middlewares.respond.register(middlewarePiece)
-}
-
-/** Register middleware piece to execute before storing data */
-export function rememberMiddleware (middlewarePiece: IPiece) {
-  if (!middlewares.remember) middlewares.remember = new Middleware('remember')
-  middlewares.remember.register(middlewarePiece)
+for (let type of middlewareTypes) {
+  middleware[type] = (middlewarePiece: IPiece) => {
+    if (!middlewares[type]) middlewares[type] = new Middleware(type)
+    middlewares[type].register(middlewarePiece)
+  }
 }

@@ -1,17 +1,6 @@
 import path from 'path'
 import * as bot from '..'
 
-/** Collection of allowed adapter types for loading. */
-const adapterTypes = ['message', 'nlu', 'storage']
-
-/** Collection of adapter types and their loaded adapter. */
-export const adapters: {
-  [key: string]: bot.Adapter | undefined
-  message?: bot.MessageAdapter | undefined
-  nlu?: bot.NLUAdapter | undefined
-  storage?: bot.StorageAdapter | undefined
-} = {}
-
 /**
  * Require adapter module from local path or NPM package.
  * If a module name is given, it will be required as normal or from the parent
@@ -57,52 +46,65 @@ export function loadAdapter (adapterPath?: string) {
   }
 }
 
-/** Load all adapters, but don't yet start them. */
-export function loadAdapters () {
-  bot.unloadAdapters()
-  for (let type of adapterTypes) {
-    const adapterPath = bot.settings.get(`${type}-adapter`)
-    if (adapterPath && adapterPath !== '' && !adapters[type]) {
-      try {
-        adapters[type] = loadAdapter(adapterPath)
-      } catch (err) {
-        bot.logger.error(err.message)
-        throw new Error(`[adapter] failed to load all adapters`)
+/** Collection of allowed adapter types for loading. */
+const adapterTypes = ['message', 'nlu', 'storage']
+
+/** Collection of adapter types and their loaded adapter. */
+export class Adapters {
+  [key: string]: any
+  message?: bot.MessageAdapter | undefined
+  nlu?: bot.NLUAdapter | undefined
+  storage?: bot.StorageAdapter | undefined
+
+  /** Load all adapters, but don't yet start them. */
+  load () {
+    this.unload()
+    for (let type of adapterTypes) {
+      const adapterPath = bot.settings.get(`${type}-adapter`)
+      if (adapterPath && adapterPath !== '' && !this[type]) {
+        try {
+          this[type] = loadAdapter(adapterPath)
+        } catch (err) {
+          bot.logger.error(err.message)
+          throw new Error(`[adapter] failed to load all adapters`)
+        }
       }
     }
   }
+
+  /** Start each adapter concurrently, to resolve when all ready. */
+  start () {
+    return Promise.all(Object.keys(this).map((type) => {
+      let adapter = this[type]
+      if (adapter) {
+        bot.logger.debug(`[adapter] starting ${type} adapter: ${adapter.name}`)
+        return Promise.resolve(adapter.start()).catch((err) => {
+          bot.logger.error(`[adapter] startup failed: ${err.message}`)
+          throw err
+        })
+      } else {
+        bot.logger.debug(`[adapter] no ${type} type adapter defined`)
+      }
+      return undefined
+    }))
+  }
+
+  /** Run shutdown on each adapter concurrently, to resolve when all shutdown */
+  shutdown () {
+    return Promise.all(Object.keys(this).map((type) => {
+      let adapter = this[type]
+      if (adapter) {
+        bot.logger.debug(`[adapter] shutdown ${type} adapter: ${adapter.name}`)
+        return Promise.resolve(adapter.shutdown())
+      }
+      return undefined
+    }))
+  }
+
+  /** Unload adapters for resetting bot */
+  unload () {
+    for (let type of adapterTypes) delete this[type]
+  }
 }
 
-/** Start each adapter concurrently, to resolve when all ready. */
-export function startAdapters () {
-  return Promise.all(Object.keys(adapters).map((type) => {
-    let adapter = adapters[type]
-    if (adapter) {
-      bot.logger.debug(`[adapter] starting ${type} adapter: ${adapter.name}`)
-      return Promise.resolve(adapter.start()).catch((err) => {
-        bot.logger.error(`[adapter] startup failed: ${err.message}`)
-        throw err
-      })
-    } else {
-      bot.logger.debug(`[adapter] no ${type} type adapter defined`)
-    }
-    return undefined
-  }))
-}
-
-/** Run shutdown on each adapter concurrently, to resolve when all shutdown */
-export function shutdownAdapters () {
-  return Promise.all(Object.keys(adapters).map((type) => {
-    let adapter = adapters[type]
-    if (adapter) {
-      bot.logger.debug(`[adapter] shutdown ${type} adapter: ${adapter.name}`)
-      return Promise.resolve(adapter.shutdown())
-    }
-    return undefined
-  }))
-}
-
-/** Unload adapters for resetting bot */
-export function unloadAdapters () {
-  for (let type of adapterTypes) delete adapters[type]
-}
+export const adapters = new Adapters()

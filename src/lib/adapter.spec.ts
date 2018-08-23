@@ -28,56 +28,58 @@ describe('[adapter]', () => {
       sinon.assert.calledOnce(use)
     })
   })
-  describe('.loadAdapters', () => {
-    it('loads nothing if none configured', () => {
-      expect(() => bot.loadAdapters()).to.not.throw()
+  describe('Adapters', () => {
+    describe('.load', () => {
+      it('loads nothing if none configured', () => {
+        expect(() => bot.adapters.load()).to.not.throw()
+      })
+      it('throws if bad path in config for adapter', () => {
+        bot.settings.set('messageAdapter', 'foo'),
+        expect(() => bot.adapters.load()).to.throw()
+      })
+      it('loads all configured adapters at valid path', () => {
+        bot.settings.set('storageAdapter', './lib/adapter.spec')
+        bot.settings.set('nluAdapter', './lib/adapter.spec')
+        bot.adapters.load()
+        sinon.assert.calledTwice(use)
+      })
+      it('keeps loaded adapters in collection', () => {
+        bot.settings.set('messageAdapter', './lib/adapter.spec')
+        bot.adapters.load()
+        expect(bot.adapters.message).to.be.instanceof(bot.Adapter)
+        expect(typeof bot.adapters.nlu).to.equal('undefined')
+      })
     })
-    it('throws if bad path in config for adapter', () => {
-      bot.settings.set('messageAdapter', 'foo'),
-      expect(() => bot.loadAdapters()).to.throw()
+    describe('.start', () => {
+      it('starts all loaded adapters', async () => {
+        bot.adapters.storage = new MockAdapter(bot)
+        bot.adapters.nlu = new MockAdapter(bot)
+        const startStorage = sinon.spy(bot.adapters.storage, 'start')
+        const startNLU = sinon.spy(bot.adapters.nlu, 'start')
+        await bot.adapters.start()
+        sinon.assert.calledOnce(startStorage)
+        sinon.assert.calledOnce(startNLU)
+      })
     })
-    it('loads all configured adapters at valid path', () => {
-      bot.settings.set('storageAdapter', './lib/adapter.spec')
-      bot.settings.set('nluAdapter', './lib/adapter.spec')
-      bot.loadAdapters()
-      sinon.assert.calledTwice(use)
+    describe('.shutdown', () => {
+      it('shuts down all loaded adapters', async () => {
+        bot.adapters.storage = new MockAdapter(bot)
+        bot.adapters.nlu = new MockAdapter(bot)
+        const shutdownStorage = sinon.spy(bot.adapters.storage, 'shutdown')
+        const shutdownNLU = sinon.spy(bot.adapters.nlu, 'shutdown')
+        await bot.adapters.shutdown()
+        sinon.assert.calledOnce(shutdownStorage)
+        sinon.assert.calledOnce(shutdownNLU)
+      })
     })
-    it('keeps loaded adapters in collection', () => {
-      bot.settings.set('messageAdapter', './lib/adapter.spec')
-      bot.loadAdapters()
-      expect(bot.adapters.message).to.be.instanceof(bot.Adapter)
-      expect(typeof bot.adapters.nlu).to.equal('undefined')
-    })
-  })
-  describe('.startAdapters', () => {
-    it('starts all loaded adapters', async () => {
-      bot.adapters.storage = new MockAdapter(bot)
-      bot.adapters.nlu = new MockAdapter(bot)
-      const startStorage = sinon.spy(bot.adapters.storage, 'start')
-      const startNLU = sinon.spy(bot.adapters.nlu, 'start')
-      await bot.startAdapters()
-      sinon.assert.calledOnce(startStorage)
-      sinon.assert.calledOnce(startNLU)
-    })
-  })
-  describe('.shutdownAdapters', () => {
-    it('shuts down all loaded adapters', async () => {
-      bot.adapters.storage = new MockAdapter(bot)
-      bot.adapters.nlu = new MockAdapter(bot)
-      const shutdownStorage = sinon.spy(bot.adapters.storage, 'shutdown')
-      const shutdownNLU = sinon.spy(bot.adapters.nlu, 'shutdown')
-      await bot.shutdownAdapters()
-      sinon.assert.calledOnce(shutdownStorage)
-      sinon.assert.calledOnce(shutdownNLU)
-    })
-  })
-  describe('.unloadAdapters', () => {
-    it('clears all configured adapters', async () => {
-      bot.adapters.message = bot.loadAdapter('./lib/adapter.spec')
-      bot.adapters.nlu = bot.loadAdapter('./lib/adapter.spec')
-      bot.adapters.storage = bot.loadAdapter('./lib/adapter.spec')
-      bot.unloadAdapters()
-      expect(bot.adapters).to.eql({})
+    describe('.unload', () => {
+      it('clears all configured adapters', async () => {
+        bot.adapters.message = bot.loadAdapter('./lib/adapter.spec')
+        bot.adapters.nlu = bot.loadAdapter('./lib/adapter.spec')
+        bot.adapters.storage = bot.loadAdapter('./lib/adapter.spec')
+        bot.adapters.unload()
+        expect(bot.adapters).to.eql({})
+      })
     })
   })
 })

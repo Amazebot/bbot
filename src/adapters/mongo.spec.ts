@@ -137,7 +137,7 @@ describe('[adapter-mongo]', () => {
         new bot.CustomBranch(() => 2, () => 2, { id: 'B', force: true })
       ]
       for (let branch of branches) await branch.process(b, new bot.Middleware('test'))
-      await adapter.keep('states', bot.convertInstance(b))
+      await adapter.keep('states', bot.store.plainObject(b))
       const states = await mongo.getModel(testCollection).findOne({
         sub: 'states',
         type: 'store'

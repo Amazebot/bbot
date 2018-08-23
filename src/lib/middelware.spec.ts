@@ -10,7 +10,7 @@ describe('[middleware]', () => {
   before(() => {
     message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
   })
-  beforeEach(() => bot.unloadMiddleware())
+  beforeEach(() => bot.middlewares.unload())
   describe('.register', () => {
     it('adds a piece to the stack', () => {
       const testMiddleware = new bot.Middleware('test')
@@ -193,73 +193,77 @@ describe('[middleware]', () => {
       })
     })
   })
-  describe('.loadMiddleware', () => {
-    it('creates middleware for each thought process', () => {
-      bot.loadMiddleware()
-      expect(bot.middlewares).to.include.all.keys([
-        'hear', 'listen', 'understand', 'act', 'respond', 'remember'
-      ])
+  describe('Middlewares', () => {
+    describe('.load', () => {
+      it('creates middleware for each thought process', () => {
+        bot.middlewares.load()
+        expect(bot.middlewares).to.include.all.keys([
+          'hear', 'listen', 'understand', 'act', 'respond', 'remember'
+        ])
+      })
+      it('creates all middleware instances', () => {
+        bot.middlewares.load()
+        for (let key in bot.middlewares) {
+          expect(bot.middlewares[key]).to.be.instanceof(bot.Middleware)
+        }
+      })
     })
-    it('creates all middleware instances', () => {
-      bot.loadMiddleware()
-      for (let key in bot.middlewares) {
-        expect(bot.middlewares[key]).to.be.instanceof(bot.Middleware)
-      }
-    })
-  })
-  describe('.unloadMiddleware', () => {
-    it('deletes all middleware instances', () => {
-      bot.loadMiddleware()
-      bot.unloadMiddleware()
-      expect(bot.middlewares).to.eql({})
-    })
-  })
-  describe('.hearMiddleware', () => {
-    it('registers piece in hear stack', () => {
-      bot.loadMiddleware()
-      const mockPiece = sinon.spy()
-      bot.hearMiddleware(mockPiece)
-      expect(bot.middlewares.hear.stack[0]).to.eql(mockPiece)
+    describe('.unload', () => {
+      it('deletes all middleware instances', () => {
+        bot.middlewares.load()
+        bot.middlewares.unload()
+        expect(bot.middlewares).to.eql({})
+      })
     })
   })
-  describe('.listenMiddleware', () => {
-    it('registers piece in listen stack', () => {
-      bot.loadMiddleware()
-      const mockPiece = sinon.spy()
-      bot.listenMiddleware(mockPiece)
-      expect(bot.middlewares.listen.stack[0]).to.eql(mockPiece)
+  describe('.middleware', () => {
+    describe('.hear', () => {
+      it('registers piece in hear stack', () => {
+        bot.middlewares.load()
+        const mockPiece = sinon.spy()
+        bot.middleware.hear(mockPiece)
+        expect(bot.middlewares.hear.stack[0]).to.eql(mockPiece)
+      })
     })
-  })
-  describe('.understandMiddleware', () => {
-    it('registers piece in understand stack', () => {
-      bot.loadMiddleware()
-      const mockPiece = sinon.spy()
-      bot.understandMiddleware(mockPiece)
-      expect(bot.middlewares.understand.stack[0]).to.eql(mockPiece)
+    describe('.listen', () => {
+      it('registers piece in listen stack', () => {
+        bot.middlewares.load()
+        const mockPiece = sinon.spy()
+        bot.middleware.listen(mockPiece)
+        expect(bot.middlewares.listen.stack[0]).to.eql(mockPiece)
+      })
     })
-  })
-  describe('.actMiddleware', () => {
-    it('registers piece in act stack', () => {
-      bot.loadMiddleware()
-      const mockPiece = sinon.spy()
-      bot.actMiddleware(mockPiece)
-      expect(bot.middlewares.act.stack[0]).to.eql(mockPiece)
+    describe('.understand', () => {
+      it('registers piece in understand stack', () => {
+        bot.middlewares.load()
+        const mockPiece = sinon.spy()
+        bot.middleware.understand(mockPiece)
+        expect(bot.middlewares.understand.stack[0]).to.eql(mockPiece)
+      })
     })
-  })
-  describe('.respondMiddleware', () => {
-    it('registers piece in respond stack', () => {
-      bot.loadMiddleware()
-      const mockPiece = sinon.spy()
-      bot.respondMiddleware(mockPiece)
-      expect(bot.middlewares.respond.stack[0]).to.eql(mockPiece)
+    describe('.act', () => {
+      it('registers piece in act stack', () => {
+        bot.middlewares.load()
+        const mockPiece = sinon.spy()
+        bot.middleware.act(mockPiece)
+        expect(bot.middlewares.act.stack[0]).to.eql(mockPiece)
+      })
     })
-  })
-  describe('.rememberMiddleware', () => {
-    it('registers piece in remember stack', () => {
-      bot.loadMiddleware()
-      const mockPiece = sinon.spy()
-      bot.rememberMiddleware(mockPiece)
-      expect(bot.middlewares.remember.stack[0]).to.eql(mockPiece)
+    describe('.respond', () => {
+      it('registers piece in respond stack', () => {
+        bot.middlewares.load()
+        const mockPiece = sinon.spy()
+        bot.middleware.respond(mockPiece)
+        expect(bot.middlewares.respond.stack[0]).to.eql(mockPiece)
+      })
+    })
+    describe('.remember', () => {
+      it('registers piece in remember stack', () => {
+        bot.middlewares.load()
+        const mockPiece = sinon.spy()
+        bot.middleware.remember(mockPiece)
+        expect(bot.middlewares.remember.stack[0]).to.eql(mockPiece)
+      })
     })
   })
 })

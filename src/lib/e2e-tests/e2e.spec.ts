@@ -22,10 +22,10 @@ describe('[E2E]', () => {
   })
   it('responds from middleware', async () => {
     bot.adapters.message!.dispatch = sandbox.stub()
-    bot.loadMiddleware()
-    bot.hearMiddleware((b, _, done) => b.respond('test').then(() => done()))
+    bot.middlewares.load()
+    bot.middleware.hear((b, _, done) => b.respond('test').then(() => done()))
     await bot.receive(new bot.TextMessage(new bot.User(), ''))
     sinon.assert.calledOnce((bot.adapters.message!.dispatch as sinon.SinonStub))
-    bot.unloadMiddleware()
+    bot.middlewares.unload()
   })
 })

@@ -36,8 +36,8 @@ export async function load () {
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
   try {
-    bot.loadMiddleware()
-    bot.loadAdapters()
+    bot.middlewares.load()
+    bot.adapters.load()
     await eventDelay()
     setStatus('loaded')
     bot.events.emit('loaded')
@@ -57,8 +57,8 @@ export async function start () {
   if (getStatus() !== 'loaded') await load()
   setStatus('starting')
   try {
-    await bot.startAdapters()
-    await bot.startMemory()
+    await bot.adapters.start()
+    await bot.memory.start()
   } catch (err) {
     bot.logger.error('[core] failed to start')
     await bot.shutdown(1).catch()
@@ -84,8 +84,8 @@ export async function shutdown (exit = 0) {
   } else if (status === 'starting') {
     await new Promise((resolve) => bot.events.on('started', () => resolve()))
   }
-  await bot.shutdownAdapters()
-  await bot.shutdownMemory()
+  await bot.adapters.shutdown()
+  await bot.memory.shutdown()
   await eventDelay()
   setStatus('shutdown')
   bot.events.emit('shutdown')
@@ -111,8 +111,8 @@ export async function reset () {
   const status = getStatus()
   if (status !== 'shutdown') await shutdown()
   try {
-    bot.unloadAdapters()
-    bot.unloadMiddleware()
+    bot.adapters.unload()
+    bot.middlewares.unload()
     bot.global.reset()
     bot.settings.resetConfig()
   } catch (err) {

@@ -217,7 +217,7 @@ export class Thoughts {
 
     // Don't remember unless middleware completed (timestamped)
     this.processes.remember.action = async (success) => {
-      if (success) await bot.keep('states', b)
+      if (success) await bot.store.keep('states', b)
     }
   }
 
@@ -247,7 +247,11 @@ export async function receive (message: bot.Message, path?: bot.Path) {
  * because it will usually by triggered from within the `receive` sequence.
  */
 export async function respond (b: bot.State) {
-  bot.logger.info(`[thought] respond to matched branch ${b.getBranch()!.id}`)
+  if (!b.branch) {
+    bot.logger.info(`[thought] respond without matched branch`)
+  } else {
+    bot.logger.info(`[thought] respond to matched branch ${b.branch.id}`)
+  }
   return new Thoughts(b).start('respond')
 }
 

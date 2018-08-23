@@ -177,37 +177,37 @@ describe('[thought]', () => {
         sinon.assert.notCalled(callback)
       })
       it('named hear, processes hear middleware', async () => {
-        bot.hearMiddleware((b, _, __) => b.hearTest = true)
+        bot.middleware.hear((b, _, __) => b.hearTest = true)
         const b = new bot.State({ message })
         await new bot.Thought({ name: 'hear', b }).process()
         expect(b.hearTest).to.equal(true)
       })
       it('named listen, processes listen middleware', async () => {
-        bot.listenMiddleware((b, _, __) => b.listenTest = true)
+        bot.middleware.listen((b, _, __) => b.listenTest = true)
         const b = new bot.State({ message })
         await new bot.Thought({ name: 'listen', b }).process()
         expect(b.listenTest).to.equal(true)
       })
       it('named understand, processes understand middleware', async () => {
-        bot.understandMiddleware((b, _, __) => b.understandTest = true)
+        bot.middleware.understand((b, _, __) => b.understandTest = true)
         const b = new bot.State({ message })
         await new bot.Thought({ name: 'understand', b }).process()
         expect(b.understandTest).to.equal(true)
       })
       it('named act, processes act middleware', async () => {
-        bot.actMiddleware((b, _, __) => b.actTest = true)
+        bot.middleware.act((b, _, __) => b.actTest = true)
         const b = new bot.State({ message })
         await new bot.Thought({ name: 'act', b }).process()
         expect(b.actTest).to.equal(true)
       })
       it('named respond, processes respond middleware', async () => {
-        bot.respondMiddleware((b, _, __) => b.respondTest = true)
+        bot.middleware.respond((b, _, __) => b.respondTest = true)
         const b = new bot.State({ message })
         await new bot.Thought({ name: 'respond', b }).process()
         expect(b.respondTest).to.equal(true)
       })
       it('named remember, processes remember middleware', async () => {
-        bot.rememberMiddleware((b, _, __) => b.rememberTest = true)
+        bot.middleware.remember((b, _, __) => b.rememberTest = true)
         const b = new bot.State({ message })
         await new bot.Thought({ name: 'remember', b }).process()
         expect(b.rememberTest).to.equal(true)
@@ -301,7 +301,7 @@ describe('[thought]', () => {
         expect(listens).to.eql(['A'])
       })
       it('does hear', async () => {
-        bot.hearMiddleware((b, _, __) => b.hearTest = true)
+        bot.middleware.hear((b, _, __) => b.hearTest = true)
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
         expect(b).to.have.property('hearTest', true)
@@ -314,13 +314,13 @@ describe('[thought]', () => {
       })
       it('does not listen when hear interrupted', async () => {
         bot.global.custom(() => true, () => null)
-        bot.hearMiddleware((_, __, done) => done())
+        bot.middleware.hear((_, __, done) => done())
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('listen')
       })
       it('calls post-process action if interrupted, not ignored', async () => {
-        bot.hearMiddleware((_: any, __: any, done: any) => {
+        bot.middleware.hear((_: any, __: any, done: any) => {
           done()
         })
         const b = new bot.State({ message })
@@ -333,7 +333,7 @@ describe('[thought]', () => {
         expect(listenActioned).to.equal(true)
       })
       it('exits before post-process action if ignored', async () => {
-        bot.hearMiddleware((_: any, __: any, done: any) => {
+        bot.middleware.hear((_: any, __: any, done: any) => {
           b.ignore()
           done()
         })
@@ -403,7 +403,7 @@ describe('[thought]', () => {
       })
       it('does not understand when hear interrupted', async () => {
         bot.global.customNLU(() => true, () => null)
-        bot.hearMiddleware((_, __, done) => done())
+        bot.middleware.hear((_, __, done) => done())
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
@@ -520,7 +520,7 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember when hear interrupted', async () => {
-        bot.hearMiddleware((_, __, done) => done())
+        bot.middleware.hear((_, __, done) => done())
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
