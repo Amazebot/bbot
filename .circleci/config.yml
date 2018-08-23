@@ -17,9 +17,9 @@ jobs:
 
       - restore_cache:
           keys:
-          - yarn-packages-{{ checksum "yarn.lock" }}
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
+            - yarn-packages-{{ checksum "yarn.lock" }}
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
 
       - run: yarn install
 
@@ -35,18 +35,11 @@ jobs:
 
       - run: yarn build
       - run: yarn test:coverage
-      - run: |
-          if [[ "${CIRCLE_BRANCH}" == "master" ]]; then
-            git config --global push.default simple
-            git config --global user.email $GH_EMAIL
-            git config --global user.name $GH_NAME
-            yarn docs:publish
-          fi
       - persist_to_workspace:
-            root: ~/repo
-            paths: .
+          root: ~/repo
+          paths: .
 
-  deploy:
+  publish:
     <<: *defaults
     steps:
       - attach_workspace:
@@ -58,9 +51,24 @@ jobs:
           name: Publish package
           command: npm publish
 
+  docs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - add_ssh_keys:
+          fingerprints:
+            - "7c:d4:c8:1a:b2:1d:fc:3e:83:69:09:fe:de:1a:38:ad"
+      - run: |
+          git config --global push.default simple
+          git config --global user.email $GH_EMAIL
+          git config --global user.name $GH_NAME
+          git remote set-url origin git@github.com:Amazebot/bbot.git
+          yarn docs:publish
+
 workflows:
   version: 2
-  test-deploy:
+  build-publish-docs:
     jobs:
       - build:
           filters:
@@ -68,11 +76,19 @@ workflows:
               only: /^v.*/
             branches:
               ignore: gh-pages
-      - deploy:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+      # - publish:
+      #     requires:
+      #       - build
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         only: master
+      # - docs:
+      #     requires:
+      #       - build
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         only: master

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Thought | bBot</title>
+	<title>Store | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="thought.html">Thought</a>
+					<a href="store.html">Store</a>
 				</li>
 			</ul>
-			<h1>Class Thought</h1>
+			<h1>Class Store</h1>
 		</div>
 	</div>
 </header>
@@ -67,9 +67,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Defines a process to wrap execution of middleware of the same name.
-							Validators can prevent a process from running.
-						Actions can effect the state before the next process validates.</p>
+						<p>Persistent store for non-operational data like state history.
+						Most methods require a storage adapter to be loaded.</p>
 					</div>
 				</div>
 			</section>
@@ -77,14 +76,8 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Thought</span>
+						<span class="target">Store</span>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implements</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -92,130 +85,131 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="thought.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#b" class="tsd-kind-icon">b</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#branches" class="tsd-kind-icon">branches</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#middleware" class="tsd-kind-icon">middleware</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thought.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="store.html#excludes" class="tsd-kind-icon">excludes</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#action" class="tsd-kind-icon">action</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#process" class="tsd-kind-icon">process</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="thought.html#validate" class="tsd-kind-icon">validate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="store.html#find" class="tsd-kind-icon">find</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="store.html#findone" class="tsd-kind-icon">find<wbr>One</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="store.html#keep" class="tsd-kind-icon">keep</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="store.html#lose" class="tsd-kind-icon">lose</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="store.html#plainobject" class="tsd-kind-icon">plain<wbr>Object</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Thought<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thought.html" class="tsd-signature-type">Thought</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L24">lib/thought.ts:24</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Create new thought process with optional validate and action functions.
-										Presence of branches in options determines how middleware will execute.
-									Without middleware option, will the middleware of same name as the thought.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>options: <a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="thought.html" class="tsd-signature-type">Thought</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="b" class="tsd-anchor"></a>
-					<h3>b</h3>
-					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <a href="state.html" class="tsd-signature-type">State</a></div>
+					<a name="excludes" class="tsd-anchor"></a>
+					<h3>excludes</h3>
+					<div class="tsd-signature tsd-kind-icon">excludes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;bot&#x27;]</span></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#b">b</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L20">lib/thought.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/store.ts#L9">lib/store.ts:9</a></li>
 						</ul>
 					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="branches" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> branches</h3>
-					<div class="tsd-signature tsd-kind-icon">branches<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#branches">branches</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L24">lib/thought.ts:24</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="middleware" class="tsd-anchor"></a>
-					<h3>middleware</h3>
-					<div class="tsd-signature tsd-kind-icon">middleware<span class="tsd-signature-symbol">:</span> <a href="middleware.html" class="tsd-signature-type">Middleware</a></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#middleware">middleware</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L23">lib/thought.ts:23</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#name">name</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L19">lib/thought.ts:19</a></li>
-						</ul>
-					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Set keys to remove from data before keep.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="action" class="tsd-anchor"></a>
-					<h3>action</h3>
+					<a name="find" class="tsd-anchor"></a>
+					<h3>find</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">action<span class="tsd-signature-symbol">(</span>_<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">find<span class="tsd-signature-symbol">(</span>collection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L22">lib/thought.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/store.ts#L32">lib/store.ts:32</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Query store for subset matching params, via adapter</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>_: <span class="tsd-signature-type">boolean</span></h5>
+									<h5>collection: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> params: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="findone" class="tsd-anchor"></a>
+					<h3>find<wbr>One</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">find<wbr>One<span class="tsd-signature-symbol">(</span>collection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/store.ts#L40">lib/store.ts:40</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Query store for single value matching params, via adapter</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>collection: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>params: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="keep" class="tsd-anchor"></a>
+					<h3>keep</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">keep<span class="tsd-signature-symbol">(</span>collection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/store.ts#L26">lib/store.ts:26</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Keep serial data in collection, via adapter (converted to objects).</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>collection: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>data: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -223,47 +217,61 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="process" class="tsd-anchor"></a>
-					<h3>process</h3>
+					<a name="lose" class="tsd-anchor"></a>
+					<h3>lose</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">lose<span class="tsd-signature-symbol">(</span>collection<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L51">lib/thought.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/store.ts#L48">lib/store.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Call validate, execute middleware, possibly branches, then action.
-										Will not enter process with empty branches or if state <code>done</code> is true.
-										Without branches, execute middleware, resolve on completion.
-										With branches, process each branch or until state <code>done</code> is true.
-										Action will be called with the boolean success of the process.
-										Process succeeds if middleware completed or branches were matched.
-									If process succeeds, timestamp is added to state.</p>
+									<p>Remove anything from collection in storage that matches params</p>
 								</div>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>collection: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>params: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="validate" class="tsd-anchor"></a>
-					<h3>validate</h3>
+					<a name="plainobject" class="tsd-anchor"></a>
+					<h3>plain<wbr>Object</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">validate<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">plain<wbr>Object<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/thought.ts#L21">lib/thought.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/store.ts#L12">lib/store.ts:12</a></li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convert instance to plain object for storage.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>data: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -282,31 +290,25 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="thought.html" class="tsd-kind-icon">Thought</a>
+						<a href="store.html" class="tsd-kind-icon">Store</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="thought.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="thought.html#b" class="tsd-kind-icon">b</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="thought.html#branches" class="tsd-kind-icon">branches</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="thought.html#middleware" class="tsd-kind-icon">middleware</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="thought.html#name" class="tsd-kind-icon">name</a>
+								<a href="store.html#excludes" class="tsd-kind-icon">excludes</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#action" class="tsd-kind-icon">action</a>
+								<a href="store.html#find" class="tsd-kind-icon">find</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#process" class="tsd-kind-icon">process</a>
+								<a href="store.html#findone" class="tsd-kind-icon">find<wbr>One</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="thought.html#validate" class="tsd-kind-icon">validate</a>
+								<a href="store.html#keep" class="tsd-kind-icon">keep</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="store.html#lose" class="tsd-kind-icon">lose</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="store.html#plainobject" class="tsd-kind-icon">plain<wbr>Object</a>
 							</li>
 						</ul>
 					</li>

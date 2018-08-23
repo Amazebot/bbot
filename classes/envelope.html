@@ -69,8 +69,10 @@
 					<div class="lead">
 						<p>Envelopes are the outgoing equivalent of a message. They can be created to
 							respond to a received message, or initialised to send unprompted by input.
-							The envelope contains address details and the content (strings or payload
-						data) for a variety of response methods through the message adapter.</p>
+							The envelope contains address details and the content (strings or payload)
+							for a variety of response methods through the message adapter.
+							Helpers provide simple interface for adding strings and attachments, but the
+						payload property can be used to access additional helpers for rich content.</p>
 					</div>
 				</div>
 			</section>
@@ -101,15 +103,21 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#_payload" class="tsd-kind-icon">_payload</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#branchid" class="tsd-kind-icon">branch<wbr>Id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#message" class="tsd-kind-icon">message</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#method" class="tsd-kind-icon">method</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#payload" class="tsd-kind-icon">payload</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#responded" class="tsd-kind-icon">responded</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#room" class="tsd-kind-icon">room</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#strings" class="tsd-kind-icon">strings</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="envelope.html#user" class="tsd-kind-icon">user</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="envelope.html#payload" class="tsd-kind-icon">payload</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -139,7 +147,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L36">lib/envelope.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L38">lib/envelope.ts:38</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -169,13 +177,23 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="_payload" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> _payload</h3>
+					<div class="tsd-signature tsd-kind-icon">_payload<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.Payload</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L38">lib/envelope.ts:38</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="branchid" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> branch<wbr>Id</h3>
 					<div class="tsd-signature tsd-kind-icon">branch<wbr>Id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#branchid">branchId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L35">lib/envelope.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L36">lib/envelope.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -185,7 +203,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;bot.random()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L24">lib/envelope.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L26">lib/envelope.ts:26</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -195,7 +213,7 @@
 					<div class="tsd-signature tsd-kind-icon">message<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.Message</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L32">lib/envelope.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L34">lib/envelope.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -206,18 +224,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#method">method</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L25">lib/envelope.ts:25</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="payload" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> payload</h3>
-					<div class="tsd-signature tsd-kind-icon">payload<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#payload">payload</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L34">lib/envelope.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L27">lib/envelope.ts:27</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -228,7 +235,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#responded">responded</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L36">lib/envelope.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L37">lib/envelope.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -239,7 +246,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#room">room</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L26">lib/envelope.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L28">lib/envelope.ts:28</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -264,7 +271,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#strings">strings</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L33">lib/envelope.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L35">lib/envelope.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -275,9 +282,34 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ienvelope.html">IEnvelope</a>.<a href="../interfaces/ienvelope.html#user">user</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L31">lib/envelope.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L33">lib/envelope.ts:33</a></li>
 						</ul>
 					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="payload" class="tsd-anchor"></a>
+					<h3>payload</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> payload<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="payload.html" class="tsd-signature-type">Payload</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L91">lib/envelope.ts:91</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Accessor for payload instance creates if it doesn&#39;t exist</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <a href="payload.html" class="tsd-signature-type">Payload</a></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -286,24 +318,24 @@
 					<a name="attach" class="tsd-anchor"></a>
 					<h3>attach</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">attach<span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">attach<span class="tsd-signature-symbol">(</span>attachment<span class="tsd-signature-symbol">: </span><a href="../interfaces/iattachment.html" class="tsd-signature-type">IAttachment</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L89">lib/envelope.ts:89</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L97">lib/envelope.ts:97</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Add multi-media attachments to a message, could be buttons or files etc</p>
+									<p>Add multi-media attachments to a message via payload handlers</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>payload: <span class="tsd-signature-type">any</span></h5>
+									<h5>attachment: <a href="../interfaces/iattachment.html" class="tsd-signature-type">IAttachment</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -314,13 +346,13 @@
 					<a name="compose" class="tsd-anchor"></a>
 					<h3>compose</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">compose<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">compose<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/iattachment.html" class="tsd-signature-type">IAttachment</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L96">lib/envelope.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L103">lib/envelope.ts:103</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -331,7 +363,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>content: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>content: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/iattachment.html" class="tsd-signature-type">IAttachment</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -348,7 +380,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L61">lib/envelope.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L63">lib/envelope.ts:63</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -376,7 +408,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L68">lib/envelope.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L70">lib/envelope.ts:70</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -404,7 +436,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L75">lib/envelope.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L77">lib/envelope.ts:77</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -432,7 +464,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L106">lib/envelope.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L112">lib/envelope.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -460,7 +492,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/85f0856/src/lib/envelope.ts#L82">lib/envelope.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/envelope.ts#L84">lib/envelope.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -499,6 +531,9 @@
 								<a href="envelope.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="envelope.html#_payload" class="tsd-kind-icon">_payload</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="envelope.html#branchid" class="tsd-kind-icon">branch<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -511,9 +546,6 @@
 								<a href="envelope.html#method" class="tsd-kind-icon">method</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="envelope.html#payload" class="tsd-kind-icon">payload</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="envelope.html#responded" class="tsd-kind-icon">responded</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -524,6 +556,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="envelope.html#user" class="tsd-kind-icon">user</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="envelope.html#payload" class="tsd-kind-icon">payload</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="envelope.html#attach" class="tsd-kind-icon">attach</a>

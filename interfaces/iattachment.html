@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IBit | bBot</title>
+	<title>IAttachment | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="ibit.html">IBit</a>
+					<a href="iattachment.html">IAttachment</a>
 				</li>
 			</ul>
-			<h1>Interface IBit</h1>
+			<h1>Interface IAttachment</h1>
 		</div>
 	</div>
 </header>
@@ -67,9 +67,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>A collection of attributes for setting up branches, paths, dialogues, scenes
-							and directors. All the related controllers for what causes a bit to execute
-						and what happens next.</p>
+						<p>Generic schema for attaching image, audio or video with meta</p>
 					</div>
 				</div>
 			</section>
@@ -77,26 +75,9 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IBit</span>
+						<span class="target">IAttachment</span>
 					</li>
 				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implemented by</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../classes/bit.html" class="tsd-signature-type">Bit</a></li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-kind-interface">
-				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>A collection of attributes for setting up branches, paths, dialogues, scenes
-							and directors. All the related controllers for what causes a bit to execute
-						and what happens next.</p>
-					</div>
-				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -105,16 +86,19 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#callback" class="tsd-kind-icon">callback</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#catch" class="tsd-kind-icon">catch</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#catchcallback" class="tsd-kind-icon">catch<wbr>Callback</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#condition" class="tsd-kind-icon">condition</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#intent" class="tsd-kind-icon">intent</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#next" class="tsd-kind-icon">next</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#options" class="tsd-kind-icon">options</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#scope" class="tsd-kind-icon">scope</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibit.html#send" class="tsd-kind-icon">send</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#audio" class="tsd-kind-icon">audio</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#author" class="tsd-kind-icon">author</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#collapsed" class="tsd-kind-icon">collapsed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#color" class="tsd-kind-icon">color</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#description" class="tsd-kind-icon">description</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#fallback" class="tsd-kind-icon">fallback</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#fields" class="tsd-kind-icon">fields</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#footer" class="tsd-kind-icon">footer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#image" class="tsd-kind-icon">image</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#pretext" class="tsd-kind-icon">pretext</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#thumburl" class="tsd-kind-icon">thumb<wbr>Url</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#title" class="tsd-kind-icon">title</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iattachment.html#video" class="tsd-kind-icon">video</a></li>
 							</ul>
 						</section>
 					</div>
@@ -123,102 +107,132 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="callback" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> callback</h3>
-					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IBranchCallback</span></div>
+					<a name="audio" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> audio</h3>
+					<div class="tsd-signature tsd-kind-icon">audio<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L17">lib/bit.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L23">lib/payload.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="catch" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> catch</h3>
-					<div class="tsd-signature tsd-kind-icon">catch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="author" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> author</h3>
+					<div class="tsd-signature tsd-kind-icon">author<span class="tsd-signature-symbol">:</span> <a href="iauthor.html" class="tsd-signature-type">IAuthor</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L16">lib/bit.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L20">lib/payload.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="catchcallback" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> catch<wbr>Callback</h3>
-					<div class="tsd-signature tsd-kind-icon">catch<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IBranchCallback</span></div>
+					<a name="collapsed" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> collapsed</h3>
+					<div class="tsd-signature tsd-kind-icon">collapsed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L18">lib/bit.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L15">lib/payload.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="condition" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> condition</h3>
-					<div class="tsd-signature tsd-kind-icon">condition<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="color" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> color</h3>
+					<div class="tsd-signature tsd-kind-icon">color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L19">lib/bit.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L14">lib/payload.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="id" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="description" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> description</h3>
+					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L14">lib/bit.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L19">lib/payload.ts:19</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="intent" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> intent</h3>
-					<div class="tsd-signature tsd-kind-icon">intent<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="fallback" class="tsd-anchor"></a>
+					<h3>fallback</h3>
+					<div class="tsd-signature tsd-kind-icon">fallback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L20">lib/bit.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L13">lib/payload.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="next" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> next</h3>
-					<div class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="fields" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> fields</h3>
+					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <a href="iattachmentfield.html" class="tsd-signature-type">IAttachmentField</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L22">lib/bit.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L25">lib/payload.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="options" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> options</h3>
-					<div class="tsd-signature tsd-kind-icon">options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="footer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> footer</h3>
+					<div class="tsd-signature tsd-kind-icon">footer<span class="tsd-signature-symbol">:</span> <a href="irichtext.html" class="tsd-signature-type">IRichText</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L23">lib/bit.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L18">lib/payload.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="scope" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> scope</h3>
-					<div class="tsd-signature tsd-kind-icon">scope<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<a name="image" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> image</h3>
+					<div class="tsd-signature tsd-kind-icon">image<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L21">lib/bit.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L22">lib/payload.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="send" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> send</h3>
-					<div class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<a name="pretext" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> pretext</h3>
+					<div class="tsd-signature tsd-kind-icon">pretext<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/bit.ts#L15">lib/bit.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L16">lib/payload.ts:16</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="thumburl" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> thumb<wbr>Url</h3>
+					<div class="tsd-signature tsd-kind-icon">thumb<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L21">lib/payload.ts:21</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="title" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> title</h3>
+					<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <a href="irichtext.html" class="tsd-signature-type">IRichText</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L17">lib/payload.ts:17</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="video" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> video</h3>
+					<div class="tsd-signature tsd-kind-icon">video<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/6813e3a/src/lib/payload.ts#L24">lib/payload.ts:24</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,37 +251,46 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="ibit.html" class="tsd-kind-icon">IBit</a>
+						<a href="iattachment.html" class="tsd-kind-icon">IAttachment</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#callback" class="tsd-kind-icon">callback</a>
+								<a href="iattachment.html#audio" class="tsd-kind-icon">audio</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#catch" class="tsd-kind-icon">catch</a>
+								<a href="iattachment.html#author" class="tsd-kind-icon">author</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#catchcallback" class="tsd-kind-icon">catch<wbr>Callback</a>
+								<a href="iattachment.html#collapsed" class="tsd-kind-icon">collapsed</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#condition" class="tsd-kind-icon">condition</a>
+								<a href="iattachment.html#color" class="tsd-kind-icon">color</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#id" class="tsd-kind-icon">id</a>
+								<a href="iattachment.html#description" class="tsd-kind-icon">description</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#intent" class="tsd-kind-icon">intent</a>
+								<a href="iattachment.html#fallback" class="tsd-kind-icon">fallback</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#next" class="tsd-kind-icon">next</a>
+								<a href="iattachment.html#fields" class="tsd-kind-icon">fields</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#options" class="tsd-kind-icon">options</a>
+								<a href="iattachment.html#footer" class="tsd-kind-icon">footer</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#scope" class="tsd-kind-icon">scope</a>
+								<a href="iattachment.html#image" class="tsd-kind-icon">image</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ibit.html#send" class="tsd-kind-icon">send</a>
+								<a href="iattachment.html#pretext" class="tsd-kind-icon">pretext</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iattachment.html#thumburl" class="tsd-kind-icon">thumb<wbr>Url</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iattachment.html#title" class="tsd-kind-icon">title</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iattachment.html#video" class="tsd-kind-icon">video</a>
 							</li>
 						</ul>
 					</li>
