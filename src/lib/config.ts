@@ -79,6 +79,11 @@ const initOptions: { [key: string]: yargs.Options } = {
     type: 'number',
     describe: 'Minimum string length for NLU parsing to apply on message',
     default: 15
+  },
+  'request-timeout': {
+    type: 'number',
+    describe: 'Maximum milliseconds to wait for a http/s request to resolve',
+    default: 1500
   }
 }
 
