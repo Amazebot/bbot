@@ -56,14 +56,11 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      - add_ssh_keys:
-          fingerprints:
-            - "7c:d4:c8:1a:b2:1d:fc:3e:83:69:09:fe:de:1a:38:ad"
       - run: |
+          mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
           git config --global push.default simple
           git config --global user.email $GH_EMAIL
           git config --global user.name $GH_NAME
-          git remote set-url origin git@github.com:Amazebot/bbot.git
           yarn docs:publish
 
 workflows:
@@ -84,11 +81,11 @@ workflows:
       #         only: /^v.*/
       #       branches:
       #         only: master
-      # - docs:
-      #     requires:
-      #       - build
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
-      #       branches:
-      #         only: master
+      - docs:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              only: master
