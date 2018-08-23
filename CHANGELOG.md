@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/Amazebot/bbot/compare/v0.3.0...v1.0.0) (2018-08-23)
+
+
+### Bug Fixes
+
+* **rocketchat:** Include user name in created user ([12115a9](https://github.com/Amazebot/bbot/commit/12115a9))
+* **shell:** Use attachment fallback as message ([f3ffe85](https://github.com/Amazebot/bbot/commit/f3ffe85))
+* **state:** Add getter for last branch and envelope ([67d267f](https://github.com/Amazebot/bbot/commit/67d267f))
+
+
+### Code Refactoring
+
+* New memory, store, middlewares, adapters classes ([2f2d584](https://github.com/Amazebot/bbot/commit/2f2d584)), closes [#96](https://github.com/Amazebot/bbot/issues/96)
+
+
+### Features
+
+* **payload:** Helpers for attachments and actions ([982efd3](https://github.com/Amazebot/bbot/commit/982efd3)), closes [#24](https://github.com/Amazebot/bbot/issues/24)
+* **request:** Add timeout setting for requests ([404b87c](https://github.com/Amazebot/bbot/commit/404b87c)), closes [#96](https://github.com/Amazebot/bbot/issues/96)
+
+
+### BREAKING CHANGES
+
+* **request:** Request methods now accessed from request instance instead of bot, like
+`bot.request.get` instead of `bot.getRequest`
+* All methods for interacting with memory, middleware and adpater collections are now
+on those class instances instead of the bot. e.g. `bot.get` is now `bot.memory.get`,
+`bot.hearMiddleware` is now `bot.middleware.hear`.
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/Amazebot/bbot/compare/v0.2.0...v0.3.0) (2018-08-14)
 
