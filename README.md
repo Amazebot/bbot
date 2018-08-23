@@ -1,5 +1,5 @@
 # bbot
-An adaptable adaptable engine for conversational UI
+An adaptable engine for conversational UI
 ---
 
 ### `#master`
@@ -32,6 +32,9 @@ Visit [bbot.chat](http://bbot.chat/) for docs on [installing and running](http:/
 
 🤓  
 Dig into the generated [API docs](https://amazebot.github.io/bbot/) for full details of every module and method.
+
+💻  
+Use our starter code, bundled with a setup script and basic examples. Grab the [bBot Boilerplate](https://github.com/Amazebot/bbot-boilerplate).
 
 ## Getting Support
 
