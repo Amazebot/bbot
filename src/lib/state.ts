@@ -116,6 +116,12 @@ export class State implements IState {
     if (branch) return branch.match
   }
 
+  /** Get the conditions of the last matched branch. */
+  get conditions () {
+    const branch = this.getBranch()
+    if (branch && branch.conditions) return branch.conditions
+  }
+
   /** Use property getting for match state (only matched branches are kept). */
   get matched () {
     return (this.branches && this.branches.length) ? true : false

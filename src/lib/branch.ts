@@ -135,32 +135,45 @@ export class CustomBranch extends Branch {
 
 /** Text branch uses basic regex matching */
 export class TextBranch extends Branch {
+  conditions: bot.Conditions
+
   /** Create text branch for regex pattern */
   constructor (
-    public regex: RegExp,
+    conditions: string | RegExp | bot.Condition | bot.Condition[] | bot.ConditionCollection | bot.Conditions,
     callback: IBranchCallback | string,
     options?: IBranch
   ) {
     super(callback, options)
+    this.conditions = (conditions instanceof bot.Conditions)
+      ? conditions
+      : new bot.Conditions(conditions)
   }
 
-  /** Use async because matchers must return a promise */
+  /**
+   * Match message text against regex or composite conditions.
+   * Resolves with either single match result or cumulative condition success.
+   */
   async matcher (message: bot.Message) {
-    const match = message.toString().match(this.regex)
+    this.conditions.exec(message.toString())
+    const match = this.conditions.match
     if (match) {
-      bot.logger.debug(`[branch] message "${message}" matched regex /${this.regex}/ ID ${this.id}`)
+      bot.logger.debug(`[branch] message "${message}" matched branch ${this.id} conditions`)
     }
     return match
   }
 }
 
-/** Text Direct Branch pre-matches the text for bot name prefix */
+/**
+ * Text Direct Branch pre-matches the text for bot name prefix.
+ * Once matched, it removes the direct pattern from the message text.
+ */
 export class TextDirectBranch extends TextBranch {
   async matcher (message: bot.TextMessage) {
-    if (directPattern(/.*/).exec(message.toString())) {
+    if (directPattern().exec(message.toString())) {
+      message.text = message.text.replace(directPattern(), '')
       return super.matcher(message)
     } else {
-      return null
+      return false
     }
   }
 }
@@ -199,7 +212,7 @@ export class NaturalLanguageBranch extends Branch {
 /** Natural Language Direct Branch pre-matches the text for bot name prefix */
 export class NaturalLanguageDirectBranch extends NaturalLanguageBranch {
   async matcher (message: bot.TextMessage) {
-    if (directPattern(/.*/).exec(message.toString())) {
+    if (directPattern().exec(message.toString())) {
       return super.matcher(message)
     } else {
       return undefined
@@ -212,7 +225,20 @@ export class NaturalLanguageDirectBranch extends NaturalLanguageBranch {
  * - matches when alias is substring of name
  * - matches when name is substring of alias
  */
-export function directPattern (regex: RegExp) {
+export function directPattern () {
+  const botName = bot.settings.name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  if (!bot.settings.alias) {
+    return new RegExp(`^\\s*[@]?${botName}[:,]?\\s*`, 'i')
+  }
+  const botAlias = bot.settings.alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+  if (botName.length > botAlias.length) {
+    return new RegExp(`^\\s*[@]?(?:${botName}[:,]?|${botAlias}[:,]?)\\s*`, 'i')
+  }
+  return new RegExp(`^\\s*[@]?(?:${botAlias}[:,]?|${botName}[:,]?)\\s*`, 'i')
+}
+
+/** Build a regular expression for bot's name combined with another regex */
+export function directPatternCombined (regex: RegExp) {
   const regexWithoutModifiers = regex.toString().split('/')
   regexWithoutModifiers.shift()
   const modifiers = regexWithoutModifiers.pop()

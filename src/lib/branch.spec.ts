@@ -184,12 +184,74 @@ describe('[branch]', () => {
     })
   })
   describe('TextBranch', () => {
-    it('.process adds matcher result to state', () => {
-      const fooBranch = new bot.TextBranch(/foo/, (state) => {
-        expect(state.match).to.eql('foo'.match(/foo/))
+    it('.process adds matcher result to state', async () => {
+      const branch = new bot.TextBranch(/foo/, () => null)
+      const text = 'foo'
+      const b = new bot.State({ message: new bot.TextMessage(user, text) })
+      await branch.process(b, middleware)
+      expect(b.match).to.eql('foo'.match(/foo/))
+    })
+    it('.process adds condition match results to state', async () => {
+      const conditions = [{ starts: 'foo' }, { ends: 'bar' }]
+      const text = 'foo bar'
+      const b = new bot.State({ message: new bot.TextMessage(user, text) })
+      const branch = new bot.TextBranch(conditions, () => null)
+      await branch.process(b, middleware)
+      expect(b.conditions.success).to.equal(true)
+    })
+    it('.process adds condition captures to branch in state', async () => {
+      const conditions = { door: { after: 'door number', range: '1-3' } }
+      const text = 'door number 3'
+      const b = new bot.State({ message: new bot.TextMessage(user, text) })
+      const branch = new bot.TextBranch(conditions, () => null)
+      await branch.process(b, middleware)
+      expect(b.conditions.captured).to.eql({ door: '3' })
+    })
+    it('.process branch with pre-constructed conditions', async () => {
+      const conditions = new bot.Conditions({
+        they: { contains: [`they're`, `their`, 'they'] }
+      }, {
+        ignorePunctuation: true
       })
-      return fooBranch.process(new bot.State({
-        message: new bot.TextMessage(user, 'foo')
+      const text = `they're about ready aren't they`
+      const b = new bot.State({ message: new bot.TextMessage(user, text) })
+      const branch = new bot.TextBranch(conditions, () => null)
+      await branch.process(b, middleware)
+      expect(b.conditions.captured).to.eql({ they: `they're` })
+    })
+    it('.process unmatched if condition match falsy', async () => {
+      const conditions = {
+        question: { ends: '?' },
+        not: { starts: 'not' }
+      }
+      const text = `not a question!`
+      const b = new bot.State({ message: new bot.TextMessage(user, text) })
+      const branch = new bot.TextBranch(conditions, () => null)
+      await branch.process(b, middleware)
+      expect(typeof b.conditions).to.equal('undefined')
+      assert.notOk(b.match)
+    })
+  })
+  describe('TextDirectBranch', () => {
+    it('.process returns match if bot name prefixed', () => {
+      const direct = new bot.TextDirectBranch(/foo/, (b) => {
+        expect(b.match).to.eql('foo'.match(/foo/))
+      })
+      return direct.process(new bot.State({
+        message: new bot.TextMessage(user, `${bot.settings.get('name')} foo`)
+      }), middleware)
+    })
+    it('.process adds condition match results to state', () => {
+      const conditions = [{ starts: 'foo' }, { ends: 'bar' }]
+      const branch = new bot.TextDirectBranch(conditions, (b) => {
+        expect(b.match).to.equal(true)
+        expect(b.conditions.matches).to.eql({
+          0: /^foo/.exec('foo bar'),
+          1: /bar$/.exec('foo bar')
+        })
+      })
+      return branch.process(new bot.State({
+        message: new bot.TextMessage(user, `${bot.settings.get('name')} foo bar`)
       }), middleware)
     })
   })

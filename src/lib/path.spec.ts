@@ -116,28 +116,34 @@ describe('[path]', () => {
   })
   describe('.directPattern', () => {
     it('creates new regex for bot name prefixed to original', () => {
-      const direct = bot.directPattern(/test/)
-      expect(direct.toString()).to.include(bot.settings.name).and.include('test')
+      const direct = bot.directPattern()
+      expect(direct.toString()).to.include(bot.settings.name)
     })
     it('matches when bot name is prefixed', async () => {
-      const direct = bot.directPattern(/test/)
+      const direct = bot.directPattern()
       expect(direct.test(`${bot.settings.name} test`)).to.equal(true)
     })
     it('matches when bot alias is prefixed', async () => {
-      const direct = bot.directPattern(/test/)
+      const direct = bot.directPattern()
       expect(direct.test(`${bot.settings.alias} test`)).to.equal(true)
     })
     it('matches when bot alias is prefixed with @ symbol', async () => {
-      const direct = bot.directPattern(/test/)
+      const direct = bot.directPattern()
       expect(direct.test(`@${bot.settings.name} test`)).to.equal(true)
     })
-    it('does not match on name unless otherwise matched', async () => {
-      const direct = bot.directPattern(/test/)
-      expect(direct.test(`${bot.settings.name}`)).to.equal(false)
-    })
     it('does not match unless bot name is prefixed', async () => {
-      const direct = bot.directPattern(/test/)
+      const direct = bot.directPattern()
       expect(direct.test(`test`)).to.equal(false)
+    })
+  })
+  describe('.directPatterCombined', () => {
+    it('creates new regex for bot name prefixed to original', () => {
+      const direct = bot.directPatternCombined(/test/)
+      expect(direct.toString()).to.include(bot.settings.name).and.include('test')
+    })
+    it('does not match on name unless otherwise matched', async () => {
+      const direct = bot.directPatternCombined(/test/)
+      expect(direct.test(`${bot.settings.name}`)).to.equal(false)
     })
   })
 })
