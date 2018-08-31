@@ -82,9 +82,9 @@
     lodash "^4.17.5"
     to-fast-properties "^2.0.0"
 
-"@rocket.chat/sdk@^0.2.6":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@rocket.chat/sdk/-/sdk-0.2.6.tgz#45c2965b66bdaf5440765c3ecbf0f8e46359ebdc"
+"@rocket.chat/sdk@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@rocket.chat/sdk/-/sdk-0.2.7.tgz#0133dd393838dda18db623124c005fa2c1e06626"
   dependencies:
     "@types/lru-cache" "^4.1.0"
     "@types/node" "^9.4.6"

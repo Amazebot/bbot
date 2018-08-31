@@ -25,14 +25,12 @@ describe('[payload]', () => {
           text: 'Foo'
         })
       })
-      it('populates payload with given quick replies', () => {
-        const payload = new bot.Payload({ quickReplies: [{
-          text: 'Foo',
-          content: 'foo'
-        }] })
+      it('populates payload with quick reply defaults', () => {
+        const payload = new bot.Payload({ quickReplies: [{ text: 'Foo' }] })
         expect(payload.quickReplies![0]).to.eql({
           text: 'Foo',
-          content: 'foo'
+          content: 'Foo',
+          type: 'button'
         })
       })
     })

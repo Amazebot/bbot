@@ -96,14 +96,15 @@ export class Rocketchat extends bot.MessageAdapter {
 
   /** Parsing envelope content to an array of Rocket.Chat message schemas */
   parseEnvelope (envelope: bot.Envelope, roomId?: string) {
-    const messages = []
+    const messages: any[] = []
+    const attachments: any[] = []
+    const actions: any[] = []
     if (envelope.strings) {
       for (let text of envelope.strings) {
         messages.push(this.driver.prepareMessage(this.format(text), roomId))
       }
     }
     if (envelope.payload.attachments) {
-      const attachments = []
       for (let attachment of envelope.payload.attachments) {
         attachments.push({
           fields: attachment.fields,
@@ -121,7 +122,37 @@ export class Rocketchat extends bot.MessageAdapter {
           video_url: attachment.video
         })
       }
-      if (attachments.length) {
+    }
+    if (envelope.payload.quickReplies) {
+      for (let qr of envelope.payload.quickReplies) {
+        const { text, type, content, image } = qr
+        actions.push({
+          text,
+          type,
+          msg: content,
+          image_url: image,
+          is_webview: true,
+          msg_in_chat_window: true
+        })
+      }
+    }
+
+    // Append actions to existing attachment if only one,
+    // otherwise create new attachment for actions.
+    if (actions.length) {
+      if (attachments.length === 1) {
+        attachments[0].actions = actions
+      } else {
+        attachments.push({ actions })
+      }
+    }
+
+    // Append actions to existing attachment if only one,
+    // otherwise create new attachment for actions.
+    if (attachments.length) {
+      if (messages.length === 1) {
+        messages[0].attachments = attachments
+      } else {
         messages.push(this.driver.prepareMessage({
           rid: roomId || envelope.room.id || null,
           attachments

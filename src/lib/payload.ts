@@ -66,9 +66,9 @@ export interface IConfirm {
 
 /** Rich message quick reply button, support dependent on messaging platform */
 export interface IQuickReply {
-  type?: string                // Type of content (text, phone, email, location)
   text: string                 // Button display text
-  content: any                 // Value to submit if clicked
+  type?: string                // Type of content (text, phone, email, location)
+  content?: any                // Value to submit if clicked
   image?: string               // Button image URL
 }
 
@@ -89,18 +89,23 @@ export class Payload implements IPayload {
   attachment (attachment: IAttachment) {
     if (!this.attachments) this.attachments = []
     this.attachments.push(attachment)
+    return this
   }
 
   /** Add an action button to the payload */
   action (action: IAction) {
     if (!this.actions) this.actions = []
     this.actions.push(action)
+    return this
   }
 
   /** Add a quick reply button to the payload */
   quickReply (quickReply: IQuickReply) {
+    if (!quickReply.type) quickReply.type = 'button'
+    if (!quickReply.content) quickReply.content = quickReply.text
     if (!this.quickReplies) this.quickReplies = []
     this.quickReplies.push(quickReply)
+    return this
   }
 
   /** Get the payload as a plain object */

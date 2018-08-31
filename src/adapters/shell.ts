@@ -125,7 +125,16 @@ export class Shell extends bBot.MessageAdapter {
       this.messages.push([this.bot.settings.name, text])
     }
     for (let attachment of (envelope.payload.attachments || [])) {
-      this.messages.push([this.bot.settings.name, attachment.fallback])
+      if (attachment.fallback) {
+        this.messages.push([this.bot.settings.name, attachment.fallback])
+      }
+    }
+    // @todo Use inquirer prompt as UI to select from quick replies
+    if (envelope.payload.quickReplies) {
+      this.messages.push([
+        this.bot.settings.name,
+        `[${envelope.payload.quickReplies.map((qr) => qr.text).join('], [')}]`
+      ])
     }
   }
 
