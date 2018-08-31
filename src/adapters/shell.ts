@@ -6,27 +6,35 @@ import chalk from 'chalk'
 /** Load prompts and render chat in shell, for testing interactions */
 export class Shell extends bBot.MessageAdapter {
   name = 'shell-message-adapter'
+  debug: boolean = false
   ui: any
   logs: string[] = ['']
   messages: [string, string][] = []
   line = new inquirer.Separator()
-  settings = {
-    chatSize: 5
-  }
-  // @todo extend bot settings instead...
-  userName = process.env.BOT_SHELL_USER_NAME
-  userId = process.env.BOT_SHELL_USER_ID
-  roomName = process.env.BOT_SHELL_ROOM
   transport?: Transport
   user?: bBot.User
   room?: { id?: string, name?: string }
+
+  /** Singleton pattern instance */
+  private static instance: Shell
+
+  /** Prevent direct access to constructor for singleton adapter */
+  private constructor (bot: typeof bBot) {
+    super(bot)
+  }
+
+  /** Singleton instance init */
+  static getInstance (bot: typeof bBot) {
+    if (!Shell.instance) Shell.instance = new Shell(bot)
+    return Shell.instance
+  }
 
   /** Update chat window and return to input prompt */
   async render () {
     let _ = '\n'
     let n = '           '
     _ += chalk.cyan('╔═════════════════════════════════════════════════════════▶') + '\n'
-    for (let m of this.messages.slice(-this.settings.chatSize)) {
+    for (let m of this.messages.slice(-this.bot.settings.get('shell-size'))) {
       _ += chalk.cyan(`║${n.substr(0, n.length - m[0].length) + m[0]} ┆ `) + m[1] + '\n'
     }
     _ += chalk.cyan('╚═════════════════════════════════════════════════════════▶') + '\n\n'
@@ -60,12 +68,51 @@ export class Shell extends bBot.MessageAdapter {
     callback()
   }
 
+  /** Register user and room, then render chat with welcome message */
+  async start () {
+    this.bot.settings.extend({
+      'shell-user-name': {
+        type: 'string',
+        description: 'Pre-filled username for user in shell chat session.'
+      },
+      'shell-user-id': {
+        type: 'string',
+        description: 'ID to persist shell user data (or set as "random").',
+        default: 'shell-user-01'
+      },
+      'shell-room-name': {
+        type: 'string',
+        description: 'Name for "room" of shell chat session.'
+      },
+      'shell-size': {
+        type: 'number',
+        description: 'Number of message lines to display in shell chat.',
+        default: 5
+      }
+    })
+    this.ui = new inquirer.ui.BottomBar()
+    this.bot.global.enter((b) => b.respond(
+      `${this.user!.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.get('name')}`,
+      `Type "exit" to exit any time.`
+    ), { id: 'shell-enter' })
+    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
+    this.bot.events.on('started', async () => {
+      if (!this.debug) {
+        this.logSetup()
+        await this.roomSetup()
+        await this.bot.receive(new this.bot.EnterMessage(this.user!))
+        await this.render()
+      }
+      this.bot.events.emit('shell-started')
+    })
+  }
+
   /** Write prompt to collect room and user name, or take from env settings */
   async roomSetup () {
-    if (this.userName && this.roomName) {
-      this.user = new this.bot.User({ name: this.userName, id: this.userId })
-      this.room = { name: this.roomName }
-    } else {
+    if (
+      !this.bot.settings.get('shell-user-name') ||
+      !this.bot.settings.get('shell-room-name')
+    ) {
       const registration: any = await inquirer.prompt([{
         type: 'input',
         name: 'username',
@@ -74,7 +121,7 @@ export class Shell extends bBot.MessageAdapter {
       },{
         type: 'input',
         name: 'userId',
-        message: 'Use ID for user, or generate random?',
+        message: 'Use ID for user - enter "random" to generate',
         default: 'random'
       },{
         type: 'input',
@@ -82,29 +129,17 @@ export class Shell extends bBot.MessageAdapter {
         message: 'And what about this "room"?',
         default: 'shell'
       }])
-      if (registration.userId !== 'random') this.userId = registration.userId
-      this.user = new this.bot.User({
-        name: registration.username,
-        id: this.userId
-      })
-      this.room = { name: registration.room }
+      if (registration.userId !== 'random') {
+        this.bot.settings.set('shell-user-id', registration.userId)
+      }
+      this.bot.settings.set('shell-user-name', registration.username)
+      this.bot.settings.set('shell-room-name', registration.room)
     }
-  }
-
-  /** Register user and room, then render chat with welcome message */
-  async start () {
-    this.ui = new inquirer.ui.BottomBar()
-    this.bot.global.enter((b) => b.respond(
-      `${this.user!.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.name}`,
-      `Type "exit" to exit any time.`
-    ), { id: 'shell-enter' })
-    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
-    this.bot.events.on('started', async () => {
-      this.logSetup()
-      await this.roomSetup()
-      await this.bot.receive(new this.bot.EnterMessage(this.user!))
-      await this.render()
+    this.user = new this.bot.User({
+      name: this.bot.settings.get('shell-user-name'),
+      id: this.bot.settings.get('shell-user-id')
     })
+    this.room = { name: this.bot.settings.get('shell-room-name') }
   }
 
   /** Prompt for message input, recursive after each render */
@@ -144,4 +179,4 @@ export class Shell extends bBot.MessageAdapter {
   }
 }
 
-export const use = (bot: typeof bBot) => new Shell(bot)
+export const use = (bot: typeof bBot) => Shell.getInstance(bot)

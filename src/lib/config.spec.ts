@@ -104,6 +104,15 @@ describe('[config]', () => {
         config.settings.name = 'f()!o@#o2'
         expect(config.settings.config.name).to.equal('foo2')
       })
+      it('returns name from settings changes, overruling env', () => {
+        process.env.BOT_NAME = 'env-name'
+        const settings = new config.Settings()
+        expect(settings.get('name')).to.equal('env-name')
+        settings.name = 'prop-name'
+        expect(settings.get('name')).to.equal('prop-name')
+        settings.set('name', 'set-name')
+        expect(settings.get('name')).to.equal('set-name')
+      })
     })
     describe('.alias', () => {
       beforeEach(() => config.settings.resetConfig())
@@ -132,6 +141,12 @@ describe('[config]', () => {
         config.settings.set('foo-bar', 'bar')
         expect(config.settings.get('fooBar')).to.equal('bar')
         expect(config.settings.get('foo-bar')).to.equal('bar')
+      })
+      it('retains settings after extending', () => {
+        process.env.BOT_NAME = 'foo'
+        config.settings.set('name', 'bar')
+        config.settings.extend({ 'bar': { type: 'string', describe: 'test' } })
+        expect(config.settings.name).to.equal('bar')
       })
     })
     describe('.unset', () => {

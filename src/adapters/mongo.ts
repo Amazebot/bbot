@@ -1,4 +1,4 @@
-import { StorageAdapter } from '..'
+import * as bBot from '..'
 import mongoose from 'mongoose'
 
 export interface IStore extends mongoose.Document {
@@ -27,7 +27,7 @@ export function getModel (collection: string) {
  * Long-term data is stored in sub-collections alongside memory, using either
  * a key for key/value pairs, or a key-less array for serial data.
  */
-export class Mongo extends StorageAdapter {
+export class Mongo extends bBot.StorageAdapter {
   name = 'mongo-storage-adapter'
   config = {
     useNewUrlParser: true,
@@ -40,8 +40,20 @@ export class Mongo extends StorageAdapter {
   model: mongoose.Model<mongoose.Document>
   store?: mongoose.Mongoose
 
-  /** Create adapter instance with ref to bot instance */
-  constructor (bot: any) {
+  /** Singleton pattern instance */
+  private static instance: Mongo
+
+  /** Singleton instance init */
+  static getInstance (bot: typeof bBot) {
+    if (!Mongo.instance) Mongo.instance = new Mongo(bot)
+    return Mongo.instance
+  }
+
+  /**
+   * Create adapter instance with ref to bot instance.
+   * Prevent direct access to constructor for singleton adapter
+   */
+  constructor (bot: typeof bBot) {
     super(bot)
     this.bot.settings.extend({
       'db-url': {
@@ -164,4 +176,4 @@ export class Mongo extends StorageAdapter {
   }
 }
 
-export const use = (bot: any) => new Mongo(bot)
+export const use = (bot: any) => Mongo.getInstance(bot)

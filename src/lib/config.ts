@@ -94,6 +94,9 @@ export class Settings {
   /** Access all settings from argv, env, package.json and custom config file */
   config: yargs.Arguments = this.loadConfig(true)
 
+  /** Keep all manually assigned configs, to be retained on reload */
+  updates: { [key: string]: any } = {}
+
   /**
    * Combine and load config from command line, environment and JSON if provided.
    * The returned argv object will copy any options given using param alias into
@@ -101,17 +104,21 @@ export class Settings {
    * then assigned to the config object (some are nullable).
    */
   loadConfig (reset = false) {
+    const options: { [key: string]: yargs.Options } = {} // populate new options
+    // const restore: { [key: string]: any } = {} // restore set settings
+
     for (let key in this.options) {
       const opt = Object.assign({}, this.options[key])
       if (this.config) {
         if (typeof opt.global === 'undefined') opt.global = false
-        if (!reset && typeof this.config[key] !== 'undefined') {
-          opt.default = this.config[key]
-        }
+        // if (!reset && typeof this.config[key] !== 'undefined') {
+        //   restore[key] = this.config[key]
+        // }
       }
-      yargs.option(key, opt)
+      options[key] = opt
     }
     const config = yargs
+      .options(options)
       .usage('\nUsage: $0 [args]')
       .env('BOT')
       .pkgConf('bot')
@@ -125,8 +132,14 @@ export class Settings {
       .epilogue(argsInfo)
       .fail(argsError)
       .argv
-    for (let key of Object.keys(config)) {
-      if (Object.keys(this.options).indexOf(hyphenate(key)) < 0) delete config[key]
+    // restore or reset manually assigned settings on reload/reset
+    if (reset) this.updates = {}
+    else for (let key in this.updates) config[key] = this.updates[key]
+    // clear out config key case variations
+    for (let key in config) {
+      if (Object.keys(this.options).indexOf(hyphenate(key)) < 0) {
+        delete config[key]
+      }
     }
     return config
   }
@@ -165,13 +178,24 @@ export class Settings {
   /** Generic config setter (@todo this is kinda whack) */
   set (key: string, value: any) {
     this.config[key] = value
-    if (key === hyphenate(key)) this.config[camelCase(key)] = value
-    else if (key === camelCase(key)) this.config[hyphenate(key)] = value
+    this.updates[key] = value
+    if (key === hyphenate(key)) {
+      this.config[camelCase(key)] = value
+      this.updates[camelCase(key)] = value
+    } else if (key === camelCase(key)) {
+      this.config[hyphenate(key)] = value
+      this.updates[hyphenate(key)] = value
+    }
   }
 
   /** Generic config clear */
   unset (key: string) {
     delete this.config[key]
+    delete this.config[camelCase(key)]
+    delete this.config[hyphenate(key)]
+    delete this.updates[key]
+    delete this.updates[camelCase(key)]
+    delete this.updates[hyphenate(key)]
     this.reloadConfig()
   }
 

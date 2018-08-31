@@ -1,4 +1,4 @@
-import * as bot from '..'
+import * as bBot from '..'
 import * as sdk from '@rocket.chat/sdk'
 
 /**
@@ -6,15 +6,27 @@ import * as sdk from '@rocket.chat/sdk'
  * their this modules as attributes for advanced branch callbacks to use.
  * Provides member alias to some SDK methods, to support legacy Hubot scripts.
  */
-export class Rocketchat extends bot.MessageAdapter {
+export class Rocketchat extends bBot.MessageAdapter {
   name = 'rocketchat-message-adapter'
   driver = sdk.driver
   methodCache = sdk.methodCache
   api = sdk.api
   settings = sdk.settings
 
-  /** Create Rocket.Chat adapter, configure bot to use username as alias */
-  constructor (bot: any) {
+  /** Singleton pattern instance */
+  private static instance: Rocketchat
+
+  /** Singleton instance init */
+  static getInstance (bot: typeof bBot) {
+    if (!Rocketchat.instance) Rocketchat.instance = new Rocketchat(bot)
+    return Rocketchat.instance
+  }
+
+  /**
+   * Create Rocket.Chat adapter, configure bot to use username as alias.
+   * Prevent direct access to constructor for singleton adapter
+   */
+  private constructor (bot: typeof bBot) {
     super(bot)
     this.settings.integrationId = 'bBot'
     if (this.settings.username !== this.bot.settings.name) this.bot.settings.alias = this.settings.username
@@ -26,9 +38,9 @@ export class Rocketchat extends bot.MessageAdapter {
   /** Connect to Rocket.Chat via DDP driver and setup message subscriptions */
   async start () {
     this.bot.logger.info(`[rocketchat] responds to name: ${this.bot.settings.name}`)
-    if (this.bot.settings.alias) bot.logger.info(`[rocketchat] responds to alias: ${this.bot.settings.alias}`)
+    if (this.bot.settings.alias) this.bot.logger.info(`[rocketchat] responds to alias: ${this.bot.settings.alias}`)
 
-    this.driver.useLog(bot.logger)
+    this.driver.useLog(this.bot.logger)
     await this.driver.connect()
     await this.driver.login()
     await this.driver.subscribeToMessages()
@@ -47,7 +59,7 @@ export class Rocketchat extends bot.MessageAdapter {
     this.bot.logger.info('[rocketchat] filters passed, will hear message')
     const isDM = (meta.roomType === 'd')
     const isLC = (meta.roomType === 'l')
-    const user = bot.userById(message.u._id, {
+    const user = this.bot.userById(message.u._id, {
       fullName: message.u.name,
       name: message.u.username,
       room: {
@@ -59,34 +71,34 @@ export class Rocketchat extends bot.MessageAdapter {
 
     // Room joins, hear without further detail
     if (message.t === 'uj') {
-      bot.logger.debug('[rocketchat] hear type EnterMessage')
-      return bot.receive(new bot.EnterMessage(user, message._id))
+      this.bot.logger.debug('[rocketchat] hear type EnterMessage')
+      return this.bot.receive(new bBot.EnterMessage(user, message._id))
     }
 
     // Room exit, hear without further detail
     if (message.t === 'ul') {
-      bot.logger.debug('[rocketchat] hear type LeaveMessage')
-      return bot.receive(new bot.LeaveMessage(user, message._id))
+      this.bot.logger.debug('[rocketchat] hear type LeaveMessage')
+      return this.bot.receive(new bBot.LeaveMessage(user, message._id))
     }
 
     // Direct messages prepend bot's name so bBot can respond directly
     const startOfText = (message.msg.indexOf('@') === 0) ? 1 : 0
-    const robotIsNamed = message.msg.indexOf(bot.settings.name) === startOfText || message.msg.indexOf(bot.settings.alias) === startOfText
-    if ((isDM || isLC) && !robotIsNamed) message.msg = `${bot.settings.name} ${message.msg}`
+    const robotIsNamed = message.msg.indexOf(this.bot.settings.name) === startOfText || message.msg.indexOf(this.bot.settings.alias) === startOfText
+    if ((isDM || isLC) && !robotIsNamed) message.msg = `${this.bot.settings.name} ${message.msg}`
 
     // Attachments, format properties as payload for bBot rich message type
     if (Array.isArray(message.attachments) && message.attachments.length) {
-      bot.logger.debug('[rocketchat] hear type RichMessage')
-      return bot.receive(new bot.RichMessage(user, {
+      this.bot.logger.debug('[rocketchat] hear type RichMessage')
+      return this.bot.receive(new bBot.RichMessage(user, {
         attachments: message.attachments,
         text: message.text
       }, message._id))
     }
 
     // Standard text messages, hear as is
-    let textMessage = new bot.TextMessage(user, message.msg, message._id)
-    bot.logger.debug(`[rocketchat] hear type TextMessage: ${textMessage.toString()}`)
-    return bot.receive(textMessage)
+    let textMessage = new bBot.TextMessage(user, message.msg, message._id)
+    this.bot.logger.debug(`[rocketchat] hear type TextMessage: ${textMessage.toString()}`)
+    return this.bot.receive(textMessage)
   }
 
   /** Parse any strings before sending to fix for Rocket.Chat syntaxes */
@@ -95,7 +107,7 @@ export class Rocketchat extends bot.MessageAdapter {
   }
 
   /** Parsing envelope content to an array of Rocket.Chat message schemas */
-  parseEnvelope (envelope: bot.Envelope, roomId?: string) {
+  parseEnvelope (envelope: bBot.Envelope, roomId?: string) {
     const messages: any[] = []
     const attachments: any[] = []
     const actions: any[] = []
@@ -163,7 +175,7 @@ export class Rocketchat extends bot.MessageAdapter {
   }
 
   /** Dispatch envelope content, mapped to Rocket.Chat SDK methods */
-  async dispatch (envelope: bot.Envelope) {
+  async dispatch (envelope: bBot.Envelope) {
     switch (envelope.method) {
       case 'send':
         if (!envelope.room || !envelope.room.id) {
@@ -206,4 +218,4 @@ export class Rocketchat extends bot.MessageAdapter {
   }
 }
 
-export const use = (bot: any) => new Rocketchat(bot)
+export const use = (bot: any) => Rocketchat.getInstance(bot)
