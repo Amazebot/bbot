@@ -90,10 +90,10 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="rocketchat.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><a href="rocketchat.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -118,36 +118,44 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="rocketchat.html#process" class="tsd-kind-icon">process</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="rocketchat.html#shutdown" class="tsd-kind-icon">shutdown</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="rocketchat.html#start" class="tsd-kind-icon">start</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="rocketchat.html#getinstance" class="tsd-kind-icon">get<wbr>Instance</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Rocketchat<span class="tsd-signature-symbol">(</span>bot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="rocketchat.html" class="tsd-signature-type">Rocketchat</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Rocketchat<span class="tsd-signature-symbol">(</span>bot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="rocketchat.html" class="tsd-signature-type">Rocketchat</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="adapter.html">Adapter</a>.<a href="adapter.html#constructor">constructor</a></p>
+								<p>Inherited from <a href="adapter.html">Adapter</a>.<a href="adapter.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L14">adapters/rocketchat.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L6">lib/adapter-classes/base.ts:6</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create Rocket.Chat adapter, configure bot to use username as alias</p>
+									<p>Create an adapter instance.
+										Adapter modules should provide a <code>.use</code> method that accepts the bot, to
+									provide to their adapter class constructor, returning the instance.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>bot: <span class="tsd-signature-type">any</span></h5>
+									<h5>bot: <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The current bBot instance</p>
+										</div>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="rocketchat.html" class="tsd-signature-type">Rocketchat</a></h4>
@@ -160,21 +168,21 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="api" class="tsd-anchor"></a>
 					<h3>api</h3>
-					<div class="tsd-signature tsd-kind-icon">api<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/circleci/repo/node_modules/@rocket.chat/sdk/dist/lib/api&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.api</span></div>
+					<div class="tsd-signature tsd-kind-icon">api<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/node_modules/@rocket.chat/sdk/dist/lib/api&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.api</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L13">adapters/rocketchat.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L13">adapters/rocketchat.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="bot" class="tsd-anchor"></a>
 					<h3>bot</h3>
-					<div class="tsd-signature tsd-kind-icon">bot<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/circleci/repo/src/index&quot;</span></div>
+					<div class="tsd-signature tsd-kind-icon">bot<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="adapter.html">Adapter</a>.<a href="adapter.html#bot">bot</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/lib/adapter-classes/base.ts#L14">lib/adapter-classes/base.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L14">lib/adapter-classes/base.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -186,20 +194,20 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="driver" class="tsd-anchor"></a>
 					<h3>driver</h3>
-					<div class="tsd-signature tsd-kind-icon">driver<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/circleci/repo/node_modules/@rocket.chat/sdk/dist/lib/driver&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.driver</span></div>
+					<div class="tsd-signature tsd-kind-icon">driver<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/node_modules/@rocket.chat/sdk/dist/lib/driver&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.driver</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L11">adapters/rocketchat.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L11">adapters/rocketchat.ts:11</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="methodcache" class="tsd-anchor"></a>
 					<h3>method<wbr>Cache</h3>
-					<div class="tsd-signature tsd-kind-icon">method<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/circleci/repo/node_modules/@rocket.chat/sdk/dist/lib/methodCache&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.methodCache</span></div>
+					<div class="tsd-signature tsd-kind-icon">method<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/node_modules/@rocket.chat/sdk/dist/lib/methodCache&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.methodCache</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L12">adapters/rocketchat.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L12">adapters/rocketchat.ts:12</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -210,17 +218,17 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L10">adapters/rocketchat.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L10">adapters/rocketchat.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="settings" class="tsd-anchor"></a>
 					<h3>settings</h3>
-					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/home/circleci/repo/node_modules/@rocket.chat/sdk/dist/lib/settings&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.settings</span></div>
+					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/node_modules/@rocket.chat/sdk/dist/lib/settings&quot;</span><span class="tsd-signature-symbol"> =&nbsp;sdk.settings</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L14">adapters/rocketchat.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L14">adapters/rocketchat.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,7 +245,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L24">adapters/rocketchat.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L36">adapters/rocketchat.ts:36</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -264,7 +272,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#dispatch">dispatch</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L135">adapters/rocketchat.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L178">adapters/rocketchat.ts:178</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -292,7 +300,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L93">adapters/rocketchat.ts:93</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L105">adapters/rocketchat.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -320,7 +328,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L23">adapters/rocketchat.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L35">adapters/rocketchat.ts:35</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -337,13 +345,13 @@
 					<a name="parseenvelope" class="tsd-anchor"></a>
 					<h3>parse<wbr>Envelope</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">parse<wbr>Envelope<span class="tsd-signature-symbol">(</span>envelope<span class="tsd-signature-symbol">: </span><a href="envelope.html" class="tsd-signature-type">Envelope</a>, roomId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Message</span><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Envelope<span class="tsd-signature-symbol">(</span>envelope<span class="tsd-signature-symbol">: </span><a href="envelope.html" class="tsd-signature-type">Envelope</a>, roomId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L98">adapters/rocketchat.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L110">adapters/rocketchat.ts:110</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -360,7 +368,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> roomId: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Message</span><span class="tsd-signature-symbol">[]</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -374,7 +382,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L45">adapters/rocketchat.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L57">adapters/rocketchat.ts:57</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -409,7 +417,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#shutdown">shutdown</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L40">adapters/rocketchat.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L52">adapters/rocketchat.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -432,7 +440,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="messageadapter.html">MessageAdapter</a>.<a href="messageadapter.html#start">start</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1f74688/src/adapters/rocketchat.ts#L27">adapters/rocketchat.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L39">adapters/rocketchat.ts:39</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -441,6 +449,34 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
+					<a name="getinstance" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> get<wbr>Instance</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Instance<span class="tsd-signature-symbol">(</span>bot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="rocketchat.html" class="tsd-signature-type">Rocketchat</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/adapters/rocketchat.ts#L20">adapters/rocketchat.ts:20</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Singleton instance init</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>bot: <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="rocketchat.html" class="tsd-signature-type">Rocketchat</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -461,7 +497,7 @@
 					<li class="current tsd-kind-class">
 						<a href="rocketchat.html" class="tsd-kind-icon">Rocketchat</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
 								<a href="rocketchat.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -505,6 +541,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="rocketchat.html#start" class="tsd-kind-icon">start</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
+								<a href="rocketchat.html#getinstance" class="tsd-kind-icon">get<wbr>Instance</a>
 							</li>
 						</ul>
 					</li>

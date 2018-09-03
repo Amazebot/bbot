@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Adapter | bBot</title>
+	<title>Expression | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="adapter.html">Adapter</a>
+					<a href="expression.html">Expression</a>
 				</li>
 			</ul>
-			<h1>Class Adapter</h1>
+			<h1>Class Expression</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,8 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Base Adapter class, extending to create different types of adapters.</p>
+						<p>Utils for converting semantic key/value condition to regex capture groups.
+						Also accepts straight regex or strings to convert to regex.</p>
 					</div>
 				</div>
 			</section>
@@ -75,18 +76,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">Adapter</span>
-						<ul class="tsd-hierarchy">
-							<li>
-								<a href="messageadapter.html" class="tsd-signature-type">MessageAdapter</a>
-							</li>
-							<li>
-								<a href="nluadapter.html" class="tsd-signature-type">NLUAdapter</a>
-							</li>
-							<li>
-								<a href="storageadapter.html" class="tsd-signature-type">StorageAdapter</a>
-							</li>
-						</ul>
+						<span class="target">Expression</span>
 					</li>
 				</ul>
 			</section>
@@ -95,142 +85,110 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="adapter.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="adapter.html#bot" class="tsd-kind-icon">bot</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="adapter.html#name" class="tsd-kind-icon">name</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="adapter.html#shutdown" class="tsd-kind-icon">shutdown</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="adapter.html#start" class="tsd-kind-icon">start</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="expression.html#escape" class="tsd-kind-icon">escape</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="expression.html#fromcondition" class="tsd-kind-icon">from<wbr>Condition</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="expression.html#fromstring" class="tsd-kind-icon">from<wbr>String</a></li>
 							</ul>
 						</section>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Adapter<span class="tsd-signature-symbol">(</span>bot<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="adapter.html" class="tsd-signature-type">Adapter</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L6">lib/adapter-classes/base.ts:6</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Create an adapter instance.
-										Adapter modules should provide a <code>.use</code> method that accepts the bot, to
-									provide to their adapter class constructor, returning the instance.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>bot: <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>The current bBot instance</p>
-										</div>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="adapter.html" class="tsd-signature-type">Adapter</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="bot" class="tsd-anchor"></a>
-					<h3>bot</h3>
-					<div class="tsd-signature tsd-kind-icon">bot<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">&quot;/Volumes/x/code/amazebot/bbot/src/index&quot;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L14">lib/adapter-classes/base.ts:14</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>The current bBot instance</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3>name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;base-adapter&quot;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L6">lib/adapter-classes/base.ts:6</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Name of adapter, used for logs</p>
-						</div>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="shutdown" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> shutdown</h3>
+					<a name="escape" class="tsd-anchor"></a>
+					<h3>escape</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">shutdown<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">escape<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L20">lib/adapter-classes/base.ts:20</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/condition.ts#L82">lib/condition.ts:82</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Extend to add any bot shutdown requirements in adapter environment</p>
+									<p>Escape any special regex characters</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="start" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> start</h3>
+					<a name="fromcondition" class="tsd-anchor"></a>
+					<h3>from<wbr>Condition</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">start<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Condition<span class="tsd-signature-symbol">(</span>condition<span class="tsd-signature-symbol">: </span><a href="../index.html#condition" class="tsd-signature-type">Condition</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/iconditionoptions.html" class="tsd-signature-type">IConditionOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RegExp</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/adapter-classes/base.ts#L17">lib/adapter-classes/base.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/condition.ts#L91">lib/condition.ts:91</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Extend to add any bot startup requirements in adapter environment</p>
+									<p>Create regex for a value from various condition types</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>todo</dt>
+									<dd><p>combining patterns only works in correct order - can do better</p>
+									</dd>
+									<dt>todo</dt>
+									<dd><p>make this function modular for better testing of each logic piece</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>condition: <a href="../index.html#condition" class="tsd-signature-type">Condition</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../interfaces/iconditionoptions.html" class="tsd-signature-type">IConditionOptions</a><span class="tsd-signature-symbol"> =&nbsp;_defaults</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RegExp</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fromstring" class="tsd-anchor"></a>
+					<h3>from<wbr>String</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">from<wbr>String<span class="tsd-signature-symbol">(</span>str<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RegExp</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/1464b40/src/lib/condition.ts#L71">lib/condition.ts:71</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Convert strings to regular expressions</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>str: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RegExp</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -249,22 +207,16 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="adapter.html" class="tsd-kind-icon">Adapter</a>
+						<a href="expression.html" class="tsd-kind-icon">Expression</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="adapter.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="adapter.html#bot" class="tsd-kind-icon">bot</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="adapter.html#name" class="tsd-kind-icon">name</a>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="expression.html#escape" class="tsd-kind-icon">escape</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="adapter.html#shutdown" class="tsd-kind-icon">shutdown</a>
+								<a href="expression.html#fromcondition" class="tsd-kind-icon">from<wbr>Condition</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="adapter.html#start" class="tsd-kind-icon">start</a>
+								<a href="expression.html#fromstring" class="tsd-kind-icon">from<wbr>String</a>
 							</li>
 						</ul>
 					</li>
