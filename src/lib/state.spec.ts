@@ -5,11 +5,12 @@ import * as bot from '..'
 
 let message: bot.TextMessage
 let stubs: { [key: string]: sinon.SinonStub }
+const uId = 'test-user'
 
 describe('[state]', () => {
   before(() => {
     stubs = {}
-    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+    message = new bot.TextMessage(new bot.User({ id: uId }), 'foo')
   })
   describe('State', () => {
     it('provides access to bot properties', () => {
@@ -107,6 +108,19 @@ describe('[state]', () => {
     it('returns false if no branches added', () => {
       const b = new bot.State({ message })
       expect(b.matched).to.equal(false)
+    })
+  })
+  describe('.user', () => {
+    it('returns user from memory', () => {
+      bot.userById(uId, { foo: 'bar' })
+      const b = new bot.State({ message })
+      expect(b.user).to.have.property('foo', 'bar')
+    })
+    it('updates apply to user in memory', () => {
+      bot.userById(uId, { foo: 'bar' })
+      const b = new bot.State({ message })
+      b.user.baz = 'qux'
+      expect(bot.userById(uId)).to.have.property('baz', 'qux')
     })
   })
   describe('.respondEnvelope', () => {

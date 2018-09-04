@@ -133,6 +133,12 @@ export class State implements IState {
     return this.envelopes.find((e) => typeof e.responded === 'undefined')
   }
 
+  /** Access user from memory matching message details */
+  get user () {
+    const user = this.message.user
+    return bot.userById(user.id, user)
+  }
+
   /** Return the last dispatched envelope. */
   dispatchedEnvelope () {
     if (!this.envelopes) return
