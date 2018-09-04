@@ -58,7 +58,6 @@ export class Adapters {
 
   /** Load all adapters, but don't yet start them. */
   load () {
-    this.unload()
     for (let type of adapterTypes) {
       const adapterPath = bot.settings.get(`${type}-adapter`)
       if (adapterPath && adapterPath !== '' && !this[type]) {
