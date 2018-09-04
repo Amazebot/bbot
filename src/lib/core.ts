@@ -50,8 +50,8 @@ export async function load () {
 /**
  * Make it go!
  * @example
- *  import * as bbot from 'bbot'
- *  bbot.start()
+ *  import * as bot from 'bbot'
+ *  bot.start()
  */
 export async function start () {
   if (getStatus() !== 'loaded') await load()
