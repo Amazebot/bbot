@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/Amazebot/bbot/compare/v1.1.0...v1.2.0) (2018-09-04)
+
+
+### Bug Fixes
+
+* **adapter:** Let adapter be manually assigned before load ([7ee44dd](https://github.com/Amazebot/bbot/commit/7ee44dd))
+* **condition:** Match words and trim leading/trailing puncuation ([7e441db](https://github.com/Amazebot/bbot/commit/7e441db))
+* **path:** Condition types update ([6daa7fd](https://github.com/Amazebot/bbot/commit/6daa7fd))
+* **shell:** Undefined type bug ([4b6eee1](https://github.com/Amazebot/bbot/commit/4b6eee1))
+
+
+### Features
+
+* **state:** Access user in memory matching message details ([646d2bf](https://github.com/Amazebot/bbot/commit/646d2bf))
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/Amazebot/bbot/compare/v1.0.1...v1.1.0) (2018-09-03)
 
