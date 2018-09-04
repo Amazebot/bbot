@@ -1,31 +1,41 @@
 import 'mocha'
 import sinon from 'sinon'
-// import { expect } from 'chai'
+import { expect } from 'chai'
 import * as bot from '../..'
 
 class MockMessenger extends bot.MessageAdapter {
-  name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
   async shutdown () { return }
 }
-const sandbox = sinon.createSandbox()
+const mocks = sinon.createStubInstance(MockMessenger)
+mocks.name = 'mock-messenger'
 
 describe('[E2E]', () => {
-  beforeEach(() => {
-    bot.adapters.message = new MockMessenger(bot)
-    return bot.start()
+  beforeEach(async () => {
+    await bot.reset()
+    bot.adapters.message = mocks
+    await bot.start()
   })
   afterEach(() => {
-    sandbox.restore()
-    return bot.reset()
+    mocks.dispatch.resetHistory()
   })
   it('responds from middleware', async () => {
-    bot.adapters.message!.dispatch = sandbox.stub()
-    bot.middlewares.load()
-    bot.middleware.hear((b, _, done) => b.respond('test').then(() => done()))
+    bot.middleware.hear((b, _, done) => {
+      return b.respond('test').then(() => done())
+    })
     await bot.receive(new bot.TextMessage(new bot.User(), ''))
-    sinon.assert.calledOnce((bot.adapters.message!.dispatch as sinon.SinonStub))
-    bot.middlewares.unload()
+    sinon.assert.calledOnce(mocks.dispatch)
+  })
+  it('captures input matching conditions', async () => {
+    let captured: any[] = []
+    bot.global.text({ after: 'call me', before: 'please' }, (b) => {
+      captured.push(b.conditions.captured)
+    }, { force: true })
+    bot.global.text({ after: 'call me' }, (b) => {
+      captured.push(b.conditions.captured)
+    }, { force: true })
+    await bot.receive(new bot.TextMessage(new bot.User(), 'Call me bb, please'))
+    expect(captured).to.eql(['bb', 'bb, please'])
   })
 })

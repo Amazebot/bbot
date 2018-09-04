@@ -95,6 +95,9 @@ export class Expression {
     const config = Object.assign({}, _defaults, options)
     const b = (config.matchWord) ? '\\b' : '' // word boundary regex toggle
     const i = (config.ignoreCase) ? 'i' : ''  // ignore case flag toggle
+    const p = (config.ignorePunctuation)
+      ? `\\,\\-\\:\\[\\]\\/\\(\\)\\+\\?\\.\\'\\$`
+      : '\\,\\-\\:'
 
     const patterns: string[] = []
     for (let cKey of Object.keys(condition)) {
@@ -112,8 +115,8 @@ export class Expression {
         case 'ends': patterns.push(`${b}(?:${value})$`); break
         case 'contains': patterns.push(`${b}(${value})${b}`); break
         case 'excludes': patterns.push(`^((?!${b}${value}${b}).)*$`); break
-        case 'after': patterns.push(`(?:${value}\\s?)([\\w\\-\\s]+?)`); break
-        case 'before': patterns.push(`([\\w\\-\\s]+?)(?:\\s?${value})`); break
+        case 'after': patterns.push(`(?:${value}\\s?)([\\w\\-\\s${p}]+)`); break
+        case 'before': patterns.push(`([\\w\\-\\s${p}]+)(?:\\s?${value})`); break
         case 'range':
           const rangeExp = rangeRegex(value.split('-')[0], value.split('-')[1])
           patterns.push(`${b}(${rangeExp})${b}`)
@@ -212,9 +215,11 @@ export class Conditions {
   /** Test a string against all expressions. */
   exec (str: string) {
     for (let key in this.expressions) {
-      const match = str.match(this.expressions[key])
+      const match: any = str.match(this.expressions[key])
       this.matches[key] = match
-      this.captures[key] = (match && match.length > 0) ? match[1] : undefined
+      this.captures[key] = (match && typeof match[1] === 'string')
+        ? match[1].replace(/(^[\,\-\:\s]*)|([\,\-\:\s]*$)/g, '')
+        : undefined
     }
     return this.matches
   }
