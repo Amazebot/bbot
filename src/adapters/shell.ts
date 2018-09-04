@@ -157,10 +157,10 @@ export class Shell extends bBot.MessageAdapter {
   /** Add outgoing messages and re-render chat */
   async dispatch (envelope: bBot.Envelope) {
     for (let text of (envelope.strings || [])) {
-      this.messages.push([this.bot.settings.name, text])
+      if (text) this.messages.push([this.bot.settings.name, text])
     }
     for (let attachment of (envelope.payload.attachments || [])) {
-      if (attachment.fallback) {
+      if (attachment && attachment.fallback) {
         this.messages.push([this.bot.settings.name, attachment.fallback])
       }
     }
