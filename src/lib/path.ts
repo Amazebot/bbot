@@ -45,24 +45,24 @@ export class Path implements IPath {
 
   /** Create text branch with provided regex, action and options */
   text (
-    regex: RegExp,
+    condition: string | RegExp | bot.Condition | bot.Condition[] | bot.ConditionCollection | bot.Conditions,
     action: bot.IBranchCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
-      new bot.TextBranch(regex, action, options),
+      new bot.TextBranch(condition, action, options),
       'listen'
     )
   }
 
   /** Create text branch pre-matched on the bot name as prefix. */
   direct (
-    regex: RegExp,
+    condition: string | RegExp | bot.Condition | bot.Condition[] | bot.ConditionCollection | bot.Conditions,
     action: bot.IBranchCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
-      new bot.TextDirectBranch(regex, action, options),
+      new bot.TextDirectBranch(condition, action, options),
       'listen'
     )
   }
