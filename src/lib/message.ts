@@ -16,6 +16,11 @@ export abstract class Message {
 
   /** String representation of the message. */
   abstract toString (): string
+
+  /** Return a copy of message to alter without effecting original */
+  clone () {
+    return Object.assign(Object.create(this), this)
+  }
 }
 
 /** An empty message for outgoings without original input */

@@ -15,6 +15,16 @@ describe('[message]', () => {
       const mockMessage = new MockMessage(mockUser)
       expect(mockMessage).to.be.instanceof(message.Message)
     })
+    it('can clone, without altering original', () => {
+      class MockMessage extends message.Message {
+        toString () { return 'original' }
+      }
+      const original = new MockMessage(mockUser)
+      const clone = original.clone()
+      clone.toString = () => 'clone'
+      expect(original.toString()).to.equal('original')
+      expect(clone.toString()).to.equal('clone')
+    })
     it('accepts user for property', () => {
       class MockMessage extends message.Message {
         toString () { return 'test' }
