@@ -241,6 +241,16 @@ describe('[branch]', () => {
         message: new bot.TextMessage(user, `${bot.settings.get('name')} foo`)
       }), middleware)
     })
+    it('.process returns match on consecutive direct branch', async () => {
+      const directFoo = new bot.TextDirectBranch(/foo/, () => null)
+      const directBar = new bot.TextDirectBranch(/bar/, () => null)
+      const b = new bot.State({
+        message: new bot.TextMessage(user, `${bot.settings.get('name')} bar`)
+      })
+      await directFoo.process(b, middleware)
+      await directBar.process(b, middleware)
+      expect(b.branches).to.eql([directBar])
+    })
     it('.process adds condition match results to state', () => {
       const conditions = [{ starts: 'foo' }, { ends: 'bar' }]
       const branch = new bot.TextDirectBranch(conditions, (b) => {

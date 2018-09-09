@@ -165,13 +165,16 @@ export class TextBranch extends Branch {
 
 /**
  * Text Direct Branch pre-matches the text for bot name prefix.
- * Once matched, it removes the direct pattern from the message text.
+ * If matched on the direct pattern (name prefix) it runs the branch matcher on
+ * a clone of the message with the prefix removed, this allows conditions like
+ * `is` to operate on the body of the message, without failing due to a prefix.
  */
 export class TextDirectBranch extends TextBranch {
   async matcher (message: bot.TextMessage) {
     if (directPattern().exec(message.toString())) {
-      message.text = message.text.replace(directPattern(), '')
-      return super.matcher(message)
+      const indirectMessage = message.clone()
+      indirectMessage.text = message.text.replace(directPattern(), '')
+      return super.matcher(indirectMessage)
     } else {
       return false
     }
