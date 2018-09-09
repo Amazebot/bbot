@@ -118,34 +118,35 @@ export class Rocketchat extends bBot.MessageAdapter {
     }
     if (envelope.payload.attachments) {
       for (let attachment of envelope.payload.attachments) {
-        attachments.push({
-          fields: attachment.fields,
-          color: attachment.color,
-          text: attachment.pretext,
-          thumb_url: attachment.thumbUrl,
-          collapsed: attachment.collapsed,
-          author_name: (attachment.author) ? attachment.author.name : undefined,
-          author_link: (attachment.author) ? attachment.author.link : undefined,
-          author_icon: (attachment.author) ? attachment.author.icon : undefined,
-          title: (attachment.title) ? attachment.title.text : undefined,
-          title_link: (attachment.title) ? attachment.title.link : undefined,
-          image_url: attachment.image,
-          audio_url: attachment.audio,
-          video_url: attachment.video
-        })
+        attachments.push(this.parseSchema(attachment, {
+          'text': 'pretext',
+          'thumb_url': 'thumbUrl',
+          'author_name': 'author.name',
+          'author_link': 'author.link',
+          'author_icon': 'author.icon',
+          'title': 'title.text',
+          'title_link': 'title.link',
+          'image_url': 'image',
+          'audio_url': 'audio',
+          'video_url': 'video'
+        }, attachment))
       }
     }
     if (envelope.payload.quickReplies) {
       for (let qr of envelope.payload.quickReplies) {
-        const { text, type, content, image } = qr
-        actions.push({
-          text,
-          type,
-          msg: content,
-          image_url: image,
+        const defaults: any = {
           is_webview: true,
-          msg_in_chat_window: true
-        })
+          webview_height_ratio: 'full',
+          button_alignment: 'vertical',
+          temporary_buttons: false
+        }
+        const schema = {
+          'msg': 'content',
+          'image_url': 'image'
+        }
+        if (qr.msg) defaults.msg_in_chat_window = true // @todo issue #11994
+        const action = this.parseSchema(qr, schema, qr)
+        actions.push(Object.assign(defaults, action))
       }
     }
 

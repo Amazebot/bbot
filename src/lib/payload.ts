@@ -10,6 +10,7 @@ export interface IPayload {
 
 /** Generic schema for attaching image, audio or video with meta */
 export interface IAttachment {
+  [key: string]: any           // Allow custom attributes
   fallback: string             // Required plain-text summary of the attachment
   color?: string               // Hex code (messaging platform support may vary)
   collapsed?: boolean          // Initially display as collapsed or expended
@@ -48,6 +49,7 @@ export interface IAttachmentField {
 
 /** Rich message actions, support dependent on messaging platform */
 export interface IAction {
+  [key: string]: any           // Allow custom attributes
   name: string                 // Action ID (known to messaging platform)
   type: string                 // Type of action
   text: string                 // Text to display
@@ -58,6 +60,7 @@ export interface IAction {
 
 /** Field schema for actions with confirmation */
 export interface IConfirm {
+  [key: string]: any           // Allow custom attributes
   title?: string               // Header text
   text?: string                // Confirmation description
   ok: string                   // Confirm button text
@@ -66,9 +69,11 @@ export interface IConfirm {
 
 /** Rich message quick reply button, support dependent on messaging platform */
 export interface IQuickReply {
+  [key: string]: any           // Allow custom attributes
   text: string                 // Button display text
   type?: string                // Type of content (text, phone, email, location)
   content?: any                // Value to submit if clicked
+  url?: string                 // URL to deliver users to on click
   image?: string               // Button image URL
 }
 
