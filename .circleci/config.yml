@@ -65,7 +65,8 @@ jobs:
 
 workflows:
   version: 2
-  build-publish-docs:
+  # build-publish-docs:
+  build:
     jobs:
       - build:
           filters:
@@ -81,11 +82,11 @@ workflows:
       #         only: /^v.*/
       #       branches:
       #         only: master
-      - docs:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              only: master
+      # - docs:
+      #     requires:
+      #       - build
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         only: master
