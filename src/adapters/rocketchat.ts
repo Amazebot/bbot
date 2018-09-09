@@ -144,6 +144,7 @@ export class Rocketchat extends bBot.MessageAdapter {
           'msg': 'content',
           'image_url': 'image'
         }
+        if (qr.text && !qr.url && !qr.msg) qr.msg = qr.text // default msg == text
         if (qr.msg) defaults.msg_in_chat_window = true // @todo issue #11994
         const action = this.parseSchema(qr, schema, qr)
         actions.push(Object.assign(defaults, action))
