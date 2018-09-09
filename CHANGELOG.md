@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.0"></a>
+# [1.3.0](https://github.com/Amazebot/bbot/compare/v1.2.0...v1.3.0) (2018-09-09)
+
+
+### Bug Fixes
+
+* **branch:** Bug that caused consecutive direct branches not to match ([cebfb1e](https://github.com/Amazebot/bbot/commit/cebfb1e))
+* **message:** Minor utility for cloning messages ([3bea0ad](https://github.com/Amazebot/bbot/commit/3bea0ad))
+* **rocketchat:** Update adapter schema for quick reply actions with URL ([afabc40](https://github.com/Amazebot/bbot/commit/afabc40))
+
+
+### Features
+
+* **adapter:** Utility to parse internal into platform requiremed schema ([ec85334](https://github.com/Amazebot/bbot/commit/ec85334))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/Amazebot/bbot/compare/v1.1.0...v1.2.0) (2018-09-04)
 
