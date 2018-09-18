@@ -34,5 +34,16 @@ describe('[payload]', () => {
         })
       })
     })
+    describe('.custom', () => {
+      it('allows adding any custom attributes', () => {
+        const payload = new bot.Payload()
+        const custom = {
+          foo: 'foo',
+          bar: { baz: 'qux' }
+        }
+        payload.custom(custom)
+        expect(payload).to.eql(custom)
+      })
+    })
   })
 })

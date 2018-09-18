@@ -9,7 +9,7 @@ export interface IEnvelope {
   }
   user?: bot.User
   strings?: string[]
-  payload?: bot.IPayload
+  payload?: bot.IPayload | any
   branchId?: string
   responded?: number
 }

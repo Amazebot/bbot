@@ -116,7 +116,7 @@ export class Rocketchat extends bBot.MessageAdapter {
         messages.push(this.driver.prepareMessage(this.format(text), roomId))
       }
     }
-    if (envelope.payload.attachments) {
+    if (envelope.payload && Array.isArray(envelope.payload.attachments)) {
       for (let attachment of envelope.payload.attachments) {
         attachments.push(this.parseSchema(attachment, {
           'text': 'pretext',
@@ -132,7 +132,7 @@ export class Rocketchat extends bBot.MessageAdapter {
         }, attachment))
       }
     }
-    if (envelope.payload.quickReplies) {
+    if (envelope.payload && Array.isArray(envelope.payload.quickReplies)) {
       for (let qr of envelope.payload.quickReplies) {
         const defaults: any = {
           is_webview: true,

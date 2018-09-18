@@ -38,4 +38,21 @@ describe('[E2E]', () => {
     await bot.receive(new bot.TextMessage(new bot.User(), 'Call me bb, please'))
     expect(captured).to.eql(['bb', 'bb, please'])
   })
+  it('responds with custom attachment attributes', async () => {
+    let attachment = {
+      'title': 'a custom attachment payload',
+      'actions': [{
+        'type': 'button',
+        'text': 'Visit Google',
+        'url': 'http://www.google.com',
+        'is_webview': true,
+        'webview_height_ratio': 'compact'
+      }]
+    }
+    bot.global.text(/attachment/i, (b) => b.respond(attachment))
+    await bot.receive(new bot.TextMessage(new bot.User(), 'Do attachment'))
+    sinon.assert.calledWithMatch(mocks.dispatch, { _payload: {
+      attachments: [attachment]
+    } })
+  })
 })

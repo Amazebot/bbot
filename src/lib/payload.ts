@@ -79,6 +79,7 @@ export interface IQuickReply {
 
 /** Payload class provides helpers for sub-object creation */
 export class Payload implements IPayload {
+  [key: string]: any
   attachments?: IAttachment[]
   actions?: IAction[]
   quickReplies?: IQuickReply[]
@@ -88,6 +89,11 @@ export class Payload implements IPayload {
     if (meta.attachments) for (let i of meta.attachments) this.attachment(i)
     if (meta.actions) for (let i of meta.actions) this.action(i)
     if (meta.quickReplies) for (let i of meta.quickReplies) this.quickReply(i)
+  }
+
+  /** Add any custom attributes / JSON to a message */
+  custom (object: any) {
+    for (let key in object) this[key] = object[key]
   }
 
   /** Add an attachment to the payload */
