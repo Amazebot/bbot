@@ -541,7 +541,7 @@ describe('[thought]', () => {
         ])
         sinon.assert.calledOnce((bot.adapters.storage!.keep as sinon.SinonStub))
       })
-      describe('receive', () => {
+      describe('.receive', () => {
         it('timestamps all actioned processes', async () => {
           bot.global.custom(() => true, (b) => b.respond('ping'))
           const now = Date.now()
@@ -557,8 +557,26 @@ describe('[thought]', () => {
           expect(b.sequence).to.equal('receive')
           expect(b.scope).to.equal('global')
         })
+        it('consecutive calls isolate thought and path', async () => {
+          const listenCallback = sinon.spy()
+          const understandCallback = sinon.spy()
+          bot.global.text(/foo/i, listenCallback, {
+            id: 'receive-text'
+          })
+          bot.global.customNLU(() => true, understandCallback, {
+            id: 'receive-custom-nlu'
+          })
+          bot.settings.set('nlu-min-length', 2)
+          const messageA = new bot.TextMessage(new bot.User(), 'foo')
+          const messageB = new bot.TextMessage(new bot.User(), 'bar')
+          await bot.receive(messageA)
+          await bot.receive(messageB)
+          sinon.assert.calledOnce(listenCallback)
+          sinon.assert.calledOnce(understandCallback)
+          bot.settings.unset('nlu-min-length')
+        })
       })
-      describe('respond', () => {
+      describe('.respond', () => {
         it('timestamps all actioned processes', async () => {
           const b = new bot.State({ message })
           b.respondEnvelope().write('ping')
@@ -572,7 +590,7 @@ describe('[thought]', () => {
           expect(b.scope).to.equal('global')
         })
       })
-      describe('dispatch', () => {
+      describe('.dispatch', () => {
         it('timestamps all actioned processes', async () => {
           const now = Date.now()
           const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')

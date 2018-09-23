@@ -49,6 +49,14 @@ describe('[path]', () => {
         const id = path.customNLU(() => null, () => null)
         expect(path.understand[id]).to.be.instanceof(bot.CustomBranch)
       })
+      it('.process calls callback on matching message', async () => {
+        const path = new bot.Path()
+        const callback = sinon.spy()
+        const message = new bot.TextMessage(user, 'testing custom NLU')
+        const id = path.customNLU(() => true, callback, { id: 'test-custom-nlu' })
+        await path.understand[id].process(new bot.State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
     })
     describe('.enter', () => {
       it('.process calls callback on enter messages', async () => {

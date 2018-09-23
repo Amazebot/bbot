@@ -17,9 +17,9 @@ export class Path implements IPath {
 
   constructor (init: Path | IPath = {}) {
     this.scope = (init.scope) ? init.scope : 'global'
-    this.listen = (init.listen) ? init.listen : {}
-    this.understand = (init.understand) ? init.understand : {}
-    this.act = (init.act) ? init.act : {}
+    this.listen = (init.listen) ? Object.assign({}, init.listen) : {}
+    this.understand = (init.understand) ? Object.assign({}, init.understand) : {}
+    this.act = (init.act) ? Object.assign({}, init.act) : {}
   }
 
   /** Remove all but forced branches from collection, return remaining size. */

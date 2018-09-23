@@ -125,7 +125,7 @@ export class Thoughts {
     path?: bot.Path
   ) {
     this.b = state
-    this.path = (path) ? path : bot.global
+    this.path = (path) ? new bot.Path(path) : new bot.Path(bot.global)
     const { b } = this
 
     // Define processes with validation and post processing actions
@@ -238,8 +238,13 @@ export class Thoughts {
  * Branch callbacks may also respond. Final state is remembered.
  */
 export async function receive (message: bot.Message, path?: bot.Path) {
-  bot.logger.info(`[thought] receive message ID ${message.id}`)
-  return new Thoughts(new bot.State({ message }), path).start('receive')
+  const thought = new Thoughts(new bot.State({ message }), path)
+  bot.logger.info(`[thought] receive message ID ${message.id} against ${
+    Object.keys(thought.path.listen).length + ' listen branches, ' +
+    Object.keys(thought.path.understand).length + ' understand branches, ' +
+    Object.keys(thought.path.act).length + ' act branches'
+  }`)
+  return thought.start('receive')
 }
 
 /**
