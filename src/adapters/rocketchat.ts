@@ -173,6 +173,12 @@ export class Rocketchat extends bBot.MessageAdapter {
         }, roomId))
       }
     }
+
+    // Update the integration ID for all messages
+    for (let i in messages) {
+      messages[i].bot = { i: this.settings.integrationId }
+    }
+
     return messages
   }
 
