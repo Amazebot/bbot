@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/Amazebot/bbot/compare/v1.3.1...v1.3.2) (2018-09-23)
+
+
+### Bug Fixes
+
+* **branch:** Update timestamp only on listen (not nlu) ([ec8104c](https://github.com/Amazebot/bbot/commit/ec8104c))
+* **config:** Reduce NLU threshold for message length ([6a87737](https://github.com/Amazebot/bbot/commit/6a87737))
+* **payload:** Accept custom payloads ([094eecc](https://github.com/Amazebot/bbot/commit/094eecc)), closes [#100](https://github.com/Amazebot/bbot/issues/100)
+* **rocketchat:** Add integration ID as 'bbot' on all outgoing ([392bd68](https://github.com/Amazebot/bbot/commit/392bd68))
+* **thought:** Processing uses initial path state every time ([bbbe4ef](https://github.com/Amazebot/bbot/commit/bbbe4ef))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/Amazebot/bbot/compare/v1.3.0...v1.3.1) (2018-09-09)
 
