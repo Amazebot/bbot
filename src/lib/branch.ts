@@ -76,9 +76,7 @@ export abstract class Branch {
         b.setBranch(this)
         await middleware.execute(b, (b) => {
           bot.logger.debug(`[branch] executing ${this.constructor.name} callback, ID ${this.id}`)
-          // @todo Fix workaround for thought process timestamp ordering
-          // vvvvv If this is an NLU branch, it should not apply a `listen` timestamp
-          b.processed.listen = Date.now()
+          if (!b.message.nlu) b.processed.listen = Date.now() // workaround for thought process
           return Promise.resolve(this.callback(b))
         }).then(() => {
           bot.logger.debug(`[branch] ${this.id} process done (${(this.matched) ? 'matched' : 'no match'})`)
