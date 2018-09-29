@@ -9,23 +9,26 @@
       "request": "launch",
       "name": "Start",
       "cwd": "${workspaceRoot}",
-      "env": {
-        "NODE_ENV": "development",
-        "BOT_LOG_LEVEL": "debug",
-        "TS_NODE_CACHE_DIRECTORY": "${workspaceRoot}/.ts-node"
-      },
       "sourceMaps": true,
       "runtimeExecutable": "node",
       "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-      "args": [
-        "--require",
-        "ts-node/register",
-        "--require",
-        "source-map-support/register",
-        "${workspaceFolder}/src/start.ts"
-      ],
+      "args": ["${workspaceFolder}/src/start.ts"],
       "protocol": "inspector",
-      "stopOnEntry": false
+      "stopOnEntry": false,
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Current .ts File",
+      "cwd": "${workspaceRoot}",
+      "sourceMaps": true,
+      "runtimeExecutable": "node",
+      "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
+      "args": ["${relativeFile}"],
+      "protocol": "inspector",
+      "stopOnEntry": false,
+      "console": "integratedTerminal"
     },
     {
       "name": "Current Spec",
