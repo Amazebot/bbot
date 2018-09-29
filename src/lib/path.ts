@@ -5,6 +5,7 @@ export interface IPath {
   scope?: string
   listen?: { [id: string]: bot.TextBranch | bot.CustomBranch }
   understand?: { [id: string]: bot.NaturalLanguageBranch | bot.CustomBranch }
+  serve?: { [id: string]: bot.ServerBranch | bot.CustomBranch }
   act?: { [id: string]: bot.CatchAllBranch }
 }
 
@@ -13,12 +14,14 @@ export class Path implements IPath {
   scope: string
   listen: { [id: string]: bot.TextBranch | bot.CustomBranch }
   understand: { [id: string]: bot.NaturalLanguageBranch | bot.CustomBranch }
+  serve: { [id: string]: bot.ServerBranch | bot.CustomBranch }
   act: { [id: string]: bot.CatchAllBranch }
 
   constructor (init: Path | IPath = {}) {
     this.scope = (init.scope) ? init.scope : 'global'
     this.listen = (init.listen) ? Object.assign({}, init.listen) : {}
     this.understand = (init.understand) ? Object.assign({}, init.understand) : {}
+    this.serve = (init.serve) ? Object.assign({}, init.serve) : {}
     this.act = (init.act) ? Object.assign({}, init.act) : {}
   }
 
@@ -31,7 +34,7 @@ export class Path implements IPath {
   }
 
   /** Add branch to collection, for separation based on thought processes. */
-  add (branch: bot.Branch, collection: 'listen' | 'understand' | 'act') {
+  add (branch: bot.Branch, collection: 'listen' | 'understand' | 'act' | 'serve') {
     this[collection][branch.id] = branch
     return branch.id
   }
@@ -145,6 +148,18 @@ export class Path implements IPath {
     return this.custom((message: bot.Message) => {
       return message instanceof bot.TopicMessage
     }, action, options)
+  }
+
+  /** Create a branch that triggers when server message matches criteria */
+  server (
+    criteria: bot.IServerBranchCriteria,
+    action: bot.IBranchCallback | string,
+    options?: bot.IBranch
+  ) {
+    return this.add(
+      new bot.ServerBranch(criteria, action, options),
+      'serve'
+    )
   }
 }
 

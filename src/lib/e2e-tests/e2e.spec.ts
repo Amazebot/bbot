@@ -1,6 +1,7 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
+import axios from 'axios'
 import * as bot from '../..'
 
 class MockMessenger extends bot.MessageAdapter {
@@ -54,5 +55,14 @@ describe('[E2E]', () => {
     sinon.assert.calledWithMatch(mocks.dispatch, { _payload: {
       attachments: [attachment]
     } })
+  })
+  it('replies to user from server message', async () => {
+    bot.global.server({ test: 1 }, (b) => {
+      b.reply('testing')
+    }, {
+      id: 'e2e-server'
+    })
+    await axios.get(`${bot.server.url()}/message/111?test=1`)
+    sinon.assert.calledWithMatch(mocks.dispatch, { strings: ['@111 testing'] })
   })
 })

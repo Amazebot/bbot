@@ -6,7 +6,7 @@ import * as bot from '..'
  */
 export class Store {
   /** Set keys to remove from data before keep. */
-  excludes: string[] = ['bot']
+  excludes: string[] = ['bot', 'server']
 
   /** Convert instance to plain object for storage. */
   plainObject (data: any) {

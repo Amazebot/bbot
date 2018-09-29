@@ -45,6 +45,26 @@ const initOptions: { [key: string]: yargs.Options } = {
     describe: 'Save data in the brain every 5 seconds (defaults true).',
     default: true
   },
+  'use-server': {
+    type: 'boolean',
+    describe: 'Enable/disable the internal Koa server for incoming requests and http/s messages.',
+    default: true
+  },
+  'server-host': {
+    type: 'string',
+    describe: 'The host the bot is running on.',
+    default: 'localhost'
+  },
+  'server-port': {
+    type: 'string',
+    describe: 'The port the server should listen on.',
+    default: '3000'
+  },
+  'server-secure': {
+    type: 'boolean',
+    describe: 'Server should listen on HTTPS only.',
+    default: false
+  },
   'message-adapter': {
     type: 'string',
     describe: 'Local path or NPM package name to require as message platform adapter',

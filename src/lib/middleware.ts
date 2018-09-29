@@ -124,7 +124,7 @@ export class Middleware {
 
 /** Collection of allowed middleware types for loading. */
 const middlewareTypes = [
-  'hear', 'listen', 'understand', 'act', 'respond', 'remember'
+  'hear', 'listen', 'understand', 'serve', 'act', 'respond', 'remember'
 ]
 
 /**

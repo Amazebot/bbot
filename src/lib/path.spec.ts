@@ -98,6 +98,18 @@ describe('[path]', () => {
         sinon.assert.calledOnce(callback)
       })
     })
+    describe('.server', () => {
+      it('.process calls callback on matching server message', async () => {
+        const path = new bot.Path()
+        const callback = sinon.spy()
+        const message = new bot.ServerMessage({ userId: user.id, data: {
+          foo: 'bar'
+        } })
+        const id = path.server({ foo: 'bar' }, callback)
+        await path.serve[id].process(new bot.State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
     describe('.reset', () => {
       it('clears all branches from collections', () => {
         const path = new bot.Path()
@@ -149,7 +161,7 @@ describe('[path]', () => {
       const direct = bot.directPatternCombined(/test/)
       expect(direct.toString()).to.include(bot.settings.name).and.include('test')
     })
-    it('does not match on name unless otherwise matched', async () => {
+    it('does not match on name unless otherwise matched', () => {
       const direct = bot.directPatternCombined(/test/)
       expect(direct.test(`${bot.settings.name}`)).to.equal(false)
     })

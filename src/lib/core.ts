@@ -37,6 +37,7 @@ export async function load () {
   setStatus('loading')
   try {
     bot.middlewares.load()
+    bot.server.load()
     bot.adapters.load()
     await eventDelay()
     setStatus('loaded')
@@ -57,6 +58,7 @@ export async function start () {
   if (getStatus() !== 'loaded') await load()
   setStatus('starting')
   try {
+    await bot.server.start()
     await bot.adapters.start()
     await bot.memory.start()
   } catch (err) {
@@ -84,8 +86,9 @@ export async function shutdown (exit = 0) {
   } else if (status === 'starting') {
     await new Promise((resolve) => bot.events.on('started', () => resolve()))
   }
-  await bot.adapters.shutdown()
   await bot.memory.shutdown()
+  await bot.adapters.shutdown()
+  await bot.server.shutdown()
   await eventDelay()
   setStatus('shutdown')
   bot.events.emit('shutdown')

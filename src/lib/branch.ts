@@ -76,7 +76,6 @@ export abstract class Branch {
         b.setBranch(this)
         await middleware.execute(b, (b) => {
           bot.logger.debug(`[branch] executing ${this.constructor.name} callback, ID ${this.id}`)
-          if (!b.message.nlu) b.processed.listen = Date.now() // workaround for thought process
           return Promise.resolve(this.callback(b))
         }).then(() => {
           bot.logger.debug(`[branch] ${this.id} process done (${(this.matched) ? 'matched' : 'no match'})`)
@@ -210,7 +209,7 @@ export class NaturalLanguageBranch extends Branch {
   }
 }
 
-/** Natural Language Direct Branch pre-matches the text for bot name prefix */
+/** Natural Language Direct Branch pre-matches the text for bot name prefix. */
 export class NaturalLanguageDirectBranch extends NaturalLanguageBranch {
   async matcher (message: bot.TextMessage) {
     if (directPattern().exec(message.toString())) {
@@ -221,8 +220,66 @@ export class NaturalLanguageDirectBranch extends NaturalLanguageBranch {
   }
 }
 
+export interface IServerBranchCriteria {
+  [path: string]: any
+}
+
+/** Server branch matches data in a message received on the server. */
+export class ServerBranch extends Branch {
+  match: any
+
+  /** Create server branch for data matching. */
+  constructor (
+    public criteria: IServerBranchCriteria,
+    callback: IBranchCallback | string,
+    options?: IBranch
+  ) {
+    super(callback, options)
+  }
+
+  /**
+   * Match on any exact or regex values at path of key in criteria.
+   * Will also match on empty data if criteria is an empty object.
+   */
+  async matcher (message: bot.ServerMessage) {
+    const match: { [path: string]: any } = {}
+    if (
+      Object.keys(this.criteria).length === 0 &&
+      (
+        typeof message.data === 'undefined' ||
+        Object.keys(message.data).length === 0
+      )
+    ) {
+      return match
+    } else {
+      if (!message.data) {
+        bot.logger.error(`[branch] server branch attempted matching without data, ID ${this.id}`)
+        return undefined
+      }
+    }
+    for (let path in this.criteria) {
+      const valueAtPath = path.split('.').reduce((pre, cur) => {
+        return (typeof pre !== 'undefined') ? pre[cur] : undefined
+      }, message.data)
+      if (
+        this.criteria[path] instanceof RegExp &&
+        this.criteria[path].exec(valueAtPath)
+      ) match[path] = this.criteria[path].exec(valueAtPath)
+      else if (
+        this.criteria[path] === valueAtPath ||
+        this.criteria[path].toString() === valueAtPath
+      ) match[path] = valueAtPath
+    }
+    if (Object.keys(match).length) {
+      bot.logger.debug(`[branch] Data matched server branch ID ${this.id}`)
+      return match
+    }
+    return undefined
+  }
+}
+
 /**
- * Build a regular expression that matches text prefixed with the bot's name
+ * Build a regular expression that matches text prefixed with the bot's name.
  * - matches when alias is substring of name
  * - matches when name is substring of alias
  */
@@ -238,7 +295,7 @@ export function directPattern () {
   return new RegExp(`^\\s*[@]?(?:${botAlias}[:,]?|${botName}[:,]?)\\s*`, 'i')
 }
 
-/** Build a regular expression for bot's name combined with another regex */
+/** Build a regular expression for bot's name combined with another regex. */
 export function directPatternCombined (regex: RegExp) {
   const regexWithoutModifiers = regex.toString().split('/')
   regexWithoutModifiers.shift()

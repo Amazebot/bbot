@@ -79,11 +79,28 @@ describe('[message]', () => {
     })
   })
   describe('CatchAllMessage', () => {
-    it('inherits original message properties', () => {
+    it('constructor inherits original message properties', () => {
       const textMessage = new message.TextMessage(mockUser, 'test txt')
       const catchMessage = new message.CatchAllMessage(textMessage)
       expect(catchMessage.id).to.equal(textMessage.id)
       expect(catchMessage.toString()).to.equal(textMessage.toString())
+    })
+  })
+  describe('ServerMessage', () => {
+    it('constructor gets user from ID', () => {
+      bot.userById(mockUser.id, mockUser) // make user known
+      const requestMessage = new message.ServerMessage({
+        userId: mockUser.id,
+        data: { foo: 'bar' }
+      })
+      expect(requestMessage.user).to.eql(mockUser)
+    })
+    it('.toString prints JSON data', () => {
+      const requestMessage = new message.ServerMessage({
+        userId: mockUser.id,
+        data: { foo: 'bar' }
+      })
+      expect(requestMessage.toString()).to.match(/foo.*?bar/)
     })
   })
 })

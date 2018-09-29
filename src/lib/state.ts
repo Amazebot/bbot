@@ -11,6 +11,7 @@ export interface IState {
   sequence?: string
   scope?: string
   branch?: bot.Branch
+  server?: bot.IServerContext
   [key: string]: any
 }
 

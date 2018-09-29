@@ -4,7 +4,6 @@ import { expect } from 'chai'
 import * as bot from '..'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-let message: bot.TextMessage
 class MockMessenger extends bot.MessageAdapter {
   name = 'mock-messenger'
   async dispatch () { return }
@@ -34,18 +33,16 @@ class MockStorage extends bot.StorageAdapter {
   async findOne () { return }
   async lose () { return }
 }
+const message = new bot.TextMessage(
+  new bot.User({ id: 'test-user' }),
+  `Where there a foo, there's a bar. And with you, there's always a bar.`
+)
 describe('[thought]', () => {
-  before(() => {
-    message = new bot.TextMessage(
-      new bot.User({ id: 'test-user' }),
-      `Where there a foo, there's a bar. And with you, there's always a bar.`
-    )
-  })
   beforeEach(async () => {
-    await bot.reset()
     await bot.load()
     bot.adapters.message = sinon.createStubInstance(MockMessenger)
   })
+  afterEach(() => bot.reset())
   describe('Thought', () => {
     describe('constructor', () => {
       it('constructor fails without corresponding middleware', async () => {
@@ -226,7 +223,7 @@ describe('[thought]', () => {
     describe('.start', () => {
       it('receive records initiating sequence and path scope', async () => {
         const b = await new bot.Thoughts(new bot.State({ message }))
-          .start('receive')
+        .start('receive')
         expect(b.sequence).to.equal('receive')
         expect(b.scope).to.equal('global')
       })
@@ -529,7 +526,11 @@ describe('[thought]', () => {
         bot.global.custom(() => true, () => null)
         const b = new bot.State({ message })
         await new bot.Thoughts(b).start('receive')
-        sinon.assert.calledWithExactly((bot.adapters.storage!.keep as sinon.SinonStub), 'states', sinon.match({ message }))
+        sinon.assert.calledWithExactly(
+          (bot.adapters.storage!.keep as sinon.SinonStub),
+          'states',
+          sinon.match({ message })
+        )
       })
       it('remember only once with multiple responses', async () => {
         bot.global.custom(() => true, (b) => b.respond('A'))
@@ -544,13 +545,8 @@ describe('[thought]', () => {
       describe('.receive', () => {
         it('timestamps all actioned processes', async () => {
           bot.global.custom(() => true, (b) => b.respond('ping'))
-          const now = Date.now()
           const b = await bot.receive(message)
           expect(b.processed).to.have.all.keys('hear', 'listen', 'respond', 'remember')
-          expect(b.processed.hear, 'heard gte now').to.be.gte(now)
-          expect(b.processed.listen, 'listen gte hear').to.be.gte(b.processed.hear)
-          expect(b.processed.respond, 'respond gte listen').to.be.gte(b.processed.listen)
-          expect(b.processed.remember, 'remember gte respond').to.be.gte(b.processed.respond)
         })
         it('records initiating sequence and path scope', async () => {
           const b = await bot.receive(message)
@@ -592,18 +588,23 @@ describe('[thought]', () => {
       })
       describe('.dispatch', () => {
         it('timestamps all actioned processes', async () => {
-          const now = Date.now()
           const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')
           const b = await bot.dispatch(envelope)
           expect(b.processed).to.have.all.keys('respond', 'remember')
-          expect(b.processed.respond, 'responded gte now').to.be.gte(now)
-          expect(b.processed.remember, 'remembered gte responded').to.be.gte(b.processed.respond)
         })
         it('records initiating sequence and path scope', async () => {
           const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')
           const b = await bot.dispatch(envelope)
           expect(b.sequence).to.equal('dispatch')
           expect(b.scope).to.equal('global')
+        })
+      })
+      describe('.serve', () => {
+        it('timestamps all actioned processes', async () => {
+          const message = new bot.ServerMessage({ userId: '111', data: {} })
+          bot.global.server({}, (b) => b.respond('ping'))
+          const b = await bot.serve(message, ({} as bot.IServerContext))
+          expect(b.processed).to.have.all.keys('hear', 'serve', 'respond', 'remember')
         })
       })
     })

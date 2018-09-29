@@ -2,6 +2,8 @@ import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
+import { EventEmitter } from 'events'
+EventEmitter.prototype.setMaxListeners(100)
 
 let initEnv: any
 

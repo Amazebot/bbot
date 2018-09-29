@@ -336,4 +336,57 @@ describe('[branch]', () => {
       assert.isFalse(b.matched)
     })
   })
+  describe('ServerBranch', () => {
+    it('.matcher matches on empty criteria if no data', async () => {
+      const reqBranch = new bot.ServerBranch({}, () => null)
+      const reqMessage = new bot.ServerMessage({ userId: '111' })
+      expect(await reqBranch.matcher(reqMessage)).to.eql({})
+    })
+    it('.matcher matches on property at attribute', async () => {
+      const reqBranch = new bot.ServerBranch({
+        foo: 'bar'
+      }, () => null)
+      const reqMessage = new bot.ServerMessage({
+        data: { foo: 'bar' },
+        userId: '111',
+        roomId: 'test'
+      })
+      expect(await reqBranch.matcher(reqMessage)).to.eql({
+        foo: 'bar'
+      })
+    })
+  })
+  it('.matcher fails on wrong property at attribute', async () => {
+    const reqBranch = new bot.ServerBranch({
+      foo: 'bar'
+    }, () => null)
+    const reqMessage = new bot.ServerMessage({
+      data: { foo: 'baz' },
+      userId: '111',
+      roomId: 'test'
+    })
+    expect(await reqBranch.matcher(reqMessage)).to.eql(undefined)
+  })
+  it('.matcher matches on property at path', async () => {
+    const reqBranch = new bot.ServerBranch({
+      'foo.bar.baz': 'qux'
+    }, () => null)
+    const reqMessage = new bot.ServerMessage({
+      data: { foo: { bar: { baz: 'qux' } } },
+      userId: '111',
+      roomId: 'test'
+    })
+    expect(await reqBranch.matcher(reqMessage)).to.eql({ 'foo.bar.baz': 'qux' })
+  })
+  it('.matcher matches on property matching expression', async () => {
+    const reqBranch = new bot.ServerBranch({
+      foo: /b.r/i
+    }, () => null)
+    const reqMessage = new bot.ServerMessage({
+      data: { foo: 'BAR' },
+      userId: '111',
+      roomId: 'test'
+    })
+    expect(await reqBranch.matcher(reqMessage)).to.eql({ 'foo': /b.r/i.exec('BAR') })
+  })
 })

@@ -91,6 +91,33 @@ export class TopicMessage extends EventMessage {
   event = 'topic'
 }
 
+/** JSON data for server request event message. */
+export interface IServerMessageOptions {
+  userId: string  // The user the request relates to
+  roomId?: string // The room to message the user from
+  data?: any      // Any data to be used by callbacks
+  id?: string     // ID for the message
+}
+
+/** Represent message data coming from a server request. */
+export class ServerMessage extends EventMessage {
+  event = 'request'
+  data: any
+
+  /** Create a server message for a user. */
+  constructor (options: IServerMessageOptions) {
+    super(bot.userById(options.userId, {
+      room: (options.roomId) ? { id: options.roomId } : {}
+    }), options.id)
+    this.data = options.data || {}
+    bot.logger.debug(`[message] server request keys: ${Object.keys(this.data).join(', ')}`)
+  }
+
+  toString () {
+    return `Data for user ${this.user.id}: ${JSON.stringify(this.data)}`
+  }
+}
+
 /** Represent a message where nothing matched. */
 export class CatchAllMessage extends Message {
   constructor (public message: Message) {

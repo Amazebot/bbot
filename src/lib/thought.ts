@@ -65,10 +65,14 @@ export class Thought implements IThought {
       Promise.resolve(validate())
         .then(async (valid) => {
           if (!valid) return reject()
+          const branchCount = Object.keys(this.branches || {}).length
+          const branchDetail = (branchCount)
+            ? ` against ${branchCount} branch${branchCount > 1 ? 'es' : ''}`
+            : ``
           if (b.message) {
-            bot.logger.debug(`[thought] ${b.scope} ${name} processing incoming message ID ${b.message.id}`)
+            bot.logger.debug(`[thought] ${b.scope} ${name} processing incoming message ID ${b.message.id}${branchDetail}`)
           } else if (b.envelopes) {
-            bot.logger.debug(`[thought] ${b.scope} ${name} processing outgoing envelopes`)
+            bot.logger.debug(`[thought] ${b.scope} ${name} processing outgoing envelopes${branchDetail}`)
           }
           if (typeof branches === 'undefined') return middleware.execute(b, resolve).then(reject)
           for (let id in branches) {
@@ -83,7 +87,6 @@ export class Thought implements IThought {
         })
     })
       .then(() => {
-        // branch will add timestamp on match, so that it pre-dates response
         if (!this.b.processed[this.name]) this.b.processed[this.name] = Date.now()
         return this.action(true)
       })
@@ -109,6 +112,7 @@ export class Thoughts {
   b: bot.State | bot.State
   path: bot.Path
   sequence: { [key: string]: string[] } = {
+    serve: ['hear', 'serve', 'act', 'remember'],
     receive: ['hear', 'listen', 'understand', 'act', 'remember'],
     respond: ['respond'],
     dispatch: ['respond', 'remember']
@@ -133,6 +137,7 @@ export class Thoughts {
       hear: new bot.Thought({ name: 'hear', b }),
       listen: new bot.Thought({ name: 'listen', b, branches: this.path.listen }),
       understand: new bot.Thought({ name: 'understand', b, branches: this.path.understand }),
+      serve: new bot.Thought({ name: 'serve', b, branches: this.path.serve }),
       act: new bot.Thought({ name: 'act', b, branches: this.path.act }),
       respond: new bot.Thought({ name: 'respond', b }),
       remember: new bot.Thought({ name: 'remember', b })
@@ -239,11 +244,7 @@ export class Thoughts {
  */
 export async function receive (message: bot.Message, path?: bot.Path) {
   const thought = new Thoughts(new bot.State({ message }), path)
-  bot.logger.info(`[thought] receive message ID ${message.id} against ${
-    Object.keys(thought.path.listen).length + ' listen branches, ' +
-    Object.keys(thought.path.understand).length + ' understand branches, ' +
-    Object.keys(thought.path.act).length + ' act branches'
-  }`)
+  bot.logger.info(`[thought] receive message ID ${message.id}`)
   return thought.start('receive')
 }
 
@@ -267,4 +268,14 @@ export async function respond (b: bot.State) {
 export async function dispatch (envelope: bot.Envelope) {
   bot.logger.info(`[thought] dispatch envelope ${envelope.id}`)
   return new Thoughts(new bot.State({ envelopes: [envelope] })).start('dispatch')
+}
+
+/** Initiate chain of thought processes for responding to a server request. */
+export async function serve (
+  message: bot.ServerMessage,
+  context: bot.IServerContext,
+  path?: bot.Path
+) {
+  bot.logger.info(`[thought] serving ${message.id} for ${message.user.id}`)
+  return new Thoughts(new bot.State({ message, context }), path).start('serve')
 }

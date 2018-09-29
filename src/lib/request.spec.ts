@@ -2,15 +2,23 @@ import 'mocha'
 import { expect } from 'chai'
 import * as bot from '..'
 
-// @todo replace external requests with internal 'json-server'
-
 describe('[request]', () => {
+  before(() => {
+    bot.server.load()
+    bot.server.router!.get('/pass', (ctx) => ctx.body = 'success')
+    bot.server.router!.get('/json', (ctx) => ctx.body = { id: '1' })
+    bot.server.router!.get('/data', (ctx) => ctx.body = { data: ctx.query })
+    bot.server.router!.post('/data', (ctx) => ctx.body = { data: ctx.request.body })
+    bot.server.router!.get('/fail', (ctx) => ctx.throw('failure'))
+    return bot.server.start()
+  })
+  after(() => bot.server.shutdown())
   describe('Request', () => {
     describe('.make', () => {
       it('rejects bad request URL', () => {
         return bot.request.make({
           method: 'GET',
-          uri: 'https://I.AM.BAD.URL'
+          uri: `${bot.server.url()}/fail`
         })
           .then(() => expect(true).to.equal(false))
           .catch((err) => expect(err).to.be.an('error'))
@@ -19,7 +27,7 @@ describe('[request]', () => {
         bot.settings.set('request-timeout', 200)
         return bot.request.make({
           method: 'GET',
-          uri: 'https://google.com'
+          uri: `${bot.server.url()}/pass`
         })
           .then(() => expect(true).to.equal(false))
           .catch((err) => expect(err).to.be.an('error'))
@@ -28,42 +36,42 @@ describe('[request]', () => {
       it('handles GET request without data', async () => {
         const result = await bot.request.make({
           method: 'GET',
-          uri: 'https://jsonplaceholder.typicode.com/users/1'
+          uri: `${bot.server.url()}/json`
         })
-        expect(result).to.include({ id: 1 })
+        expect(result).to.include({ id: '1' })
       })
       it('handles GET request with data', async () => {
         const result = await bot.request.make({
           method: 'GET',
-          uri: 'https://jsonplaceholder.typicode.com/posts',
-          qs: { userId: 1 }
+          uri: `${bot.server.url()}/data`,
+          qs: { userId: '1' }
         })
-        expect(result[result.length - 1]).to.include({ userId: 1 })
+        expect(result.data).to.include({ userId: '1' })
       })
       it('handles POST request with data', async () => {
         const result = await bot.request.make({
           method: 'POST',
-          uri: 'https://jsonplaceholder.typicode.com/posts',
+          uri: `${bot.server.url()}/data`,
           json: true,
-          body: { userId: 1 }
+          body: { userId: '1' }
         })
-        expect(result).to.include({ userId: 1 })
+        expect(result.data).to.include({ userId: '1' })
       })
     })
     describe('.get', () => {
       it('handles request without data', async () => {
-        const result = await bot.request.get('https://jsonplaceholder.typicode.com/users/1')
-        expect(result).to.include({ id: 1 })
+        const result = await bot.request.get(`${bot.server.url()}/json`)
+        expect(result).to.include({ id: '1' })
       })
       it('handles request with data', async () => {
-        const result = await bot.request.get('https://jsonplaceholder.typicode.com/posts', { userId: 1 })
-        expect(result[result.length - 1]).to.include({ userId: 1 })
+        const result = await bot.request.get(`${bot.server.url()}/data`, { userId: '1' })
+        expect(result.data).to.include({ userId: '1' })
       })
     })
     describe('.post', () => {
       it('handles request with data', async () => {
-        const result = await bot.request.post('https://jsonplaceholder.typicode.com/posts', { userId: 1 })
-        expect(result).to.include({ userId: 1 })
+        const result = await bot.request.post(`${bot.server.url()}/data`, { userId: '1' })
+        expect(result.data).to.include({ userId: '1' })
       })
     })
   })
