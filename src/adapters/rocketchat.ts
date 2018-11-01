@@ -2,9 +2,9 @@ import * as bBot from '..'
 import * as sdk from '@rocket.chat/sdk'
 
 /**
- * Rocket.Chat adapter processes incoming message stream, providing the
- * their this modules as attributes for advanced branch callbacks to use.
- * Provides member alias to some SDK methods, to support legacy Hubot scripts.
+ * Rocket.Chat adapter processes incoming message stream, creating and
+ * dispatching messages, including with rich message actions/quick replies
+ * and querying rooms and users via the Rocket.Chat SDK.
  */
 export class Rocketchat extends bBot.MessageAdapter {
   name = 'rocketchat-message-adapter'
@@ -161,8 +161,8 @@ export class Rocketchat extends bBot.MessageAdapter {
       }
     }
 
-    // Append actions to existing attachment if only one,
-    // otherwise create new attachment for actions.
+    // Append attachments to existing message if only one,
+    // otherwise create new message for attachments.
     if (attachments.length) {
       if (messages.length === 1) {
         messages[0].attachments = attachments
