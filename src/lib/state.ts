@@ -168,16 +168,6 @@ export class State implements IState {
     return bot.respond(this)
   }
 
-  /** Respond with the incoming message's user name prefixed. */
-  reply (...content: any[]) {
-    for (let i in content) {
-      if (typeof content[i] === 'string') {
-        content[i] = `@${this.message.user.name} ${content[i]}`
-      }
-    }
-    return this.respond(...content)
-  }
-
   /** Set method for dispatching envelope responding to state. */
   respondVia (method: string, ...content: any[]) {
     this.respondEnvelope().via(method)
