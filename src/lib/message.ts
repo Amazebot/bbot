@@ -10,7 +10,7 @@ export abstract class Message {
    * @param user The sender's user instance (or properties to create it)
    * @param id   A unique ID for the message
    */
-  constructor (user: bot.IUser, public id: string = bot.random()) {
+  constructor (user: bot.IUser, public id: string = bot.id.random()) {
     this.user = (user instanceof bot.User) ? user : new bot.User(user)
   }
 

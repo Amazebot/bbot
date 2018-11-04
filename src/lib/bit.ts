@@ -63,7 +63,7 @@ export class Bit implements IBit {
    * that does something outside chat, but can be triggered by chat scripts.
    */
   constructor (options: IBit) {
-    this.id = (options.id) ? options.id : bot.counter('bit')
+    this.id = (options.id) ? options.id : bot.id.counter('bit')
     for (let key of Object.keys(options)) this[key] = options[key]
     if (!this.strings && !this.attach && !this.callback) {
       bot.logger.warn(`[bit] won't work without a strings, attach or callback attribute.`)

@@ -24,14 +24,14 @@ export class User implements IUser {
 
   /** Create a User */
   constructor (meta: IUser = {}) {
-    this.id = meta.id || bot.random()
+    this.id = meta.id || bot.id.random()
     Object.keys(meta).forEach((key: string) => {
       if (typeof(meta[key] !== 'undefined') && meta[key] !== null) {
         this[key] = meta[key]
       }
     })
     this.room = (meta && meta.room) ? meta.room : {}
-    if (!this.id) this.id = bot.random()
+    if (!this.id) this.id = bot.id.random()
     if (!this.name) this.name = this.id
   }
 }

@@ -23,7 +23,7 @@ export interface IEnvelope {
  * payload property can be used to access additional helpers for rich content.
  */
 export class Envelope implements IEnvelope {
-  id: string = bot.random()
+  id: string = bot.id.random()
   method: string = 'send'
   room: {
     id?: string

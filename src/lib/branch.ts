@@ -44,7 +44,7 @@ export abstract class Branch {
     this.callback = (typeof action === 'string')
       ? (state) => bot.doBit(action, state)
       : action
-    this.id = (options.id) ? options.id : bot.counter('branch')
+    this.id = (options.id) ? options.id : bot.id.counter('branch')
     for (let key in options) this[key] = options[key]
   }
 
