@@ -109,6 +109,13 @@ export class State implements IState {
       : this.branches.find((branch) => branch.id === id)
   }
 
+  /** Provide path from current dialogue or global scope. */
+  get path () {
+    return (this.dialogue && !this.dialogue.closed)
+      ? this.dialogue.path
+      : bot.global
+  }
+
   /** Provide the last matched branch as an property. */
   get branch () {
     return this.getBranch()

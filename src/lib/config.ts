@@ -102,8 +102,18 @@ const initOptions: { [key: string]: yargs.Options } = {
   },
   'request-timeout': {
     type: 'number',
-    describe: 'Maximum milliseconds to wait for a http/s request to resolve',
+    describe: 'Milliseconds to wait for a http/s request to resolve',
     default: 1500
+  },
+  'path-timeout': {
+    type: 'number',
+    describe: 'Default milliseconds to wait for input on a scene path (0 = infinite)',
+    default: 0
+  },
+  'path-timeout-text': {
+    type: 'string',
+    describe: 'What to send when timeout reached, set null to not send',
+    default: 'Sorry, conversation timed out. Please start again.'
   }
 }
 

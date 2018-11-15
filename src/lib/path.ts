@@ -16,6 +16,7 @@ export class Path implements IPath {
   understand: { [id: string]: bot.NaturalLanguageBranch | bot.CustomBranch }
   serve: { [id: string]: bot.ServerBranch | bot.CustomBranch }
   act: { [id: string]: bot.CatchAllBranch }
+  clock?: NodeJS.Timer
 
   constructor (init: Path | IPath = {}) {
     this.scope = (init.scope) ? init.scope : 'global'
@@ -136,6 +137,11 @@ export class Path implements IPath {
     }, action, options)
   }
 
+  /** @deprecated enter replaced with join to avoid confusion with dialogue. */
+  enter (action: bot.IStateCallback | string, options?: bot.IBranch) {
+    return this.join(action, options)
+  }
+
   /** Create a branch that triggers when user leaves a room. */
   leave (action: bot.IStateCallback | string, options?: bot.IBranch) {
     return this.custom((message: bot.Message) => {
@@ -161,7 +167,41 @@ export class Path implements IPath {
       'serve'
     )
   }
+
+  /**
+   * Trigger a branch callback when a timeout occurs. Re-uses current state.
+   * The timeout is stopped when any input received, using a custom the matcher
+   * that always returns false so it doesn't stop other branches from matching.
+   * If an action is not provided, the default action is to respond with the
+   * configured `path-timeout-text`. Only one timeout can be applied to a path.
+   * @param ms Milliseconds to wait, overriding config `path-timeout` value
+   */
+  timeout (
+    state: bot.State,
+    action?: bot.IStateCallback | string,
+    ms?: number
+  ) {
+    if (!ms) ms = bot.settings.get('path-timeout')
+    if (ms === 0) return
+    if (!action) action = (b) => b.respond(bot.settings.get('path-timeout-text'))
+    const matcher = this.stopTimeout.bind(this)
+    const branch = new bot.CustomBranch(matcher, action, { force: true })
+    this.clock = setTimeout(() => branch.callback(state), ms!)
+    return this.add(branch, 'listen')
+  }
+
+  /** Stop and remove active timeout on the path (returns false for matcher) */
+  stopTimeout () {
+    if (this.clock) {
+      clearTimeout(this.clock)
+      delete this.clock
+    }
+    return false
+  }
 }
 
 /** Global path to process any state not within specific isolated context. */
-export const global = new Path()
+export const path = new Path()
+
+/** @deprecated global is now just called path, is "global" as bot attribute. */
+export const global = path

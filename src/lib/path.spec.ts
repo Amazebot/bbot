@@ -5,6 +5,7 @@ import * as bot from '..'
 
 const user = new bot.User({ id: 'TEST_ID', name: 'testy' })
 const middleware = new bot.Middleware('mock')
+let clock: sinon.SinonFakeTimers
 
 describe('[path]', () => {
   describe('Path', () => {
@@ -131,6 +132,52 @@ describe('[path]', () => {
         const len = path.forced('listen')
         expect(len).to.equal(1)
         expect(Object.keys(path.listen)).to.eql(['C'])
+      })
+    })
+    describe('.timeout', () => {
+      beforeEach(() => clock = sinon.useFakeTimers())
+      afterEach(() => clock.restore())
+      it('fires callback with state after interval', () => {
+        const path = new bot.Path()
+        const message = new bot.TextMessage(user, 'testing timeout')
+        const state = new bot.State({ message })
+        const spy = sinon.spy()
+        path.timeout(state, spy, 100)
+        clock.tick(200)
+        expect(sinon.assert.calledWithExactly(spy, state))
+      })
+      it('does not fire callback if branch is processed', async () => {
+        const path = new bot.Path()
+        const message = new bot.TextMessage(user, 'testing timeout')
+        const state = new bot.State({ message })
+        const spy = sinon.spy()
+        const id = path.timeout(state, spy, 100)
+        await path.listen[id].process(state, middleware)
+        clock.tick(200)
+        expect(sinon.assert.notCalled(spy))
+      })
+      it('responds with defaults if not given action or interval', () => {
+        bot.settings.set('path-timeout', 100)
+        bot.settings.set('path-timeout-text', 'foo')
+        const path = new bot.Path()
+        const message = new bot.TextMessage(user, 'testing timeout')
+        const state = new bot.State({ message })
+        const spy = sinon.spy()
+        state.respond = spy
+        path.timeout(state)
+        clock.tick(200)
+        expect(sinon.assert.calledWithExactly(spy, 'foo'))
+      })
+      it('does not call timeout if default interval is 0', () => {
+        bot.settings.set('path-timeout', 0)
+        const path = new bot.Path()
+        const message = new bot.TextMessage(user, 'testing timeout')
+        const state = new bot.State({ message })
+        const spy = sinon.spy()
+        state.respond = spy
+        path.timeout(state)
+        clock.tick(200)
+        expect(sinon.assert.notCalled(spy))
       })
     })
   })
