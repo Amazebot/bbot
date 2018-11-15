@@ -14,8 +14,8 @@ export interface IBit {
   id?: string,
   send?: string | string[],
   catch?: string,
-  callback?: bot.IBranchCallback,
-  catchCallback?: bot.IBranchCallback,
+  callback?: bot.IStateCallback,
+  catchCallback?: bot.IStateCallback,
   condition?: RegExp | string,
   intent?: string,
   scope?: string,
@@ -37,9 +37,9 @@ export class Bit implements IBit {
   /** To send if response unmatched by branch */
   catch?: string
   /** Function to call when executing bit (after any defined sends) */
-  callback?: bot.IBranchCallback
+  callback?: bot.IStateCallback
   /** Function to call when response unmatched by branch */
-  catchCallback?: bot.IBranchCallback
+  catchCallback?: bot.IStateCallback
   /** Regex or string converted to regex for branch to trigger bit */
   condition?: RegExp | string
   /** Key for language processed intent to match for execution */

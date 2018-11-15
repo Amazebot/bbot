@@ -15,7 +15,7 @@ class MockBranch extends bot.Branch {
 class BoolBranch extends bot.Branch {
   constructor (
     public result: boolean,
-    callback: bot.IBranchCallback,
+    callback: bot.IStateCallback,
     options?: bot.IBranch
   ) {
     super(callback, options)

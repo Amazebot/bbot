@@ -15,6 +15,11 @@ export interface IState {
   [key: string]: any
 }
 
+/** State callback interface, usually for branch if the message matched. */
+export interface IStateCallback {
+  (b: bot.State): any
+}
+
 /**
  * Received states persist the incoming message to be used for matching and
  * to address response envelopes.

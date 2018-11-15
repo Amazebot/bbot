@@ -49,7 +49,7 @@ export class Path implements IPath {
   /** Create text branch with provided regex, action and options */
   text (
     condition: string | RegExp | bot.Condition | bot.Condition[] | bot.ConditionCollection | bot.Conditions,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -61,7 +61,7 @@ export class Path implements IPath {
   /** Create text branch pre-matched on the bot name as prefix. */
   direct (
     condition: string | RegExp | bot.Condition | bot.Condition[] | bot.ConditionCollection | bot.Conditions,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -73,7 +73,7 @@ export class Path implements IPath {
   /** Create custom branch with provided matcher, action and optional meta. */
   custom (
     matcher: bot.IMatcher,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -84,7 +84,7 @@ export class Path implements IPath {
 
   /** Create a branch that triggers when no other branch matches. */
   catchAll (
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -96,7 +96,7 @@ export class Path implements IPath {
   /** Create a natural language branch to match on NLU result attributes. */
   NLU (
     criteria: bot.NaturalLanguageCriteria,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -108,7 +108,7 @@ export class Path implements IPath {
   /** Create a natural language branch pre-matched on the bot name as prefix. */
   directNLU (
     criteria: bot.NaturalLanguageCriteria,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -120,7 +120,7 @@ export class Path implements IPath {
   /** Create a natural language branch with custom matcher. */
   customNLU (
     matcher: bot.IMatcher,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(
@@ -129,31 +129,31 @@ export class Path implements IPath {
     )
   }
 
-  /** Create a branch that triggers when user enters a room. */
-  enter (action: bot.IBranchCallback | string, options?: bot.IBranch) {
+  /** Create a branch that triggers when user joins a room. */
+  join (action: bot.IStateCallback | string, options?: bot.IBranch) {
     return this.custom((message: bot.Message) => {
       return message instanceof bot.EnterMessage
     }, action, options)
   }
 
   /** Create a branch that triggers when user leaves a room. */
-  leave (action: bot.IBranchCallback | string, options?: bot.IBranch) {
+  leave (action: bot.IStateCallback | string, options?: bot.IBranch) {
     return this.custom((message: bot.Message) => {
       return message instanceof bot.LeaveMessage
     }, action, options)
   }
 
   /** Create a branch that triggers when user changes the topic. */
-  topic (action: bot.IBranchCallback | string, options?: bot.IBranch) {
+  topic (action: bot.IStateCallback | string, options?: bot.IBranch) {
     return this.custom((message: bot.Message) => {
       return message instanceof bot.TopicMessage
     }, action, options)
   }
 
-  /** Create a branch that triggers when server message matches criteria */
+  /** Create a branch that triggers when server message matches criteria. */
   server (
     criteria: bot.IServerBranchCriteria,
-    action: bot.IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: bot.IBranch
   ) {
     return this.add(

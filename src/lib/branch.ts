@@ -5,11 +5,6 @@ export interface IMatcher {
   (input: any): Promise<any> | any
 }
 
-/** Branch callback interface, called if the message matched. */
-export interface IBranchCallback {
-  (b: bot.State): any
-}
-
 /** Called at the end of middleware with status of match */
 export interface IBranchDone {
   (matched: boolean): void
@@ -30,7 +25,7 @@ export interface IBranch {
  */
 export abstract class Branch {
   id: string
-  callback: IBranchCallback
+  callback: bot.IStateCallback
   force: boolean = false
   match?: any
   matched?: boolean
@@ -38,7 +33,7 @@ export abstract class Branch {
 
   /** Create a Branch */
   constructor (
-    action: IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options: IBranch = {}
   ) {
     this.callback = (typeof action === 'string')
@@ -95,7 +90,7 @@ export abstract class Branch {
 /** Branch to match on any CatchAllMessage type */
 export class CatchAllBranch extends Branch {
   /** Accepts only super args, matcher is fixed */
-  constructor (action: IBranchCallback | string, options?: IBranch) {
+  constructor (action: bot.IStateCallback | string, options?: IBranch) {
     super(action, options)
   }
 
@@ -114,7 +109,7 @@ export class CustomBranch extends Branch {
   /** Accepts custom function to test message */
   constructor (
     public customMatcher: IMatcher,
-    action: IBranchCallback | string,
+    action: bot.IStateCallback | string,
     options?: IBranch
   ) {
     super(action, options)
@@ -137,7 +132,7 @@ export class TextBranch extends Branch {
   /** Create text branch for regex pattern */
   constructor (
     conditions: string | RegExp | bot.Condition | bot.Condition[] | bot.ConditionCollection | bot.Conditions,
-    callback: IBranchCallback | string,
+    callback: bot.IStateCallback | string,
     options?: IBranch
   ) {
     super(callback, options)
@@ -188,7 +183,7 @@ export class NaturalLanguageBranch extends Branch {
   /** Create natural language branch for NLU matching. */
   constructor (
     public criteria: bot.NaturalLanguageCriteria,
-    callback: IBranchCallback | string,
+    callback: bot.IStateCallback | string,
     options?: IBranch
   ) {
     super(callback, options)
@@ -231,7 +226,7 @@ export class ServerBranch extends Branch {
   /** Create server branch for data matching. */
   constructor (
     public criteria: IServerBranchCriteria,
-    callback: IBranchCallback | string,
+    callback: bot.IStateCallback | string,
     options?: IBranch
   ) {
     super(callback, options)
