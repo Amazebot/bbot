@@ -11,6 +11,7 @@ export interface IState {
   sequence?: string
   scope?: string
   branch?: bot.Branch
+  dialogue?: bot.Dialogue
   server?: bot.IServerContext
   [key: string]: any
 }
@@ -49,6 +50,7 @@ export class State implements IState {
   processed: { [key: string]: number } = {}
   message: bot.Message = new bot.NullMessage()
   branches?: bot.Branch[]
+  dialogue?: bot.Dialogue
   envelopes?: bot.Envelope[]
   sequence?: string
   scope?: string

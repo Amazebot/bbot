@@ -241,8 +241,10 @@ export class Thoughts {
 /**
  * Initiate sequence of thought processes for an incoming message.
  * Branch callbacks may also respond. Final state is remembered.
+ * If user is already engaged (in scene), route through dialogue.
  */
 export async function receive (message: bot.Message, path?: bot.Path) {
+  // @todo if message user is engaged, use path from dialogue
   const thought = new Thoughts(new bot.State({ message }), path)
   bot.logger.info(`[thought] receive message ID ${message.id}`)
   return thought.start('receive')
