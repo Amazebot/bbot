@@ -23,7 +23,7 @@ describe('[adapter-shell]', () => {
       bot.settings.set('name', 'shelby')
       const shell = shellAdapter.use(bot)
       shell.debug = true
-      bot.start()
+      await bot.start()
       await new Promise((resolve) => bot.events.on('shell-started', resolve))
       expect(shell.bot.settings.name).to.equal('shelby')
     })
@@ -31,7 +31,7 @@ describe('[adapter-shell]', () => {
       const shell = shellAdapter.use(bot)
       shell.debug = true
       bot.settings.name = 'not-shelby'
-      await bot.start().catch((err) => { throw err })
+      await bot.start()
       bot.settings.name = 'shelby'
       expect(shell.bot.settings.name).to.equal('shelby')
     })
