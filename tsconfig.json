@@ -1,7 +1,4 @@
 {
-  "exclude": [
-    "**/*.spec.ts"
-  ],
   "compilerOptions": {
     /* Basic Options */
     "pretty": true,
