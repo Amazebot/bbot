@@ -64,7 +64,7 @@ describe('[path]', () => {
         const path = new bot.Path()
         const callback = sinon.spy()
         const message = new bot.EnterMessage(user)
-        const id = path.enter(callback)
+        const id = path.join(callback)
         await path.listen[id].process(new bot.State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
@@ -152,9 +152,11 @@ describe('[path]', () => {
         const state = new bot.State({ message })
         const spy = sinon.spy()
         const id = path.timeout(state, spy, 100)
-        await path.listen[id].process(state, middleware)
-        clock.tick(200)
-        expect(sinon.assert.notCalled(spy))
+        if (id) {
+          await path.listen[id].process(state, middleware)
+          clock.tick(200)
+          expect(sinon.assert.notCalled(spy))
+        } else throw new Error('Path timeout failed to add branch')
       })
       it('responds with defaults if not given action or interval', () => {
         bot.settings.set('path-timeout', 100)

@@ -30,10 +30,10 @@ describe('[E2E]', () => {
   })
   it('captures input matching conditions', async () => {
     let captured: any[] = []
-    bot.global.text({ after: 'call me', before: 'please' }, (b) => {
+    bot.path.text({ after: 'call me', before: 'please' }, (b) => {
       captured.push(b.conditions.captured)
     }, { force: true })
-    bot.global.text({ after: 'call me' }, (b) => {
+    bot.path.text({ after: 'call me' }, (b) => {
       captured.push(b.conditions.captured)
     }, { force: true })
     await bot.receive(new bot.TextMessage(new bot.User(), 'Call me bb, please'))
@@ -50,14 +50,14 @@ describe('[E2E]', () => {
         'webview_height_ratio': 'compact'
       }]
     }
-    bot.global.text(/attachment/i, (b) => b.respond(attachment))
+    bot.path.text(/attachment/i, (b) => b.respond(attachment))
     await bot.receive(new bot.TextMessage(new bot.User(), 'Do attachment'))
     sinon.assert.calledWithMatch(mocks.dispatch, { _payload: {
       attachments: [attachment]
     } })
   })
   it('replies to user from server message', async () => {
-    bot.global.server({ test: 1 }, (b) => {
+    bot.path.server({ test: 1 }, (b) => {
       b.reply('testing')
     }, {
       id: 'e2e-server'

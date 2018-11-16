@@ -129,7 +129,7 @@ export class Thoughts {
     path?: bot.Path
   ) {
     this.b = state
-    this.path = (path) ? new bot.Path(path) : new bot.Path(bot.global)
+    this.path = (path) ? new bot.Path(path) : new bot.Path(bot.path)
     const { b } = this
 
     // Define processes with validation and post processing actions

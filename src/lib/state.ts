@@ -113,7 +113,7 @@ export class State implements IState {
   get path () {
     return (this.dialogue && !this.dialogue.closed)
       ? this.dialogue.path
-      : bot.global
+      : bot.path
   }
 
   /** Provide the last matched branch as an property. */

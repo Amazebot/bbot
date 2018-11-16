@@ -45,7 +45,7 @@ import * as bot from '..'
  *    // ... as above
  *  })
  *  // dialogues can also be manually closed...
- *  bot.global.text(/quit all/, () => dialogue.exit())
+ *  bot.path.text(/quit all/, () => dialogue.exit())
  */
 
 /**
@@ -92,20 +92,21 @@ export class Dialogue implements IDialogue {
     this.id = options.id || bot.id.counter('dialogue')
     this.state.dialogue = this // circular reference
     this.onTimeout = (override) => {
-      if (override != null) {
+      if (override) {
         this.onTimeout = override
       } else if (this.timeoutText) {
         this.state.respondVia(this.timeoutVia, this.timeoutText)
+          .catch((err) => bot.logger.error(`[dialogue] timeout response error: ${err.message}`))
       }
     }
   }
 
   open () {
-    
+    //
   }
 
   receive () {
-
+    //
   }
 
   /** Close dialogue (if open) and call callback to disengage participants. */
@@ -114,15 +115,15 @@ export class Dialogue implements IDialogue {
     if (typeof this.clock) this.stopClock()
     if (this.openPath) bot.logger.debug(`Dialogue ended ${this.state.matched ? '' : 'in'}complete`)
     else bot.logger.debug('Dialogue ended before paths added')
-    if (this.onClose) await Promise.resolve(this.onClose(this.state))
+    if (this.onClose) await Promise.resolve(this.onClose(this.state)).catch((err) => bot.logger.error(err))
     this.closed = true
     return true
   }
 
   /** Start (or restart) countdown for matching dialogue branches. */
-  async startClock () {
+  startClock () {
     this.stopClock()
-    this.clock = setTimeout(() => {
+    this.clock = setTimeout(async () => {
       bot.events.emit('timeout', this.state)
       try {
         this.onTimeout()
@@ -130,13 +131,13 @@ export class Dialogue implements IDialogue {
         bot.logger.error(`[dialogue] timeout error: ${err.message}`)
       }
       delete this.clock
-      this.close()
+      await this.close()
     }, this.timeout)
     return this.clock
   }
 
   /** Stop countdown for matching dialogue branches. */
-  async stopClock () {
+  stopClock () {
     if (this.clock) {
       clearTimeout(this.clock)
       delete this.clock

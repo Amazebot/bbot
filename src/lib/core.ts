@@ -116,7 +116,7 @@ export async function reset () {
   try {
     bot.adapters.unload()
     bot.middlewares.unload()
-    bot.global.reset()
+    bot.path.reset()
     bot.settings.resetConfig()
   } catch (err) {
     bot.logger.error('[core] failed to reset')

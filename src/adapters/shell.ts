@@ -91,11 +91,11 @@ export class Shell extends bBot.MessageAdapter {
       }
     })
     this.ui = new inquirer.ui.BottomBar()
-    this.bot.global.enter((b) => b.respond(
+    this.bot.path.join((b) => b.respond(
       `${this.user!.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.get('name')}`,
       `Type "exit" to exit any time.`
-    ), { id: 'shell-enter' })
-    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
+    ), { id: 'shell-join' })
+    this.bot.path.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       if (!this.debug) {
         this.logSetup()
