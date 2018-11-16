@@ -2,7 +2,6 @@ import * as bot from '..'
 
 /** Collection interface for path containing sets of branches. */
 export interface IPath {
-  scope?: string
   listen?: { [id: string]: bot.TextBranch | bot.CustomBranch }
   understand?: { [id: string]: bot.NaturalLanguageBranch | bot.CustomBranch }
   serve?: { [id: string]: bot.ServerBranch | bot.CustomBranch }
@@ -11,7 +10,6 @@ export interface IPath {
 
 /** Path contains collections of branches and methods to create each type. */
 export class Path implements IPath {
-  scope: string
   listen: { [id: string]: bot.TextBranch | bot.CustomBranch }
   understand: { [id: string]: bot.NaturalLanguageBranch | bot.CustomBranch }
   serve: { [id: string]: bot.ServerBranch | bot.CustomBranch }
@@ -19,7 +17,6 @@ export class Path implements IPath {
   clock?: NodeJS.Timer
 
   constructor (init: Path | IPath = {}) {
-    this.scope = (init.scope) ? init.scope : 'global'
     this.listen = (init.listen) ? Object.assign({}, init.listen) : {}
     this.understand = (init.understand) ? Object.assign({}, init.understand) : {}
     this.serve = (init.serve) ? Object.assign({}, init.serve) : {}

@@ -221,11 +221,10 @@ describe('[thought]', () => {
       delete bot.adapters.storage
     })
     describe('.start', () => {
-      it('receive records initiating sequence and path scope', async () => {
+      it('receive records initiating sequence', async () => {
         const b = await new bot.Thoughts(new bot.State({ message }))
         .start('receive')
         expect(b.sequence).to.equal('receive')
-        expect(b.scope).to.equal('global')
       })
       it('with path, processes branches', async () => {
         const path = new bot.Path()
@@ -236,19 +235,17 @@ describe('[thought]', () => {
           .start('receive')
         expect(listens).to.eql(['A', 'B'])
       })
-      it('receive records initiating sequence and path scope', async () => {
+      it('receive records initiating sequence', async () => {
         const b = await new bot.Thoughts(new bot.State({ message }))
           .start('respond')
         expect(b.sequence).to.equal('respond')
-        expect(b.scope).to.equal('global')
       })
-      it('with path, respond keeps initial sequence and scope', async () => {
-        const path = new bot.Path({ scope: 'testing' })
+      it('with path, respond keeps initial sequence', async () => {
+        const path = new bot.Path()
         path.custom(() => true, (b) => b.respond('test'))
         const b = await new bot.Thoughts(new bot.State({ message }), path)
           .start('receive')
         expect(b.sequence).to.equal('receive')
-        expect(b.scope).to.equal('testing')
         expect(b.processed).to.include.keys('respond')
       })
       it('with path, ignores global path', async () => {
@@ -548,10 +545,9 @@ describe('[thought]', () => {
           const b = await bot.receive(message)
           expect(b.processed).to.have.all.keys('hear', 'listen', 'respond', 'remember')
         })
-        it('records initiating sequence and path scope', async () => {
+        it('records initiating sequence and path', async () => {
           const b = await bot.receive(message)
           expect(b.sequence).to.equal('receive')
-          expect(b.scope).to.equal('global')
         })
         it('consecutive calls isolate thought and path', async () => {
           const listenCallback = sinon.spy()
@@ -579,11 +575,10 @@ describe('[thought]', () => {
           await bot.respond(b)
           expect(b.processed).to.have.all.keys('respond')
         })
-        it('records initiating sequence and path scope', async () => {
+        it('records initiating sequence and path', async () => {
           const b = new bot.State({ message })
           await bot.respond(b)
           expect(b.sequence).to.equal('respond')
-          expect(b.scope).to.equal('global')
         })
       })
       describe('.dispatch', () => {
@@ -592,11 +587,10 @@ describe('[thought]', () => {
           const b = await bot.dispatch(envelope)
           expect(b.processed).to.have.all.keys('respond', 'remember')
         })
-        it('records initiating sequence and path scope', async () => {
+        it('records initiating sequence and path', async () => {
           const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')
           const b = await bot.dispatch(envelope)
           expect(b.sequence).to.equal('dispatch')
-          expect(b.scope).to.equal('global')
         })
       })
       describe('.serve', () => {

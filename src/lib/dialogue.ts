@@ -146,7 +146,7 @@ export class Dialogue implements IDialogue {
 
   /** Create or return existing path for this dialogue path */
   get path () {
-    if (!this.openPath) this.openPath = new bot.Path({ scope: this.id })
+    if (!this.openPath) this.openPath = new bot.Path()
     this.startClock() // restart whenever path accessed (to add branches)
     return this.openPath
   }

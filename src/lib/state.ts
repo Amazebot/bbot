@@ -9,7 +9,6 @@ export interface IState {
   done?: boolean
   exit?: boolean
   sequence?: string
-  scope?: string
   branch?: bot.Branch
   dialogue?: bot.Dialogue
   server?: bot.IServerContext
@@ -53,7 +52,6 @@ export class State implements IState {
   dialogue?: bot.Dialogue
   envelopes?: bot.Envelope[]
   sequence?: string
-  scope?: string
   method?: string
   exit?: boolean
   [key: string]: any
@@ -109,7 +107,7 @@ export class State implements IState {
       : this.branches.find((branch) => branch.id === id)
   }
 
-  /** Provide path from current dialogue or global scope. */
+  /** Provide path from current dialogue or bot. */
   get path () {
     return (this.dialogue && !this.dialogue.closed)
       ? this.dialogue.path

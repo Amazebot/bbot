@@ -18,7 +18,6 @@ export interface IBit {
   catchCallback?: bot.IStateCallback,
   condition?: RegExp | string,
   intent?: string,
-  scope?: string,
   next?: string | string[],
   options?: string,
   [key: string]: any
@@ -51,9 +50,7 @@ export class Bit implements IBit {
   /** Index signature for looping through attributes */
   [key: string]: any
   /**
-   * Define a `condition` or `intent` that executes the bit, consecutively from
-   * a prior bit, or with a `scope` attribute to become a "global" entry point
-   * to a one time interaction or continuing scene.
+   * Define a `condition` or `intent` that executes the bit.
    *
    * A subsequent bit can even lead back to its own parent or any other bit,
    * creating a mesh of possible conversational pathways.

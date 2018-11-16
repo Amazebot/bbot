@@ -70,9 +70,9 @@ export class Thought implements IThought {
             ? ` against ${branchCount} branch${branchCount > 1 ? 'es' : ''}`
             : ``
           if (b.message) {
-            bot.logger.debug(`[thought] ${b.scope} ${name} processing incoming message ID ${b.message.id}${branchDetail}`)
+            bot.logger.debug(`[thought] ${name} processing incoming message ID ${b.message.id}${branchDetail}`)
           } else if (b.envelopes) {
-            bot.logger.debug(`[thought] ${b.scope} ${name} processing outgoing envelopes${branchDetail}`)
+            bot.logger.debug(`[thought] ${name} processing outgoing envelopes${branchDetail}`)
           }
           if (typeof branches === 'undefined') return middleware.execute(b, resolve).then(reject)
           for (let id in branches) {
@@ -230,7 +230,6 @@ export class Thoughts {
   async start (sequence: string) {
     if (!this.sequence[sequence]) throw new Error('[thought] invalid sequence')
     if (!this.b.sequence) this.b.sequence = sequence
-    if (!this.b.scope) this.b.scope = this.path.scope
     for (let process of this.sequence[sequence]) {
       await this.processes[process].process()
     }
