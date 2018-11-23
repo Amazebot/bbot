@@ -137,12 +137,7 @@ export class State implements IState {
 
   /** Use property getting for match state (only matched branches are kept). */
   get matched () {
-    return (
-      this.branches &&
-      this.branches.filter((branch) => {
-        return !(branch instanceof bot.CatchAllBranch)
-      }).length
-    ) ? true : false
+    return (this.branches && this.branches.length) ? true : false
   }
 
   /** Check for existing envelope without response. */
