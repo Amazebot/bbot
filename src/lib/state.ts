@@ -107,11 +107,12 @@ export class State implements IState {
       : this.branches.find((branch) => branch.id === id)
   }
 
-  /** Provide path from current dialogue or bot. */
+  /** Provide path from current or new dialogue. */
   get path () {
-    return (this.dialogue && !this.dialogue.closed)
-      ? this.dialogue.path
-      : bot.path
+    if (!this.dialogue || this.dialogue.closed) {
+      this.dialogue = new bot.Dialogue(this)
+    }
+    return this.dialogue.path
   }
 
   /** Provide the last matched branch as an property. */

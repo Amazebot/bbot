@@ -23,6 +23,15 @@ export class Path implements IPath {
     this.act = (init.act) ? Object.assign({}, init.act) : {}
   }
 
+  /** Check if any branches have been added to the path. */
+  hasBranches () {
+    if (Object.keys(this.listen).length) return true
+    if (Object.keys(this.understand).length) return true
+    if (Object.keys(this.serve).length) return true
+    if (Object.keys(this.act).length) return true
+    return false
+  }
+
   /** Remove all but forced branches from collection, return remaining size. */
   forced (collection: 'listen' | 'understand' | 'act') {
     for (let id in this[collection]) {
@@ -163,37 +172,6 @@ export class Path implements IPath {
       new bot.ServerBranch(criteria, action, options),
       'serve'
     )
-  }
-
-  /**
-   * Trigger a branch callback when a timeout occurs. Re-uses current state.
-   * The timeout is stopped when any input received, using a custom the matcher
-   * that always returns false so it doesn't stop other branches from matching.
-   * If an action is not provided, the default action is to respond with the
-   * configured `path-timeout-text`. Only one timeout can be applied to a path.
-   * @param ms Milliseconds to wait, overriding config `path-timeout` value
-   */
-  timeout (
-    state: bot.State,
-    action?: bot.IStateCallback | string,
-    ms?: number
-  ) {
-    if (!ms) ms = bot.settings.get('path-timeout')
-    if (ms === 0) return
-    if (!action) action = (b) => b.respond(bot.settings.get('path-timeout-text'))
-    const matcher = this.stopTimeout.bind(this)
-    const branch = new bot.CustomBranch(matcher, action, { force: true })
-    this.clock = setTimeout(() => branch.callback(state), ms!)
-    return this.add(branch, 'listen')
-  }
-
-  /** Stop and remove active timeout on the path (returns false for matcher) */
-  stopTimeout () {
-    if (this.clock) {
-      clearTimeout(this.clock)
-      delete this.clock
-    }
-    return false
   }
 }
 
