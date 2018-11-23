@@ -20,19 +20,20 @@ describe('[adapter-shell]', () => {
       expect(shell).to.be.instanceof(bot.Adapter)
     })
     it('accepts changes in bot settings before startup', async () => {
-      bot.settings.set('name', 'shelby')
       const shell = shellAdapter.use(bot)
-      shell.debug = true
+      shell.bot.settings.set('name', 'shelby')
+      bot.adapters.message = shell
       await bot.start()
-      await new Promise((resolve) => bot.events.on('shell-started', resolve))
+      expect(bot.settings.name).to.equal('shelby')
       expect(shell.bot.settings.name).to.equal('shelby')
     })
     it('accepts changes in bot settings after startup', async () => {
       const shell = shellAdapter.use(bot)
-      shell.debug = true
-      bot.settings.name = 'not-shelby'
+      bot.adapters.message = shell
+      shell.bot.settings.name = 'not-shelby'
       await bot.start()
-      bot.settings.name = 'shelby'
+      shell.bot.settings.name = 'shelby'
+      expect(bot.settings.name).to.equal('shelby')
       expect(shell.bot.settings.name).to.equal('shelby')
     })
   })
