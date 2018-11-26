@@ -103,7 +103,6 @@ export class Shell extends bBot.MessageAdapter {
         await this.bot.receive(new this.bot.EnterMessage(this.user!))
         await this.render()
       }
-      this.bot.events.emit('shell-started')
     })
   }
 
