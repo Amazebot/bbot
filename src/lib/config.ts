@@ -114,6 +114,11 @@ const initOptions: { [key: string]: yargs.Options } = {
     type: 'string',
     describe: 'What to send when timeout reached, set null to not send',
     default: 'Sorry, the time limit for a response was reached. Please start again.'
+  },
+  'dialogue-timeout-method': {
+    type: 'string',
+    describe: 'The envelope method to use when dispatching message on timeout',
+    default: 'send'
   }
 }
 

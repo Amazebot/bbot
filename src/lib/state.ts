@@ -10,7 +10,7 @@ export interface IState {
   exit?: boolean
   sequence?: string
   branch?: bot.Branch
-  dialogue?: bot.Dialogue
+  dialogue?: bot.dialogue.Dialogue
   server?: bot.IServerContext
   [key: string]: any
 }
@@ -49,7 +49,7 @@ export class State implements IState {
   processed: { [key: string]: number } = {}
   message: bot.Message = new bot.NullMessage()
   branches?: bot.Branch[]
-  dialogue?: bot.Dialogue
+  dialogue?: bot.dialogue.Dialogue
   envelopes?: bot.Envelope[]
   sequence?: string
   method?: string
@@ -109,8 +109,9 @@ export class State implements IState {
 
   /** Provide path from current or new dialogue. */
   get path () {
-    if (!this.dialogue || this.dialogue.closed) {
-      this.dialogue = new bot.Dialogue(this)
+    if (!this.dialogue) {
+      this.dialogue = bot.dialogue.create()
+      this.dialogue.open(this)
     }
     return this.dialogue.path
   }

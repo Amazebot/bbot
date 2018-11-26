@@ -241,25 +241,25 @@ export class Thoughts {
  * Initiate sequence of thought processes for an incoming message.
  * Branch callbacks may also respond. Final state is remembered.
  *
- * If audience is engaged in dialogue, use the dialogue path instead of default
- * "global" path. The dialogue current path is then progressed to a clean path,
+ * If audience is engaged in dialogue, use the isolated dialogue path instead of
+ * default "global" path. The dialogue path is then progressed to a clean path,
  * to allow adding a new set of branches upon matching the current ones.
- * If no branches matched, no new branches could be added to the new path, so
+ * If no branches matched, no new branches would be added to the new path, so
  * we revert to the previous path (the one that was just processed). If branches
  * matched, but no additional branches added, close the dialogue.
  */
 export async function receive (message: bot.Message, path?: bot.Path) {
-  const state = new bot.State({ message })
-  const dialogue = bot.dialogue.engaged(state)
-  if (dialogue && !path) path = dialogue.progressPath()
-  const thought = new Thoughts(state, path)
   bot.logger.info(`[thought] receive message ID ${message.id}`)
-  const final = await thought.start('receive')
-  if (dialogue && !path) {
-    if (!final.matched) dialogue.revertPath()
+  const startingState = new bot.State({ message })
+  const dialogue = bot.dialogue.engaged(startingState)
+  if (dialogue && !path) path = dialogue.progressPath()
+  const thought = new Thoughts(startingState, path)
+  const finalState = await thought.start('receive')
+  if (dialogue) {
+    if (!finalState.matched) dialogue.revertPath()
     else if (dialogue.path.hasBranches()) dialogue.close()
   }
-  return final
+  return finalState
 }
 
 /**
