@@ -36,42 +36,46 @@ describe('[dialogue]', () => {
       expect(dialogue.timeoutMethod).to.equal('test')
       expect(dialogue.audience).to.equal('room')
     })
-    it('default responds to user in state', () => {
+    it('assigns a default onTimeout method', () => {
+      const dialogue = new bot.dialogue.Dialogue()
+      expect(typeof dialogue.onTimeout).to.equal('function')
+    })
+    it('default onTimeout responds to user in state', () => {
       const state = sinon.createStubInstance(bot.State)
       state.respondVia.resolves()
       const dialogue = new bot.dialogue.Dialogue()
-      dialogue.onTimeout(state)
+      dialogue.onTimeout!(state)
       sinon.assert.calledOnce(state.respondVia)
     })
   })
   describe('.open', () => {
     beforeEach(() => bot.dialogue.reset())
-    it('calls .onOpen with state', () => {
+    it('calls .onOpen with state', async () => {
       const dialogue = new bot.dialogue.Dialogue()
       dialogue.onOpen = sinon.spy()
-      dialogue.open(new bot.State({ message }))
+      await dialogue.open(new bot.State({ message }))
       sinon.assert.calledOnce(dialogue.onOpen as sinon.SinonSpy)
     })
     context('`direct` audience', () => {
-      it('adds dialogue to engaged under user and room ID', () => {
+      it('adds dialogue to engaged under user and room ID', async () => {
         const dialogue = new bot.dialogue.Dialogue({ audience: 'direct' })
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         expect(bot.dialogue.dialogues).to.have.property(
           `${user.id}_${room.id}`, dialogue
         )
       })
     })
     context('`user` audience', () => {
-      it('adds dialogue to engaged under user ID', () => {
+      it('adds dialogue to engaged under user ID', async () => {
         const dialogue = new bot.dialogue.Dialogue({ audience: 'user' })
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         expect(bot.dialogue.dialogues).to.have.property(user.id, dialogue)
       })
     })
     context('`room` audience', () => {
-      it('adds dialogue to engaged under room ID', () => {
+      it('adds dialogue to engaged under room ID', async () => {
         const dialogue = new bot.dialogue.Dialogue({ audience: 'room' })
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         expect(bot.dialogue.dialogues).to.have.property(room.id, dialogue)
       })
     })
@@ -81,11 +85,11 @@ describe('[dialogue]', () => {
       const dialogue = new bot.dialogue.Dialogue()
       expect(await dialogue.close()).to.equal(false)
     })
-    it('calls .onClose ', () => {
+    it('calls .onClose ', async () => {
       const dialogue = new bot.dialogue.Dialogue()
-      dialogue.open(new bot.State({ message }))
+      await dialogue.open(new bot.State({ message }))
       dialogue.onClose = sinon.spy()
-      dialogue.close()
+      await dialogue.close()
       sinon.assert.calledOnce(dialogue.onClose as sinon.SinonSpy)
     })
   })
@@ -94,14 +98,14 @@ describe('[dialogue]', () => {
       const dialogue = new bot.dialogue.Dialogue()
       expect(() => dialogue.startClock()).to.throw()
     })
-    it('returns undefined if timeout == 0', () => {
+    it('returns undefined if timeout == 0', async () => {
       const dialogue = new bot.dialogue.Dialogue({ timeout: 0 })
-      dialogue.open(new bot.State({ message }))
+      await dialogue.open(new bot.State({ message }))
       expect(typeof dialogue.startClock()).to.equal('undefined')
     })
-    it('creates and returns timeout if > 0', () => {
+    it('creates and returns timeout if > 0', async () => {
       const dialogue = new bot.dialogue.Dialogue({ timeout: 100 })
-      dialogue.open(new bot.State({ message }))
+      await dialogue.open(new bot.State({ message }))
       const clock = dialogue.startClock()
       expect(dialogue.clock).to.be.instanceOf(Timeout)
       expect(clock).to.be.instanceOf(Timeout)
@@ -109,10 +113,10 @@ describe('[dialogue]', () => {
     context('(with mock timers)', () => {
       beforeEach(() => clock = sinon.useFakeTimers())
       afterEach(() => clock.restore())
-      it('calls .onTimeout with state on timeout', () => {
+      it('calls .onTimeout with state on timeout', async () => {
         const dialogue = new bot.dialogue.Dialogue({ timeout: 100 })
         const state = new bot.State({ message })
-        dialogue.open(state)
+        await dialogue.open(state)
         dialogue.onTimeout = sinon.spy()
         dialogue.startClock()
         clock.tick(150)
@@ -123,7 +127,7 @@ describe('[dialogue]', () => {
       })
       it('calls .close after async .onTimeout', async () => {
         const dialogue = new bot.dialogue.Dialogue({ timeout: 100 })
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         dialogue.onTimeout = () => delay(100)
         dialogue.close = sinon.spy()
         dialogue.startClock()
@@ -133,17 +137,17 @@ describe('[dialogue]', () => {
         await setImmediatePromise() // wait for start of next event loop
         expect(sinon.assert.calledOnce(dialogue.close as sinon.SinonSpy))
       })
-      it('accepts custom timeout', () => {
+      it('accepts custom timeout', async () => {
         const dialogue = new bot.dialogue.Dialogue({ timeout: 150 })
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         dialogue.onTimeout = sinon.spy()
         dialogue.startClock(50)
         clock.tick(100)
         expect(sinon.assert.calledOnce(dialogue.onTimeout as sinon.SinonSpy))
       })
-      it('stops existing timers', () => {
+      it('stops existing timers', async () => {
         const dialogue = new bot.dialogue.Dialogue()
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         dialogue.onTimeout = sinon.spy()
         dialogue.startClock(50)
         dialogue.startClock(150)
@@ -153,16 +157,16 @@ describe('[dialogue]', () => {
         clock.restore()
         expect(sinon.assert.calledOnce(dialogue.onTimeout as sinon.SinonSpy))
       })
-      it('removes timer after timeout', () => {
+      it('removes timer after timeout', async () => {
         const dialogue = new bot.dialogue.Dialogue()
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         dialogue.startClock(50)
         clock.tick(100)
         expect(typeof dialogue.clock).to.equal('undefined')
       })
-      it('timer can be restarted after timeout', () => {
+      it('timer can be restarted after timeout', async () => {
         const dialogue = new bot.dialogue.Dialogue()
-        dialogue.open(new bot.State({ message }))
+        await dialogue.open(new bot.State({ message }))
         dialogue.onTimeout = sinon.spy()
         dialogue.startClock(50)
         clock.tick(100)

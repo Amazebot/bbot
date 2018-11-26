@@ -13,13 +13,14 @@ export interface IUser {
 /** A user in the chat. */
 export class User implements IUser {
   id: string = ''
-  room: room.IRoom = room.blank()
+  room: room.Room = room.blank()
   name?: string
   [key: string]: any
 
   /** Create a User */
   constructor (meta: IUser = {}) {
     Object.keys(meta).forEach((key: string) => this[key] = meta[key])
+    if (!(this.room instanceof room.Room)) this.room = room.create(this.room)
     if (!this.id || this.id === '') this.id = id.counter('user')
     if (!this.name) this.name = this.id
   }

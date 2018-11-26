@@ -257,7 +257,7 @@ export async function receive (message: bot.Message, path?: bot.Path) {
   const finalState = await thought.start('receive')
   if (dialogue) {
     if (!finalState.matched) dialogue.revertPath()
-    else if (dialogue.path.hasBranches()) dialogue.close()
+    else if (dialogue.path.hasBranches()) await dialogue.close()
   }
   return finalState
 }

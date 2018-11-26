@@ -57,6 +57,7 @@ describe('[core]', () => {
     })
   })
   describe('.getStatus', () => {
+    beforeEach(() => bot.reset())
     it('returns waiting before start', () => {
       expect(bot.getStatus()).to.equal('waiting')
     })

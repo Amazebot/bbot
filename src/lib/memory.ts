@@ -126,9 +126,9 @@ export const memory = new Memory()
  * if given meta and ID not found, creates new user.
  */
 export function userById (id: string, meta?: any) {
-  let user: bot.User = memory.users[id]
-  if (!user) user = new bot.User(Object.assign({}, { id }, meta))
-  if (meta) for (let key of Object.keys(meta)) user[key] = meta[key]
+  let saved: bot.User = memory.users[id]
+  const updated = Object.assign({}, { id }, saved, meta)
+  const user = new bot.User(updated)
   memory.users[id] = user
   return user
 }

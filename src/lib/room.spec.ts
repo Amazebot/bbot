@@ -1,7 +1,6 @@
 import 'mocha'
 import { room } from '..'
 import { expect } from 'chai'
-import { isatty } from 'tty';
 
 describe('[room]', () => {
   describe('Room', () => {
@@ -37,9 +36,14 @@ describe('[room]', () => {
   })
   describe('.random', () => {
     it('creates a room instance with random ID', () => {
-      const testRoomA = new room.Room({ id: 'TEST_ID' })
-      const testRoomB = room.create({ id: 'TEST_ID' })
-      expect(testRoomA).to.eql(testRoomB)
+      const testRoom = room.random()
+      expect(testRoom.id).to.have.lengthOf(32)
+    })
+  })
+  describe('.blank', () => {
+    it('creates a room instance with generic ID', () => {
+      const testRoom = room.blank()
+      expect(testRoom.id).to.eql('room')
     })
   })
 })

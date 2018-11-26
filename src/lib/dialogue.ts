@@ -122,7 +122,6 @@ export namespace dialogue {
     /** Open dialogue and call optional callback (e.g. send opening message) */
     async open (state: bot.State) {
       this.state = state
-      this.state.dialogue = this // circular reference
       if (this.onOpen) {
         await Promise.resolve(this.onOpen(this.state))
           .catch((err) => {

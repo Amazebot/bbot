@@ -109,10 +109,12 @@ export class State implements IState {
 
   /** Provide path from current or new dialogue. */
   get path () {
-    if (!this.dialogue) {
-      this.dialogue = bot.dialogue.create()
-      this.dialogue.open(this)
-    }
+    if (!this.dialogue) this.dialogue = bot.dialogue.create()
+    this.dialogue.open(this)
+      .catch((err) => {
+        bot.logger.error(`Error opening dialogue from state: ${err.message}`)
+        throw err
+      })
     return this.dialogue.path
   }
 

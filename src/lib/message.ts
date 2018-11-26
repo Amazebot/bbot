@@ -106,9 +106,12 @@ export class ServerMessage extends EventMessage {
 
   /** Create a server message for a user. */
   constructor (options: IServerMessageOptions) {
-    super(bot.userById(options.userId, {
-      room: (options.roomId) ? { id: options.roomId } : {}
-    }), options.id)
+    super(
+      bot.userById(options.userId, {
+        room: (options.roomId) ? { room: { id: options.roomId } } : undefined
+      }),
+      options.id
+    )
     this.data = options.data || {}
     bot.logger.debug(`[message] server request keys: ${Object.keys(this.data).join(', ')}`)
   }
