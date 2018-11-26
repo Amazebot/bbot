@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '..'
 
-const user = new bot.User({ id: 'TEST_ID', name: 'testy' })
+const user = bot.user.create({ id: 'TEST_ID', name: 'testy' })
 const middleware = new bot.Middleware('mock')
 
 describe('[path]', () => {

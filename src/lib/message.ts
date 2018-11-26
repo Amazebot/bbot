@@ -11,7 +11,7 @@ export abstract class Message {
    * @param id   A unique ID for the message
    */
   constructor (user: bot.IUser, public id: string = bot.id.random()) {
-    this.user = (user instanceof bot.User) ? user : new bot.User(user)
+    this.user = (user instanceof bot.User) ? user : bot.user.create(user)
   }
 
   /** String representation of the message. */
@@ -26,7 +26,7 @@ export abstract class Message {
 /** An empty message for outgoings without original input */
 export class NullMessage extends Message {
   constructor () {
-    super(new bot.User({ id: 'null-user' }))
+    super(bot.user.create({ id: 'null-user' }))
   }
   toString () {
     return ''
@@ -107,7 +107,7 @@ export class ServerMessage extends EventMessage {
   /** Create a server message for a user. */
   constructor (options: IServerMessageOptions) {
     super(
-      bot.userById(options.userId, {
+      bot.user.byId(options.userId, {
         room: (options.roomId) ? { room: { id: options.roomId } } : undefined
       }),
       options.id

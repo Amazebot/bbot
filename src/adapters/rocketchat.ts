@@ -59,7 +59,7 @@ export class Rocketchat extends bBot.MessageAdapter {
     this.bot.logger.info('[rocketchat] filters passed, will hear message')
     const isDM = (meta.roomType === 'd')
     const isLC = (meta.roomType === 'l')
-    const user = this.bot.userById(message.u._id, {
+    const user = this.bot.user.byId(message.u._id, {
       fullName: message.u.name,
       name: message.u.username,
       room: {
@@ -204,7 +204,7 @@ export class Rocketchat extends bBot.MessageAdapter {
         if (!envelope.user) throw new Error('Reply without user')
         if (!envelope.room || !envelope.room.id) throw new Error('Reply without room ID')
         if (envelope.room.id.indexOf(envelope.user.id) === -1 && envelope.strings) {
-          envelope.strings = envelope.strings.map((s) => `@${envelope.user!.username} ${s}`)
+          envelope.strings = envelope.strings.map((s) => `@${envelope.user.username} ${s}`)
         }
         for (let message of this.parseEnvelope(envelope)) {
           await this.driver.sendToRoomId(message, envelope.room.id)

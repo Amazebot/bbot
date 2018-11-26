@@ -3,28 +3,32 @@ import * as bot from '..'
 /** Magic function to un-weird weird things. */
 export const deepClone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
-/** Save tracking vars */
-export const intervals: {
-  save: {
-    timer?: NodeJS.Timer,
-    value: number
-  }
-} = { save: { value: 5000 } }
-
 /** Internal storage for data, can hold any key/value collection. */
 export class Memory {
   /** Index signature allows any key value pair to be added to memory. */
   [key: string]: any
 
   /** All known users assigned to their ID as key. */
-  users: { [id: string]: bot.User }
+  users: { [id: string]: bot.user.User }
+
+  /** All known rooms assigned to their ID as key. */
+  rooms: { [id: string]: bot.room.Room }
 
   /** Any misc data added without specifying collection. */
   private: { [key: string]: any }
 
+  /** Save tracking vars */
+  intervals: {
+    save: {
+      timer?: NodeJS.Timer,
+      value: number
+    }
+  } = { save: { value: 5000 } }
+
   /** Create a memory instance for isolating users, key/value pairs. */
   constructor () {
     this.users = {}
+    this.rooms = {}
     this.private = {}
   }
 
@@ -37,6 +41,7 @@ export class Memory {
   clear () {
     for (let key of Object.keys(memory)) delete memory[key]
     this.users = {}
+    this.rooms = {}
     this.private = {}
   }
 
@@ -62,11 +67,11 @@ export class Memory {
 
   /** Save memory every x milliseconds */
   setSaveInterval (newInterval?: number) {
-    if (newInterval) intervals.save.value = newInterval
+    if (newInterval) this.intervals.save.value = newInterval
     if (!bot.adapters.storage || !bot.settings.get('autoSave')) return
-    intervals.save.timer = global.setInterval(
+    this.intervals.save.timer = global.setInterval(
       () => this.save(),
-      intervals.save.value
+      this.intervals.save.value
     )
   }
 
@@ -83,7 +88,9 @@ export class Memory {
 
   /** Stop saving data */
   clearSaveInterval () {
-    if (intervals.save.timer) global.clearInterval(intervals.save.timer)
+    if (this.intervals.save.timer) {
+      global.clearInterval(this.intervals.save.timer)
+    }
   }
 
   /**
@@ -105,7 +112,7 @@ export class Memory {
     await this.load()
     this.setSaveInterval()
     if (bot.settings.get('auto-save')) {
-      const sec = (intervals.save.value / 1000).toFixed(2)
+      const sec = (this.intervals.save.value / 1000).toFixed(2)
       bot.logger.info(`[memory] auto save is enabled, every ${sec} seconds.`)
     }
   }
@@ -119,33 +126,3 @@ export class Memory {
 }
 
 export const memory = new Memory()
-
-/**
- * Get a user by ID.
- * If found and given meta, updates and returns updated user.
- * if given meta and ID not found, creates new user.
- */
-export function userById (id: string, meta?: any) {
-  let saved: bot.User = memory.users[id]
-  const updated = Object.assign({}, { id }, saved, meta)
-  const user = new bot.User(updated)
-  memory.users[id] = user
-  return user
-}
-
-/** Get users by their name. */
-export function usersByName (name: string) {
-  let users: bot.User[] = []
-  for (let id in memory.users) {
-    let user: bot.User = memory.users[id]
-    if (user.name && user.name.toLowerCase() === name.toLowerCase()) {
-      users.push(user)
-    }
-  }
-  return users
-}
-
-/** Get all users in memory */
-export function users () {
-  return memory.users
-}

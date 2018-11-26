@@ -8,7 +8,7 @@ let message: bot.TextMessage
 
 describe('[middleware]', () => {
   before(() => {
-    message = new bot.TextMessage(new bot.User({ id: 'test-user' }), 'foo')
+    message = new bot.TextMessage(bot.user.create({ id: 'test-user' }), 'foo')
   })
   beforeEach(() => bot.middlewares.unload())
   describe('.register', () => {

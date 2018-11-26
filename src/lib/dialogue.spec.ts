@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import { promisify } from 'util'
 import * as bot from '..'
 const room = bot.room.create({ id: 'testing' })
-const user = new bot.User({ id: 'tester', room })
+const user = bot.user.create({ id: 'tester', room })
 const message = new bot.TextMessage(user, '_')
 let clock: sinon.SinonFakeTimers
 

@@ -34,7 +34,7 @@ describe('[store]', () => {
         stub.resetHistory()
       })
       it('removes bot from kept states', async () => {
-        let message = new bot.TextMessage(new bot.User(), 'testing')
+        let message = new bot.TextMessage(bot.user.create(), 'testing')
         let b = new bot.State({ message: message })
         let stub = (mockAdapter.keep as sinon.SinonStub)
         await bot.store.keep('test-state', b)

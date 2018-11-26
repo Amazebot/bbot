@@ -92,7 +92,7 @@ export class Shell extends bBot.MessageAdapter {
     })
     this.ui = new inquirer.ui.BottomBar()
     this.bot.path.join((b) => b.respond(
-      `${this.user!.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.get('name')}`,
+      `${this.user.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.get('name')}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-join' })
     this.bot.path.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
@@ -100,7 +100,7 @@ export class Shell extends bBot.MessageAdapter {
       if (!this.debug) {
         this.logSetup()
         await this.roomSetup()
-        await this.bot.receive(new this.bot.EnterMessage(this.user!))
+        await this.bot.receive(new this.bot.EnterMessage(this.user))
         await this.render()
       }
     })
@@ -148,8 +148,8 @@ export class Shell extends bBot.MessageAdapter {
       name: 'message',
       message: chalk.magenta(`#${this.room!.name}`) + chalk.cyan(' ➤')
     })
-    this.messages.push([this.user!.name!, input.message])
-    await this.bot.receive(new this.bot.TextMessage(this.user!, input.message))
+    this.messages.push([this.user.name, input.message])
+    await this.bot.receive(new this.bot.TextMessage(this.user, input.message))
     return this.render()
   }
 

@@ -34,7 +34,7 @@ class MockStorage extends bot.StorageAdapter {
   async lose () { return }
 }
 const message = new bot.TextMessage(
-  new bot.User({ id: 'test-user' }),
+  bot.user.create({ id: 'test-user' }),
   `Where there a foo, there's a bar. And with you, there's always a bar.`
 )
 describe('[thought]', () => {
@@ -381,7 +381,7 @@ describe('[thought]', () => {
       it('does not understand when message text is empty', async () => {
         bot.adapters.nlu!.process = sinon.spy()
         bot.path.customNLU(() => true, () => null)
-        const empty = new bot.TextMessage(new bot.User(), '                   ')
+        const empty = new bot.TextMessage(bot.user.create(), '                   ')
         const b = new bot.State({ message: empty })
         await new bot.Thoughts(b).start('receive')
         sinon.assert.notCalled((bot.adapters.nlu!.process as sinon.SinonSpy))
@@ -404,7 +404,7 @@ describe('[thought]', () => {
       })
       it('does not understand non-text messages', async () => {
         bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message: new bot.EnterMessage(new bot.User()) })
+        const b = new bot.State({ message: new bot.EnterMessage(bot.user.create()) })
         await new bot.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
@@ -559,8 +559,8 @@ describe('[thought]', () => {
             id: 'receive-custom-nlu'
           })
           bot.settings.set('nlu-min-length', 2)
-          const messageA = new bot.TextMessage(new bot.User(), 'foo')
-          const messageB = new bot.TextMessage(new bot.User(), 'bar')
+          const messageA = new bot.TextMessage(bot.user.create(), 'foo')
+          const messageB = new bot.TextMessage(bot.user.create(), 'bar')
           await bot.receive(messageA)
           await bot.receive(messageB)
           sinon.assert.calledOnce(listenCallback)
@@ -583,12 +583,12 @@ describe('[thought]', () => {
       })
       describe('.dispatch', () => {
         it('timestamps all actioned processes', async () => {
-          const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')
+          const envelope = new bot.Envelope({ user: bot.user.create() }).write('hello')
           const b = await bot.dispatch(envelope)
           expect(b.processed).to.have.all.keys('respond', 'remember')
         })
         it('records initiating sequence and path', async () => {
-          const envelope = new bot.Envelope({ user: new bot.User() }).write('hello')
+          const envelope = new bot.Envelope({ user: bot.user.create() }).write('hello')
           const b = await bot.dispatch(envelope)
           expect(b.sequence).to.equal('dispatch')
         })

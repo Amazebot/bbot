@@ -25,7 +25,7 @@ describe('[E2E]', () => {
     bot.middleware.hear((b, _, done) => {
       return b.respond('test').then(() => done())
     })
-    await bot.receive(new bot.TextMessage(new bot.User(), ''))
+    await bot.receive(new bot.TextMessage(bot.user.create(), ''))
     sinon.assert.calledOnce(mocks.dispatch)
   })
   it('captures input matching conditions', async () => {
@@ -36,7 +36,7 @@ describe('[E2E]', () => {
     bot.path.text({ after: 'call me' }, (b) => {
       captured.push(b.conditions.captured)
     }, { force: true })
-    await bot.receive(new bot.TextMessage(new bot.User(), 'Call me bb, please'))
+    await bot.receive(new bot.TextMessage(bot.user.create(), 'Call me bb, please'))
     expect(captured).to.eql(['bb', 'bb, please'])
   })
   it('responds with custom attachment attributes', async () => {
@@ -51,7 +51,7 @@ describe('[E2E]', () => {
       }]
     }
     bot.path.text(/attachment/i, (b) => b.respond(attachment))
-    await bot.receive(new bot.TextMessage(new bot.User(), 'Do attachment'))
+    await bot.receive(new bot.TextMessage(bot.user.create(), 'Do attachment'))
     sinon.assert.calledWithMatch(mocks.dispatch, { _payload: {
       attachments: [attachment]
     } })

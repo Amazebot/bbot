@@ -209,7 +209,7 @@ export class Thoughts {
 
     // Don't remember states with unmatched messages
     this.processes.remember.validate = async () => {
-      if (b.matched) bot.userById(b.message.user.id, b.message.user)
+      if (b.matched) bot.user.byId(b.message.user.id, b.message.user)
       if (!bot.adapters.storage) {
         bot.logger.debug(`[thought] skip remember, no storage adapter`)
       } else if (!b.matched && !b.dispatchedEnvelope()) {

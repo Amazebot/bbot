@@ -153,7 +153,7 @@ export class State implements IState {
   /** Access user from memory matching message details */
   get user () {
     const user = this.message.user
-    return bot.userById(user.id, user)
+    return bot.user.byId(user.id, user)
   }
 
   /** Return the last dispatched envelope. */

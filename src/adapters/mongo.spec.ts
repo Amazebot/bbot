@@ -9,8 +9,8 @@ const testMongo = 'mongodb://127.0.0.1:27017/' + testDB
 const testCollection = 'brain-testing'
 const testMemory = {
   users: {
-    'test-user-1': new bot.User({ id: 'test-user-1' }),
-    'test-user-2': new bot.User({ id: 'test-user-2' })
+    'test-user-1': bot.user.create({ id: 'test-user-1' }),
+    'test-user-2': bot.user.create({ id: 'test-user-2' })
   },
   private: {
     'last-respond-time': Date.parse('01 Jun 2018 01:30:00 GMT'),
@@ -131,7 +131,7 @@ describe('[adapter-mongo]', () => {
       expect(tests.data).to.eql(testStore)
     })
     it('keeps matches intact for state branches', async () => {
-      const b = new bot.State({ message: new bot.TextMessage(new bot.User(), '_') })
+      const b = new bot.State({ message: new bot.TextMessage(bot.user.create(), '_') })
       const branches = [
         new bot.CustomBranch(() => 1, () => 1, { id: 'A', force: true }),
         new bot.CustomBranch(() => 2, () => 2, { id: 'B', force: true })

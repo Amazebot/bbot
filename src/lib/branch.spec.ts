@@ -3,7 +3,7 @@ import sinon from 'sinon'
 import { expect, assert } from 'chai'
 import * as bot from '..'
 
-const user = new bot.User({ id: 'TEST_ID', name: 'testy' })
+const user = bot.user.create({ id: 'TEST_ID', name: 'testy' })
 const message = new bot.TextMessage(user, 'test')
 const middleware = new bot.Middleware('mock')
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

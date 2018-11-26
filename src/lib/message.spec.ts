@@ -6,7 +6,7 @@ import * as message from './message'
 let mockUser: bot.User
 
 describe('[message]', () => {
-  before(() => mockUser = new bot.User({ id: 'TEST_ID', name: 'testy' }))
+  before(() => mockUser = bot.user.create({ id: 'TEST_ID', name: 'testy' }))
   describe('Message', () => {
     it('allows extending', () => {
       class MockMessage extends message.Message {
@@ -88,7 +88,7 @@ describe('[message]', () => {
   })
   describe('ServerMessage', () => {
     it('constructor gets user from ID', () => {
-      bot.userById(mockUser.id, mockUser) // make user known
+      bot.user.byId(mockUser.id, mockUser) // make user known
       const requestMessage = new message.ServerMessage({
         userId: mockUser.id,
         data: { foo: 'bar' }

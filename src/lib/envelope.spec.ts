@@ -11,7 +11,7 @@ const testRoomDM = {
   id: '222',
   name: 'tester-direct'
 }
-const testUser = new bot.User({ name: 'tester', room: testRoomDM })
+const testUser = bot.user.create({ name: 'tester', room: testRoomDM })
 
 describe('[envelope]', () => {
   describe('Envelope', () => {
