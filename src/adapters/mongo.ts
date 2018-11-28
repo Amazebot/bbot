@@ -1,4 +1,4 @@
-import * as bBot from '..'
+import * as bot from '..'
 import mongoose from 'mongoose'
 
 export interface IStore extends mongoose.Document {
@@ -27,7 +27,7 @@ export function getModel (collection: string) {
  * Long-term data is stored in sub-collections alongside memory, using either
  * a key for key/value pairs, or a key-less array for serial data.
  */
-export class Mongo extends bBot.StorageAdapter {
+export class Mongo extends bot.adapter.Storage {
   name = 'mongo-storage-adapter'
   config = {
     useNewUrlParser: true,
@@ -40,27 +40,15 @@ export class Mongo extends bBot.StorageAdapter {
   model: mongoose.Model<mongoose.Document>
   store?: mongoose.Mongoose
 
-  /** Singleton pattern instance */
-  private static instance: Mongo
-
-  /** Singleton instance init */
-  static getInstance (bot: typeof bBot) {
-    if (!Mongo.instance) Mongo.instance = new Mongo(bot)
-    return Mongo.instance
-  }
-
-  /**
-   * Create adapter instance with ref to bot instance.
-   * Prevent direct access to constructor for singleton adapter
-   */
-  constructor (bot: typeof bBot) {
+  /** Create mongo instance, initialise settings and model. */
+  constructor (bot: bot.Bot) {
     super(bot)
     this.bot.settings.extend({
       'db-url': {
         type: 'string',
         alias: 'mongodb-url',
         description: 'Storage adapter address for mongo database',
-        default: `mongodb://127.0.0.1:27017/${bot.settings.name}-brain`
+        default: `mongodb://127.0.0.1:27017/${bot.settings.get('name')}-brain`
       },
       'db-collection': {
         type: 'string',
@@ -74,7 +62,7 @@ export class Mongo extends bBot.StorageAdapter {
     this.bot.logger.debug(`[mongo] storing to '${this.bot.settings.get('db-collection')}' collection at ${this.bot.settings.get('db-url')}`)
   }
 
-  /** Connect to Mongo */
+  /** Connect to Mongo. */
   async start () {
     this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.bot.settings.get('db-url')}`)
     this.store = await mongoose.connect(this.bot.settings.get('db-url'), this.config)
@@ -88,7 +76,7 @@ export class Mongo extends bBot.StorageAdapter {
     return
   }
 
-  /** Put memory data in documents by sub-collection */
+  /** Put memory data in documents by sub-collection. */
   async saveMemory (data: any) {
     for (let sub in data) {
       const query = { sub, type: 'memory' }
@@ -99,7 +87,7 @@ export class Mongo extends bBot.StorageAdapter {
     return
   }
 
-  /** Get all the memory document data */
+  /** Get all the memory document data. */
   async loadMemory () {
     this.bot.logger.debug(`[mongo] loading memory data from DB`)
     const query = { type: 'memory' }
@@ -112,7 +100,7 @@ export class Mongo extends bBot.StorageAdapter {
       if (doc.sub === 'users') {
         if (!memory[doc.sub]) memory[doc.sub] = {}
         for (let id in doc.data) {
-          memory[doc.sub][id] = new this.bot.User(doc.data[id])
+          memory[doc.sub][id] = new this.bot.user.User(doc.data[id])
         }
       } else {
         memory[doc.sub] = doc.data
@@ -121,7 +109,7 @@ export class Mongo extends bBot.StorageAdapter {
     return memory
   }
 
-  /** Add item to serial store data */
+  /** Add item to serial store data. */
   async keep (sub: string, data: any) {
     try {
       this.bot.logger.debug(`[mongo] keep ${sub} value in DB`)
@@ -135,7 +123,7 @@ export class Mongo extends bBot.StorageAdapter {
     }
   }
 
-  /** Find certain stuff in Mongo */
+  /** Find certain stuff in Mongo. */
   async find (sub: string, params: any) {
     this.bot.logger.debug(`[mongo] finding any ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
@@ -155,7 +143,7 @@ export class Mongo extends bBot.StorageAdapter {
     return matching
   }
 
-  /** Find a thing in Mongo */
+  /** Find a thing in Mongo. */
   async findOne (sub: string, params: any) {
     this.bot.logger.debug(`[mongo] finding a ${sub} matching ${params}`)
     const query = { sub, data: { $elemMatch: params }, type: 'store' }
@@ -166,7 +154,7 @@ export class Mongo extends bBot.StorageAdapter {
     return doc.data[0]
   }
 
-  /** Get rid of stuff in Mongo */
+  /** Get rid of stuff in Mongo. */
   async lose (sub: string, params: any) {
     this.bot.logger.debug(`[mongo] losing a ${sub} matching ${params}`)
     const query = { sub, type: 'store' }
@@ -176,4 +164,9 @@ export class Mongo extends bBot.StorageAdapter {
   }
 }
 
-export const use = (bot: any) => Mongo.getInstance(bot)
+/** Adapter singleton (ish) require pattern. */
+let mongo: Mongo
+export const use = (bBot: bot.Bot) => {
+  if (!mongo) mongo = new Mongo(bBot)
+  return mongo
+}

@@ -1,15 +1,15 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 
 describe('[request]', () => {
   before(() => {
     bot.server.load()
-    bot.server.router!.get('/pass', (ctx) => ctx.body = 'success')
-    bot.server.router!.get('/json', (ctx) => ctx.body = { id: '1' })
-    bot.server.router!.get('/data', (ctx) => ctx.body = { data: ctx.query })
-    bot.server.router!.post('/data', (ctx) => ctx.body = { data: ctx.request.body })
-    bot.server.router!.get('/fail', (ctx) => ctx.throw('failure'))
+    bot.server.router.get('/pass', (ctx) => ctx.body = 'success')
+    bot.server.router.get('/json', (ctx) => ctx.body = { id: '1' })
+    bot.server.router.get('/data', (ctx) => ctx.body = { data: ctx.query })
+    bot.server.router.post('/data', (ctx) => ctx.body = { data: ctx.body })
+    bot.server.router.get('/fail', (ctx) => ctx.throw('failure'))
     return bot.server.start()
   })
   after(() => bot.server.shutdown())

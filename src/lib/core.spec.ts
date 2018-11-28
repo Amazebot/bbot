@@ -1,13 +1,13 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 import { EventEmitter } from 'events'
 EventEmitter.prototype.setMaxListeners(100)
 
 let initEnv: any
 
-class MessageAdapter extends bot.MessageAdapter {
+class MessageAdapter extends bot.adapter.Message {
   name = 'mock-adapter'
   async start () { /* mock start */ }
   async shutdown () { /* mock shutdown */ }
@@ -24,11 +24,11 @@ describe('[core]', () => {
   describe('.load', () => {
     it('loads middleware', async () => {
       await bot.load()
-      expect(Object.keys(bot.middlewares)).have.length.gt(0)
+      expect(Object.keys(bot.middleware.stacks)).have.length.gt(0)
     })
     it('loads adapters', async () => {
       await bot.load()
-      expect(Object.keys(bot.adapters)).have.length.gt(0)
+      expect(Object.keys(bot.adapter.adapters)).have.length.gt(0)
     })
   })
   describe('.start', () => {
@@ -43,12 +43,12 @@ describe('[core]', () => {
     it('clears middleware', async () => {
       await bot.start()
       await bot.reset()
-      expect(Object.keys(bot.middlewares)).to.have.lengthOf(0)
+      expect(Object.keys(bot.middleware.stacks)).to.have.lengthOf(0)
     })
     it('clears adapters', async () => {
       await bot.start()
       await bot.reset()
-      expect(Object.keys(bot.adapters)).to.have.lengthOf(0)
+      expect(Object.keys(bot.adapter.adapters)).to.have.lengthOf(0)
     })
     it('returns bot to waiting state', async () => {
       await bot.start()

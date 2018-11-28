@@ -1,16 +1,16 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-class MockMessenger extends bot.MessageAdapter {
+class MockMessenger extends bot.adapter.Message {
   name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
   async shutdown () { return }
 }
-class MockNLU extends bot.NLUAdapter {
+class MockNLU extends bot.adapter.NLU {
   name = 'mock-nlu'
   async process () {
     return {
@@ -22,7 +22,7 @@ class MockNLU extends bot.NLUAdapter {
   async start () { return }
   async shutdown () { return }
 }
-class MockStorage extends bot.StorageAdapter {
+class MockStorage extends bot.adapter.Storage {
   name = 'mock-storage'
   async start () { return }
   async shutdown () { return }
@@ -33,292 +33,292 @@ class MockStorage extends bot.StorageAdapter {
   async findOne () { return }
   async lose () { return }
 }
-const message = new bot.TextMessage(
+const message = bot.message.text(
   bot.user.create({ id: 'test-user' }),
   `Where there a foo, there's a bar. And with you, there's always a bar.`
 )
 describe('[thought]', () => {
   beforeEach(async () => {
     await bot.load()
-    bot.adapters.message = sinon.createStubInstance(MockMessenger)
+    bot.adapter.adapters.message = sinon.createStubInstance(MockMessenger)
   })
   afterEach(() => bot.reset())
   describe('Thought', () => {
     describe('constructor', () => {
       it('constructor fails without corresponding middleware', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
-        expect(() => new bot.Thought({ name, b }).process()).to.throw()
+        expect(() => new bot.thought.Thought({ name, b }).process()).to.throw()
       })
     })
     describe('.process', () => {
       it('runs provided middleware', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         const middlewarePiece = sinon.spy()
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, middleware }).process()
+        await new bot.thought.Thought({ name, b, middleware }).process()
         sinon.assert.calledOnce(middlewarePiece)
       })
       it('calls validate, then middleware, then action', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const validate = sinon.stub().returns(true)
         const action = sinon.spy()
         const middlewarePiece = sinon.spy()
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, validate, middleware, action }).process()
+        await new bot.thought.Thought({ name, b, validate, middleware, action }).process()
         sinon.assert.callOrder(validate, middlewarePiece, action)
       })
       it('false from validate gives false to action', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const validate = async () => false
         const action = sinon.spy()
         const middlewarePiece = sinon.spy()
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, validate, middleware, action }).process()
+        await new bot.thought.Thought({ name, b, validate, middleware, action }).process()
         sinon.assert.notCalled(middlewarePiece)
         sinon.assert.calledWithExactly(action, false)
       })
       it('adds timestamp if middleware complete', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const middlewarePiece = (_: any, next: any) => next()
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, middleware }).process()
+        await new bot.thought.Thought({ name, b, middleware }).process()
         expect(b.processed).to.include.keys('test')
       })
       it('action called only once with interrupted middleware', async () => {
         const action = sinon.spy()
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const middlewarePiece = (_: any, next: any) => next()
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, middleware, action }).process()
+        await new bot.thought.Thought({ name, b, middleware, action }).process()
         sinon.assert.calledOnce(action)
       })
       it('no timestamp if middleware incomplete', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const middlewarePiece = (_: any, __: any, done: any) => done()
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, middleware }).process()
+        await new bot.thought.Thought({ name, b, middleware }).process()
         expect(b.processed).to.not.include.keys('test')
       })
       it('with branches, calls validate, then middleware, then branch callback, then action', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const validate = sinon.stub().returns(true)
         const action = sinon.spy()
         const middlewarePiece = sinon.spy()
         const branchCallback = sinon.spy()
         const branches = {
-          test: new bot.CustomBranch(() => true, () => branchCallback())
+          test: new bot.branch.Custom(() => true, () => branchCallback())
         }
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, validate, middleware, branches, action }).process()
+        await new bot.thought.Thought({ name, b, validate, middleware, branches, action }).process()
         sinon.assert.callOrder(validate, middlewarePiece, branchCallback, action)
       })
       it('with branches, exits if empty branch collection', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
         const action = sinon.spy()
         const middlewarePiece = sinon.spy()
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         const branches = {}
         middleware.register(middlewarePiece)
-        await new bot.Thought({ name, b, middleware, branches, action }).process()
+        await new bot.thought.Thought({ name, b, middleware, branches, action }).process()
         sinon.assert.notCalled(middlewarePiece)
         sinon.assert.calledWithExactly(action, false)
       })
       it('with branches, no timestamp if state already done', async () => {
-        const b = new bot.State({ message, done: true })
+        const b = bot.state.create({ message, done: true })
         const name = 'test'
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         const branches = {
-          test: new bot.CustomBranch(() => true, () => null)
+          test: new bot.branch.Custom(() => true, () => null)
         }
-        await new bot.Thought({ name, b, middleware, branches }).process()
+        await new bot.thought.Thought({ name, b, middleware, branches }).process()
         expect(typeof b.processed.test).to.equal('undefined')
       })
       it('with branches, calls consecutive branches if forced', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         const callback = sinon.spy()
         const branches = {
-          'A': new bot.CustomBranch(() => true, callback),
-          'B': new bot.CustomBranch(() => true, callback, { force: true })
+          'A': new bot.branch.Custom(() => true, callback),
+          'B': new bot.branch.Custom(() => true, callback, { force: true })
         }
-        await new bot.Thought({ name, b, middleware, branches }).process()
+        await new bot.thought.Thought({ name, b, middleware, branches }).process()
         sinon.assert.calledTwice(callback)
       })
       it('with branches, stops processing when state done', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         const name = 'test'
-        const middleware = new bot.Middleware('test')
+        const middleware = new bot.middleware.Middleware('test')
         const callback = sinon.spy()
         const branches = {
-          'A': new bot.CustomBranch(() => true, (b) => b.finish()),
-          'B': new bot.CustomBranch(() => true, callback, { force: true })
+          'A': new bot.branch.Custom(() => true, (b) => b.finish()),
+          'B': new bot.branch.Custom(() => true, callback, { force: true })
         }
-        await new bot.Thought({ name, b, middleware, branches }).process()
+        await new bot.thought.Thought({ name, b, middleware, branches }).process()
         sinon.assert.notCalled(callback)
       })
       it('named hear, processes hear middleware', async () => {
-        bot.middleware.hear((b, _, __) => b.hearTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thought({ name: 'hear', b }).process()
+        bot.middleware.register('hear', (b, _, __) => b.hearTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thought({ name: 'hear', b }).process()
         expect(b.hearTest).to.equal(true)
       })
       it('named listen, processes listen middleware', async () => {
-        bot.middleware.listen((b, _, __) => b.listenTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thought({ name: 'listen', b }).process()
+        bot.middleware.register('listen', (b, _, __) => b.listenTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thought({ name: 'listen', b }).process()
         expect(b.listenTest).to.equal(true)
       })
       it('named understand, processes understand middleware', async () => {
-        bot.middleware.understand((b, _, __) => b.understandTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thought({ name: 'understand', b }).process()
+        bot.middleware.register('understand', (b, _, __) => b.understandTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thought({ name: 'understand', b }).process()
         expect(b.understandTest).to.equal(true)
       })
       it('named act, processes act middleware', async () => {
-        bot.middleware.act((b, _, __) => b.actTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thought({ name: 'act', b }).process()
+        bot.middleware.register('act', (b, _, __) => b.actTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thought({ name: 'act', b }).process()
         expect(b.actTest).to.equal(true)
       })
       it('named respond, processes respond middleware', async () => {
-        bot.middleware.respond((b, _, __) => b.respondTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thought({ name: 'respond', b }).process()
+        bot.middleware.register('respond', (b, _, __) => b.respondTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thought({ name: 'respond', b }).process()
         expect(b.respondTest).to.equal(true)
       })
       it('named remember, processes remember middleware', async () => {
-        bot.middleware.remember((b, _, __) => b.rememberTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thought({ name: 'remember', b }).process()
+        bot.middleware.register('remember', (b, _, __) => b.rememberTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thought({ name: 'remember', b }).process()
         expect(b.rememberTest).to.equal(true)
       })
     })
   })
   describe('Thoughts', () => {
     beforeEach(() => {
-      bot.adapters.nlu = new MockNLU(bot)
-      bot.adapters.storage = sinon.createStubInstance(MockStorage)
+      bot.adapter.adapters.nlu = new MockNLU(bot)
+      bot.adapter.adapters.storage = sinon.createStubInstance(MockStorage)
     })
     afterEach(() => {
-      delete bot.adapters.nlu
-      delete bot.adapters.storage
+      delete bot.adapter.adapters.nlu
+      delete bot.adapter.adapters.storage
     })
     describe('.start', () => {
       it('receive records initiating sequence', async () => {
-        const b = await new bot.Thoughts(new bot.State({ message }))
+        const b = await new bot.thought.Thoughts(bot.state.create({ message }))
         .start('receive')
         expect(b.sequence).to.equal('receive')
       })
       it('with path, processes branches', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         let listens: string[] = []
         path.custom(() => true, () => listens.push('A'), { force: true })
         path.custom(() => true, () => listens.push('B'), { force: true })
-        await new bot.Thoughts(new bot.State({ message }), path)
+        await new bot.thought.Thoughts(bot.state.create({ message }), path)
           .start('receive')
         expect(listens).to.eql(['A', 'B'])
       })
       it('receive records initiating sequence', async () => {
-        const b = await new bot.Thoughts(new bot.State({ message }))
+        const b = await new bot.thought.Thoughts(bot.state.create({ message }))
           .start('respond')
         expect(b.sequence).to.equal('respond')
       })
       it('with path, respond keeps initial sequence', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         path.custom(() => true, (b) => b.respond('test'))
-        const b = await new bot.Thoughts(new bot.State({ message }), path)
+        const b = await new bot.thought.Thoughts(bot.state.create({ message }), path)
           .start('receive')
         expect(b.sequence).to.equal('receive')
         expect(b.processed).to.include.keys('respond')
       })
       it('with path, ignores global path', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         let listens: string[] = []
-        bot.path.custom(() => true, () => listens.push('A'), { force: true })
+        bot.global.custom(() => true, () => listens.push('A'), { force: true })
         path.custom(() => true, () => listens.push('B'), { force: true })
         path.custom(() => true, () => listens.push('C'), { force: true })
-        await new bot.Thoughts(new bot.State({ message }), path)
+        await new bot.thought.Thoughts(bot.state.create({ message }), path)
           .start('receive')
         expect(listens).to.eql(['B', 'C'])
       })
       it('continues to following branches after branch responds', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         let processed = false
         path.custom(() => true, (b) => b.respond('foo'))
         path.custom(() => true, () => (processed = true), { force: true })
-        await new bot.Thoughts(new bot.State({ message }), path)
+        await new bot.thought.Thoughts(bot.state.create({ message }), path)
           .start('receive')
         expect(processed).to.equal(true)
       })
       it('continues to following branches after async callback', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         let processed = false
         path.custom(() => true, () => delay(50))
         path.custom(() => true, () => (processed = true), { force: true })
-        await new bot.Thoughts(new bot.State({ message }), path)
+        await new bot.thought.Thoughts(bot.state.create({ message }), path)
           .start('receive')
         expect(processed).to.equal(true)
       })
       it('continues to following branches after async matcher', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         let processed = false
         path.custom(() => delay(50).then(() => true), () => null)
         path.custom(() => true, () => (processed = true), { force: true })
-        await new bot.Thoughts(new bot.State({ message }), path)
+        await new bot.thought.Thoughts(bot.state.create({ message }), path)
           .start('receive')
         expect(processed).to.equal(true)
       })
       it('without path, uses global path', async () => {
-        const path = new bot.Path()
+        const path = bot.path.create()
         let listens: string[] = []
-        bot.path.custom(() => true, () => listens.push('A'), { force: true })
+        bot.global.custom(() => true, () => listens.push('A'), { force: true })
         path.custom(() => true, () => listens.push('B'), { force: true })
         path.custom(() => true, () => listens.push('C'), { force: true })
-        await new bot.Thoughts(new bot.State({ message })).start('receive')
+        await new bot.thought.Thoughts(bot.state.create({ message })).start('receive')
         expect(listens).to.eql(['A'])
       })
       it('does hear', async () => {
-        bot.middleware.hear((b, _, __) => b.hearTest = true)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.middleware.register('hear', (b, _, __) => b.hearTest = true)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b).to.have.property('hearTest', true)
       })
       it('does listen when hear uninterrupted', async () => {
-        bot.path.custom(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('listen')
       })
       it('does not listen when hear interrupted', async () => {
-        bot.path.custom(() => true, () => null)
-        bot.middleware.hear((_, __, done) => done())
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        bot.middleware.register('hear', (_, __, done) => done())
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('listen')
       })
       it('calls post-process action if interrupted, not ignored', async () => {
-        bot.middleware.hear((_: any, __: any, done: any) => {
+        bot.middleware.register('hear', (_: any, __: any, done: any) => {
           done()
         })
-        const b = new bot.State({ message })
-        const thoughts = new bot.Thoughts(b)
+        const b = bot.state.create({ message })
+        const thoughts = new bot.thought.Thoughts(b)
         let listenActioned = false
         thoughts.processes.listen.action = async function () {
           listenActioned = true
@@ -327,12 +327,12 @@ describe('[thought]', () => {
         expect(listenActioned).to.equal(true)
       })
       it('exits before post-process action if ignored', async () => {
-        bot.middleware.hear((_: any, __: any, done: any) => {
+        bot.middleware.register('hear', (_: any, __: any, done: any) => {
           b.ignore()
           done()
         })
-        const b = new bot.State({ message })
-        const thoughts = new bot.Thoughts(b)
+        const b = bot.state.create({ message })
+        const thoughts = new bot.thought.Thoughts(b)
         let listenActioned = false
         thoughts.processes.listen.action = async function () {
           listenActioned = true
@@ -341,228 +341,228 @@ describe('[thought]', () => {
         expect(listenActioned).to.equal(false)
       })
       it('does understand when listen unmatched', async () => {
-        bot.path.custom(() => false, () => null)
-        bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => false, () => null)
+        bot.global.customNLU(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('understand')
       })
       it('understand passes message to NLU adapter', async () => {
-        bot.adapters.nlu!.process = sinon.spy()
-        bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
-        sinon.assert.calledWithExactly((bot.adapters.nlu!.process as sinon.SinonSpy), message)
+        bot.adapter.adapters.nlu!.process = sinon.spy()
+        bot.global.customNLU(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
+        sinon.assert.calledWithExactly((bot.adapter.adapters.nlu!.process as sinon.SinonSpy), message)
       })
       it('understand branches include NLU results from adapter', async () => {
-        bot.adapters.nlu!.process = async () => {
-          return { intent: new bot.NaturalLanguageResult().add({ id: 'test' }) }
+        bot.adapter.adapters.nlu!.process = async () => {
+          return { intent: bot.nlu.result().add({ id: 'test' }) }
         }
-        bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.customNLU(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.message.nlu!.results.intent).to.eql([{ id: 'test' }])
       })
       it('does not understand without adapter', async () => {
-        bot.path.custom(() => false, () => null)
-        bot.path.customNLU(() => true, () => null)
-        delete bot.adapters.nlu
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => false, () => null)
+        bot.global.customNLU(() => true, () => null)
+        delete bot.adapter.adapters.nlu
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when listen matched', async () => {
-        bot.path.custom(() => true, () => null)
-        bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        bot.global.customNLU(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when message text is empty', async () => {
-        bot.adapters.nlu!.process = sinon.spy()
-        bot.path.customNLU(() => true, () => null)
-        const empty = new bot.TextMessage(bot.user.create(), '                   ')
-        const b = new bot.State({ message: empty })
-        await new bot.Thoughts(b).start('receive')
-        sinon.assert.notCalled((bot.adapters.nlu!.process as sinon.SinonSpy))
+        bot.adapter.adapters.nlu!.process = sinon.spy()
+        bot.global.customNLU(() => true, () => null)
+        const empty = bot.message.text(bot.user.create(), '                   ')
+        const b = bot.state.create({ message: empty })
+        await new bot.thought.Thoughts(b).start('receive')
+        sinon.assert.notCalled((bot.adapter.adapters.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when message too short', async () => {
-        bot.adapters.nlu!.process = sinon.spy()
+        bot.adapter.adapters.nlu!.process = sinon.spy()
         bot.settings.set('nlu-min-length', 99)
-        bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.customNLU(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         bot.settings.unset('nlu-min-length')
-        sinon.assert.notCalled((bot.adapters.nlu!.process as sinon.SinonSpy))
+        sinon.assert.notCalled((bot.adapter.adapters.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when hear interrupted', async () => {
-        bot.path.customNLU(() => true, () => null)
-        bot.middleware.hear((_, __, done) => done())
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.customNLU(() => true, () => null)
+        bot.middleware.register('hear', (_, __, done) => done())
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand non-text messages', async () => {
-        bot.path.customNLU(() => true, () => null)
-        const b = new bot.State({ message: new bot.EnterMessage(bot.user.create()) })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.customNLU(() => true, () => null)
+        const b = bot.state.create({ message: bot.message.enter(bot.user.create()) })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does act when listen unmatched', async () => {
-        bot.path.custom(() => false, () => null)
-        bot.path.customNLU(() => false, () => null)
-        bot.path.catchAll(() => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => false, () => null)
+        bot.global.customNLU(() => false, () => null)
+        bot.global.catchAll(() => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('act')
       })
       it('act replaces message with catch all', async () => {
-        bot.path.catchAll(() => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
-        expect(b.message instanceof bot.CatchAllMessage).to.equal(true)
+        bot.global.catchAll(() => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
+        expect(b.message instanceof bot.message.CatchAll).to.equal(true)
       })
       it('does not act when text branch matched', async () => {
-        bot.path.custom(() => true, () => null)
-        bot.path.catchAll(() => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        bot.global.catchAll(() => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('act')
       })
       it('does not act when NLU branch matched', async () => {
-        bot.path.customNLU(() => true, () => null)
-        bot.path.catchAll(() => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.customNLU(() => true, () => null)
+        bot.global.catchAll(() => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('act')
       })
       it('does respond if branch responds', async () => {
-        bot.path.custom(() => true, (b) => b.respond('test'))
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, (b) => b.respond('test'))
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('respond')
       })
       it('does not respond without adapter', async () => {
-        delete bot.adapters.message
-        bot.path.custom(() => true, (b) => b.respond('test'))
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        delete bot.adapter.adapters.message
+        bot.global.custom(() => true, (b) => b.respond('test'))
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('respond')
       })
       it('respond updates envelope with matched branch ID', async () => {
-        bot.path.custom(() => true, (b) => b.respond('test'), { id: 'test' })
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, (b) => b.respond('test'), { id: 'test' })
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.envelopes![0].branchId).to.equal('test')
       })
       it('respond passes message to nlu adapter', async () => {
-        bot.path.custom(() => true, (b) => b.respond('test'))
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, (b) => b.respond('test'))
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         const envelope = b.envelopes![0]
-        sinon.assert.calledWithExactly((bot.adapters.message!.dispatch as sinon.SinonStub), envelope)
+        sinon.assert.calledWithExactly((bot.adapter.adapters.message!.dispatch as sinon.SinonStub), envelope)
       })
       it('remembers user when branch matched', async () => {
         bot.memory.users = {}
-        bot.path.custom(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(bot.memory.users[b.message.user.id]).to.eql(message.user)
       })
       it('remembers user when branch matched', async () => {
         bot.memory.users = {}
-        bot.path.custom(() => false, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => false, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(typeof bot.memory.users[b.message.user.id]).to.equal('undefined')
       })
       it('does remember when branch matched', async () => {
-        bot.path.custom(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('remember')
       })
       it('does not remember without adapter', async () => {
-        bot.path.custom(() => true, () => null)
-        delete bot.adapters.storage
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        delete bot.adapter.adapters.storage
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember when branch unmatched', async () => {
-        bot.path.custom(() => false, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => false, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does remember on dispatch, without branch', async () => {
-        const b = new bot.State({ message })
+        const b = bot.state.create({ message })
         b.respondEnvelope().write('ping')
-        await new bot.Thoughts(b).start('dispatch')
+        await new bot.thought.Thoughts(b).start('dispatch')
         expect(b.processed).to.include.keys('remember')
       })
       it('does not remember on respond', async () => {
-        bot.path.custom(() => true, () => null)
-        const b = new bot.State({ message })
+        bot.global.custom(() => true, () => null)
+        const b = bot.state.create({ message })
         b.respondEnvelope().write('ping')
-        await new bot.Thoughts(b).start('respond')
+        await new bot.thought.Thoughts(b).start('respond')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember dispatch without envelope', async () => {
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('dispatch')
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('dispatch')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember when hear interrupted', async () => {
-        bot.middleware.hear((_, __, done) => done())
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.middleware.register('hear', (_, __, done) => done())
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('remember passes state to storage adapter', async () => {
-        bot.path.custom(() => true, () => null)
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, () => null)
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         sinon.assert.calledWithExactly(
-          (bot.adapters.storage!.keep as sinon.SinonStub),
+          (bot.adapter.adapters.storage!.keep as sinon.SinonStub),
           'states',
           sinon.match({ message })
         )
       })
       it('remember only once with multiple responses', async () => {
-        bot.path.custom(() => true, (b) => b.respond('A'))
-        bot.path.custom(() => true, (b) => b.respond('B'), { force: true })
-        const b = new bot.State({ message })
-        await new bot.Thoughts(b).start('receive')
+        bot.global.custom(() => true, (b) => b.respond('A'))
+        bot.global.custom(() => true, (b) => b.respond('B'), { force: true })
+        const b = bot.state.create({ message })
+        await new bot.thought.Thoughts(b).start('receive')
         expect(b.envelopes!.map((envelope) => envelope.strings)).to.eql([
           ['A'], ['B']
         ])
-        sinon.assert.calledOnce((bot.adapters.storage!.keep as sinon.SinonStub))
+        sinon.assert.calledOnce((bot.adapter.adapters.storage!.keep as sinon.SinonStub))
       })
       describe('.receive', () => {
         it('timestamps all actioned processes', async () => {
-          bot.path.custom(() => true, (b) => b.respond('ping'))
-          const b = await bot.receive(message)
+          bot.global.custom(() => true, (b) => b.respond('ping'))
+          const b = await bot.thought.receive(message)
           expect(b.processed).to.have.all.keys('hear', 'listen', 'respond', 'remember')
         })
         it('records initiating sequence and path', async () => {
-          const b = await bot.receive(message)
+          const b = await bot.thought.receive(message)
           expect(b.sequence).to.equal('receive')
         })
         it('consecutive calls isolate thought and path', async () => {
           const listenCallback = sinon.spy()
           const understandCallback = sinon.spy()
-          bot.path.text(/foo/i, listenCallback, {
+          bot.global.text(/foo/i, listenCallback, {
             id: 'receive-text'
           })
-          bot.path.customNLU(() => true, understandCallback, {
+          bot.global.customNLU(() => true, understandCallback, {
             id: 'receive-custom-nlu'
           })
           bot.settings.set('nlu-min-length', 2)
-          const messageA = new bot.TextMessage(bot.user.create(), 'foo')
-          const messageB = new bot.TextMessage(bot.user.create(), 'bar')
-          await bot.receive(messageA)
-          await bot.receive(messageB)
+          const messageA = bot.message.text(bot.user.create(), 'foo')
+          const messageB = bot.message.text(bot.user.create(), 'bar')
+          await bot.thought.receive(messageA)
+          await bot.thought.receive(messageB)
           sinon.assert.calledOnce(listenCallback)
           sinon.assert.calledOnce(understandCallback)
           bot.settings.unset('nlu-min-length')
@@ -570,34 +570,34 @@ describe('[thought]', () => {
       })
       describe('.respond', () => {
         it('timestamps all actioned processes', async () => {
-          const b = new bot.State({ message })
+          const b = bot.state.create({ message })
           b.respondEnvelope().write('ping')
-          await bot.respond(b)
+          await bot.thought.respond(b)
           expect(b.processed).to.have.all.keys('respond')
         })
         it('records initiating sequence and path', async () => {
-          const b = new bot.State({ message })
-          await bot.respond(b)
+          const b = bot.state.create({ message })
+          await bot.thought.respond(b)
           expect(b.sequence).to.equal('respond')
         })
       })
       describe('.dispatch', () => {
         it('timestamps all actioned processes', async () => {
-          const envelope = new bot.Envelope({ user: bot.user.create() }).write('hello')
-          const b = await bot.dispatch(envelope)
+          const envelope = bot.envelope.create({ user: bot.user.create() }).write('hello')
+          const b = await bot.thought.dispatch(envelope)
           expect(b.processed).to.have.all.keys('respond', 'remember')
         })
         it('records initiating sequence and path', async () => {
-          const envelope = new bot.Envelope({ user: bot.user.create() }).write('hello')
-          const b = await bot.dispatch(envelope)
+          const envelope = bot.envelope.create({ user: bot.user.create() }).write('hello')
+          const b = await bot.thought.dispatch(envelope)
           expect(b.sequence).to.equal('dispatch')
         })
       })
       describe('.serve', () => {
         it('timestamps all actioned processes', async () => {
-          const message = new bot.ServerMessage({ userId: '111', data: {} })
-          bot.path.server({}, (b) => b.respond('ping'))
-          const b = await bot.serve(message, ({} as bot.IServerContext))
+          const message = bot.message.server({ userId: '111', data: {} })
+          bot.global.server({}, (b) => b.respond('ping'))
+          const b = await bot.thought.serve(message, ({} as bot.server.IContext))
           expect(b.processed).to.have.all.keys('hear', 'serve', 'respond', 'remember')
         })
       })

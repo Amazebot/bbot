@@ -1,6 +1,6 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 
 describe('[id]', () => {
   describe('random', () => {

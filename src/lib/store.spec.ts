@@ -1,10 +1,10 @@
 import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 
-let mockAdapter: bot.StorageAdapter
-class MockStorageAdapter extends bot.StorageAdapter {
+let mockAdapter: bot.adapter.Storage
+class MockStorageAdapter extends bot.adapter.Storage {
   name = 'mock-storage'
   async start () { return }
   async shutdown () { return }
@@ -23,9 +23,9 @@ describe('[store]', () => {
       (mockAdapter.loadMemory as sinon.SinonStub).resolves({ test: { foo: 'bar' } });
       (mockAdapter.find as sinon.SinonStub).resolves([{ test: 'test' }]);
       (mockAdapter.findOne as sinon.SinonStub).resolves({ test: 'test' })
-      bot.adapters.storage = mockAdapter
+      bot.adapter.adapters.storage = mockAdapter
     })
-    after(() => delete bot.adapters.storage)
+    after(() => delete bot.adapter.adapters.storage)
     describe('.keep', () => {
       it('passes args to storage adapter keep', async () => {
         let stub = (mockAdapter.keep as sinon.SinonStub)
@@ -34,8 +34,8 @@ describe('[store]', () => {
         stub.resetHistory()
       })
       it('removes bot from kept states', async () => {
-        let message = new bot.TextMessage(bot.user.create(), 'testing')
-        let b = new bot.State({ message: message })
+        let message = bot.message.text(bot.user.create(), 'testing')
+        let b = bot.state.create({ message: message })
         let stub = (mockAdapter.keep as sinon.SinonStub)
         await bot.store.keep('test-state', b)
         sinon.assert.calledWithExactly(stub, 'test-state', sinon.match({ message }))

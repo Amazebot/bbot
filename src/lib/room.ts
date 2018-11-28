@@ -1,4 +1,4 @@
-import { id, memory } from '..'
+import { id, memory } from '.'
 
 /** Represents rooms in messaging platform. */
 export namespace room {

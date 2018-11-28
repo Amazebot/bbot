@@ -1,29 +1,28 @@
 import 'mocha'
-import * as sinon from 'sinon'
+import sinon from 'sinon'
 import { expect } from 'chai'
-import * as bit from './bit'
 import * as bot from '..'
 
-let message: bot.TextMessage
+let message: bot.message.Text
 
 describe('[bit]', () => {
   before(() => {
-    message = new bot.TextMessage(bot.user.create({ id: 'test-user' }), 'foo')
+    message = bot.message.text(bot.user.create({ id: 'test-user' }), 'foo')
   })
   describe('Bit', () => {
     it('assigns ID if not given', () => {
-      const aBit = new bit.Bit({})
+      const aBit = bot.bit.create({})
       expect(aBit.id).to.match(/bit_\d/)
     })
     it('accepts ID if given', () => {
-      const aBit = new bit.Bit({ id: 'TEST_ID' })
+      const aBit = bot.bit.create({ id: 'TEST_ID' })
       expect(aBit.id).to.equal('TEST_ID')
     })
     describe('.execute', () => {
       it('calls bit callback with state', async () => {
         const callback = sinon.spy()
-        const b = new bot.State({ message })
-        const aBit = new bit.Bit({ callback })
+        const b = bot.state.create({ message })
+        const aBit = bot.bit.create({ callback })
         await aBit.execute(b)
         sinon.assert.calledWith(callback, b)
       })
@@ -31,21 +30,21 @@ describe('[bit]', () => {
   })
   describe('.setupBit', () => {
     it('stores created bit in array', () => {
-      const bitId = bit.setupBit({})
-      expect(bit.bits[bitId]).to.be.instanceof(bit.Bit)
+      const bitId = bot.bit.setup({})
+      expect(bot.bit.bits[bitId]).to.be.instanceof(bot.bit.Bit)
     })
   })
-  describe('.doBit', () => {
+  describe('.run', () => {
     it('executes the bit by ID', async () => {
-      const bitId = bit.setupBit({})
-      const b = new bot.State({ message })
-      const execute = sinon.spy(bit.bits[bitId], 'execute')
-      await bit.doBit(bitId, b)
+      const bitId = bot.bit.setup({})
+      const b = bot.state.create({ message })
+      const execute = sinon.spy(bot.bit.bits[bitId], 'execute')
+      await bot.bit.run(bitId, b)
       sinon.assert.calledWith(execute, b)
     })
     it('logs error if bit ID does not exist', async () => {
       const error = sinon.spy(bot.logger, 'error')
-      await bit.doBit('404bit', new bot.State({ message }))
+      await bot.bit.run('404bit', bot.state.create({ message }))
       sinon.assert.calledWithMatch(error, /unknown/)
     })
   })

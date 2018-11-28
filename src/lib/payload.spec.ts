@@ -1,12 +1,12 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 
 describe('[payload]', () => {
   describe('Payload', () => {
     describe('constructor', () => {
       it('populates payload with given attachments', () => {
-        const payload = new bot.Payload({ attachments: [{
+        const payload = bot.payload.create({ attachments: [{
           fallback: 'foo'
         }] })
         expect(payload.attachments![0]).to.eql({
@@ -14,7 +14,7 @@ describe('[payload]', () => {
         })
       })
       it('populates payload with given actions', () => {
-        const payload = new bot.Payload({ actions: [{
+        const payload = bot.payload.create({ actions: [{
           name: 'foo',
           type: 'button',
           text: 'Foo'
@@ -26,7 +26,7 @@ describe('[payload]', () => {
         })
       })
       it('populates payload with quick reply defaults', () => {
-        const payload = new bot.Payload({ quickReplies: [{ text: 'Foo' }] })
+        const payload = bot.payload.create({ quickReplies: [{ text: 'Foo' }] })
         expect(payload.quickReplies![0]).to.eql({
           text: 'Foo',
           content: 'Foo',
@@ -36,7 +36,7 @@ describe('[payload]', () => {
     })
     describe('.custom', () => {
       it('allows adding any custom attributes', () => {
-        const payload = new bot.Payload()
+        const payload = bot.payload.create()
         const custom = {
           foo: 'foo',
           bar: { baz: 'qux' }

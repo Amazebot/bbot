@@ -1,4 +1,4 @@
-import * as bot from '..'
+import { settings, logger, message, thought, adapter, middleware } from '.'
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import Router from 'koa-router'
@@ -6,41 +6,46 @@ import http from 'http'
 import https from 'https'
 import { AddressInfo } from 'net'
 
-/** Server states include Koa context object, to respond to http/s requests. */
-export interface IServerContext extends Koa.Context {}
+/** Listen for data over HTTP/s */
+export namespace server {
+  /** Server states include Koa context, to respond to http/s requests. */
+  export interface IContext extends Router.IRouterContext {}
 
-export class Server {
-  enabled: boolean
-  secure: boolean
-  app?: Koa
-  server?: http.Server | https.Server
-  info?: AddressInfo
-  router?: Router
-  messageRouter?: Router
-  started?: Date
+  /** Koa app. */
+  export let app: Koa
 
-  constructor () {
-    this.enabled = bot.settings.get('use-server')
-    this.secure = bot.settings.get('server-secure')
-  }
+  /** Http/s server. */
+  export let server: http.Server | https.Server
+
+  /** Koa router. */
+  export let router: Router
+
+  /** Served address. */
+  export let info: AddressInfo
+
+  /** Koa sub-router for request messages. */
+  export let messageRouter: Router
+
+  /** Timestamp for server startup. */
+  export let started: Date
 
   /** Initialise server and router, adding logger middleware */
-  load () {
-    if (!this.enabled) return
-    this.app = new Koa()
-    this.router = new Router()
-    this.messageRouter = new Router()
-    this.app.use(koaBody())
-    this.app.use(async (ctx, next) => {
+  export function load () {
+    if (!settings.get('use-server')) return
+    app = new Koa()
+    router = new Router()
+    messageRouter = new Router()
+    app.use(koaBody())
+    app.use(async (ctx, next) => {
       const start = new Date().getTime()
       await next()
       const ms = new Date().getTime() - start
-      bot.logger.info(`[server] served ${ctx.method} ${ctx.url} - ${ms}ms`)
+      logger.info(`[server] served ${ctx.method} ${ctx.url} - ${ms}ms`)
       ctx.set('X-Response-Time', `${ms}ms`)
     })
-    this.app.on('error', (err) => bot.logger.error(`[server] ${err}`))
-    this.messageRoutes()
-    this.publicRoutes()
+    app.on('error', (err) => logger.error(`[server] ${err}`))
+    messageRoutes()
+    publicRoutes()
   }
 
   /**
@@ -49,103 +54,101 @@ export class Server {
    * The Room ID is an optional param on the route, but without a room ID, the
    * bot may fail in dispatching a response, depends on the messaging platform.
    */
-  messageRoutes () {
-    if (!this.messageRouter) return
-    this.messageRouter.post('/:userId/:roomId*', async (ctx) => {
-      const message = new bot.ServerMessage({
+  export function messageRoutes () {
+    if (!messageRouter) return
+    messageRouter.post('/:userId/:roomId*', async (ctx) => {
+      const msg = message.server({
         userId: ctx.params.userId,
         roomId: ctx.params.roomId,
-        data: ctx.request.body
+        data: ctx.body
       })
-      await bot.serve(message, ctx)
-      if (!ctx.body) ctx.body = message.id
+      await thought.serve(msg, ctx)
+      if (!ctx.body) ctx.body = msg.id
     })
-    this.messageRouter.get('/:userId/:roomId*', async (ctx) => {
-      const message = new bot.ServerMessage({
+    messageRouter.get('/:userId/:roomId*', async (ctx) => {
+      const msg = message.server({
         userId: ctx.params.userId,
         roomId: ctx.params.roomId,
         data: ctx.query
       })
-      await bot.serve(message, ctx)
-      if (!ctx.body) ctx.body = message.id
+      await thought.serve(msg, ctx)
+      if (!ctx.body) ctx.body = msg.id
     })
   }
 
   /** Public routes serve content without entering thought process/middleware */
-  publicRoutes () {
-    if (!this.router) return
-    this.router.get('/public', async (ctx) => {
-      ctx.body = this.publicStats()
+  export function publicRoutes () {
+    if (!router) return
+    router.get('/public', async (ctx) => {
+      ctx.body = publicStats()
     })
   }
 
   /** Start server listening on configured port and protocol */
-  async start () {
-    if (!this.app || !this.router) return
-    if (this.messageRouter) this.router.use('/message', this.messageRouter.routes())
-    this.app.use(this.router.routes())
-    this.app.use(this.router.allowedMethods())
-    this.server = (this.secure)
-      ? https.createServer({}, this.app.callback())
-      : http.createServer(this.app.callback())
-    await this.listen(parseInt(bot.settings.get('server-port'), 10))
-    bot.logger.info(`[server] listening, see public stats: ${this.url()}/public`)
-    this.server.on('error', (err) => bot.logger.error(`[server] ${err}`))
+  export async function start () {
+    if (!app || !router) return
+    if (messageRouter) router.use('/message', messageRouter.routes())
+    app.use(router.routes())
+    app.use(router.allowedMethods())
+    server = (settings.get('server-secure'))
+      ? https.createServer({}, app.callback())
+      : http.createServer(app.callback())
+    await listen(parseInt(settings.get('server-port'), 10))
+    logger.info(`[server] listening, see public stats: ${url()}/public`)
+    server.on('error', (err) => logger.error(`[server] ${err}`))
   }
 
   /** Start listening on configured port, cycling up port number if in use. */
-  async listen (port: number) {
-    if (!this.server) {
-      bot.logger.error(`[server] listen before server created`)
+  export async function listen (port: number) {
+    if (!server) {
+      logger.error(`[server] listen before server created`)
       return
-    } else if (this.server.listening) {
-      bot.logger.error(`[server] already listening at ${this.url()}`)
+    } else if (server.listening) {
+      logger.error(`[server] already listening at ${url()}`)
       return
     }
     await new Promise((resolve) => {
-      this.server!.once('error', (err) => {
+      server.once('error', (err) => {
         if (err.code === 'EADDRINUSE') {
-          bot.logger.info(`[server] Port ${port} in use, retrying on ${port + 1}`)
-          this.server!.close()
-          this.listen(port + 1).catch()
+          logger.info(`[server] Port ${port} in use, retrying on ${port + 1}`)
+          server.close()
+          listen(port + 1).catch()
         }
       })
-      this.server!.listen(port, bot.settings.get('server-host'))
-      this.server!.once('listening', () => {
-        this.info = (this.server!.address() as AddressInfo)
-        this.started = new Date()
+      server.listen(port, settings.get('server-host'))
+      server.once('listening', () => {
+        info = (server.address() as AddressInfo)
+        started = new Date()
         resolve()
       })
     })
   }
 
   /** Close server */
-  async shutdown () {
-    if (this.server) this.server.close()
+  export async function shutdown () {
+    if (server) server.close()
   }
 
   /** Get the root URL being served */
-  url () {
-    if (!this.info) return '[server disabled]'
-    const protocol = this.secure ? 'https' : 'http'
-    const { address, port } = this.info
+  export function url () {
+    if (!info) return '[server disabled]'
+    const protocol = settings.get('server-secure') ? 'https' : 'http'
+    const { address, port } = info
     return `${protocol}://${address}:${port}`
   }
 
   /** Data for /public route to share basic operating stats */
   // @todo Move this as foundation for analytics module at later data
-  publicStats () {
+  export function publicStats () {
     return {
-      name: bot.settings.name,
-      started: this.started,
-      adapters: Object.keys(bot.adapters).map((key) => {
-        return bot.adapters[key].name
+      name: settings.get('name'),
+      started: started,
+      adapters: Object.keys(adapter.adapters).map((key) => {
+        return adapter.adapters[key]!.name
       }),
-      middleware: Object.keys(bot.middlewares).map((key) => {
-        return `${key}: ${bot.middlewares[key].stack.length}`
+      middleware: Object.keys(middleware.stacks).map((key) => {
+        return `${key}: ${middleware.stacks[key]!.stack.length}`
       })
     }
   }
 }
-
-export const server = new Server()

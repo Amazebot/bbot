@@ -1,8 +1,17 @@
 import { promisify } from 'util'
-import * as bot from '..'
+import {
+  settings,
+  logger,
+  middleware,
+  server,
+  memory,
+  adapter,
+  events,
+  global
+} from '.'
 
 /** Await helper, pauses for event loop */
-export const eventDelay = promisify(setImmediate)
+const eventDelay = promisify(setImmediate)
 
 /** Internal index for loading status */
 const status: { [key: string]: 0 | 1 } = {
@@ -13,11 +22,11 @@ const status: { [key: string]: 0 | 1 } = {
 function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'started' | 'shutdown') {
   for (let key of Object.keys(status)) status[key] = (set === key) ? 1 : 0
   if (set === 'loading') {
-    bot.logger.info(`[core] ${bot.settings.name} loading  . . . . . ~(0_0)~`)
+    logger.info(`[core] ${settings.get('name')} loading  . . . . . ~(0_0)~`)
   } else if (set === 'starting') {
-    bot.logger.info(`[core] ${bot.settings.name} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
+    logger.info(`[core] ${settings.get('name')} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
   } else if (set === 'started') {
-    bot.logger.info(`[core] ${bot.settings.name} started  . . . . . ~(O_O)~ bleep bloop`)
+    logger.info(`[core] ${settings.get('name')} started  . . . . . ~(O_O)~ bleep bloop`)
   }
 }
 
@@ -32,19 +41,19 @@ export function getStatus () {
  * Extensions/adapters can interrupt or modify the stack before start.
  */
 export async function load () {
-  bot.logger.level = bot.settings.get('log-level') // may change after init
+  logger.level = settings.get('log-level') // may change after init
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
   try {
-    bot.middlewares.load()
-    bot.server.load()
-    bot.adapters.load()
+    middleware.loadAll()
+    server.load()
+    adapter.loadAll()
     await eventDelay()
     setStatus('loaded')
-    bot.events.emit('loaded')
+    events.emit('loaded')
   } catch (err) {
-    bot.logger.error('[core] failed to load')
-    await bot.shutdown(1).catch()
+    logger.error('[core] failed to load')
+    await shutdown(1).catch()
   }
 }
 
@@ -52,22 +61,22 @@ export async function load () {
  * Make it go!
  * @example
  *  import * as bot from 'bbot'
- *  bot.start()
+ *  start()
  */
 export async function start () {
   if (getStatus() !== 'loaded') await load()
   setStatus('starting')
   try {
-    await bot.server.start()
-    await bot.adapters.start()
-    await bot.memory.start()
+    await server.start()
+    await adapter.startAll()
+    await memory.start()
   } catch (err) {
-    bot.logger.error('[core] failed to start')
-    await bot.shutdown(1).catch()
+    logger.error('[core] failed to start')
+    await shutdown(1).catch()
   }
   await eventDelay()
   setStatus('started')
-  bot.events.emit('started')
+  events.emit('started')
 }
 
 /**
@@ -82,16 +91,16 @@ export async function shutdown (exit = 0) {
   const status = getStatus()
   if (status === 'shutdown') return
   if (status === 'loading') {
-    await new Promise((resolve) => bot.events.on('loaded', () => resolve()))
+    await new Promise((resolve) => events.on('loaded', () => resolve()))
   } else if (status === 'starting') {
-    await new Promise((resolve) => bot.events.on('started', () => resolve()))
+    await new Promise((resolve) => events.on('started', () => resolve()))
   }
-  await bot.memory.shutdown()
-  await bot.adapters.shutdown()
-  await bot.server.shutdown()
+  await memory.shutdown()
+  await adapter.shutdownAll()
+  await server.shutdown()
   await eventDelay()
   setStatus('shutdown')
-  bot.events.emit('shutdown')
+  events.emit('shutdown')
   if (exit) process.exit(exit)
 }
 
@@ -103,7 +112,7 @@ export async function pause () {
   await shutdown()
   await eventDelay()
   setStatus('loaded')
-  bot.events.emit('paused')
+  events.emit('paused')
 }
 
 /**
@@ -114,15 +123,15 @@ export async function reset () {
   const status = getStatus()
   if (status !== 'shutdown') await shutdown()
   try {
-    bot.adapters.unload()
-    bot.middlewares.unload()
-    bot.path.reset()
-    bot.settings.resetConfig()
+    adapter.unloadAll()
+    middleware.unloadAll()
+    global.reset()
+    settings.reset()
   } catch (err) {
-    bot.logger.error('[core] failed to reset')
-    await bot.shutdown(1).catch()
+    logger.error('[core] failed to reset')
+    await shutdown(1).catch()
   }
   await eventDelay()
   setStatus('waiting')
-  bot.events.emit('waiting')
+  events.emit('waiting')
 }

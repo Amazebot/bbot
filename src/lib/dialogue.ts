@@ -1,4 +1,4 @@
-import * as bot from '..'
+import { logger, settings, id, state, path } from '.'
 
 /**
  * Manage isolated conversational paths and branches.
@@ -39,15 +39,15 @@ import * as bot from '..'
  *    b.path.text(/yes/i, (b) => inventoryQuery(b)) // add more branches here
  *  }
  *  bot.path.text(/hello/i, (b) => dialogue.open(b))
- *  bot.path.join((b) => dialogue.open(b))
+ *  bot.path.enter((b) => dialogue.open(b))
  * @example <caption>Dispatch envelope, opening dialogue for outgoing state</caption>
- *  const envelope = new bot.Envelope({ user })
- *  const dialogue = bot.dialogue.create(options)
+ *  const envelope = bot.envelope.create({ user })
  *  envelope.write('Hello, do you want to see our inventory?')
- *  b.path // add more branches here
- *  const state = bot.dispatch(envelope)
+ *  const dialogue = bot.dialogue.create(options)
+ *  const state = bot.thought.dispatch(envelope)
  *  dialogue.open(state)
- *  dialogue.path.text(/no/i, (b) => b.respond(`OK, bye.`))
+ *  dialogue.path.text(/no/i, (b) => b.respond(`O
+ * K, bye.`))
  *  dialogue.path.text(/yes/i, (b) => inventoryQuery(b))
  *  dialogue.path.text(/quit/i, (b) => dialogue.close())
  * @example <caption>Use function to add paths for current state dialogue</caption>
@@ -81,7 +81,7 @@ export namespace dialogue {
     timeoutMethod?: string
     id?: string
     audience?: 'direct' | 'user' | 'room'
-    defaultPath?: bot.IPath
+    defaultPath?: path.IOptions
   }
 
   /** Add, remove and return paths, for managing end-to-end conversation flow. */
@@ -91,13 +91,13 @@ export namespace dialogue {
     timeoutMethod: string
     id: string
     audience: 'direct' | 'user' | 'room'
-    defaultPath: bot.IPath = {}
-    paths: bot.Path[] = []
-    state?: bot.State
+    defaultPath: path.IOptions = {}
+    paths: path.Path[] = []
+    state?: state.State
     clock?: NodeJS.Timer
-    onOpen?: bot.IStateCallback
-    onClose?: bot.IStateCallback
-    onTimeout?: bot.IStateCallback
+    onOpen?: state.ICallback
+    onClose?: state.ICallback
+    onTimeout?: state.ICallback
 
     /**
      * Create and configure dialogue from options/defaults, link with state.
@@ -105,27 +105,29 @@ export namespace dialogue {
      */
     constructor (options: IOptions = {}) {
       this.timeout = typeof options.timeout !== 'undefined' ? options.timeout
-        : bot.settings.get('dialogue-timeout')
+        : settings.get('dialogue-timeout')
       this.timeoutText = options.timeoutText
-        || bot.settings.get('dialogue-timeout-text')
+        || settings.get('dialogue-timeout-text')
       this.timeoutMethod = options.timeoutMethod
-      || bot.settings.get('dialogue-timeout-method')
-      this.id = options.id || bot.id.counter('dialogue')
+      || settings.get('dialogue-timeout-method')
+      this.id = options.id || id.counter('dialogue')
       this.audience = options.audience || 'direct'
       this.onTimeout = (b) => {
         if (!this.timeoutText) return
         b.respondVia(this.timeoutMethod, this.timeoutText)
-          .catch((err) => bot.logger.error(`[dialogue] timeout response error: ${err.message}`))
+          .catch((err: Error) => {
+            logger.error(`[dialogue] timeout response error: ${err.message}`)
+          })
       }
     }
 
     /** Open dialogue and call optional callback (e.g. send opening message) */
-    async open (state: bot.State) {
+    async open (state: state.State) {
       this.state = state
       if (this.onOpen) {
         await Promise.resolve(this.onOpen(this.state))
           .catch((err) => {
-            bot.logger.error(`[dialogue] open error: ${err.message}`)
+            logger.error(`[dialogue] open error: ${err.message}`)
             throw err
           })
       }
@@ -136,19 +138,19 @@ export namespace dialogue {
     /** Close dialogue (if open), call callback and disengage audience. */
     async close () {
       if (!this.state) {
-        bot.logger.debug(`[dialogue] Closed ${this.id} without state (never opened)`)
+        logger.debug(`[dialogue] Closed ${this.id} without state (never opened)`)
         return false
       }
       this.stopClock()
       if (this.path.hasBranches()) {
-        bot.logger.debug(`Dialogue closed ${this.state.matched ? '' : 'in'}complete`)
+        logger.debug(`Dialogue closed ${this.state.matched ? '' : 'in'}complete`)
       } else {
-        bot.logger.debug('Dialogue closed before paths added')
+        logger.debug('Dialogue closed before paths added')
       }
       if (this.onClose) {
         await Promise.resolve(this.onClose(this.state))
           .catch((err) => {
-            bot.logger.error(`[dialogue] close error: ${err.message}`)
+            logger.error(`[dialogue] close error: ${err.message}`)
             throw err
           })
       }
@@ -167,7 +169,7 @@ export namespace dialogue {
         if (this.onTimeout) {
           await Promise.resolve(this.onTimeout(this.state!))
           .catch((err) => {
-            bot.logger.error(`[dialogue] timeout error: ${err.message}`)
+            logger.error(`[dialogue] timeout error: ${err.message}`)
             throw err
           })
         }
@@ -187,14 +189,14 @@ export namespace dialogue {
     /** Create/return current path and start timer (e.g. on adding branches). */
     get path () {
       this.startClock()
-      if (!this.paths.length) this.paths.push(new bot.Path(this.defaultPath))
+      if (!this.paths.length) this.paths.push(path.create(this.defaultPath))
       return this.paths[this.paths.length - 1]
     }
 
     /** Return the current path, adding a new one to the top of the stack. */
     progressPath () {
       const clonePath = this.paths.slice(-1).pop()
-      this.paths.push(new bot.Path(this.defaultPath))
+      this.paths.push(path.create(this.defaultPath))
       return clonePath
     }
 
@@ -217,7 +219,7 @@ export namespace dialogue {
   }
 
   /** Get set of possible audience IDs for a given state. */
-  export const audiences = (b: bot.State) => {
+  export const audiences = (b: state.State) => {
     return {
       direct: `${b.message.user.id}_${b.message.user.room.id}`,
       user: `${b.message.user.id}`,
@@ -229,7 +231,7 @@ export namespace dialogue {
   export const audienceEngaged = (id: string) => (Object.keys(dialogues).indexOf(id) > -1)
 
   /** Get the ID of engaged audience from current state (if any). */
-  export const engagedId = (b: bot.State) => {
+  export const engagedId = (b: state.State) => {
     const audienceIds = audiences(b)
     if (audienceEngaged(audienceIds.direct)) return audienceIds.direct
     else if (audienceEngaged(audienceIds.user)) return audienceIds.user
@@ -237,19 +239,19 @@ export namespace dialogue {
   }
 
   /** Find an open dialogue from state for any possibly engaged audience. */
-  export const engaged = (b: bot.State) => {
+  export const engaged = (b: state.State) => {
     const audienceId = engagedId(b)
     if (audienceId) return dialogues[audienceId]
   }
 
   /** Add an audience from state to a given dialogue. */
-  export const engage = (b: bot.State, dialogue: Dialogue) => {
+  export const engage = (b: state.State, dialogue: Dialogue) => {
     const audienceId = audiences(b)[dialogue.audience]
     dialogues[audienceId] = dialogue
   }
 
   /** Remove the audience from any dialogue or a given dialogue. */
-  export const disengage = (b: bot.State, dialogue?: Dialogue) => {
+  export const disengage = (b: state.State, dialogue?: Dialogue) => {
     const audienceId = (dialogue)
       ? audiences(b)[dialogue.audience]
       : engagedId(b)

@@ -1,12 +1,11 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
-import * as message from './message'
+import { user, message } from '.'
 
-let mockUser: bot.User
+let mockUser: user.User
 
 describe('[message]', () => {
-  before(() => mockUser = bot.user.create({ id: 'TEST_ID', name: 'testy' }))
+  before(() => mockUser = user.create({ id: 'TEST_ID', name: 'testy' }))
   describe('Message', () => {
     it('allows extending', () => {
       class MockMessage extends message.Message {
@@ -37,7 +36,7 @@ describe('[message]', () => {
         toString () { return 'test' }
       }
       const mockMessage = new MockMessage({ name: 'testy' })
-      expect(mockMessage.user).to.be.instanceof(bot.User)
+      expect(mockMessage.user).to.be.instanceof(user.User)
     })
     it('accepts ID if given', () => {
       class MockMessage extends message.Message {
@@ -54,49 +53,49 @@ describe('[message]', () => {
       expect(mockMessage.id).to.have.lengthOf(32)
     })
   })
-  describe('TextMessage', () => {
+  describe('Text', () => {
     it('.toString returns text', () => {
-      const textMessage = new message.TextMessage(mockUser, 'test txt')
+      const textMessage = new message.Text(mockUser, 'test txt')
       expect(textMessage.toString()).to.equal('test txt')
     })
   })
-  describe('EnterMessage', () => {
+  describe('Enter', () => {
     it('.toString returns event and user', () => {
-      const enterMessage = new message.EnterMessage(mockUser, 'test txt')
+      const enterMessage = new message.Enter(mockUser, 'test txt')
       expect(enterMessage.toString()).to.equal(`enter message for ${mockUser.name}`)
     })
   })
-  describe('LeaveMessage', () => {
+  describe('Leave', () => {
     it('.toString returns event and user', () => {
-      const leaveMessage = new message.LeaveMessage(mockUser, 'test txt')
+      const leaveMessage = new message.Leave(mockUser, 'test txt')
       expect(leaveMessage.toString()).to.equal(`leave message for ${mockUser.name}`)
     })
   })
-  describe('TopicMessage', () => {
+  describe('Topic', () => {
     it('.toString returns event and user', () => {
-      const topicMessage = new message.TopicMessage(mockUser, 'test txt')
+      const topicMessage = new message.Topic(mockUser, 'test txt')
       expect(topicMessage.toString()).to.equal(`topic message for ${mockUser.name}`)
     })
   })
-  describe('CatchAllMessage', () => {
+  describe('CatchAll', () => {
     it('constructor inherits original message properties', () => {
-      const textMessage = new message.TextMessage(mockUser, 'test txt')
-      const catchMessage = new message.CatchAllMessage(textMessage)
+      const textMessage = new message.Text(mockUser, 'test txt')
+      const catchMessage = new message.CatchAll(textMessage)
       expect(catchMessage.id).to.equal(textMessage.id)
       expect(catchMessage.toString()).to.equal(textMessage.toString())
     })
   })
-  describe('ServerMessage', () => {
+  describe('Server', () => {
     it('constructor gets user from ID', () => {
-      bot.user.byId(mockUser.id, mockUser) // make user known
-      const requestMessage = new message.ServerMessage({
+      user.byId(mockUser.id, mockUser) // make user known
+      const requestMessage = new message.Server({
         userId: mockUser.id,
         data: { foo: 'bar' }
       })
       expect(requestMessage.user).to.eql(mockUser)
     })
     it('.toString prints JSON data', () => {
-      const requestMessage = new message.ServerMessage({
+      const requestMessage = new message.Server({
         userId: mockUser.id,
         data: { foo: 'bar' }
       })

@@ -1,23 +1,27 @@
-import * as bBot from '../..'
+/** Magic helpful functions. */
+export namespace util {
+  /** Deep clone any class or object via JSON conversion. */
+  export const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
-/** Base Adapter class, extending to create different types of adapters. */
-export abstract class Adapter {
-  /** Name of adapter, used for logs */
-  name = 'base-adapter'
+  /** Convert instance to plain object for storage. */
+  export function convert (data: any, excludes: string[] = []) {
+    if (typeof data === 'object') {
+      data = clone(Object.keys(data)
+        .filter((key) => !excludes.includes(key))
+        .reduce((obj: any, key) => {
+          if (typeof obj[key] !== 'function') obj[key] = data[key]
+          return obj
+        }, {})
+      )
+    }
+    return data
+  }
 
-  /**
-   * Create an adapter instance.
-   * Adapter modules should provide a `.use` method that accepts the bot, to
-   * provide to their adapter class constructor, returning the instance.
-   * @param bot The current bBot instance
-   */
-  constructor (public bot: typeof bBot) {}
-
-  /** Extend to add any bot startup requirements in adapter environment */
-  abstract start (): Promise<void>
-
-  /** Extend to add any bot shutdown requirements in adapter environment */
-  abstract shutdown (): Promise<void>
+  /** Convert plain objects into their original class. */
+  /** @todo TESTS */
+  export function restore (data: any, namespace: string) {
+    return require(`../${namespace}`).create(data)
+  }
 
   /**
    * Utility to convert internal object to schema required in adapter platform.
@@ -25,7 +29,7 @@ export abstract class Adapter {
    * all attributes without needing to map the ones that are the same in both.
    * Otherwise, result would only include values from defined schema fields.
    */
-  parseSchema (
+  export function parseSchema (
     internal: any,
     schema: { [path: string]: string },
     external: any = {}
@@ -33,7 +37,7 @@ export abstract class Adapter {
     const converted: any = {}
     const target = (external.constructor.name !== 'Object')
       ? Object.create(external)
-      : this.bot.deepClone(external)
+      : clone(external)
     for (let key in schema) {
       const valueAtPath = schema[key].split('.').reduce((pre, cur) => {
         return (typeof pre !== 'undefined') ? pre[cur] : undefined

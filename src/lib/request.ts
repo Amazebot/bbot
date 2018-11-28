@@ -1,5 +1,5 @@
 import * as client from 'request'
-import * as bot from '..'
+import * as bot from '.'
 
 /** Standard arguments object for requests */
 export interface IRequestMeta {

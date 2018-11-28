@@ -1,5 +1,5 @@
 import 'mocha'
-import { room, memory } from '..'
+import { room, memory } from '.'
 import { expect } from 'chai'
 const mockRooms = {
   'r1': room.create({ id: 'r1', name: 'test-1' }),

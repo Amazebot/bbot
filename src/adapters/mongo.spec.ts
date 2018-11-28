@@ -39,7 +39,7 @@ describe('[adapter-mongo]', () => {
   after(() => process.env = initEnv)
   describe('.use', () => {
     it('returns adapter instance', () => {
-      expect(adapter).to.be.instanceof(bot.Adapter)
+      expect(adapter).to.be.instanceof(bot.adapter.Adapter)
     })
     it('adds env settings for DB to bot settings', () => {
       expect(bot.settings.get('db-collection')).to.equal(testCollection)
@@ -103,7 +103,7 @@ describe('[adapter-mongo]', () => {
     })
     it('loads each value with its original type', async () => {
       const memory = await adapter.loadMemory()
-      expect(memory.users['test-user-1']).to.be.instanceof(bot.User)
+      expect(memory.users['test-user-1']).to.be.instanceof(bot.user.User)
     })
   })
   describe('.keep', () => {
@@ -131,13 +131,17 @@ describe('[adapter-mongo]', () => {
       expect(tests.data).to.eql(testStore)
     })
     it('keeps matches intact for state branches', async () => {
-      const b = new bot.State({ message: new bot.TextMessage(bot.user.create(), '_') })
+      const b = bot.state.create({
+        message: bot.message.text(bot.user.blank(), '_')
+      })
       const branches = [
-        new bot.CustomBranch(() => 1, () => 1, { id: 'A', force: true }),
-        new bot.CustomBranch(() => 2, () => 2, { id: 'B', force: true })
+        new bot.branch.Custom(() => 1, () => 1, { id: 'A', force: true }),
+        new bot.branch.Custom(() => 2, () => 2, { id: 'B', force: true })
       ]
-      for (let branch of branches) await branch.process(b, new bot.Middleware('test'))
-      await adapter.keep('states', bot.store.plainObject(b))
+      for (let branch of branches) {
+        await branch.process(b, new bot.middleware.Middleware('test'))
+      }
+      await adapter.keep('states', bot.util.convert(b))
       const states = await mongo.getModel(testCollection).findOne({
         sub: 'states',
         type: 'store'

@@ -1,5 +1,5 @@
 import 'mocha'
-import { user, memory } from '..'
+import { user, memory } from '.'
 import { expect } from 'chai'
 const mockUsers = {
   'u1': user.create({ id: 'u1', name: 'test-1' }),

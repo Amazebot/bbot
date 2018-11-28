@@ -19,7 +19,7 @@ describe('[rocketchat]', () => {
           'webview_height_ratio': 'compact'
         }]
       }
-      const envelope = new bot.Envelope({
+      const envelope = bot.envelope.create({
         payload: { attachments: [attachment] }
       })
       const result = rc.parseEnvelope(envelope)
@@ -27,7 +27,7 @@ describe('[rocketchat]', () => {
     })
   })
   it('accepts custom attachments', async () => {
-    const envelope = new bot.Envelope()
+    const envelope = bot.envelope.create()
     const custom = {
       attachments: [{
         foo: 'foo',

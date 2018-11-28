@@ -17,24 +17,24 @@ describe('[adapter-shell]', () => {
   describe('.use', () => {
     it('returns adapter instance', () => {
       const shell = shellAdapter.use(bot)
-      expect(shell).to.be.instanceof(bot.Adapter)
+      expect(shell).to.be.instanceof(bot.adapter.Adapter)
     })
     it('accepts changes in bot settings before startup', async () => {
       const shell = shellAdapter.use(bot)
       shell.bot.settings.set('name', 'shelby')
-      bot.adapters.message = shell
+      bot.adapter.adapters.message = shell
       await bot.start()
-      expect(bot.settings.name).to.equal('shelby')
-      expect(shell.bot.settings.name).to.equal('shelby')
+      expect(bot.settings.get('name')).to.equal('shelby')
+      expect(shell.bot.settings.get('name')).to.equal('shelby')
     })
     it('accepts changes in bot settings after startup', async () => {
       const shell = shellAdapter.use(bot)
-      bot.adapters.message = shell
-      shell.bot.settings.name = 'not-shelby'
+      bot.adapter.adapters.message = shell
+      shell.bot.settings.set('name', 'not-shelby')
       await bot.start()
-      shell.bot.settings.name = 'shelby'
-      expect(bot.settings.name).to.equal('shelby')
-      expect(shell.bot.settings.name).to.equal('shelby')
+      shell.bot.settings.set('name', 'shelby')
+      expect(bot.settings.get('name')).to.equal('shelby')
+      expect(shell.bot.settings.get('name')).to.equal('shelby')
     })
   })
 })

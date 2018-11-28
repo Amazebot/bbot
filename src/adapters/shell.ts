@@ -1,33 +1,19 @@
-import * as bBot from '..'
+import * as bot from '..'
 import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
 
 /** Load prompts and render chat in shell, for testing interactions */
-export class Shell extends bBot.MessageAdapter {
+export class Shell extends bot.adapter.Message {
   name = 'shell-message-adapter'
   debug: boolean = false
   ui: any
   logs: string[] = ['']
   messages: [string, string][] = []
+  user: bot.user.User = bot.user.blank()
+  room: bot.room.Room = bot.room.blank()
   line = new inquirer.Separator()
   transport?: Transport
-  user?: bBot.User
-  room?: { id?: string, name?: string }
-
-  /** Singleton pattern instance */
-  private static instance: Shell
-
-  /** Prevent direct access to constructor for singleton adapter */
-  private constructor (bot: typeof bBot) {
-    super(bot)
-  }
-
-  /** Singleton instance init */
-  static getInstance (bot: typeof bBot) {
-    if (!Shell.instance) Shell.instance = new Shell(bot)
-    return Shell.instance
-  }
 
   /** Update chat window and return to input prompt */
   async render () {
@@ -91,16 +77,16 @@ export class Shell extends bBot.MessageAdapter {
       }
     })
     this.ui = new inquirer.ui.BottomBar()
-    this.bot.path.join((b) => b.respond(
-      `${this.user.name} Welcome to #${this.room!.name}, I'm ${b.bot.settings.get('name')}`,
+    this.bot.global.enter((b) => b.respond(
+      `${this.user.name} Welcome to #${this.room.name}, I'm ${b.bot.settings.get('name')}`,
       `Type "exit" to exit any time.`
-    ), { id: 'shell-join' })
-    this.bot.path.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
+    ), { id: 'shell-enter' })
+    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       if (!this.debug) {
         this.logSetup()
         await this.roomSetup()
-        await this.bot.receive(new this.bot.EnterMessage(this.user))
+        await this.bot.thought.receive(this.bot.message.enter(this.user))
         await this.render()
       }
     })
@@ -134,11 +120,14 @@ export class Shell extends bBot.MessageAdapter {
       this.bot.settings.set('shell-user-name', registration.username)
       this.bot.settings.set('shell-room-name', registration.room)
     }
-    this.user = new this.bot.User({
-      name: this.bot.settings.get('shell-user-name'),
-      id: this.bot.settings.get('shell-user-id')
+    this.room = this.bot.room.create({
+      name: this.bot.settings.get('shell-room-name')
     })
-    this.room = { name: this.bot.settings.get('shell-room-name') }
+    this.user = this.bot.user.create({
+      name: this.bot.settings.get('shell-user-name'),
+      id: this.bot.settings.get('shell-user-id'),
+      room: this.room
+    })
   }
 
   /** Prompt for message input, recursive after each render */
@@ -146,27 +135,27 @@ export class Shell extends bBot.MessageAdapter {
     const input: any = await inquirer.prompt({
       type: 'input',
       name: 'message',
-      message: chalk.magenta(`#${this.room!.name}`) + chalk.cyan(' ➤')
+      message: chalk.magenta(`#${this.room.name}`) + chalk.cyan(' ➤')
     })
-    this.messages.push([this.user.name, input.message])
-    await this.bot.receive(new this.bot.TextMessage(this.user, input.message))
+    this.messages.push([this.user.name!, input.message])
+    await this.bot.thought.receive(this.bot.message.text(this.user, input.message))
     return this.render()
   }
 
   /** Add outgoing messages and re-render chat */
-  async dispatch (envelope: bBot.Envelope) {
+  async dispatch (envelope: bot.envelope.Envelope) {
     for (let text of (envelope.strings || [])) {
-      if (text) this.messages.push([this.bot.settings.name, text])
+      if (text) this.messages.push([this.bot.settings.get('name'), text])
     }
     for (let attachment of (envelope.payload.attachments || [])) {
       if (attachment && attachment.fallback) {
-        this.messages.push([this.bot.settings.name, attachment.fallback])
+        this.messages.push([this.bot.settings.get('name'), attachment.fallback])
       }
     }
     // @todo Use inquirer prompt as UI to select from quick replies
     if (envelope.payload.quickReplies) {
       this.messages.push([
-        this.bot.settings.name,
+        this.bot.settings.get('name'),
         `[${envelope.payload.quickReplies.map((qr) => qr.text).join('], [')}]`
       ])
     }
@@ -178,4 +167,9 @@ export class Shell extends bBot.MessageAdapter {
   }
 }
 
-export const use = (bot: typeof bBot) => Shell.getInstance(bot)
+/** Adapter singleton (ish) require pattern. */
+let shell: Shell
+export const use = (bBot: bot.Bot) => {
+  if (!shell) shell = new Shell(bBot)
+  return shell
+}

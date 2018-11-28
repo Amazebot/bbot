@@ -1,35 +1,35 @@
 import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
-import * as bot from '..'
+import * as bot from '.'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-let message: bot.TextMessage
+let message: bot.message.Text
 
 describe('[middleware]', () => {
   before(() => {
-    message = new bot.TextMessage(bot.user.create({ id: 'test-user' }), 'foo')
+    message = new bot.message.Text(bot.user.create({ id: 'test-user' }), 'foo')
   })
-  beforeEach(() => bot.middlewares.unload())
+  beforeEach(() => bot.middleware.unloadAll())
   describe('.register', () => {
     it('adds a piece to the stack', () => {
-      const testMiddleware = new bot.Middleware('test')
-      const piece: bot.IPiece = (_, next) => next()
+      const testMiddleware = new bot.middleware.Middleware('test')
+      const piece: bot.middleware.IPiece = (_, next) => next()
       testMiddleware.register(piece)
       expect(testMiddleware.stack).to.eql([piece])
     })
   })
   describe('.execute', () => {
     it('returns a promise', () => {
-      const testMiddleware = new bot.Middleware('test')
-      const piece: bot.IPiece = (_, next) => next()
+      const testMiddleware = new bot.middleware.Middleware('test')
+      const piece: bot.middleware.IPiece = (_, next) => next()
       testMiddleware.register(piece)
       const promise = testMiddleware.execute({ message }, () => null)
       expect(promise.then).to.be.a('Function')
       return promise
     })
     it('executes synchronous pieces', () => {
-      const testMiddleware = new bot.Middleware('test')
+      const testMiddleware = new bot.middleware.Middleware('test')
       const spy = sinon.spy()
       testMiddleware.register(spy)
       return testMiddleware.execute({ message }, () => null).then(() => {
@@ -37,7 +37,7 @@ describe('[middleware]', () => {
       })
     })
     it('executes asynchronous pieces', () => {
-      const testMiddleware = new bot.Middleware('test')
+      const testMiddleware = new bot.middleware.Middleware('test')
       const spy = sinon.spy()
       testMiddleware.register(spy)
       return testMiddleware.execute({ message }, () => null).then(() => {
@@ -45,8 +45,8 @@ describe('[middleware]', () => {
       })
     })
     it('resolves after asynchronous pieces', async () => {
-      const testMiddleware = new bot.Middleware('test')
-      const asyncPiece: bot.IPiece = (b: bot.State) => {
+      const testMiddleware = new bot.middleware.Middleware('test')
+      const asyncPiece: bot.middleware.IPiece = (b: bot.state.State) => {
         return delay(50).then(() => b.delayed = true)
       }
       testMiddleware.register(asyncPiece)
@@ -54,13 +54,13 @@ describe('[middleware]', () => {
       expect(b.delayed).to.equal(true)
     })
     it('accepts and processes initialised state', () => {
-      const b = new bot.State({ message })
-      const testMiddleware = new bot.Middleware('test')
-      const complete = (state: bot.State) => expect(state).to.eql(b)
+      const b = bot.state.create({ message })
+      const testMiddleware = new bot.middleware.Middleware('test')
+      const complete = (state: bot.state.State) => expect(state).to.eql(b)
       return testMiddleware.execute(b, complete)
     })
     it('executes synchronous pieces in order', () => {
-      const testMiddleware = new bot.Middleware('test')
+      const testMiddleware = new bot.middleware.Middleware('test')
       const pieceA = sinon.spy()
       const pieceB = sinon.spy()
       const complete = () => null
@@ -69,11 +69,11 @@ describe('[middleware]', () => {
       return testMiddleware.execute({ message }, complete)
     })
     it('executes asynchronous pieces in order', async () => {
-      const testMiddleware = new bot.Middleware('test')
-      const pieceA: bot.IPiece = (_, next) => {
+      const testMiddleware = new bot.middleware.Middleware('test')
+      const pieceA: bot.middleware.IPiece = (_, next) => {
         delay(20).then(() => next()).catch()
       }
-      const pieceB: bot.IPiece = (_, next) => {
+      const pieceB: bot.middleware.IPiece = (_, next) => {
         delay(10).then(() => next()).catch()
       }
       const spyA = sinon.spy(pieceA)
@@ -84,15 +84,15 @@ describe('[middleware]', () => {
       sinon.assert.callOrder(spyA, spyB)
     })
     it('executes the complete function when there are no other pieces', () => {
-      const testMiddleware = new bot.Middleware('test')
+      const testMiddleware = new bot.middleware.Middleware('test')
       const complete = sinon.spy()
       return testMiddleware.execute({ message }, complete).then(() => {
         sinon.assert.calledOnce(complete)
       })
     })
     it('executes the complete function when there are other pieces', () => {
-      const testMiddleware = new bot.Middleware('test')
-      const piece: bot.IPiece = (_, next) => next()
+      const testMiddleware = new bot.middleware.Middleware('test')
+      const piece: bot.middleware.IPiece = (_, next) => next()
       const complete = sinon.spy()
       testMiddleware.register(piece)
       return testMiddleware.execute({ message }, complete).then(() => {
@@ -100,8 +100,8 @@ describe('[middleware]', () => {
       })
     })
     it('rejects promise if piece throws', () => {
-      const testMiddleware = new bot.Middleware('failure')
-      const piece: bot.IPiece = () => {
+      const testMiddleware = new bot.middleware.Middleware('failure')
+      const piece: bot.middleware.IPiece = () => {
         throw new Error('test throw')
       }
       const complete = sinon.spy()
@@ -111,8 +111,8 @@ describe('[middleware]', () => {
         .catch((err) => expect(err).to.be.an('Error'))
     })
     it('does not execute complete function if piece throws', () => {
-      const testMiddleware = new bot.Middleware('failure')
-      const piece: bot.IPiece = () => {
+      const testMiddleware = new bot.middleware.Middleware('failure')
+      const piece: bot.middleware.IPiece = () => {
         throw new Error('test throw')
       }
       const complete = sinon.spy()
@@ -122,17 +122,17 @@ describe('[middleware]', () => {
         .catch(() => sinon.assert.notCalled(complete))
     })
     it('does not execute complete function if piece interrupts', async () => {
-      const testMiddleware = new bot.Middleware('interrupt')
-      const piece: bot.IPiece = (_, __, done) => done()
+      const testMiddleware = new bot.middleware.Middleware('interrupt')
+      const piece: bot.middleware.IPiece = (_, __, done) => done()
       const complete = sinon.spy()
       testMiddleware.register(piece)
       await testMiddleware.execute({ message }, complete)
       sinon.assert.notCalled(complete)
     })
     it('resolves promise if piece interrupts', () => {
-      const testMiddleware = new bot.Middleware('interrupt')
+      const testMiddleware = new bot.middleware.Middleware('interrupt')
       let tracker = false
-      const piece: bot.IPiece = (_, __, done) => {
+      const piece: bot.middleware.IPiece = (_, __, done) => {
         tracker = true
         done()
       }
@@ -143,10 +143,10 @@ describe('[middleware]', () => {
       })
     })
     it('calls wrapped done functions after complete', () => {
-      const testMiddleware = new bot.Middleware('wrapped')
-      const pieceDone: bot.IPieceDone = (done) => (done) ? done() : null
+      const testMiddleware = new bot.middleware.Middleware('wrapped')
+      const pieceDone: bot.middleware.IPieceDone = (done) => (done) ? done() : null
       const doneSpy = sinon.spy(pieceDone)
-      const piece: bot.IPiece = (_, next, done) => next(() => doneSpy(done))
+      const piece: bot.middleware.IPiece = (_, next, done) => next(() => doneSpy(done))
       const pieceSpy = sinon.spy(piece)
       const completeSpy = sinon.spy()
       testMiddleware.register(pieceSpy)
@@ -155,7 +155,7 @@ describe('[middleware]', () => {
       })
     })
     it('calls wrapped done functions in inverse order of pieces', async () => {
-      const testMiddleware = new bot.Middleware('failure')
+      const testMiddleware = new bot.middleware.Middleware('failure')
       const doneA = sinon.spy((done: any) => done())
       const pieceA = (_: any, next: any, done: any) => next(() => doneA(done))
       const doneB = sinon.spy((done: any) => done())
@@ -168,102 +168,90 @@ describe('[middleware]', () => {
       })
     })
     it('passes state along with any modifications', async () => {
-      const testMiddleware = new bot.Middleware()
+      const testMiddleware = new bot.middleware.Middleware()
       const b = { message, pieces: [] }
-      const pieceA = (b: bot.State, next: any) => {
+      const pieceA = (b: bot.state.State, next: any) => {
         b.pieces.push('A')
         next()
       }
-      const pieceB = (b: bot.State, next: any) => {
+      const pieceB = (b: bot.state.State, next: any) => {
         b.pieces.push('B')
         next()
       }
-      const complete = (b: bot.State) => b.pieces.push('C')
+      const complete = (b: bot.state.State) => b.pieces.push('C')
       testMiddleware.register(pieceA)
       testMiddleware.register(pieceB)
       await testMiddleware.execute(b, complete)
       expect(b.pieces).to.eql(['A', 'B', 'C'])
     })
     it('resolves promise with final state', () => {
-      const testMiddleware = new bot.Middleware()
+      const testMiddleware = new bot.middleware.Middleware()
       const b = { message, complete: false }
-      const complete = (b: bot.State) => b.complete = true
+      const complete = (b: bot.state.State) => b.complete = true
       return testMiddleware.execute(b, complete).then((b) => {
         expect(b.complete).to.equal(true)
       })
     })
   })
   describe('Middlewares', () => {
-    describe('.load', () => {
+    describe('.loadAll', () => {
       it('creates middleware for each thought process', () => {
-        bot.middlewares.load()
-        expect(bot.middlewares).to.include.all.keys([
+        bot.middleware.loadAll()
+        expect(bot.middleware.stacks).to.include.all.keys([
           'hear', 'listen', 'understand', 'act', 'respond', 'remember'
         ])
       })
       it('creates all middleware instances', () => {
-        bot.middlewares.load()
-        for (let key in bot.middlewares) {
-          expect(bot.middlewares[key]).to.be.instanceof(bot.Middleware)
+        bot.middleware.loadAll()
+        for (let key in bot.middleware.stacks) {
+          expect(bot.middleware.stacks[key]).to.be.instanceof(bot.middleware.Middleware)
         }
       })
     })
-    describe('.unload', () => {
+    describe('.unloadAll', () => {
       it('deletes all middleware instances', () => {
-        bot.middlewares.load()
-        bot.middlewares.unload()
-        expect(bot.middlewares).to.eql({})
+        bot.middleware.loadAll()
+        bot.middleware.unloadAll()
+        expect(bot.middleware.stacks).to.eql({})
       })
     })
   })
-  describe('.middleware', () => {
-    describe('.hear', () => {
-      it('registers piece in hear stack', () => {
-        bot.middlewares.load()
-        const mockPiece = sinon.spy()
-        bot.middleware.hear(mockPiece)
-        expect(bot.middlewares.hear.stack[0]).to.eql(mockPiece)
-      })
+  describe('.register', () => {
+    it('registers piece in hear stack', () => {
+      bot.middleware.loadAll()
+      const mockPiece = sinon.spy()
+      bot.middleware.register('hear', mockPiece)
+      expect(bot.middleware.stacks.hear!.stack[0]).to.eql(mockPiece)
     })
-    describe('.listen', () => {
-      it('registers piece in listen stack', () => {
-        bot.middlewares.load()
-        const mockPiece = sinon.spy()
-        bot.middleware.listen(mockPiece)
-        expect(bot.middlewares.listen.stack[0]).to.eql(mockPiece)
-      })
+    it('registers piece in listen stack', () => {
+      bot.middleware.loadAll()
+      const mockPiece = sinon.spy()
+      bot.middleware.register('listen', mockPiece)
+      expect(bot.middleware.stacks.listen!.stack[0]).to.eql(mockPiece)
     })
-    describe('.understand', () => {
-      it('registers piece in understand stack', () => {
-        bot.middlewares.load()
-        const mockPiece = sinon.spy()
-        bot.middleware.understand(mockPiece)
-        expect(bot.middlewares.understand.stack[0]).to.eql(mockPiece)
-      })
+    it('registers piece in understand stack', () => {
+      bot.middleware.loadAll()
+      const mockPiece = sinon.spy()
+      bot.middleware.register('understand', mockPiece)
+      expect(bot.middleware.stacks.understand!.stack[0]).to.eql(mockPiece)
     })
-    describe('.act', () => {
-      it('registers piece in act stack', () => {
-        bot.middlewares.load()
-        const mockPiece = sinon.spy()
-        bot.middleware.act(mockPiece)
-        expect(bot.middlewares.act.stack[0]).to.eql(mockPiece)
-      })
+    it('registers piece in act stack', () => {
+      bot.middleware.loadAll()
+      const mockPiece = sinon.spy()
+      bot.middleware.register('act', mockPiece)
+      expect(bot.middleware.stacks.act!.stack[0]).to.eql(mockPiece)
     })
-    describe('.respond', () => {
-      it('registers piece in respond stack', () => {
-        bot.middlewares.load()
-        const mockPiece = sinon.spy()
-        bot.middleware.respond(mockPiece)
-        expect(bot.middlewares.respond.stack[0]).to.eql(mockPiece)
-      })
+    it('registers piece in respond stack', () => {
+      bot.middleware.loadAll()
+      const mockPiece = sinon.spy()
+      bot.middleware.register('respond', mockPiece)
+      expect(bot.middleware.stacks.respond!.stack[0]).to.eql(mockPiece)
     })
-    describe('.remember', () => {
-      it('registers piece in remember stack', () => {
-        bot.middlewares.load()
-        const mockPiece = sinon.spy()
-        bot.middleware.remember(mockPiece)
-        expect(bot.middlewares.remember.stack[0]).to.eql(mockPiece)
-      })
+    it('registers piece in remember stack', () => {
+      bot.middleware.loadAll()
+      const mockPiece = sinon.spy()
+      bot.middleware.register('remember', mockPiece)
+      expect(bot.middleware.stacks.remember!.stack[0]).to.eql(mockPiece)
     })
   })
 })

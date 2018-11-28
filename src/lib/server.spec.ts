@@ -2,7 +2,7 @@ import 'mocha'
 import sinon from 'sinon'
 import { expect } from 'chai'
 import axios from 'axios'
-import * as bot from '..'
+import * as bot from '.'
 
 describe('[server]', () => {
   afterEach(() => bot.server.shutdown())
@@ -19,7 +19,7 @@ describe('[server]', () => {
       it('creates listening http/s server', async () => {
         bot.server.load()
         await bot.server.start()
-        expect(bot.server.server!.listening).to.equal(true)
+        expect(bot.server.server.listening).to.equal(true)
       })
     })
     describe('.url', () => {
@@ -36,19 +36,19 @@ describe('[server]', () => {
         const res = await axios.get(`${bot.server.url()}/public`)
           .catch((err) => expect(err).to.not.be.instanceof(Error))
         expect(res).to.haveOwnProperty('data')
-        expect((res as any).data.name).to.equal(bot.settings.name)
+        expect((res as any).data.name).to.equal(bot.settings.get('name'))
       })
     })
     describe('.messageRoutes', () => {
       it('/message/userId/roomId calls bot.serve with message', async () => {
         bot.server.load()
-        const serve = sinon.stub(bot, 'serve')
+        const serve = sinon.stub(bot.thought, 'serve')
         serve.resolves(true)
         await bot.server.start()
         await axios.get(`${bot.server.url()}/message/111/222?foo=bar`)
           .catch((err) => expect(err).to.not.be.instanceof(Error))
         const message = serve.args[0][0]
-        expect(message).to.be.instanceof(bot.ServerMessage)
+        expect(message).to.be.instanceof(bot.message.Server)
         expect(message.data).to.eql({ foo: 'bar' })
         expect(message.user.id).to.eql('111')
         expect(message.user.room.id).to.eql('222')
@@ -56,7 +56,7 @@ describe('[server]', () => {
       })
       it('/message/userId/roomId response serves message ID', async () => {
         bot.server.load()
-        const serve = sinon.stub(bot, 'serve')
+        const serve = sinon.stub(bot.thought, 'serve')
         serve.resolves(true)
         await bot.server.start()
         const res = await axios.get(`${bot.server.url()}/message/111/222`)
@@ -67,7 +67,7 @@ describe('[server]', () => {
       })
       it('/message/userId response serves message without room', async () => {
         bot.server.load()
-        const serve = sinon.stub(bot, 'serve')
+        const serve = sinon.stub(bot.thought, 'serve')
         serve.resolves(true)
         await bot.server.start()
         const res = await axios.get(`${bot.server.url()}/message/111`)
