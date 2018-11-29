@@ -16,18 +16,17 @@ class MockStorageAdapter extends bot.adapter.Storage {
   async findOne () { return }
   async lose () { return }
 }
-let mockAdapter: MockStorageAdapter
+let mockStorage = sinon.createStubInstance(MockStorageAdapter)
 
 describe('[memory]', () => {
   before(() => {
-    mockAdapter = sinon.createStubInstance(MockStorageAdapter)
     bot.settings.set('autoSave', false)
-    sinon.spy(bot.memory, 'setSaveInterval')
-    sinon.spy(bot.memory, 'clearSaveInterval');
-    (mockAdapter.loadMemory as sinon.SinonStub).resolves({ test: { foo: 'bar' } });
-    (mockAdapter.find as sinon.SinonStub).resolves([{ test: 'test' }]);
-    (mockAdapter.findOne as sinon.SinonStub).resolves({ test: 'test' })
-    bot.adapter.adapters.storage = mockAdapter
+    bot.memory.setSaveInterval = sinon.spy()
+    bot.memory.clearSaveInterval = sinon.spy()
+    mockStorage.loadMemory.resolves({ test: { foo: 'bar' } })
+    mockStorage.find.resolves([{ test: 'test' }])
+    mockStorage.findOne.resolves({ test: 'test' })
+    bot.adapter.adapters.storage = mockStorage
   })
   afterEach(() => {
     (bot.memory.setSaveInterval as sinon.SinonSpy).resetHistory();

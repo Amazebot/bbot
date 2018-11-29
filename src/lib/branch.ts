@@ -1,4 +1,4 @@
-import * as lib from '.'
+import { state, bit, id, logger, conditions, settings, middleware, message, nlu } from '.'
 
 /** Create branches for matching conversation input to callbacks. */
 export namespace branch {
@@ -20,13 +20,13 @@ export namespace branch {
   export type matchCondition =
     string |
     RegExp |
-    lib.conditions.Condition |
-    lib.conditions.Condition[] |
-    lib.conditions.Collection |
-    lib.conditions.Conditions
+    conditions.Condition |
+    conditions.Condition[] |
+    conditions.Collection |
+    conditions.Conditions
 
   /** Alias for acceptable branch action types. */
-  export type action = lib.state.ICallback | string
+  export type action = state.ICallback | string
 
   /**
    * Process message in state and decide whether to act on it.
@@ -36,7 +36,7 @@ export namespace branch {
    */
   export abstract class Branch {
     id: string
-    callback: lib.state.ICallback
+    callback: state.ICallback
     force: boolean = false
     match?: any
     matched?: boolean
@@ -48,9 +48,9 @@ export namespace branch {
       options: IOptions = {}
     ) {
       this.callback = (typeof action === 'string')
-        ? (state) => lib.bit.run(action, state)
+        ? (state) => bit.run(action, state)
         : action
-      this.id = (options.id) ? options.id : lib.id.counter('branch')
+      this.id = (options.id) ? options.id : id.counter('branch')
       for (let key in options) this[key] = options[key]
     }
 
@@ -71,8 +71,8 @@ export namespace branch {
      * @param done       Called after middleware (optional), with match status
      */
     async process (
-      b: lib.state.State,
-      middleware: lib.middleware.Middleware,
+      b: state.State,
+      middleware: middleware.Middleware,
       done: IDone = () => null
     ) {
       if (!b.matched || this.force) {
@@ -81,13 +81,13 @@ export namespace branch {
         if (this.matched) {
           b.setBranch(this)
           await middleware.execute(b, (b) => {
-            lib.logger.debug(`[branch] executing ${this.constructor.name} callback, ID ${this.id}`)
+            logger.debug(`[branch] executing ${this.constructor.name} callback, ID ${this.id}`)
             return Promise.resolve(this.callback(b))
           }).then(() => {
-            lib.logger.debug(`[branch] ${this.id} process done (${(this.matched) ? 'matched' : 'no match'})`)
+            logger.debug(`[branch] ${this.id} process done (${(this.matched) ? 'matched' : 'no match'})`)
             return Promise.resolve(done(true))
-          }).catch((err) => {
-            lib.logger.error(`[branch] ${this.id} middleware error, ${err.message}`)
+          }).catch((err: Error) => {
+            logger.error(`[branch] ${this.id} middleware error, ${err.message}`)
             return Promise.resolve(done(false))
           })
         } else {
@@ -106,9 +106,9 @@ export namespace branch {
     }
 
     /** Matching function looks for any CatchAll */
-    async matcher (msg: lib.message.Message) {
-      if (msg instanceof lib.message.CatchAll) {
-        lib.logger.debug(`[branch] message "${msg}" matched catch all ID ${this.id}`)
+    async matcher (msg: message.Message) {
+      if (msg instanceof message.CatchAll) {
+        logger.debug(`[branch] message "${msg}" matched catch all ID ${this.id}`)
         return msg
       }
       return undefined
@@ -127,10 +127,10 @@ export namespace branch {
     }
 
     /** Standard matcher method routes to custom matching function */
-    async matcher (msg: lib.message.Message) {
+    async matcher (msg: message.Message) {
       const match = await Promise.resolve(this.customMatcher(msg))
       if (match) {
-        lib.logger.debug(`[branch] message "${msg}" matched custom branch ID ${this.id}`)
+        logger.debug(`[branch] message "${msg}" matched custom branch ID ${this.id}`)
       }
       return match
     }
@@ -138,7 +138,7 @@ export namespace branch {
 
   /** Text branch uses basic regex matching */
   export class Text extends Branch {
-    conditions: lib.conditions.Conditions
+    conditions: conditions.Conditions
 
     /** Create text branch for regex pattern */
     constructor (
@@ -147,20 +147,20 @@ export namespace branch {
       options?: IOptions
     ) {
       super(callback, options)
-      this.conditions = (match instanceof lib.conditions.Conditions)
+      this.conditions = (match instanceof conditions.Conditions)
         ? match
-        : lib.conditions.create(match)
+        : conditions.create(match)
     }
 
     /**
      * Match message text against regex or composite conditions.
      * Resolves with either single match result or cumulative condition success.
      */
-    async matcher (message: lib.message.Message) {
-      this.conditions.exec(message.toString())
+    async matcher (msg: message.Message) {
+      this.conditions.exec(msg.toString())
       const match = this.conditions.match
       if (match) {
-        lib.logger.debug(`[branch] message "${message}" matched branch ${this.id} conditions`)
+        logger.debug(`[branch] message "${msg}" matched branch ${this.id} conditions`)
       }
       return match
     }
@@ -173,10 +173,10 @@ export namespace branch {
    * `is` to operate on the body of the message, without failing due to a prefix.
    */
   export class TextDirect extends Text {
-    async matcher (message: lib.message.Text) {
-      if (directPattern().exec(message.toString())) {
-        const indirectMessage = message.clone()
-        indirectMessage.text = message.text.replace(directPattern(), '')
+    async matcher (msg: message.Text) {
+      if (directPattern().exec(msg.toString())) {
+        const indirectMessage = msg.clone()
+        indirectMessage.text = msg.text.replace(directPattern(), '')
         return super.matcher(indirectMessage)
       } else {
         return false
@@ -189,11 +189,11 @@ export namespace branch {
    * sentiment of optional score threshold. NLU must be trained to provide intent.
    */
   export class NLU extends Branch {
-    match: lib.nlu.ResultsRaw | undefined
+    match: nlu.ResultsRaw | undefined
 
     /** Create natural language branch for NLU matching. */
     constructor (
-      public criteria: lib.nlu.Criteria,
+      public criteria: nlu.Criteria,
       callback: action,
       options?: IOptions
     ) {
@@ -201,14 +201,14 @@ export namespace branch {
     }
 
     /** Match on message's NLU attributes */
-    async matcher (message: lib.message.Text) {
-      if (!message.nlu) {
-        lib.logger.error(`[branch] NLU attempted matching without NLU, ID ${this.id}`)
+    async matcher (msg: message.Text) {
+      if (!msg.nlu) {
+        logger.error(`[branch] NLU attempted matching without NLU, ID ${this.id}`)
         return undefined
       }
-      const match = message.nlu.matchAllCriteria(this.criteria)
+      const match = msg.nlu.matchAllCriteria(this.criteria)
       if (match) {
-        lib.logger.debug(`[branch] NLU matched language branch ID ${this.id}`)
+        logger.debug(`[branch] NLU matched language branch ID ${this.id}`)
         return match
       }
       return undefined
@@ -217,9 +217,9 @@ export namespace branch {
 
   /** Natural Language Direct Branch pre-matches the text for bot name prefix. */
   export class NLUDirect extends NLU {
-    async matcher (message: lib.message.Text) {
-      if (directPattern().exec(message.toString())) {
-        return super.matcher(message)
+    async matcher (msg: message.Text) {
+      if (directPattern().exec(msg.toString())) {
+        return super.matcher(msg)
       } else {
         return undefined
       }
@@ -247,26 +247,26 @@ export namespace branch {
      * Match on any exact or regex values at path of key in criteria.
      * Will also match on empty data if criteria is an empty object.
      */
-    async matcher (message: lib.message.Server) {
+    async matcher (msg: message.Server) {
       const match: { [path: string]: any } = {}
       if (
         Object.keys(this.criteria).length === 0 &&
         (
-          typeof message.data === 'undefined' ||
-          Object.keys(message.data).length === 0
+          typeof msg.data === 'undefined' ||
+          Object.keys(msg.data).length === 0
         )
       ) {
         return match
       } else {
-        if (!message.data) {
-          lib.logger.error(`[branch] server branch attempted matching without data, ID ${this.id}`)
+        if (!msg.data) {
+          logger.error(`[branch] server branch attempted matching without data, ID ${this.id}`)
           return undefined
         }
       }
       for (let path in this.criteria) {
         const valueAtPath = path.split('.').reduce((pre, cur) => {
           return (typeof pre !== 'undefined') ? pre[cur] : undefined
-        }, message.data)
+        }, msg.data)
         if (
           this.criteria[path] instanceof RegExp &&
           this.criteria[path].exec(valueAtPath)
@@ -277,7 +277,7 @@ export namespace branch {
         ) match[path] = valueAtPath
       }
       if (Object.keys(match).length) {
-        lib.logger.debug(`[branch] Data matched server branch ID ${this.id}`)
+        logger.debug(`[branch] Data matched server branch ID ${this.id}`)
         return match
       }
       return undefined
@@ -290,10 +290,10 @@ export namespace branch {
    * - matches when name is substring of alias
    */
   export function directPattern () {
-    let name = lib.settings.get('name') || ''
-    let alias = lib.settings.get('alias') || ''
+    let name = settings.get('name') || ''
+    let alias = settings.get('alias') || ''
     name = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-    alias = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+    alias = alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
     if (!alias.length) return new RegExp(`^\\s*[@]?${name}[:,]?\\s*`, 'i')
     if (name.length > alias.length) {
       return new RegExp(`^\\s*[@]?(?:${name}[:,]?|${alias}[:,]?)\\s*`, 'i')
@@ -307,8 +307,8 @@ export namespace branch {
     regexWithoutModifiers.shift()
     const modifiers = regexWithoutModifiers.pop()
     const pattern = regexWithoutModifiers.join('/')
-    let name = lib.settings.get('name') || ''
-    let alias = lib.settings.get('alias') || ''
+    let name = settings.get('name') || ''
+    let alias = settings.get('alias') || ''
     name = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
     alias = alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
     if (!alias.length) {

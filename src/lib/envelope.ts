@@ -64,8 +64,8 @@ export namespace envelope {
     }
 
     /** Set user attribute, overwrites room if user has room attribute */
-    toUser (user: user.User) {
-      this.user = user.byId(user.id, user)
+    toUser (usr: user.User) {
+      this.user = user.byId(usr.id, usr)
       if (this.user.room) this.room = this.user.room
       return this
     }

@@ -57,6 +57,7 @@ export class Mongo extends bot.adapter.Storage {
         default: `brain`
       }
     })
+    this.bot.settings.get('db-collection') // ?
     this.model = getModel(this.bot.settings.get('db-collection'))
     this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
     this.bot.logger.debug(`[mongo] storing to '${this.bot.settings.get('db-collection')}' collection at ${this.bot.settings.get('db-url')}`)

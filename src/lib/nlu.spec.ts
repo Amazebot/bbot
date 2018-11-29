@@ -1,5 +1,5 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect, assert } from 'chai'
 import * as bot from '..'
 
@@ -295,7 +295,7 @@ describe('[nlu]', () => {
     describe('.matchCriteria', () => {
       it('returns matches from match call on NLU results', () => {
         const nlu = bot.nlu.create().addResult('act', { id: 'foo' }, { id: 'bar' })
-        const match = sinon.spy(nlu.results.act!, 'match')
+        const match = sinon.spy(nlu.results.act.match)
         const result = nlu.matchCriteria('act', { id: 'foo' })
         expect(result).to.eql(match.returnValues[0])
       })
@@ -306,8 +306,8 @@ describe('[nlu]', () => {
           act: [{ id: 'foo' }, { id: 'bar' }],
           intent: [{ id: 'baz' }, { id: 'qux' }]
         })
-        const matchAct = sinon.spy(nlu.results.act!, 'match')
-        const matchIntent = sinon.spy(nlu.results.intent!, 'match')
+        const matchAct = sinon.spy(nlu.results.act.match)
+        const matchIntent = sinon.spy(nlu.results.intent.match)
         const result = nlu.matchAllCriteria({
           act: { id: 'foo' },
           intent: { id: 'qux' }

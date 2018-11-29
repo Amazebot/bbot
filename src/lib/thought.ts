@@ -288,11 +288,11 @@ export namespace thought {
 
   /** Initiate chain of thought processes for responding to a server request. */
   export async function serve (
-    message: message.Server,
-    context: server.IContext,
-    path?: path.Path
+    msg: message.Server,
+    ctx: server.IContext,
+    pth?: path.Path
   ) {
-    logger.info(`[thought] serving ${message.id} for ${message.user.id}`)
-    return new Thoughts(state.create({ message, context }), path).start('serve')
+    logger.info(`[thought] serving ${msg.id} for ${msg.user.id}`)
+    return new Thoughts(state.create({ msg, ctx }), pth).start('serve')
   }
 }

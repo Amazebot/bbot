@@ -1,5 +1,5 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect, assert } from 'chai'
 import { conditions } from '.'
 

@@ -21,7 +21,9 @@ export namespace user {
     /** Create a User (creates ID and room if not given in options) */
     constructor (options: IOptions = {}) {
       Object.keys(options).forEach((key: string) => this[key] = options[key])
-      this.room = (!options.room) ? room.blank() : room.create(options.room)
+      this.room = (options.room && options.room.id)
+        ? room.byId(options.room.id, options.room)
+        : room.blank()
       if (!this.id || this.id === '') this.id = id.counter('user')
       if (!this.name) this.name = this.id
     }

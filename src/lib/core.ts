@@ -45,6 +45,7 @@ export async function load () {
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
   try {
+    settings.load()
     middleware.loadAll()
     server.load()
     adapter.loadAll()

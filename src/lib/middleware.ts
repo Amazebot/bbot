@@ -2,18 +2,15 @@ import { logger, state } from '.'
 
 /** Asynchronous dynamic processing pipelines. */
 export namespace middleware {
+  /** Collection of allowed middleware types for loading. */
+  const types = [
+    'hear', 'listen', 'understand', 'serve', 'act', 'respond', 'remember'
+  ]
+
   /** Initial collection of middleware stacks for loading (extendible). */
   export const stacks: {
     [name: string]: Middleware | undefined
-  } = {
-    hear: undefined,
-    listen: undefined,
-    understand: undefined,
-    serve: undefined,
-    act: undefined,
-    respond: undefined,
-    remember: undefined
-  }
+  } = {}
 
   /** Get a middleware stack by name (creating if not exists). */
   export function get (stack: string) {
@@ -23,12 +20,12 @@ export namespace middleware {
 
   /** Populate all middleware stacks. */
   export function loadAll () {
-    for (let stack in stacks) get(stack)
+    for (let stack of types) get(stack)
   }
 
   /** Remove all middleware for reset. */
   export function unloadAll () {
-    for (let stack in stacks) stacks[stack] = undefined
+    for (let stack in stacks) delete stacks[stack]
   }
 
   /** Registration new piece in a middleware stack (creating if not exists). */
@@ -103,8 +100,8 @@ export namespace middleware {
      * Execute middleware in order, following by chained completion handlers.
      * State to process can be an object with state properties or existing state.
      */
-    execute (state: state.State | state.IOptions, complete: IComplete) {
-      const b = (state instanceof state.State) ? state : state.create(state)
+    execute (init: state.State | state.IOptions, complete: IComplete) {
+      const b = (init instanceof state.State) ? init : state.create(state)
       let isPending = true
       return new Promise((resolve, reject) => {
         if (this.stack.length) {

@@ -7,20 +7,16 @@ const testRoom = {
   id: '111',
   name: 'testing'
 }
-const testRoomDM = {
-  id: '222',
-  name: 'tester-direct'
-}
+const testRoomDM = bot.room.byId('222', { name: 'tester-direct ' })
 const testUser = bot.user.create({ name: 'tester', room: testRoomDM })
 
 describe('[envelope]', () => {
   describe('Envelope', () => {
-    it('defaults provide method, id and blank room', () => {
+    it('defaults provide method, id, room and user', () => {
       const envelope = bot.envelope.create()
-      expect(Object.keys(envelope)).to.eql(['id', 'method', 'room'])
+      expect(envelope).to.include.keys(['id', 'method', 'room', 'user'])
       expect(envelope.method).to.equal('send')
       expect(envelope.id).to.have.lengthOf(32)
-      expect(envelope.room).to.eql({})
     })
     it('given user room and room, addresses to the room', () => {
       const envelope = bot.envelope.create({ user: testUser, room: testRoom })
@@ -30,9 +26,9 @@ describe('[envelope]', () => {
       const envelope = bot.envelope.create({ user: testUser })
       expect(envelope.room).to.eql(testRoomDM)
     })
-    it('given just room, user is unset', () => {
+    it('given just room, user is blank', () => {
       const envelope = bot.envelope.create({ room: testRoom })
-      expect(envelope).to.not.have.property('user')
+      expect(envelope.user).to.eql(bot.user.blank())
     })
     it('given content, keeps those properties', () => {
       const envelope = bot.envelope.create({
@@ -48,12 +44,10 @@ describe('[envelope]', () => {
     })
   })
   describe('.toRoomId', () => {
-    it('sets room id, removes name', () => {
+    it('sets room id, getting name from known room', () => {
       const envelope = bot.envelope.create({ room: testRoom })
       envelope.toRoomId(testRoomDM.id)
-      expect(envelope.room).to.eql({
-        id: testRoomDM.id
-      })
+      expect(envelope.room).to.eql(testRoomDM)
     })
   })
   describe('.toUser', () => {
@@ -99,6 +93,8 @@ describe('[envelope]', () => {
       envelope.compose('hello', { fallback: 'foo' }, 'world')
       expect(write.args).to.eql([['hello'], ['world']])
       expect(attach.args).to.eql([[{ fallback: 'foo' }]])
+      write.restore()
+      attach.restore()
     })
   })
   describe('.via', () => {

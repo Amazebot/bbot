@@ -1,16 +1,16 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect } from 'chai'
 import axios from 'axios'
 import * as bot from '..'
 
-class MockMessenger extends bot.adapter.Message {
+class MockMessageAdapter extends bot.adapter.Message {
+  name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
   async shutdown () { return }
 }
-const mocks = sinon.createStubInstance(MockMessenger)
-mocks.name = 'mock-messenger'
+const mocks = sinon.createStubInstance(MockMessageAdapter)
 
 describe('[E2E]', () => {
   beforeEach(async () => {

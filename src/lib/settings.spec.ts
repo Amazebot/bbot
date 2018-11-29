@@ -1,24 +1,19 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as yargs from 'yargs'
 import * as bot from '..'
 let initEnv: any
 
 describe('[settings]', () => {
-  before(() => {
-    initEnv = process.env
-    delete process.env.BOT_NAME
-  })
-  beforeEach(() => {
-    delete process.env.BOT_NAME
-    bot.settings.reset()
-  })
+  before(() => initEnv = process.env)
+  beforeEach(() => delete process.env.BOT_NAME)
+  afterEach(() => bot.settings.reset())
   after(() => process.env = initEnv)
   describe('Settings', () => {
     describe('.load', () => {
       it('allows overwrite of saved config with update settings', () => {
         process.env.BOT_NAME = 'thierry'
-        expect(bot.settings.config.name).to.equal('thierry')
+        bot.settings.load()
+        expect(bot.settings.get('name')).to.equal('thierry')
         process.env.BOT_NAME = 'philippe'
         bot.settings.load()
         expect(bot.settings.config.name).to.equal('philippe')
@@ -44,7 +39,7 @@ describe('[settings]', () => {
           description: 'testing a new option',
           default: false
         }
-        bot.settings.config = bot.settings.load()
+        bot.settings.load()
         bot.settings.set('is-foo', true)
         bot.settings.set('name', 'foo')
         bot.settings.load()
@@ -150,31 +145,7 @@ describe('[settings]', () => {
   describe('.config', () => {
     beforeEach(() => bot.settings.reset())
     it('contains arguments collection, with defaults', () => {
-      expect(bot.settings).to.have.property('name', 'bot')
+      expect(bot.settings.config).to.have.property('name', 'bot')
     })
-  })
-  describe('.getConfig', () => {
-    beforeEach(() => bot.settings.reset())
-    it('loads config from process.config', () => {
-      yargs.parse(['--name', 'hao']) // overwrite config
-      expect(bot.settings.getConfig()).to.have.property('name', 'hao')
-      yargs.parse(process.argv) // replace with actual config
-    })
-    it('loads configs from ENV variables using prefix', () => {
-      process.env.BOT_NAME = 'henry'
-      expect(bot.settings.getConfig()).to.have.property('name', 'henry')
-    })
-    it('loads config from package.json `bot` attribute', () => {
-      expect(bot.settings.getConfig()).to.have.property('alias', 'bb')
-    })
-    // it('load config from a defined json file if given', () => {
-    //   mock({
-    //     '/mock/config.json': JSON.stringify({ name: 'harriet' })
-    //   })
-    //   yargs.parse(['--config', '/mock/config.json']) // overwrite config
-    //   console.log(config.getConfig())
-    //   mock.restore()
-    //   yargs.parse(process.config) // replace with actual config
-    // })
   })
 })

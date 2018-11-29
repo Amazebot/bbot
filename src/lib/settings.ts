@@ -95,7 +95,7 @@ export namespace settings {
   export let options = Object.assign({}, initOptions)
 
   /** Access all settings from argv, env, package and custom config files. */
-  export let config: yargs.Arguments = load(true)
+  export let config: yargs.Arguments
 
   /** Keep all manually assigned configs, to be retained on reload. */
   export let updates: { [key: string]: any } = {}
@@ -121,15 +121,15 @@ export namespace settings {
    * the main attribute, or use defaults if none assigned. The option values are
    * then assigned to the config object (some are nullable).
    */
-  export function load (reset = false) {
-    const options: { [key: string]: yargs.Options } = {} // populate new options
+  export function load (clear = false) {
+    const opts: { [key: string]: yargs.Options } = {} // populate new options
     for (let key in options) {
       const opt = Object.assign({}, options[key])
-      if (typeof opt.global === 'undefined') opt.global = false
-      options[key] = opt
+      if (config && typeof opt.global === 'undefined') opt.global = false
+      opts[key] = opt
     }
     const loaded = yargs
-      .options(options)
+      .options(opts)
       .usage('\nUsage: $0 [args]')
       .env('BOT')
       .pkgConf('bot')
@@ -143,14 +143,12 @@ export namespace settings {
       .epilogue(argsInfo)
       .fail(argsError)
       .argv
-    // restore or reset manually assigned settings on reload/reset
-    if (reset) updates = {}
+    if (clear) updates = {} // reset later assigned settings on reload/reset
     else for (let key in updates) loaded[key] = updates[key]
-    // clear out config key case variations
     for (let key in loaded) {
       if (Object.keys(options).indexOf(hyphenate(key)) < 0) delete loaded[key]
     }
-    config = loaded
+    config = Object.assign({}, loaded)
     return loaded
   }
 
@@ -205,9 +203,6 @@ export namespace settings {
   export function camelCase (str: string) {
     return str.replace(/-([a-z])/gi, (g) => g[1].toUpperCase())
   }
-
-  /** Return config directly, without updating those in the settings instance */
-  export const getConfig = () => load()
-
-  if (process.platform !== 'win32') process.on('SIGTERM', () => process.exit(0))
 }
+
+if (process.platform !== 'win32') process.on('SIGTERM', () => process.exit(0))

@@ -4,6 +4,9 @@ import * as bot from '..'
 
 /** Adapter classes and loading utilities. */
 export namespace adapter {
+  /** Collection of allowed adapter types for loading. */
+  const types = ['message', 'nlu', 'storage']
+
   /** Collection of loaded adapters. */
   export const adapters: {
     [key: string]: Adapter | undefined
@@ -71,7 +74,7 @@ export namespace adapter {
 
   /** Load configured adapters, but don't yet start them. */
   export function loadAll () {
-    for (let type of Object.keys(adapters)) {
+    for (let type of types) {
       if (adapters[type]) continue // already loaded
       const adapterPath = settings.get(`${type}-adapter`)
       if (adapterPath && adapterPath !== '') {

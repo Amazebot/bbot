@@ -1,5 +1,5 @@
 import 'mocha'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { expect } from 'chai'
 import * as bot from '.'
 import { EventEmitter } from 'events'

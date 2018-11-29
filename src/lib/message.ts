@@ -129,7 +129,9 @@ export namespace message {
     constructor (options: IServerOptions) {
       super(
         user.byId(options.userId, {
-          room: (options.roomId) ? { room: { id: options.roomId } } : undefined
+          room: (options.roomId)
+            ? { id: options.roomId }
+            : undefined
         }),
         options.id
       )
@@ -157,5 +159,5 @@ export namespace message {
   }
 
   /** Create a catch all message. */
-  export const catchAll = (message: Message) => new CatchAll(message)
+  export const catchAll = (msg: Message) => new CatchAll(msg)
 }
