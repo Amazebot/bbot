@@ -14,9 +14,11 @@ describe('[request]', () => {
   before(() => {
     server.load()
     server.router.get('/pass', (ctx) => ctx.body = 'success')
+    server.router.post('/pass', (ctx) => ctx.body = 'success')
     server.router.get('/json', (ctx) => ctx.body = { id: '1' })
     server.router.get('/data', (ctx) => ctx.body = { data: ctx.query })
     server.router.post('/data', (ctx) => ctx.body = { data: ctx.request.body })
+    server.router.post('/empty', (ctx) => ctx.body = '')
     server.router.get('/fail', (ctx) => ctx.throw('failure'))
     return server.start()
   })
@@ -38,7 +40,7 @@ describe('[request]', () => {
           uri: `${server.url}/pass`
         })
           .then(() => expect(true).to.equal(false))
-          .catch((err) => expect(err).to.be.an('error'))
+          .catch((err) => expect(typeof err).to.not.equal('undefined'))
           .then(() => config.unset('request-timeout'))
       })
       it('handles GET request without data', async () => {
@@ -64,6 +66,25 @@ describe('[request]', () => {
           body: { userId: '1' }
         })
         expect(result.data).to.include({ userId: '1' })
+      })
+      it('handles POST with string body', async () => {
+        const result = await request.make({
+          method: 'POST',
+          uri: `${server.url}/pass`,
+          json: true,
+          body: { userId: '1' }
+        })
+        expect(result).to.equal('success')
+        expect(typeof result.data).to.equal('undefined')
+      })
+      it('handles POST request without data', async () => {
+        const result = await request.make({
+          method: 'POST',
+          uri: `${server.url}/empty`,
+          json: true,
+          body: { userId: '1' }
+        })
+        expect(typeof result).to.equal('undefined')
       })
     })
     describe('.get', () => {

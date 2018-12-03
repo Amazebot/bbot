@@ -57,10 +57,15 @@ export class Request {
           return reject(new Error(`[request] ${opts.method} error, body is buffer, not JSON`))
         }
         try {
-          const data = (opts.json) ? body : JSON.parse(body)
-          const keys = Object.keys(data).join(', ')
-          logger.info(`[request] ${opts.method} ${result} success (${keys})`)
-          resolve(data)
+          if (typeof body !== 'undefined' && body !== '') {
+            const data = (opts.json) ? body : JSON.parse(body)
+            const keys = Object.keys(data).join(', ')
+            logger.info(`[request] ${opts.method} ${result} success (${keys})`)
+            resolve(data)
+          } else {
+            logger.info(`[request] ${opts.method} ${result} success (null body)`)
+            resolve()
+          }
         } catch (err) {
           logger.error(`[request] ${opts.method} error parsing body: ${err.message}`)
           reject(err)
