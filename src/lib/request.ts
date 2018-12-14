@@ -67,7 +67,7 @@ export class Request {
       else if (opts.method === 'DELETE') client.del(opts)
       else if (opts.method === 'HEAD') client.head(opts)
     })
-    return timeoutPromise(bot.settings.get('request-timeout'), requestPromise)
+    return timeoutPromise(bot.config.get('request-timeout'), requestPromise)
   }
 
   /** GET request handler, adds data to query string with default options */

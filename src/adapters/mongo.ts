@@ -43,12 +43,12 @@ export class Mongo extends bot.adapter.Storage {
   /** Create mongo instance, initialise settings and model. */
   constructor (bot: bot.Bot) {
     super(bot)
-    this.bot.settings.extend({
+    this.bot.config.extend({
       'db-url': {
         type: 'string',
         alias: 'mongodb-url',
         description: 'Storage adapter address for mongo database',
-        default: `mongodb://127.0.0.1:27017/${bot.settings.get('name')}-brain`
+        default: `mongodb://127.0.0.1:27017/${bot.config.get('name')}-brain`
       },
       'db-collection': {
         type: 'string',
@@ -57,16 +57,16 @@ export class Mongo extends bot.adapter.Storage {
         default: `brain`
       }
     })
-    this.bot.settings.get('db-collection') // ?
-    this.model = getModel(this.bot.settings.get('db-collection'))
+    this.bot.config.get('db-collection') // ?
+    this.model = getModel(this.bot.config.get('db-collection'))
     this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
-    this.bot.logger.debug(`[mongo] storing to '${this.bot.settings.get('db-collection')}' collection at ${this.bot.settings.get('db-url')}`)
+    this.bot.logger.debug(`[mongo] storing to '${this.bot.config.get('db-collection')}' collection at ${this.bot.config.get('db-url')}`)
   }
 
   /** Connect to Mongo. */
   async start () {
-    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.bot.settings.get('db-url')}`)
-    this.store = await mongoose.connect(this.bot.settings.get('db-url'), this.config)
+    this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.bot.config.get('db-url')}`)
+    this.store = await mongoose.connect(this.bot.config.get('db-url'), this.config)
     this.bot.logger.debug(`[mongo] connected to Mongo DB`)
     return
   }

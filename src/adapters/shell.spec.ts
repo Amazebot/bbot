@@ -21,20 +21,20 @@ describe('[adapter-shell]', () => {
     })
     it('accepts changes in bot settings before startup', async () => {
       const shell = shellAdapter.use(bot)
-      shell.bot.settings.set('name', 'shelby')
+      shell.bot.config.set('name', 'shelby')
       bot.adapter.adapters.message = shell
       await bot.start()
-      expect(bot.settings.get('name')).to.equal('shelby')
-      expect(shell.bot.settings.get('name')).to.equal('shelby')
+      expect(bot.config.get('name')).to.equal('shelby')
+      expect(shell.bot.config.get('name')).to.equal('shelby')
     })
     it('accepts changes in bot settings after startup', async () => {
       const shell = shellAdapter.use(bot)
       bot.adapter.adapters.message = shell
-      shell.bot.settings.set('name', 'not-shelby')
+      shell.bot.config.set('name', 'not-shelby')
       await bot.start()
-      shell.bot.settings.set('name', 'shelby')
-      expect(bot.settings.get('name')).to.equal('shelby')
-      expect(shell.bot.settings.get('name')).to.equal('shelby')
+      shell.bot.config.set('name', 'shelby')
+      expect(bot.config.get('name')).to.equal('shelby')
+      expect(shell.bot.config.get('name')).to.equal('shelby')
     })
   })
 })

@@ -19,11 +19,11 @@ export class Rocketchat extends bot.adapter.Message {
   /** Connect to Rocket.Chat via DDP driver and setup message subscriptions */
   async start () {
     this.settings.integrationId = 'bBot'
-    if (this.settings.username !== this.bot.settings.get('name')) {
-      this.bot.settings.set('alias', this.settings.username)
+    if (this.settings.username !== this.bot.config.get('name')) {
+      this.bot.config.set('alias', this.settings.username)
     }
-    const name = this.bot.settings.get('name')
-    const alias = this.bot.settings.get('alias')
+    const name = this.bot.config.get('name')
+    const alias = this.bot.config.get('alias')
     this.bot.logger.info(`[rocketchat] responds to name: ${name}, alias: ${alias}`)
     this.driver.useLog(this.bot.logger)
     await this.driver.connect()
@@ -67,8 +67,8 @@ export class Rocketchat extends bot.adapter.Message {
     }
 
     // Direct messages prepend bot's name so bBot can respond directly
-    const name = this.bot.settings.get('name')
-    const alias = this.bot.settings.get('alias')
+    const name = this.bot.config.get('name')
+    const alias = this.bot.config.get('alias')
     const startOfText = (message.msg.indexOf('@') === 0) ? 1 : 0
     const robotIsNamed =
       message.msg.indexOf(name) === startOfText ||

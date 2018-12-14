@@ -42,20 +42,20 @@ describe('[adapter-mongo]', () => {
       expect(adapter).to.be.instanceof(bot.adapter.Adapter)
     })
     it('adds env settings for DB to bot settings', () => {
-      expect(bot.settings.get('db-collection')).to.equal(testCollection)
+      expect(bot.config.get('db-collection')).to.equal(testCollection)
     })
     it('creates mongoose model for configured collection', () => {
       expect(adapter.model.collection.name).to.equal(testCollection)
     })
     it('uses bot name for mongo url if no env setting', () => {
       delete process.env.DB_URL
-      bot.settings.set('name', 'mongo-test')
+      bot.config.set('name', 'mongo-test')
       adapter = mongo.use(bot)
     })
   })
   describe('.start', () => {
     it('creates connection to database', async () => {
-      bot.settings.set('db-url', testMongo)
+      bot.config.set('db-url', testMongo)
       await adapter.start()
       const stats = await adapter.store!.connection.db.stats()
       expect(adapter.store!.connection.readyState).to.equal(1)
@@ -65,7 +65,7 @@ describe('[adapter-mongo]', () => {
   })
   describe('.shutdown', async () => {
     it('closes the database connection', async () => {
-      bot.settings.set('db-url', testMongo)
+      bot.config.set('db-url', testMongo)
       await adapter.start()
       await adapter.shutdown()
       expect(adapter.store!.connection.readyState).to.equal(0)

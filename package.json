@@ -86,6 +86,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "@amazebot/config": "^0.1.1",
     "@types/inquirer": "^0.0.43",
     "@types/koa": "^2.0.47",
     "@types/koa-router": "^7.0.35",

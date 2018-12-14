@@ -20,7 +20,7 @@ let mockStorage = sinon.createStubInstance(MockStorageAdapter)
 
 describe('[memory]', () => {
   before(() => {
-    bot.settings.set('autoSave', false)
+    bot.config.set('autoSave', false)
     bot.memory.setSaveInterval = sinon.spy()
     bot.memory.clearSaveInterval = sinon.spy()
     mockStorage.loadMemory.resolves({ test: { foo: 'bar' } })
@@ -70,11 +70,11 @@ describe('[memory]', () => {
     describe('.setSaveInterval', () => {
       it('calls saveMemory after interval', async () => {
         const save = sinon.spy(bot.memory, 'save')
-        bot.settings.set('autoSave', true)
+        bot.config.set('autoSave', true)
         bot.memory.setSaveInterval(20)
         await delay(50)
         sinon.assert.calledTwice(save)
-        bot.settings.set('autoSave', false)
+        bot.config.set('autoSave', false)
         if (bot.memory.intervals.save.timer) {
           global.clearInterval(bot.memory.intervals.save.timer)
         }
@@ -84,13 +84,13 @@ describe('[memory]', () => {
     describe('.clearSaveInterval', () => {
       it('stops saveMemory from calling', async () => {
         const save = sinon.spy(bot.memory, 'save')
-        bot.settings.set('autoSave', true)
+        bot.config.set('autoSave', true)
         bot.memory.setSaveInterval(100)
         expect((bot.memory.intervals.save.timer as any)._idleTimeout).to.equal(100)
         bot.memory.clearSaveInterval()
         expect((bot.memory.intervals.save.timer as any)._idleTimeout).to.equal(-1)
         sinon.assert.notCalled(save)
-        bot.settings.set('autoSave', false)
+        bot.config.set('autoSave', false)
         save.restore()
       })
     })

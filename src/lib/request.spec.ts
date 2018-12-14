@@ -24,14 +24,14 @@ describe('[request]', () => {
           .catch((err) => expect(err).to.be.an('error'))
       })
       it('rejects non JSON response body or timeout', () => {
-        bot.settings.set('request-timeout', 200)
+        bot.config.set('request-timeout', 200)
         return bot.request.make({
           method: 'GET',
           uri: `${bot.server.url()}/pass`
         })
           .then(() => expect(true).to.equal(false))
           .catch((err) => expect(err).to.be.an('error'))
-          .then(() => bot.settings.unset('request-timeout'))
+          .then(() => bot.config.unset('request-timeout'))
       })
       it('handles GET request without data', async () => {
         const result = await bot.request.make({

@@ -43,7 +43,7 @@ describe('[server]', () => {
         const res = await axios.get(`${bot.server.url()}/public`)
           .catch((err) => expect(err).to.not.be.instanceof(Error))
         expect(res).to.haveOwnProperty('data')
-        expect((res as any).data.name).to.equal(bot.settings.get('name'))
+        expect((res as any).data.name).to.equal(bot.config.get('name'))
       })
     })
     describe('.messageRoutes', () => {

@@ -19,13 +19,13 @@ export const logger = winston.createLogger({
   level: process.env.BOT_LOG_LEVEL,
   transports: [
     new winston.transports.File({
-      filename: 'error.log',
+      filename: 'logs/error.log',
       level: 'error',
       maxsize: 500000,
       format: combine(timestamp(), json())
     }),
     new winston.transports.File({
-      filename: 'combined.log',
+      filename: 'logs/combined.log',
       level: 'debug',
       maxsize: 500000,
       format: combine(timestamp(), json())
@@ -37,7 +37,7 @@ export const logger = winston.createLogger({
     })
   ],
   exceptionHandlers: [
-    new winston.transports.File({ filename: 'exceptions.log' })
+    new winston.transports.File({ filename: 'logs/exceptions.log' })
   ],
   exitOnError: (err: Error) => (typeof (err as any).middleware === 'undefined')
 })

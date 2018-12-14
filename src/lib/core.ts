@@ -1,11 +1,11 @@
 import { promisify } from 'util'
+import adapters from './adapters'
 import {
-  settings,
+  config,
   logger,
   middleware,
   server,
   memory,
-  adapter,
   events,
   global
 } from '.'
@@ -22,11 +22,11 @@ const status: { [key: string]: 0 | 1 } = {
 function setStatus (set: 'waiting' | 'loading' | 'loaded' | 'starting' | 'started' | 'shutdown') {
   for (let key of Object.keys(status)) status[key] = (set === key) ? 1 : 0
   if (set === 'loading') {
-    logger.info(`[core] ${settings.get('name')} loading  . . . . . ~(0_0)~`)
+    logger.info(`[core] ${config.get('name')} loading  . . . . . ~(0_0)~`)
   } else if (set === 'starting') {
-    logger.info(`[core] ${settings.get('name')} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
+    logger.info(`[core] ${config.get('name')} starting . . . . . ┌(O_O)┘ bzzzt whirr`)
   } else if (set === 'started') {
-    logger.info(`[core] ${settings.get('name')} started  . . . . . ~(O_O)~ bleep bloop`)
+    logger.info(`[core] ${config.get('name')} started  . . . . . ~(O_O)~ bleep bloop`)
   }
 }
 
@@ -41,14 +41,14 @@ export function getStatus () {
  * Extensions/adapters can interrupt or modify the stack before start.
  */
 export async function load () {
-  logger.level = settings.get('log-level') // may change after init
+  logger.level = config.get('log-level') // may change after init
   if (getStatus() !== 'waiting') await reset()
   setStatus('loading')
   try {
-    settings.load()
+    config.load()
     middleware.loadAll()
     server.load()
-    adapter.loadAll()
+    adapters.loadAll()
     await eventDelay()
     setStatus('loaded')
     events.emit('loaded')
@@ -69,7 +69,7 @@ export async function start () {
   setStatus('starting')
   try {
     await server.start()
-    await adapter.startAll()
+    await adapters.startAll()
     await memory.start()
   } catch (err) {
     logger.error('[core] failed to start')
@@ -97,7 +97,7 @@ export async function shutdown (exit = 0) {
     await new Promise((resolve) => events.on('started', () => resolve()))
   }
   await memory.shutdown()
-  await adapter.shutdownAll()
+  await adapters.shutdownAll()
   await server.shutdown()
   await eventDelay()
   setStatus('shutdown')
@@ -124,10 +124,10 @@ export async function reset () {
   const status = getStatus()
   if (status !== 'shutdown') await shutdown()
   try {
-    adapter.unloadAll()
+    adapters.unloadAll()
     middleware.unloadAll()
     global.reset()
-    settings.reset()
+    config.reset()
   } catch (err) {
     logger.error('[core] failed to reset')
     await shutdown(1).catch()

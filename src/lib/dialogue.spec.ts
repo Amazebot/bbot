@@ -15,14 +15,14 @@ const setImmediatePromise = promisify(setImmediate)
 describe('[dialogue]', () => {
   describe('constructor', () => {
     it('inherits bot configs', () => {
-      bot.settings.set('dialogue-timeout', 999)
-      bot.settings.set('dialogue-timeout-text', 'testing')
-      bot.settings.set('dialogue-timeout-method', 'test')
+      bot.config.set('dialogue-timeout', 999)
+      bot.config.set('dialogue-timeout-text', 'testing')
+      bot.config.set('dialogue-timeout-method', 'test')
       const dialogue = new bot.dialogue.Dialogue()
       expect(dialogue.timeout).to.equal(999)
       expect(dialogue.timeoutText).to.equal('testing')
       expect(dialogue.timeoutMethod).to.equal('test')
-      bot.settings.reset()
+      bot.config.reset()
     })
     it('accepts config from options arg', () => {
       const dialogue = new bot.dialogue.Dialogue({

@@ -388,11 +388,11 @@ describe('[thought]', () => {
       })
       it('does not understand when message too short', async () => {
         bot.adapter.adapters.nlu!.process = sinon.spy()
-        bot.settings.set('nlu-min-length', 99)
+        bot.config.set('nlu-min-length', 99)
         bot.global.customNLU(() => true, () => null)
         const b = bot.state.create({ message })
         await new bot.thought.Thoughts(b).start('receive')
-        bot.settings.unset('nlu-min-length')
+        bot.config.unset('nlu-min-length')
         sinon.assert.notCalled((bot.adapter.adapters.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when hear interrupted', async () => {
@@ -558,14 +558,14 @@ describe('[thought]', () => {
           bot.global.customNLU(() => true, understandCallback, {
             id: 'receive-custom-nlu'
           })
-          bot.settings.set('nlu-min-length', 2)
+          bot.config.set('nlu-min-length', 2)
           const messageA = bot.message.text(bot.user.create(), 'foo')
           const messageB = bot.message.text(bot.user.create(), 'bar')
           await bot.thought.receive(messageA)
           await bot.thought.receive(messageB)
           sinon.assert.calledOnce(listenCallback)
           sinon.assert.calledOnce(understandCallback)
-          bot.settings.unset('nlu-min-length')
+          bot.config.unset('nlu-min-length')
         })
       })
       describe('.respond', () => {

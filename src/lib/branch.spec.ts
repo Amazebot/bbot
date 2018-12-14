@@ -238,14 +238,14 @@ describe('[branch]', () => {
         expect(b.match).to.eql('foo'.match(/foo/))
       })
       return direct.process(bot.state.create({
-        message: bot.message.text(user, `${bot.settings.get('name')} foo`)
+        message: bot.message.text(user, `${bot.config.get('name')} foo`)
       }), middleware)
     })
     it('.process returns match on consecutive direct branch', async () => {
       const directFoo = new bot.branch.TextDirect(/foo/, () => null)
       const directBar = new bot.branch.TextDirect(/bar/, () => null)
       const b = bot.state.create({
-        message: bot.message.text(user, `${bot.settings.get('name')} bar`)
+        message: bot.message.text(user, `${bot.config.get('name')} bar`)
       })
       await directFoo.process(b, middleware)
       await directBar.process(b, middleware)
@@ -261,7 +261,7 @@ describe('[branch]', () => {
         })
       })
       return branch.process(bot.state.create({
-        message: bot.message.text(user, `${bot.settings.get('name')} foo bar`)
+        message: bot.message.text(user, `${bot.config.get('name')} foo bar`)
       }), middleware)
     })
   })
@@ -319,7 +319,7 @@ describe('[branch]', () => {
       const nluBranch = new bot.branch.NLUDirect({
         intent: { id: 'foo' }
       }, () => null)
-      const message = bot.message.text(user, `${bot.settings.get('name')} foo`)
+      const message = bot.message.text(user, `${bot.config.get('name')} foo`)
       message.nlu = bot.nlu.create().addResult('intent', { id: 'foo', name: 'Test Foo' })
       const b = await nluBranch.process(bot.state.create({ message }), middleware)
       assert.isOk(b.match)
@@ -392,19 +392,19 @@ describe('[branch]', () => {
   describe('.directPattern', () => {
     it('creates new regex for bot name prefixed to original', () => {
       const direct = bot.branch.directPattern()
-      expect(direct.toString()).to.include(bot.settings.get('name'))
+      expect(direct.toString()).to.include(bot.config.get('name'))
     })
     it('matches when bot name is prefixed', async () => {
       const direct = bot.branch.directPattern()
-      expect(direct.test(`${bot.settings.get('name')} test`)).to.equal(true)
+      expect(direct.test(`${bot.config.get('name')} test`)).to.equal(true)
     })
     it('matches when bot alias is prefixed', async () => {
       const direct = bot.branch.directPattern()
-      expect(direct.test(`${bot.settings.get('alias')} test`)).to.equal(true)
+      expect(direct.test(`${bot.config.get('alias')} test`)).to.equal(true)
     })
     it('matches when bot alias is prefixed with @ symbol', async () => {
       const direct = bot.branch.directPattern()
-      expect(direct.test(`@${bot.settings.get('name')} test`)).to.equal(true)
+      expect(direct.test(`@${bot.config.get('name')} test`)).to.equal(true)
     })
     it('does not match unless bot name is prefixed', async () => {
       const direct = bot.branch.directPattern()
@@ -414,11 +414,11 @@ describe('[branch]', () => {
   describe('.directPatterCombined', () => {
     it('creates new regex for bot name prefixed to original', () => {
       const direct = bot.branch.directPatternCombined(/test/)
-      expect(direct.toString()).to.include(bot.settings.get('name')).and.include('test')
+      expect(direct.toString()).to.include(bot.config.get('name')).and.include('test')
     })
     it('does not match on name unless otherwise matched', () => {
       const direct = bot.branch.directPatternCombined(/test/)
-      expect(direct.test(`${bot.settings.get('name')}`)).to.equal(false)
+      expect(direct.test(`${bot.config.get('name')}`)).to.equal(false)
     })
   })
 })
