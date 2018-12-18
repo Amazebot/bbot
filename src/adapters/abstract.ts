@@ -1,7 +1,7 @@
 import { Bot } from '../bot'
-import * as envelope from '../components/envelope'
-import * as message from '../components/message'
-import * as nlu from '../components/nlu'
+import { Envelope } from '../components/envelope'
+import { TextMessage } from '../components/message'
+import { NLUResultsRaw } from '../components/nlu'
 
 /** Adapter base class, extended for different types of adapters. */
 export abstract class Adapter {
@@ -23,7 +23,7 @@ export abstract class Adapter {
 }
 
 /** Message Adapter class, extended to connect bBot with messaging platform. */
-export abstract class Message extends Adapter {
+export abstract class MessageAdapter extends Adapter {
   name = 'message-adapter'
 
   /** Open connection to messaging platform */
@@ -33,11 +33,11 @@ export abstract class Message extends Adapter {
   abstract shutdown (): Promise<void>
 
   /** Take dispatched envelope to action in platform */
-  abstract dispatch (envelope: envelope.Envelope): Promise<any>
+  abstract dispatch (envelope: Envelope): Promise<any>
 }
 
 /** NLU adapter class, extended to connect bBot with NLU platform. */
-export abstract class NLU extends Adapter {
+export abstract class NLUAdapter extends Adapter {
   name = 'nlu-adapter'
 
   /** Open connection to messaging platform */
@@ -47,14 +47,14 @@ export abstract class NLU extends Adapter {
   abstract shutdown (): Promise<void>
 
   /** Add NLU results from NLP platform analysis */
-  abstract process (msg: message.Text): Promise<nlu.ResultsRaw | undefined>
+  abstract process (msg: TextMessage): Promise<NLUResultsRaw | undefined>
 }
 
 /**
  * Storage adapter class, extended to connect brain with external storage
  * provider. Methods are just raw endpoints to be extended.
  */
-export abstract class Storage extends Adapter {
+export abstract class StorageAdapter extends Adapter {
   name = 'storage-adapter'
 
   /** Open connection to storage provider */

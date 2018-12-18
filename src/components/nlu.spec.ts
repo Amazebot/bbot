@@ -1,27 +1,27 @@
 import 'mocha'
 import * as sinon from 'sinon'
 import { expect, assert } from 'chai'
-import * as bot from '..'
+import { NLU, NLUResult, NLUResults } from './nlu'
 
-let results: bot.nlu.Results
+let results: NLUResults
 
 describe('[nlu]', () => {
-  describe('Result', () => {
+  describe('NLUResult', () => {
     beforeEach(() => {
       results = {
-        intent: bot.nlu.result().add({ id: 'test', score: .9 }, { id: 'unit', score: .5 }),
-        entities: bot.nlu.result().add({ id: 'foo' }, { id: 'bar' }),
-        sentiment: bot.nlu.result().add({ score: .5 }),
-        tone: bot.nlu.result().add(
+        intent: new NLUResult().add({ id: 'test', score: .9 }, { id: 'unit', score: .5 }),
+        entities: new NLUResult().add({ id: 'foo' }, { id: 'bar' }),
+        sentiment: new NLUResult().add({ score: .5 }),
+        tone: new NLUResult().add(
           { id: 'questioning', score: .3 },
           { id: 'tentative', score: .6 }
         ),
-        act: bot.nlu.result().add(
+        act: new NLUResult().add(
           { id: 'assert', name: 'A test assertion', score: 1 },
           { id: 'statement', name: 'Another word for assertion' }
         ),
-        language: bot.nlu.result().add({ id: 'en', name: 'english' }),
-        phrases: bot.nlu.result()
+        language: new NLUResult().add({ id: 'en', name: 'english' }),
+        phrases: new NLUResult()
       }
     })
     describe('.indexIncludes', () => {
@@ -68,9 +68,9 @@ describe('[nlu]', () => {
       })
     })
     describe('.match', () => {
-      // NB: Results are always sorted by score, make assertions in order
+      // NB: NLUResults are always sorted by score, make assertions in order
       it('`in` operator returns all matching elements', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -80,17 +80,17 @@ describe('[nlu]', () => {
         expect(result.match({ id: 'foo', operator: 'in' })).to.eql([results[2], results[0]])
       })
       it('`is` operator matches if only a single element matches', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push({ id: 'foo', score: .1 })
         expect(result.match({ id: 'foo', operator: 'is' })).to.eql([{ id: 'foo', score: .1 }])
       })
       it('`is` operator fails if element matches but other elements exist', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push({ id: 'foo', score: .1 }, { id: 'foo', score: .2 })
         assert.notOk(result.match({ id: 'foo', operator: 'is' }))
       })
       it('`max` operator returns matching item it has largest score', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push(
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -99,7 +99,7 @@ describe('[nlu]', () => {
         expect(result.match({ id: 'foo', operator: 'max' })).to.eql([{ id: 'foo', score: .3 }])
       })
       it('`max` operator returns false if largest item does not match', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push(
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -108,7 +108,7 @@ describe('[nlu]', () => {
         assert.notOk(result.match({ id: 'bar', operator: 'max' }))
       })
       it('`max` operator returns item without score if matching', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push(
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -117,7 +117,7 @@ describe('[nlu]', () => {
         expect(result.match({ id: 'baz', operator: 'max' })).to.eql([{ id: 'baz' }])
       })
       it('`min` operator returns matching item it has lowest score', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push(
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -126,7 +126,7 @@ describe('[nlu]', () => {
         expect(result.match({ id: 'foo', operator: 'min' })).to.eql([{ id: 'foo', score: .1 }])
       })
       it('`min` operator returns false if lowest item does not match', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push(
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -135,12 +135,12 @@ describe('[nlu]', () => {
         assert.notOk(result.match({ id: 'bar', operator: 'min' }))
       })
       it('`eq` operator returns matching items if score exact match', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.push({ id: 'foo', score: -0.1 }, { id: 'bar', score: 0 })
         expect(result.match({ score: 0, operator: 'eq' })).to.eql([{ id: 'bar', score: 0 }])
       })
       it('`gte` operator returns matching items if score higher or equal', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: -1 },
           { id: 'foo', score: 0 },
@@ -154,7 +154,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`gte` operator with only score returns all higher or equal', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: .1 },
           { id: 'foo', score: .2 },
@@ -169,7 +169,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`gt` operator returns matching items if score higher', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: .1 },
           { id: 'foo', score: .2 },
@@ -182,7 +182,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`gt` operator with only score returns all higher', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: .1 },
           { id: 'foo', score: .2 },
@@ -196,7 +196,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`lte` operator returns matching items if score less or equal', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'bar', score: .1 },
           { id: 'foo', score: .2 },
@@ -209,7 +209,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`lte` operator with only score returns all less or equal', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: .1 },
           { id: 'foo', score: .2 },
@@ -223,7 +223,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`lt` operator returns matching items if score less', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'bar', score: .1 },
           { id: 'foo', score: .2 },
@@ -236,7 +236,7 @@ describe('[nlu]', () => {
         ])
       })
       it('`lt` operator with only score returns all less', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'bar', score: .1 },
           { id: 'foo', score: .2 },
@@ -249,7 +249,7 @@ describe('[nlu]', () => {
         ])
       })
       it('matches as `in` if not given score', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: .1 },
           { id: 'bar', score: .2 },
@@ -259,7 +259,7 @@ describe('[nlu]', () => {
         expect(result.match({ id: 'foo' })).to.eql([results[2], results[0]])
       })
       it('matches as `gte` if given score without operator', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         const results = [
           { id: 'foo', score: -.1 },
           { id: 'foo', score: .1 },
@@ -271,7 +271,7 @@ describe('[nlu]', () => {
     })
     describe('.add', () => {
       it('pushes set of argument results into collection', () => {
-        const result = bot.nlu.result()
+        const result = new NLUResult()
         result.add({ id: 'foo', score: .1 }, { id: 'bar', score: .2 })
         expect(Array.from(result)).to.eql([
           { id: 'foo', score: .1 }, { id: 'bar', score: .2 }
@@ -282,32 +282,32 @@ describe('[nlu]', () => {
   describe('NLU', () => {
     describe('.addResult', () => {
       it('adds result set args to new results attribute at key', () => {
-        const nlu = bot.nlu.create().addResult('intent', { id: 'foo' }, { id: 'bar' })
-        expect(nlu.results.intent).to.be.instanceof(bot.nlu.Result)
+        const nlu = new NLU().addResult('intent', { id: 'foo' }, { id: 'bar' })
+        expect(nlu.results.intent).to.be.instanceof(NLUResult)
         expect(Array.from(nlu.results.intent!)).to.eql([{ id: 'foo' }, { id: 'bar' }])
       })
       it('adds to result set if already exists', () => {
-        const nlu = bot.nlu.create().addResult('act', { id: 'foo' }, { id: 'bar' })
+        const nlu = new NLU().addResult('act', { id: 'foo' }, { id: 'bar' })
         nlu.addResult('act', { id: 'baz' })
         expect(Array.from(nlu.results.act!)).to.eql([{ id: 'foo' }, { id: 'bar' }, { id: 'baz' }])
       })
     })
     describe('.matchCriteria', () => {
       it('returns matches from match call on NLU results', () => {
-        const nlu = bot.nlu.create().addResult('act', { id: 'foo' }, { id: 'bar' })
-        const match = sinon.spy(nlu.results.act.match)
+        const nlu = new NLU().addResult('act', { id: 'foo' }, { id: 'bar' })
+        const match = sinon.spy(nlu.results.act!, 'match')
         const result = nlu.matchCriteria('act', { id: 'foo' })
         expect(result).to.eql(match.returnValues[0])
       })
     })
     describe('.matchAllCriteria', () => {
       it('returns matches from match calls on set of NLU results', () => {
-        const nlu = bot.nlu.create().addResults({
+        const nlu = new NLU().addResults({
           act: [{ id: 'foo' }, { id: 'bar' }],
           intent: [{ id: 'baz' }, { id: 'qux' }]
         })
-        const matchAct = sinon.spy(nlu.results.act.match)
-        const matchIntent = sinon.spy(nlu.results.intent.match)
+        const matchAct = sinon.spy(nlu.results.act!, 'match')
+        const matchIntent = sinon.spy(nlu.results.intent!, 'match')
         const result = nlu.matchAllCriteria({
           act: { id: 'foo' },
           intent: { id: 'qux' }
@@ -320,7 +320,7 @@ describe('[nlu]', () => {
     })
     describe('.printResults', () => {
       it('formats NLU results for readability', () => {
-        const nlu = bot.nlu.create().addResults({
+        const nlu = new NLU().addResults({
           sentiment: [{ id: 'fooS', score: -.1234 }],
           act: [{ id: 'fooA' }, { id: 'bar' }],
           phrases: []

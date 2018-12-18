@@ -1,23 +1,24 @@
+import { random } from '../utils/id'
 import logger from '../controllers/logger'
-import * as id from '../utils/id'
-import * as user from './user'
-import * as nlu from './nlu'
 import users from '../controllers/users'
+import { User, IUser } from './user'
+import { NLU } from './nlu'
+import { IPayload } from './payload'
 
 /** Represents an incoming message from the chat. */
 export abstract class Message {
   id: string
-  user: user.User
-  nlu?: nlu.NLU
+  user: User
+  nlu?: NLU
 
   /**
    * Create a message.
    * @param user The sender's user instance (or properties to create it)
    * @param id   A unique ID for the message
    */
-  constructor (usr: user.IUser, mId: string = id.random()) {
+  constructor (usr: IUser, mId: string = random()) {
     this.id = mId
-    this.user = (usr instanceof user.User) ? usr : users.create(usr)
+    this.user = (usr instanceof User) ? usr : users.create(usr)
   }
 
   /** String representation of the message. */
@@ -30,20 +31,20 @@ export abstract class Message {
 }
 
 /** An empty message for outgoings without original input */
-export class Blank extends Message {
+export class BlankMessage extends Message {
   constructor () { super(users.blank()) }
   toString () { return '' }
 }
 
 /** A plain text/string message type. */
-export class Text extends Message {
+export class TextMessage extends Message {
   /**
    * Create a text message.
    * @param user The user who sent the message
    * @param text The user who sent the message
    * @param id   A unique ID for the message
    */
-  constructor (user: user.User, public text: string, id?: string) {
+  constructor (user: User, public text: string, id?: string) {
     super(user, id)
   }
 
@@ -53,7 +54,7 @@ export class Text extends Message {
 }
 
 /** A message containing payload attributes from messaging platform. */
-export class Rich extends Message {
+export class RichMessage extends Message {
 
   /**
    * Create a rich message.
@@ -61,7 +62,7 @@ export class Rich extends Message {
    * @param payload The payload to attach
    * @param id      A unique ID for the message
    */
-  constructor (user: user.User, public payload: any, id?: string) {
+  constructor (user: User, public payload: IPayload, id?: string) {
     super(user, id)
   }
 
@@ -71,7 +72,7 @@ export class Rich extends Message {
 }
 
 /** Represent an incoming event notification. */
-export abstract class Event extends Message {
+export abstract class EventMessage extends Message {
   abstract event: string
   toString () {
     return `${this.event} message for ${this.user.name}`
@@ -79,17 +80,17 @@ export abstract class Event extends Message {
 }
 
 /** Represent a room enter event for a user. */
-export class Enter extends Event {
+export class EnterMessage extends EventMessage {
   event = 'enter'
 }
 
 /** Represent a room leave event for a user. */
-export class Leave extends Event {
+export class LeaveMessage extends EventMessage {
   event = 'leave'
 }
 
 /** Represent a topic change event from a user. */
-export class Topic extends Event {
+export class TopicMessage extends EventMessage {
   event = 'topic'
 }
 
@@ -102,7 +103,7 @@ export interface IServerOptions {
 }
 
 /** Represent message data coming from a server request. */
-export class Server extends Event {
+export class ServerMessage extends EventMessage {
   event = 'request'
   data: any
 
@@ -126,7 +127,7 @@ export class Server extends Event {
 }
 
 /** Represent a message where nothing matched. */
-export class CatchAll extends Message {
+export class CatchAllMessage extends Message {
   constructor (public message: Message) {
     super(message.user, message.id)
   }

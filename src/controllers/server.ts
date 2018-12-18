@@ -9,7 +9,7 @@ import logger from './logger'
 import messages from './messages'
 import thoughts from './thoughts'
 import adapters from './adapters'
-import middleware from './middleware'
+import middleware from './middlewares'
 
 /** Server states include Koa context, to respond to http/s requests. */
 export interface IContext extends Router.IRouterContext {}

@@ -29,7 +29,7 @@ export type Condition = { [key in keys]?: string | string[] }
 export type Collection = { [key: string]: Condition }
 
   /** Mix of accepted types for conditions constructor. */
-export type input = string | RegExp | Condition | Condition[] | Collection
+export type ConditionInput = string | RegExp | Condition | Condition[] | Collection
 
 /** Type guard to check type of Condition. */
 function isCondition (c: any): c is Condition {
@@ -179,7 +179,7 @@ export class Conditions {
    * Created new conditions instance.
    * Generate expressions from conditions and options.
    */
-  constructor (condition?: input, options: IOptions = {}) {
+  constructor (condition?: ConditionInput, options: IOptions = {}) {
     this.config = Object.assign({}, _defaults, options)
     if (!condition) return
     if (
@@ -268,8 +268,4 @@ export class Conditions {
     this.clear()
     this.expressions = {}
   }
-}
-
-export const create = (condition?: input, options: IOptions = {}) => {
-  return new Conditions(condition, options)
 }

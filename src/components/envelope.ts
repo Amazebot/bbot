@@ -13,7 +13,7 @@ import * as message from './message'
 import * as payload from './payload'
 
 /** Envelope interface, to create from scratch. */
-export interface IOptions {
+export interface IEnvelope {
   method?: string
   room?: room.Room
   user?: user.User
@@ -31,7 +31,7 @@ export interface IOptions {
  * Helpers provide simple interface for adding strings and attachments, but the
  * payload property can be used to access additional helpers for rich content.
  */
-export class Envelope implements IOptions {
+export class Envelope implements IEnvelope {
   id: string = random()
   method: string = 'send'
   room: room.Room
@@ -48,7 +48,7 @@ export class Envelope implements IOptions {
    * - Provide address and content as options (overriding those in state)
    * - Address to user's room if user given. If room given, will override user
    */
-  constructor (options?: IOptions, b?: state.State) {
+  constructor (options?: IEnvelope, b?: state.State) {
     this.room = rooms.blank()
     this.user = users.blank()
     if (b) {

@@ -1,5 +1,5 @@
 import logger from '../controllers/logger'
-import * as state from '../components/state'
+import { State, IState } from '../components/state'
 
 /**
  * A generic middleware pipeline function that can either continue the pipeline
@@ -13,7 +13,7 @@ import * as state from '../components/state'
  */
 export interface IPiece {
   (
-    state: state.State,
+    state: State,
     next: (done?: IPieceDone) => Promise<void>,
     done: IPieceDone
   ): Promise<any> | any
@@ -33,7 +33,7 @@ export interface IPieceDone {
  * after middleware stack completes uninterrupted.
  */
 export interface IComplete {
-  (state: state.State): any
+  (state: State): any
 }
 
 /**
@@ -68,8 +68,8 @@ export class Middleware {
    * Execute middleware in order, following by chained completion handlers.
    * State to process can be an object with state properties or existing state.
    */
-  execute (init: state.State | state.IOptions, complete: IComplete) {
-    const b = (init instanceof state.State) ? init : state.create(state)
+  execute (init: State | IState, complete: IComplete) {
+    const b = (init instanceof State) ? init : new State()
     let isPending = true
     return new Promise((resolve, reject) => {
       if (this.stack.length) {

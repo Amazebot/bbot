@@ -1,24 +1,25 @@
-import bBot from '..'
 import logger from '../controllers/logger'
 import messages from '../controllers/messages'
 import thoughts from '../controllers/thoughts'
+import users from '../controllers/users'
 import { IContext } from '../controllers/server'
-import * as branch from './branch'
-import * as dialogue from './dialogue'
-import * as message from './message'
-import * as envelope from './envelope'
+import { Branch } from './branch'
+import { Dialogue } from './dialogue'
+import { Message } from './message'
+import { Envelope, IEnvelope } from './envelope'
+import bBot from '../bot'
 
 /**
  * States accept some known common properties, but can accept any key/value pair
  * that is needed for a specific type of branch or middleware.
  * The `done` property tells middleware not to continue processing state.
  */
-export interface IOptions {
+export interface IState {
   done?: boolean
   exit?: boolean
   sequence?: string
-  branch?: branch.Branch
-  dialogue?: dialogue.Dialogue
+  branch?: Branch
+  dialogue?: Dialogue
   server?: IContext
   [key: string]: any
 }
@@ -32,16 +33,16 @@ export interface ICallback {
  * Received states persist the incoming message to be used for matching and
  * to address response envelopes.
  */
-export interface IReceiveState extends IOptions {
-  message: message.Message
+export interface IReceiveState extends IState {
+  message: Message
 }
 
 /**
  * Dispatching states don't have an originating message, so they will be
  * processed via the attributes of the outgoing envelope/s.
  */
-export interface IDispatchState extends IOptions {
-  envelopes?: envelope.Envelope[]
+export interface IDispatchState extends IState {
+  envelopes?: Envelope[]
 }
 
 /**
@@ -51,21 +52,21 @@ export interface IDispatchState extends IOptions {
  * Each thought process attaches timestamps if they are actioned.
  * Provides proxies to envelope messages, so responses can be easily actioned.
  */
-export class State implements IOptions {
+export class State implements IState {
   bot = bBot
   done: boolean = false
   processed: { [key: string]: number } = {}
-  message: message.Message = messages.blank()
-  matching?: branch.Branch[]
-  dialogue?: dialogue.Dialogue
-  envelopes?: envelope.Envelope[]
+  message: Message = messages.blank()
+  matching?: Branch[]
+  dialogue?: Dialogue
+  envelopes?: Envelope[]
   sequence?: string
   method?: string
   exit?: boolean
   [key: string]: any
 
   /** Create new state, usually assigned as `b` in middleware callbacks. */
-  constructor (startingState: IDispatchState) {
+  constructor (startingState: IDispatchState = {}) {
     for (let key in startingState) this[key] = startingState[key]
   }
 
@@ -95,19 +96,19 @@ export class State implements IOptions {
   }
 
   /** Add to or create collection of matched branches. */
-  setBranch (branch: branch.Branch) {
+  setMatchingBranch (branch: Branch) {
     if (!branch.matched) return
     if (!this.matching) this.matching = []
     this.matching.push(branch)
   }
 
-  /** Add to the branches collection form the branch property. */
-  set branch (branch: branch.Branch | undefined) {
-    if (branch) this.setBranch(branch)
+  /** Proxy to use setMatchingBranch as property */
+  set matchingBranch (branch: Branch | undefined) {
+    if (branch) this.setMatchingBranch(branch)
   }
 
   /** Get a matched branch by it's ID or index (or last matched). */
-  matchingBranch (id?: number | string) {
+  getMatchingBranch (id?: number | string) {
     if (!this.matching) return undefined
     if (!id) id = this.matching.length - 1
     return (typeof id === 'number' && this.matching.length > id)
@@ -115,9 +116,14 @@ export class State implements IOptions {
       : this.matching.find((branch) => branch.id === id)
   }
 
+  /** Proxy to use getMatchingBranch as property */
+  get matchingBranch () {
+    return this.getMatchingBranch()
+  }
+
   /** Provide branches from current or new dialogue. */
   get branches () {
-    if (!this.dialogue) this.dialogue = new dialogue.Dialogue()
+    if (!this.dialogue) this.dialogue = new Dialogue()
     this.dialogue.open(this)
       .catch((err) => {
         logger.error(`Error opening dialogue from state: ${err.message}`)
@@ -132,13 +138,13 @@ export class State implements IOptions {
    * branch that was just matched, as opposed to `b.getMatching(id).match`.
    */
   get match () {
-    const branch = this.matchingBranch()
+    const branch = this.matchingBranch
     if (branch) return branch.match
   }
 
   /** Get the conditions of the last matched branch. */
   get conditions () {
-    const branch = this.matchingBranch()
+    const branch = this.matchingBranch
     if (branch && branch.conditions) return branch.conditions
   }
 
@@ -156,7 +162,7 @@ export class State implements IOptions {
   /** Access user from memory matching message details */
   get user () {
     const user = this.message.user
-    return user.byId(user.id, user)
+    return users.byId(user.id, user)
   }
 
   /** Return the last dispatched envelope. */
@@ -166,11 +172,11 @@ export class State implements IOptions {
   }
 
   /** Create or return pending envelope, to respond to incoming message. */
-  respondEnvelope (options?: envelope.IOptions) {
+  respondEnvelope (options?: IEnvelope) {
     let pending = this.pendingEnvelope()
     if (!pending) {
       if (!this.envelopes) this.envelopes = []
-      pending = new envelope.Envelope(options, this)
+      pending = new Envelope(options, this)
       this.envelopes.push(pending)
     }
     return pending
@@ -193,6 +199,3 @@ export class State implements IOptions {
     return this.respond(...content)
   }
 }
-
-/** Create a new state. */
-export const create = (options: IOptions) => new State(options)

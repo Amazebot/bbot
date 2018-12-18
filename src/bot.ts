@@ -4,12 +4,14 @@ import logger from './controllers/logger'
 import events from './controllers/events'
 import server from './controllers/server'
 import memory from './controllers/memory'
-import middleware from './controllers/middleware'
+import middlewares from './controllers/middlewares'
 import adapters from './controllers/adapters'
 import thoughts from './controllers/thoughts'
 import branches from './controllers/branches'
 import rooms from './controllers/rooms'
 import users from './controllers/users'
+import messages from './controllers/messages'
+import envelopes from './controllers/envelopes'
 import bits from './controllers/bits'
 
 /** Possible operational statuses. */
@@ -20,16 +22,18 @@ export type StatusKey = keyof typeof Status
 export class Bot {
   config = config
   logger = logger
-  adapters = adapters
-  middleware = middleware
-  branches = branches
+  events = events
   server = server
   memory = memory
-  events = events
-  thoughts = thoughts
-  rooms = rooms
   users = users
+  rooms = rooms
+  messages = messages
+  envelopes = envelopes
   bits = bits
+  branches = branches
+  adapters = adapters
+  middlewares = middlewares
+  thoughts = thoughts
 
   /** Internal index for loading status. */
   status: Status
@@ -73,7 +77,7 @@ export class Bot {
     this.status = Status.loading
     try {
       this.config.load()
-      this.middleware.loadAll()
+      this.middlewares.loadAll()
       this.server.load()
       this.adapters.loadAll()
       await this.eventDelay()
@@ -142,7 +146,7 @@ export class Bot {
     if (this.status !== Status.shutdown) await this.shutdown()
     try {
       this.adapters.unloadAll()
-      this.middleware.unloadAll()
+      this.middlewares.unloadAll()
       this.branches.reset()
       this.config.reset()
     } catch (err) {
@@ -157,9 +161,6 @@ export class Bot {
 
 /** Bot instance, almost always imported instead of class. */
 export const bBot = new Bot()
-
-/** Function to return bot at runtime (avoiding circular imports). */
-export const getBot = () => bBot
 
 /** Default export made available for different import/requires usage. */
 export default bBot

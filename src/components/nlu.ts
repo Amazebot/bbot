@@ -4,7 +4,7 @@
  * @param name  A display name equivalent for the ID
  * @param score The positivity or confidence rating of the result
  */
-export interface IResult {
+export interface INLUResult {
   id?: string
   name?: string
   score?: number
@@ -24,22 +24,22 @@ export interface IResult {
  * - `lt`   any result has score less than comparison
  * - `lte`  any result has score less than or equal to comparison
  */
-export interface ICriteria extends IResult {
+export interface INLUCriteria extends INLUResult {
   operator?: 'in' | 'is' | 'match' | 'max' | 'min' | 'eq' | 'gte' | 'gt' | 'lt' | 'lte'
 }
 
 /** Array of Natural Language Understanding results */
-export class Result extends Array<IResult> {
+export class NLUResult extends Array<INLUResult> {
   /**
    * Helper to see if a result has the properties of a matching element.
    * Check for matching subset (id/name) ignoring score unless only score given.
    * @param index Array index in NLU result set
    * @param criteria NLU criteria or result subset to match on (ignores score)
    */
-  indexIncludes (index: number, criteria: ICriteria) {
+  indexIncludes (index: number, criteria: INLUCriteria) {
     if (!Object.keys(criteria).some((key) => {
       return (['id', 'name', 'score'].includes(key))
-    })) throw new Error('[nlu] Result matching requires ID, name or score')
+    })) throw new Error('[nlu] NLUResult matching requires ID, name or score')
     if (this[index] === void 0) return undefined
     const { id, name, score } = criteria
     const result = this[index]
@@ -53,7 +53,7 @@ export class Result extends Array<IResult> {
   }
 
   /**
-   * Sort results by their score (DESC). Results that don't have a score will
+   * Sort results by their score (DESC). NLUResults that don't have a score will
    * come before those that do (assuming that no score relates full confidence).
    * Order remains unchanged for whole sequences of results without score.
    */
@@ -75,16 +75,16 @@ export class Result extends Array<IResult> {
    * given, it matches if the result `has` (includes) the given id and/or name.
    * When comparing score, the array is first filtered against other criteria.
    */
-  match (criteria: ICriteria) {
+  match (criteria: INLUCriteria) {
     let { score, operator } = criteria
     if (!operator) operator = (typeof score === 'undefined') ? 'in' : 'gte'
-    let matching: IResult | undefined
-    let matched: IResult[]
+    let matching: INLUResult | undefined
+    let matched: INLUResult[]
     this.sortByScore()
     if (
       ['eq', 'gte', 'gt', 'lt', 'lte'].includes(operator) &&
       typeof score === 'undefined'
-    ) throw new Error('[nlu] Result cannot match score without score criteria')
+    ) throw new Error('[nlu] NLUResult cannot match score without score criteria')
     if (
       ['eq', 'gte', 'gt', 'lt', 'lte'].includes(operator) &&
       Object.keys(criteria).some((key) => !['score', 'operator'].includes(key))
@@ -134,7 +134,7 @@ export class Result extends Array<IResult> {
   }
 
   /** Helper to push a set of result as arguments (returns result instance) */
-  add (...results: IResult[]) {
+  add (...results: INLUResult[]) {
     for (let result of results) this.push(result)
     return this
   }
@@ -154,33 +154,33 @@ export enum NLUKey { intent, entities, sentiment, tone, phrases, act, language }
 export type NLUKeys = keyof typeof NLUKey
 
 /** Collection of NLU matching criteria by key */
-export type Criteria = { [key in NLUKeys]?: ICriteria }
+export type NLUCriteria = { [key in NLUKeys]?: INLUCriteria }
 
 /** Collection of raw NLU results by key (also used for matched subset) */
-export type ResultsRaw = { [key in NLUKeys]?: IResult[] }
+export type NLUResultsRaw = { [key in NLUKeys]?: INLUResult[] }
 
-/** Collection of Result instances by key */
-export type Results = { [key in NLUKeys]?: Result }
+/** Collection of NLUResult instances by key */
+export type NLUResults = { [key in NLUKeys]?: NLUResult }
 
 /**
  * NLU attributes controller.
- * Results are instance of results class (not interface) to access helpers.
+ * NLUResults are instance of results class (not interface) to access helpers.
  */
 export class NLU {
-  results: Results = {}
+  results: NLUResults = {}
 
   /** Populate NLU results by key, creating result set if needed */
-  addResult (key: NLUKeys, ...results: IResult[]) {
-    if (this.results[key] instanceof Result) {
+  addResult (key: NLUKeys, ...results: INLUResult[]) {
+    if (this.results[key] instanceof NLUResult) {
       this.results[key]!.add(...results)
     } else {
-      this.results[key] = new Result().add(...results)
+      this.results[key] = new NLUResult().add(...results)
     }
     return this
   }
 
   /** Populate collection of NLU results */
-  addResults (results: ResultsRaw) {
+  addResults (results: NLUResultsRaw) {
     for (let key in results) {
       let nluKey = (key as NLUKeys)
       if (results[nluKey]) this.addResult(nluKey, ...results[nluKey]!)
@@ -189,14 +189,14 @@ export class NLU {
   }
 
   /** Match an NLU result set by key against given criteria */
-  matchCriteria (key: NLUKeys, criteria: ICriteria) {
+  matchCriteria (key: NLUKeys, criteria: INLUCriteria) {
     if (this.results[key]) return this.results[key]!.match(criteria)
     return undefined
   }
 
   /** Match collection of results against collection of criteria */
-  matchAllCriteria (criteria: Criteria) {
-    const matched: ResultsRaw = {}
+  matchAllCriteria (criteria: NLUCriteria) {
+    const matched: NLUResultsRaw = {}
     for (let key in criteria) {
       let nluKey = (key as NLUKeys)
       const match = this.matchCriteria(nluKey, criteria[nluKey]!)
@@ -224,9 +224,3 @@ export class NLU {
     return outputs.join(', ')
   }
 }
-
-/** Create an NLU result controller. */
-export const create = () => new NLU()
-
-/** Create an NLU result instance. */
-export const result = () => new Result()

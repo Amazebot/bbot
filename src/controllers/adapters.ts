@@ -15,9 +15,9 @@ export class AdapterController {
   /** Collection of loaded adapters. */
   loaded: {
     [key: string]: abstract.Adapter | undefined
-    message?: abstract.Message,
-    nlu?: abstract.NLU,
-    storage?: abstract.Storage
+    message?: abstract.MessageAdapter,
+    nlu?: abstract.NLUAdapter,
+    storage?: abstract.StorageAdapter
   } = {}
 
   /** For outputting loaded adapters. */
@@ -106,13 +106,13 @@ export class AdapterController {
   register (type: string, loadPath: string) {
     switch (type) {
       case 'message':
-        this.loaded.message = this.load(loadPath) as abstract.Message
+        this.loaded.message = this.load(loadPath) as abstract.MessageAdapter
         break
       case 'nlu':
-        this.loaded.nlu = this.load(loadPath) as abstract.NLU
+        this.loaded.nlu = this.load(loadPath) as abstract.NLUAdapter
         break
       case 'storage':
-        this.loaded.storage = this.load(loadPath) as abstract.Storage
+        this.loaded.storage = this.load(loadPath) as abstract.StorageAdapter
         break
     }
   }

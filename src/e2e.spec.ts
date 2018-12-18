@@ -2,9 +2,9 @@ import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
 import axios from 'axios'
-import * as bot from '.'
+import bBot from '../src'
 
-class MockMessageAdapter extends bot.adapter.Message {
+class MockMessageAdapter extends bBot.adapters.abstract.MessageAdapter {
   name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
@@ -14,29 +14,30 @@ const mocks = sinon.createStubInstance(MockMessageAdapter)
 
 describe('[E2E]', () => {
   beforeEach(async () => {
-    await bot.reset()
-    bot.adapter.adapters.message = mocks
-    await bot.start()
+    await bBot.reset()
+    bBot.adapters.loaded.message = mocks
+    await bBot.start()
   })
   afterEach(() => {
     mocks.dispatch.resetHistory()
   })
   it('responds from middleware', async () => {
-    bot.middleware.register('hear', (b, _, done) => {
+    bBot.middlewares.register('hear', (b, _, done) => {
       return b.respond('test').then(() => done())
     })
-    await bot.thought.receive(bot.message.text(bot.user.create(), ''))
+    await bBot.thoughts.receive(bBot.messages.text(bBot.users.create(), ''))
     sinon.assert.calledOnce(mocks.dispatch)
   })
   it('captures input matching conditions', async () => {
     let captured: any[] = []
-    bot.global.text({ after: 'call me', before: 'please' }, (b) => {
+    bBot.branches.text({ after: 'call me', before: 'please' }, (b) => {
       captured.push(b.conditions.captured)
     }, { force: true })
-    bot.global.text({ after: 'call me' }, (b) => {
+    bBot.branches.text({ after: 'call me' }, (b) => {
       captured.push(b.conditions.captured)
     }, { force: true })
-    await bot.thought.receive(bot.message.text(bot.user.create(), 'Call me bb, please'))
+    const msg = bBot.messages.text(bBot.users.create(), 'Call me bb, please')
+    await bBot.thoughts.receive(msg)
     expect(captured).to.eql(['bb', 'bb, please'])
   })
   it('responds with custom attachment attributes', async () => {
@@ -50,15 +51,16 @@ describe('[E2E]', () => {
         'webview_height_ratio': 'compact'
       }]
     }
-    bot.global.text(/attachment/i, (b) => b.respond(attachment))
-    await bot.thought.receive(bot.message.text(bot.user.create(), 'Do attachment'))
+    bBot.branches.text(/attachment/i, (b) => b.respond(attachment))
+    const msg = bBot.messages.text(bBot.users.create(), 'Do attachment')
+    await bBot.thoughts.receive(msg)
     sinon.assert.calledWithMatch(mocks.dispatch, { _payload: {
       attachments: [attachment]
     } })
   })
   it('replies to user from server message', async () => {
-    bot.global.server({ test: 1 }, (b) => b.respond('testing'), { id: 'e2e' })
-    await axios.get(`${bot.server.url()}/message/111?test=1`)
+    bBot.branches.server({ test: 1 }, (b) => b.respond('testing'), { id: 'e2e' })
+    await axios.get(`${bBot.server.url}/message/111?test=1`)
     sinon.assert.calledWithMatch(mocks.dispatch, { strings: ['testing'] })
   })
 })

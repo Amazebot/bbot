@@ -1,12 +1,12 @@
-import * as bot from '..'
-import * as sdk from '@rocket.chat/sdk'
+import { Bot, abstracts } from '@amazebot/bbot'
+import * as sdk from '@amazebot/rocket-socket'
 
 /**
  * Rocket.Chat adapter processes incoming message stream, creating and
  * dispatching messages, including with rich message actions/quick replies
  * and querying rooms and users via the Rocket.Chat SDK.
  */
-export class Rocketchat extends bot.adapter.Message {
+export class Rocketchat extends abstracts.Message {
   name = 'rocketchat-message-adapter'
   driver = sdk.driver
   methodCache = sdk.methodCache
@@ -217,7 +217,7 @@ export class Rocketchat extends bot.adapter.Message {
 
 /** Adapter singleton (ish) require pattern. */
 let rocketchat: Rocketchat
-export const use = (bBot: bot.Bot) => {
+export const use = (bBot: Bot) => {
   if (!rocketchat) rocketchat = new Rocketchat(bBot)
   return rocketchat
 }

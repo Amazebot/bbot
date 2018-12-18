@@ -1,6 +1,7 @@
 import { counter } from '../utils/id'
 import logger from '../controllers/logger'
 import config from '../controllers/config'
+import dialogues from '../controllers/dialogues'
 import * as state from './state'
 import { BranchController, IBranches } from '../controllers/branches'
 
@@ -78,7 +79,7 @@ import { BranchController, IBranches } from '../controllers/branches'
  * @param audience        Type of audience to engage
  * @param defaultBranches Default values for new branches
  */
-export interface IOptions {
+export interface IDialogue {
   timeout?: number
   timeoutText?: string
   timeoutMethod?: string
@@ -88,7 +89,7 @@ export interface IOptions {
 }
 
 /** Add, remove and return branch sets, for managing conversation flow. */
-export class Dialogue implements IOptions {
+export class Dialogue implements IDialogue {
   timeout: number
   timeoutText: string
   timeoutMethod: string
@@ -106,15 +107,15 @@ export class Dialogue implements IOptions {
    * Create and configure dialogue from options/defaults, link with state.
    * Default `onTimeout` method sends text, but the method can be overridden.
    */
-  constructor (options: IOptions = {}) {
-    this.timeout = typeof options.timeout !== 'undefined' ? options.timeout
+  constructor (atts: IDialogue = {}) {
+    this.timeout = typeof atts.timeout !== 'undefined' ? atts.timeout
       : config.get('dialogue-timeout')
-    this.timeoutText = options.timeoutText
+    this.timeoutText = atts.timeoutText
       || config.get('dialogue-timeout-text')
-    this.timeoutMethod = options.timeoutMethod
+    this.timeoutMethod = atts.timeoutMethod
     || config.get('dialogue-timeout-method')
-    this.id = options.id || counter('dialogue')
-    this.audience = options.audience || 'direct'
+    this.id = atts.id || counter('dialogue')
+    this.audience = atts.audience || 'direct'
     this.onTimeout = (b) => {
       if (!this.timeoutText) return
       b.respondVia(this.timeoutMethod, this.timeoutText)
@@ -134,7 +135,7 @@ export class Dialogue implements IOptions {
           throw err
         })
     }
-    engage(this.state, this)
+    dialogues.engage(this.state, this)
     return true
   }
 
@@ -157,7 +158,7 @@ export class Dialogue implements IOptions {
           throw err
         })
     }
-    disengage(this.state, this)
+    dialogues.disengage(this.state, this)
     return true
   }
 
@@ -210,55 +211,4 @@ export class Dialogue implements IOptions {
     this.branchHistory.pop()
     return this.branches
   }
-}
-
-/** Collection of open dialogues assigned to their audience ID. */
-export const dialogues: { [id: string]: Dialogue } = {}
-
-/** Stop timers and clear collection of dialogues (for tests) */
-export const reset = () => {
-  for (let id in dialogues) {
-    dialogues[id].stopClock()
-    delete dialogues[id]
-  }
-}
-
-/** Get set of possible audience IDs for a given state. */
-export const audiences = (b: state.State) => {
-  return {
-    direct: `${b.message.user.id}_${b.message.user.room.id}`,
-    user: `${b.message.user.id}`,
-    room: `${b.message.user.room.id}`
-  }
-}
-
-/** Check if audience ID has an open dialogue. */
-export const audienceEngaged = (id: string) => (Object.keys(dialogues).indexOf(id) > -1)
-
-/** Get the ID of engaged audience from current state (if any). */
-export const engagedId = (b: state.State) => {
-  const audienceIds = audiences(b)
-  if (audienceEngaged(audienceIds.direct)) return audienceIds.direct
-  else if (audienceEngaged(audienceIds.user)) return audienceIds.user
-  else if (audienceEngaged(audienceIds.room)) return audienceIds.room
-}
-
-/** Find an open dialogue from state for any possibly engaged audience. */
-export const engaged = (b: state.State) => {
-  const audienceId = engagedId(b)
-  if (audienceId) return dialogues[audienceId]
-}
-
-/** Add an audience from state to a given dialogue. */
-export const engage = (b: state.State, dialogue: Dialogue) => {
-  const audienceId = audiences(b)[dialogue.audience]
-  dialogues[audienceId] = dialogue
-}
-
-/** Remove the audience from any dialogue or a given dialogue. */
-export const disengage = (b: state.State, dialogue?: Dialogue) => {
-  const audienceId = (dialogue)
-    ? audiences(b)[dialogue.audience]
-    : engagedId(b)
-  if (audienceId) delete dialogues[audienceId]
 }

@@ -102,7 +102,7 @@ export class Mongo extends adapters.abstract.Storage {
       if (doc.sub === 'users') {
         if (!memory[doc.sub]) memory[doc.sub] = {}
         for (let id in doc.data) {
-          memory[doc.sub][id] = this.bot.users.fromId(doc.data[id])
+          memory[doc.sub][id] = this.bot.users.byId(doc.data[id])
         }
       } else {
         memory[doc.sub] = doc.data
@@ -168,7 +168,7 @@ export class Mongo extends adapters.abstract.Storage {
 
 /** Adapter singleton (ish) require pattern. */
 let mongo: Mongo
-export const use = (bBot: bot.Bot) => {
+export const use = (bBot: Bot) => {
   if (!mongo) mongo = new Mongo(bBot)
   return mongo
 }

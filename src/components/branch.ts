@@ -2,27 +2,27 @@ import { counter } from '../utils/id'
 import logger from '../controllers/logger'
 import config from '../controllers/config'
 import bits from '../controllers/bits'
-import * as middleware from './middleware'
-import * as state from './state'
-import * as conditions from './condition'
-import * as message from './message'
-import * as nlu from './nlu'
+import { Middleware } from './middleware'
+import { State, ICallback } from './state'
+import { Conditions, ConditionInput } from './condition'
+import { Message, TextMessage, CatchAllMessage, ServerMessage } from './message'
+import { NLUCriteria, NLUResultsRaw } from './nlu'
 
 /** Branch matcher function interface, resolved value must be truthy. */
 export interface IMatcher { (input: any): Promise<any> | any }
 
-/** Called at the end of middleware with status of match */
+/** Called at the end of middleware with status of match. */
 export interface IDone { (matched: boolean): void }
 
-/** Hold extra key/value data for extensions to use, such as ID */
-export interface IOptions {
+/** Attributes for branch. */
+export interface IBranch {
   id?: string
   force?: boolean
   [key: string]: any
 }
 
 /** Alias for acceptable branch action types. */
-export type action = state.ICallback | string
+export type action = ICallback | string
 
 /**
  * Process message in state and decide whether to act on it.
@@ -30,9 +30,9 @@ export type action = state.ICallback | string
  *               by passing its key. The callback be given the final state.
  * @param meta   Any additional key/values to define the branch, such as 'id'
  */
-export abstract class Branch {
+export abstract class Branch implements IBranch {
   id: string
-  callback: state.ICallback
+  callback: ICallback
   force: boolean = false
   match?: any
   matched?: boolean
@@ -41,13 +41,13 @@ export abstract class Branch {
   /** Create a Branch */
   constructor (
     action: action,
-    options: IOptions = {}
+    atts: IBranch = {}
   ) {
     this.callback = (typeof action === 'string')
       ? (state) => bits.run(action, state)
       : action
-    this.id = (options.id) ? options.id : counter('branch')
-    for (let key in options) this[key] = options[key]
+    this.id = (atts.id) ? atts.id : counter('branch')
+    for (let key in atts) this[key] = atts[key]
   }
 
   /**
@@ -67,8 +67,8 @@ export abstract class Branch {
    * @param done       Called after middleware (optional), with match status
    */
   async process (
-    b: state.State,
-    middleware: middleware.Middleware,
+    b: State,
+    middleware: Middleware,
     done: IDone = () => null
   ) {
     if (!b.matched || this.force) {
@@ -95,15 +95,15 @@ export abstract class Branch {
 }
 
 /** Branch to match on any CatchAll type */
-export class CatchAll extends Branch {
+export class CatchAllBranch extends Branch {
   /** Accepts only super args, matcher is fixed */
-  constructor (action: action, options?: IOptions) {
+  constructor (action: action, options?: IBranch) {
     super(action, options)
   }
 
   /** Matching function looks for any CatchAll */
-  async matcher (msg: message.Message) {
-    if (msg instanceof message.CatchAll) {
+  async matcher (msg: Message) {
+    if (msg instanceof CatchAllMessage) {
       logger.debug(`[branch] message "${msg}" matched catch all ID ${this.id}`)
       return msg
     }
@@ -112,18 +112,18 @@ export class CatchAll extends Branch {
 }
 
 /** Custom branch using unique matching function */
-export class Custom extends Branch {
+export class CustomBranch extends Branch {
   /** Accepts custom function to test message */
   constructor (
     public customMatcher: IMatcher,
     action: action,
-    options?: IOptions
+    options?: IBranch
   ) {
     super(action, options)
   }
 
   /** Standard matcher method routes to custom matching function */
-  async matcher (msg: message.Message) {
+  async matcher (msg: Message) {
     const match = await Promise.resolve(this.customMatcher(msg))
     if (match) {
       logger.debug(`[branch] message "${msg}" matched custom branch ID ${this.id}`)
@@ -133,26 +133,26 @@ export class Custom extends Branch {
 }
 
 /** Text branch uses basic regex matching */
-export class Text extends Branch {
-  conditions: conditions.Conditions
+export class TextBranch extends Branch {
+  conditions: Conditions
 
   /** Create text branch for regex pattern */
   constructor (
-    match: conditions.Conditions | conditions.input,
+    input: Conditions | ConditionInput,
     callback: action,
-    options?: IOptions
+    options?: IBranch
   ) {
     super(callback, options)
-    this.conditions = (match instanceof conditions.Conditions)
-      ? match
-      : conditions.create(match)
+    this.conditions = (input instanceof Conditions)
+      ? input
+      : new Conditions(input)
   }
 
   /**
    * Match message text against regex or composite conditions.
    * Resolves with either single match result or cumulative condition success.
    */
-  async matcher (msg: message.Message) {
+  async matcher (msg: Message) {
     this.conditions.exec(msg.toString())
     const match = this.conditions.match
     if (match) {
@@ -168,8 +168,8 @@ export class Text extends Branch {
  * a clone of the message with the prefix removed, this allows conditions like
  * `is` to operate on the body of the message, without failing due to a prefix.
  */
-export class TextDirect extends Text {
-  async matcher (msg: message.Text) {
+export class TextDirectBranch extends TextBranch {
+  async matcher (msg: TextMessage) {
     if (directPattern().exec(msg.toString())) {
       const indirectMessage = msg.clone()
       indirectMessage.text = msg.text.replace(directPattern(), '')
@@ -184,20 +184,20 @@ export class TextDirect extends Text {
  * Natural language branch uses NLU result to match on intent, entities and/or
  * sentiment of optional score threshold. NLU must be trained to provide intent.
  */
-export class NLU extends Branch {
-  match: nlu.ResultsRaw | undefined
+export class NLUBranch extends Branch {
+  match: NLUResultsRaw | undefined
 
   /** Create natural language branch for NLU matching. */
   constructor (
-    public criteria: nlu.Criteria,
+    public criteria: NLUCriteria,
     callback: action,
-    options?: IOptions
+    options?: IBranch
   ) {
     super(callback, options)
   }
 
   /** Match on message's NLU attributes */
-  async matcher (msg: message.Text) {
+  async matcher (msg: TextMessage) {
     if (!msg.nlu) {
       logger.error(`[branch] NLU attempted matching without NLU, ID ${this.id}`)
       return undefined
@@ -212,8 +212,8 @@ export class NLU extends Branch {
 }
 
 /** Natural Language Direct Branch pre-matches the text for bot name prefix. */
-export class NLUDirect extends NLU {
-  async matcher (msg: message.Text) {
+export class NLUDirectBranch extends NLUBranch {
+  async matcher (msg: TextMessage) {
     if (directPattern().exec(msg.toString())) {
       return super.matcher(msg)
     } else {
@@ -222,19 +222,20 @@ export class NLUDirect extends NLU {
   }
 }
 
-export interface IServerCriteria {
+/** Wild card object for validating any key/value data at path. */
+export interface IServerBranchCriteria {
   [path: string]: any
 }
 
 /** Server branch matches data in a message received on the server. */
-export class Server extends Branch {
+export class ServerBranch extends Branch {
   match: any
 
   /** Create server branch for data matching. */
   constructor (
-    public criteria: IServerCriteria,
+    public criteria: IServerBranchCriteria,
     callback: action,
-    options?: IOptions
+    options?: IBranch
   ) {
     super(callback, options)
   }
@@ -243,7 +244,7 @@ export class Server extends Branch {
    * Match on any exact or regex values at path of key in criteria.
    * Will also match on empty data if criteria is an empty object.
    */
-  async matcher (msg: message.Server) {
+  async matcher (msg: ServerMessage) {
     const match: { [path: string]: any } = {}
     if (
       Object.keys(this.criteria).length === 0 &&

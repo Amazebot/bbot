@@ -1,25 +1,23 @@
 import logger from './logger'
-import * as state from '../components/state'
-import * as bit from '../components/bit'
+import { State } from '../components/state'
+import { Bit, IBit } from '../components/bit'
 
 export class BitController {
   /** Keep all created bits, for getting by their ID as key. */
-  current: { [id: string]: bit.Bit } = {}
+  current: { [id: string]: Bit } = {}
 
   /** Create a bit instance. */
-  create (options: bit.IOptions) {
-    return new bit.Bit(options)
-  }
+  create = (atts: IBit) => new Bit(atts)
 
   /** Add new bit to collection, returning its ID. */
-  setup (options: bit.IOptions) {
-    const bit = this.create(options)
+  setup (atts: IBit) {
+    const bit = this.create(atts)
     this.current[bit.id] = bit
     return bit.id
   }
 
   /** Execute a bit using its ID, providing current bot state. */
-  run (id: string, b: state.State) {
+  run (id: string, b: State) {
     if (!this.current[id]) {
       logger.error('[bits] failed to run bit with unknown ID')
       return

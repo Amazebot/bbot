@@ -1,7 +1,16 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
-import * as mongo from './mongo'
+
+import { convert } from '../utils/instance'
+import config from '../controllers/config'
+import users from '../controllers/users'
+import adapters from '../controllers/adapters'
+import middlewares from '../controllers/middlewares'
+import { CustomBranch } from '../components/branch'
+import { User } from '../components/user'
+import { State } from '../components/state'
+import bBot from '../bot'
+import { use, getModel, Mongo } from './mongo'
 
 let initEnv: any
 const testDB = 'bbot-test'
@@ -9,8 +18,8 @@ const testMongo = 'mongodb://127.0.0.1:27017/' + testDB
 const testCollection = 'brain-testing'
 const testMemory = {
   users: {
-    'test-user-1': bot.user.create({ id: 'test-user-1' }),
-    'test-user-2': bot.user.create({ id: 'test-user-2' })
+    'test-user-1': users.create({ id: 'test-user-1' }),
+    'test-user-2': users.create({ id: 'test-user-2' })
   },
   private: {
     'last-respond-time': Date.parse('01 Jun 2018 01:30:00 GMT'),
@@ -27,7 +36,7 @@ const clean = async () => {
   const found = await adapter.model.db.db.listCollections({ name: testCollection }).toArray()
   if (found.length) await adapter.model.collection.drop()
 }
-let adapter: mongo.Mongo
+let adapter: Mongo
 
 describe('[adapter-mongo]', () => {
   before(() => {
@@ -35,27 +44,27 @@ describe('[adapter-mongo]', () => {
     process.env.BOT_DB_URL = testMongo
     process.env.BOT_DB_COLLECTION = testCollection
   })
-  beforeEach(() => adapter = mongo.use(bot))
+  beforeEach(() => adapter = use(bBot))
   after(() => process.env = initEnv)
   describe('.use', () => {
     it('returns adapter instance', () => {
-      expect(adapter).to.be.instanceof(bot.adapter.Adapter)
+      expect(adapter).to.be.instanceof(adapters.abstract.Adapter)
     })
     it('adds env settings for DB to bot settings', () => {
-      expect(bot.config.get('db-collection')).to.equal(testCollection)
+      expect(config.get('db-collection')).to.equal(testCollection)
     })
     it('creates mongoose model for configured collection', () => {
       expect(adapter.model.collection.name).to.equal(testCollection)
     })
     it('uses bot name for mongo url if no env setting', () => {
       delete process.env.DB_URL
-      bot.config.set('name', 'mongo-test')
-      adapter = mongo.use(bot)
+      config.set('name', 'mongo-test')
+      adapter = use(bBot)
     })
   })
   describe('.start', () => {
     it('creates connection to database', async () => {
-      bot.config.set('db-url', testMongo)
+      config.set('db-url', testMongo)
       await adapter.start()
       const stats = await adapter.store!.connection.db.stats()
       expect(adapter.store!.connection.readyState).to.equal(1)
@@ -65,7 +74,7 @@ describe('[adapter-mongo]', () => {
   })
   describe('.shutdown', async () => {
     it('closes the database connection', async () => {
-      bot.config.set('db-url', testMongo)
+      config.set('db-url', testMongo)
       await adapter.start()
       await adapter.shutdown()
       expect(adapter.store!.connection.readyState).to.equal(0)
@@ -81,7 +90,7 @@ describe('[adapter-mongo]', () => {
     })
     it('stores each memory sub-collection', async () => {
       await adapter.saveMemory(testMemory)
-      const found = await mongo.getModel(testCollection).find({
+      const found = await getModel(testCollection).find({
         type: 'memory'
       }, { _id: 0, data: 1, sub: 1 }).lean().exec()
       expect(found).to.eql([
@@ -103,7 +112,7 @@ describe('[adapter-mongo]', () => {
     })
     it('loads each value with its original type', async () => {
       const memory = await adapter.loadMemory()
-      expect(memory.users['test-user-1']).to.be.instanceof(bot.user.User)
+      expect(memory.users['test-user-1']).to.be.instanceof(User)
     })
   })
   describe('.keep', () => {
@@ -116,7 +125,7 @@ describe('[adapter-mongo]', () => {
     })
     it('adds data to collection series', async () => {
       await adapter.keep('tests', testStore[0])
-      const tests = await mongo.getModel(testCollection).findOne({
+      const tests = await getModel(testCollection).findOne({
         sub: 'tests',
         type: 'store'
       }).lean().exec()
@@ -124,25 +133,23 @@ describe('[adapter-mongo]', () => {
     })
     it('subsequent calls append to collection', async () => {
       for (let test of testStore) await adapter.keep('tests', test)
-      const tests = await mongo.getModel(testCollection).findOne({
+      const tests = await getModel(testCollection).findOne({
         sub: 'tests',
         type: 'store'
       }).lean().exec()
       expect(tests.data).to.eql(testStore)
     })
     it('keeps matches intact for state branches', async () => {
-      const b = bot.state.create({
-        message: bot.message.text(bot.user.blank(), '_')
-      })
+      const b = new State()
       const branches = [
-        new bot.branch.Custom(() => 1, () => 1, { id: 'A', force: true }),
-        new bot.branch.Custom(() => 2, () => 2, { id: 'B', force: true })
+        new CustomBranch(() => 1, () => 1, { id: 'A', force: true }),
+        new CustomBranch(() => 2, () => 2, { id: 'B', force: true })
       ]
       for (let branch of branches) {
-        await branch.process(b, new bot.middleware.Middleware('test'))
+        await branch.process(b, middlewares.create('test'))
       }
-      await adapter.keep('states', bot.util.convert(b))
-      const states = await mongo.getModel(testCollection).findOne({
+      await adapter.keep('states', convert(b))
+      const states = await getModel(testCollection).findOne({
         sub: 'states',
         type: 'store'
       }).lean().exec()
@@ -204,7 +211,7 @@ describe('[adapter-mongo]', () => {
     })
     it('removes items matching params from sub collection', async () => {
       await adapter.lose('tests', { name: testStore[1].name })
-      const remaining = await mongo.getModel(testCollection).findOne({
+      const remaining = await getModel(testCollection).findOne({
         type: 'store',
         sub: 'tests'
       }, { _id: 0, data: 1 }).lean().exec()
@@ -212,7 +219,7 @@ describe('[adapter-mongo]', () => {
     })
     it('removes only matching items from sub collection', async () => {
       await adapter.lose('tests', { name: testStore[0].name })
-      const remaining = await mongo.getModel(testCollection).findOne({
+      const remaining = await getModel(testCollection).findOne({
         type: 'store',
         sub: 'tests'
       }, { _id: 0, data: 1 }).lean().exec()

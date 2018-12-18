@@ -10,6 +10,9 @@ export class MiddlewareController {
   /** Initial collection of middleware stacks for loading (extendible). */
   stacks: { [name: string]: Middleware | undefined } = {}
 
+  /** Create a middleware stack. */
+  create = (type: string) => new Middleware(type)
+
   /** Get a middleware stack by name (creating if not exists). */
   get (stack: string) {
     if (!this.stacks[stack]) this.stacks[stack] = new Middleware(stack)
@@ -32,6 +35,6 @@ export class MiddlewareController {
   }
 }
 
-export const middleware = new MiddlewareController()
+export const middlewares = new MiddlewareController()
 
-export default middleware
+export default middlewares

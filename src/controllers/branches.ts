@@ -1,8 +1,25 @@
-import * as branch from '../components/branch'
-import * as condition from '../components/condition'
-import * as state from '../components/state'
-import * as message from '../components/message'
-import * as nlu from '../components/nlu'
+import { ConditionInput } from '../components/condition'
+import { ICallback } from '../components/state'
+import { NLUCriteria } from '../components/nlu'
+import {
+  Message,
+  EnterMessage,
+  LeaveMessage,
+  TopicMessage
+} from '../components/message'
+import {
+  TextBranch,
+  CustomBranch,
+  NLUBranch,
+  ServerBranch,
+  CatchAllBranch,
+  Branch,
+  IBranch,
+  TextDirectBranch,
+  IMatcher,
+  NLUDirectBranch,
+  IServerBranchCriteria
+} from '../components/branch'
 
 /**
  * @module Branches
@@ -11,18 +28,18 @@ import * as nlu from '../components/nlu'
 
 /** Collection interface for containing sets of branches. */
 export interface IBranches {
-  listen?: { [id: string]: branch.Text | branch.Custom }
-  understand?: { [id: string]: branch.NLU | branch.Custom }
-  serve?: { [id: string]: branch.Server | branch.Custom }
-  act?: { [id: string]: branch.CatchAll }
+  listen?: { [id: string]: TextBranch | CustomBranch }
+  understand?: { [id: string]: NLUBranch | CustomBranch }
+  serve?: { [id: string]: ServerBranch | CustomBranch }
+  act?: { [id: string]: CatchAllBranch }
 }
 
 /** Contains collections of branches and methods to create each type. */
 export class BranchController implements IBranches {
-  listen: { [id: string]: branch.Text | branch.Custom }
-  understand: { [id: string]: branch.NLU | branch.Custom }
-  serve: { [id: string]: branch.Server | branch.Custom }
-  act: { [id: string]: branch.CatchAll }
+  listen: { [id: string]: TextBranch | CustomBranch }
+  understand: { [id: string]: NLUBranch | CustomBranch }
+  serve: { [id: string]: ServerBranch | CustomBranch }
+  act: { [id: string]: CatchAllBranch }
 
   /** Create branch controller (branches can be cloned, created or empty). */
   constructor (init: BranchController | IBranches = {}) {
@@ -59,7 +76,7 @@ export class BranchController implements IBranches {
 
   /** Add branch to collection, for separation based on thought processes. */
   add (
-    branch: branch.Branch,
+    branch: Branch,
     collection: 'listen' | 'understand' | 'act' | 'serve'
   ) {
     this[collection][branch.id] = branch
@@ -75,125 +92,125 @@ export class BranchController implements IBranches {
 
   /** Create text branch with provided regex, action and options */
   text (
-    condition: condition.input,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    condition: ConditionInput,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.Text(condition, action, options),
+      new TextBranch(condition, action, atts),
       'listen'
     )
   }
 
   /** Create text branch pre-matched on the bot name as prefix. */
   direct (
-    condition: condition.input,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    condition: ConditionInput,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.TextDirect(condition, action, options),
+      new TextDirectBranch(condition, action, atts),
       'listen'
     )
   }
 
   /** Create custom branch with provided matcher, action and optional meta. */
   custom (
-    matcher: branch.IMatcher,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    matcher: IMatcher,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.Custom(matcher, action, options),
+      new CustomBranch(matcher, action, atts),
       'listen'
     )
   }
 
   /** Create a branch that triggers when no other branch matches. */
   catchAll (
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.CatchAll(action, options),
+      new CatchAllBranch(action, atts),
       'act'
     )
   }
 
   /** Create a natural language branch to match on NLU result attributes. */
   NLU (
-    criteria: nlu.Criteria,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    criteria: NLUCriteria,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.NLU(criteria, action, options),
+      new NLUBranch(criteria, action, atts),
       'understand'
     )
   }
 
   /** Create a natural language branch pre-matched on the bot name as prefix. */
   directNLU (
-    criteria: nlu.Criteria,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    criteria: NLUCriteria,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.NLUDirect(criteria, action, options),
+      new NLUDirectBranch(criteria, action, atts),
       'understand'
     )
   }
 
   /** Create a natural language branch with custom matcher. */
   customNLU (
-    matcher: branch.IMatcher,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    matcher: IMatcher,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.Custom(matcher, action, options),
+      new CustomBranch(matcher, action, atts),
       'understand'
     )
   }
 
   /** Create a branch that triggers when user joins a room. */
   enter (
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    action: ICallback | string,
+    atts?: IBranch
   ) {
-    return this.custom((msg: message.Message) => {
-      return msg instanceof message.Enter
-    }, action, options)
+    return this.custom((msg: Message) => {
+      return msg instanceof EnterMessage
+    }, action, atts)
   }
 
   /** Create a branch that triggers when user leaves a room. */
   leave (
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    action: ICallback | string,
+    atts?: IBranch
   ) {
-    return this.custom((msg: message.Message) => {
-      return msg instanceof message.Leave
-    }, action, options)
+    return this.custom((msg: Message) => {
+      return msg instanceof LeaveMessage
+    }, action, atts)
   }
 
   /** Create a branch that triggers when user changes the topic. */
   topic (
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    action: ICallback | string,
+    atts?: IBranch
   ) {
-    return this.custom((msg: message.Message) => {
-      return msg instanceof message.Topic
-    }, action, options)
+    return this.custom((msg: Message) => {
+      return msg instanceof TopicMessage
+    }, action, atts)
   }
 
   /** Create a branch that triggers when server message matches criteria. */
   server (
-    criteria: branch.IServerCriteria,
-    action: state.ICallback | string,
-    options?: branch.IOptions
+    criteria: IServerBranchCriteria,
+    action: ICallback | string,
+    atts?: IBranch
   ) {
     return this.add(
-      new branch.Server(criteria, action, options),
+      new ServerBranch(criteria, action, atts),
       'serve'
     )
   }

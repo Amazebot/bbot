@@ -1,17 +1,17 @@
-import * as bot from '..'
 import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
+import { Bot, components, controllers, abstracts } from '..'
 
 /** Load prompts and render chat in shell, for testing interactions */
-export class Shell extends bot.adapter.Message {
+export class Shell extends abstracts.MessageAdapter {
   name = 'shell-message-adapter'
   debug: boolean = false
   ui: any
   logs: string[] = ['']
   messages: [string, string][] = []
-  user: bot.user.User = bot.user.blank()
-  room: bot.room.Room = bot.room.blank()
+  user: components.User = controllers.users.blank()
+  room: components.Room = controllers.rooms.blank()
   line = new inquirer.Separator()
   transport?: Transport
 
@@ -77,16 +77,16 @@ export class Shell extends bot.adapter.Message {
       }
     })
     this.ui = new inquirer.ui.BottomBar()
-    this.bot.global.enter((b) => b.respond(
+    this.bot.branches.enter((b) => b.respond(
       `${this.user.name} Welcome to #${this.room.name}, I'm ${b.bot.config.get('name')}`,
       `Type "exit" to exit any time.`
     ), { id: 'shell-enter' })
-    this.bot.global.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
+    this.bot.branches.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       if (!this.debug) {
         this.logSetup()
         await this.roomSetup()
-        await this.bot.thought.receive(this.bot.message.enter(this.user))
+        await this.bot.thoughts.receive(this.bot.messages.enter(this.user))
         await this.render()
       }
     })
@@ -120,10 +120,10 @@ export class Shell extends bot.adapter.Message {
       this.bot.config.set('shell-user-name', registration.username)
       this.bot.config.set('shell-room-name', registration.room)
     }
-    this.room = this.bot.room.create({
+    this.room = this.bot.rooms.create({
       name: this.bot.config.get('shell-room-name')
     })
-    this.user = this.bot.user.create({
+    this.user = this.bot.users.create({
       name: this.bot.config.get('shell-user-name'),
       id: this.bot.config.get('shell-user-id'),
       room: this.room
@@ -138,12 +138,12 @@ export class Shell extends bot.adapter.Message {
       message: chalk.magenta(`#${this.room.name}`) + chalk.cyan(' ➤')
     })
     this.messages.push([this.user.name!, input.message])
-    await this.bot.thought.receive(this.bot.message.text(this.user, input.message))
+    await this.bot.thoughts.receive(this.bot.messages.text(this.user, input.message))
     return this.render()
   }
 
   /** Add outgoing messages and re-render chat */
-  async dispatch (envelope: bot.envelope.Envelope) {
+  async dispatch (envelope: components.Envelope) {
     for (let text of (envelope.strings || [])) {
       if (text) this.messages.push([this.bot.config.get('name'), text])
     }
@@ -169,7 +169,7 @@ export class Shell extends bot.adapter.Message {
 
 /** Adapter singleton (ish) require pattern. */
 let shell: Shell
-export const use = (bBot: bot.Bot) => {
+export const use = (bBot: Bot) => {
   if (!shell) shell = new Shell(bBot)
   return shell
 }
