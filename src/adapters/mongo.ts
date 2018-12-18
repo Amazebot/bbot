@@ -1,5 +1,6 @@
-import * as bot from '..'
 import mongoose from 'mongoose'
+import adapters from '../controllers/adapters'
+import { Bot } from '../bot'
 
 export interface IStore extends mongoose.Document {
   type: string,
@@ -27,7 +28,7 @@ export function getModel (collection: string) {
  * Long-term data is stored in sub-collections alongside memory, using either
  * a key for key/value pairs, or a key-less array for serial data.
  */
-export class Mongo extends bot.adapter.Storage {
+export class Mongo extends adapters.abstract.Storage {
   name = 'mongo-storage-adapter'
   config = {
     useNewUrlParser: true,
@@ -41,7 +42,7 @@ export class Mongo extends bot.adapter.Storage {
   store?: mongoose.Mongoose
 
   /** Create mongo instance, initialise settings and model. */
-  constructor (bot: bot.Bot) {
+  constructor (bot: Bot) {
     super(bot)
     this.bot.config.extend({
       'db-url': {
@@ -101,7 +102,7 @@ export class Mongo extends bot.adapter.Storage {
       if (doc.sub === 'users') {
         if (!memory[doc.sub]) memory[doc.sub] = {}
         for (let id in doc.data) {
-          memory[doc.sub][id] = new this.bot.user.User(doc.data[id])
+          memory[doc.sub][id] = this.bot.users.fromId(doc.data[id])
         }
       } else {
         memory[doc.sub] = doc.data

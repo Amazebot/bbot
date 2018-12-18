@@ -1,0 +1,198 @@
+import bBot from '..'
+import logger from '../controllers/logger'
+import messages from '../controllers/messages'
+import thoughts from '../controllers/thoughts'
+import { IContext } from '../controllers/server'
+import * as branch from './branch'
+import * as dialogue from './dialogue'
+import * as message from './message'
+import * as envelope from './envelope'
+
+/**
+ * States accept some known common properties, but can accept any key/value pair
+ * that is needed for a specific type of branch or middleware.
+ * The `done` property tells middleware not to continue processing state.
+ */
+export interface IOptions {
+  done?: boolean
+  exit?: boolean
+  sequence?: string
+  branch?: branch.Branch
+  dialogue?: dialogue.Dialogue
+  server?: IContext
+  [key: string]: any
+}
+
+/** State callback interface, usually for branch if the message matched. */
+export interface ICallback {
+  (b: State): any
+}
+
+/**
+ * Received states persist the incoming message to be used for matching and
+ * to address response envelopes.
+ */
+export interface IReceiveState extends IOptions {
+  message: message.Message
+}
+
+/**
+ * Dispatching states don't have an originating message, so they will be
+ * processed via the attributes of the outgoing envelope/s.
+ */
+export interface IDispatchState extends IOptions {
+  envelopes?: envelope.Envelope[]
+}
+
+/**
+ * Generic state, starting point for outgoing dispatches
+ * States have access to all bBot modules from the bot property.
+ * It has defined properties but can be extended with any key/value pair.
+ * Each thought process attaches timestamps if they are actioned.
+ * Provides proxies to envelope messages, so responses can be easily actioned.
+ */
+export class State implements IOptions {
+  bot = bBot
+  done: boolean = false
+  processed: { [key: string]: number } = {}
+  message: message.Message = messages.blank()
+  matching?: branch.Branch[]
+  dialogue?: dialogue.Dialogue
+  envelopes?: envelope.Envelope[]
+  sequence?: string
+  method?: string
+  exit?: boolean
+  [key: string]: any
+
+  /** Create new state, usually assigned as `b` in middleware callbacks. */
+  constructor (startingState: IDispatchState) {
+    for (let key in startingState) this[key] = startingState[key]
+  }
+
+  /** Initialise a new state from this one's attribute. */
+  clone () {
+    return new State(this)
+  }
+
+  /** Get a pretty-printed view of the state without all the bot attributes. */
+  inspect () {
+    const clone = Object.assign({}, this)
+    delete clone.bot
+    return JSON.stringify(clone, null, 2)
+  }
+
+  /** Indicate that no more thought processes should look at this state. */
+  ignore () {
+    logger.debug(`[state] ignored by further thought processes`)
+    this.exit = true
+    return this
+  }
+
+  /** Indicate that no other branch should process this state. */
+  finish () {
+    this.done = true
+    return this
+  }
+
+  /** Add to or create collection of matched branches. */
+  setBranch (branch: branch.Branch) {
+    if (!branch.matched) return
+    if (!this.matching) this.matching = []
+    this.matching.push(branch)
+  }
+
+  /** Add to the branches collection form the branch property. */
+  set branch (branch: branch.Branch | undefined) {
+    if (branch) this.setBranch(branch)
+  }
+
+  /** Get a matched branch by it's ID or index (or last matched). */
+  matchingBranch (id?: number | string) {
+    if (!this.matching) return undefined
+    if (!id) id = this.matching.length - 1
+    return (typeof id === 'number' && this.matching.length > id)
+      ? this.matching[id]
+      : this.matching.find((branch) => branch.id === id)
+  }
+
+  /** Provide branches from current or new dialogue. */
+  get branches () {
+    if (!this.dialogue) this.dialogue = new dialogue.Dialogue()
+    this.dialogue.open(this)
+      .catch((err) => {
+        logger.error(`Error opening dialogue from state: ${err.message}`)
+        throw err
+      })
+    return this.dialogue.branches
+  }
+
+  /**
+   * Use property getter for last branch match (often the only match).
+   * In the context of a branch callback, this provides a shorthand to the
+   * branch that was just matched, as opposed to `b.getMatching(id).match`.
+   */
+  get match () {
+    const branch = this.matchingBranch()
+    if (branch) return branch.match
+  }
+
+  /** Get the conditions of the last matched branch. */
+  get conditions () {
+    const branch = this.matchingBranch()
+    if (branch && branch.conditions) return branch.conditions
+  }
+
+  /** Use property getting for match state (only matched branches are kept). */
+  get matched () {
+    return (this.matching && this.matching.length) ? true : false
+  }
+
+  /** Check for existing envelope without response. */
+  pendingEnvelope () {
+    if (!this.envelopes) return
+    return this.envelopes.find((e) => typeof e.responded === 'undefined')
+  }
+
+  /** Access user from memory matching message details */
+  get user () {
+    const user = this.message.user
+    return user.byId(user.id, user)
+  }
+
+  /** Return the last dispatched envelope. */
+  dispatchedEnvelope () {
+    if (!this.envelopes) return
+    return this.envelopes.find((e) => typeof e.responded !== 'undefined')
+  }
+
+  /** Create or return pending envelope, to respond to incoming message. */
+  respondEnvelope (options?: envelope.IOptions) {
+    let pending = this.pendingEnvelope()
+    if (!pending) {
+      if (!this.envelopes) this.envelopes = []
+      pending = new envelope.Envelope(options, this)
+      this.envelopes.push(pending)
+    }
+    return pending
+  }
+
+  /** Get an envelope for responding with, either pending or newly created. */
+  get envelope () {
+    return this.respondEnvelope()
+  }
+
+  /** Dispatch the envelope via respond thought process. */
+  respond (...content: any[]) {
+    this.respondEnvelope().compose(...content)
+    return thoughts.respond(this)
+  }
+
+  /** Set method for dispatching envelope responding to state. */
+  respondVia (method: string, ...content: any[]) {
+    this.respondEnvelope().via(method)
+    return this.respond(...content)
+  }
+}
+
+/** Create a new state. */
+export const create = (options: IOptions) => new State(options)
