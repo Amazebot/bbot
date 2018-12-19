@@ -1,9 +1,14 @@
-import { convert, clone } from '../utils/instance'
-import config from './config'
-import logger from './logger'
-import adapters from './adapters'
-import { User } from '../components/user'
-import { Room } from '../components/room'
+/**
+ * Store and retrieve data from internal or external storage.
+ * @module components/memory
+ */
+
+import { convert, clone } from '../util/instance'
+import config from '../util/config'
+import logger from '../util/logger'
+import adapters from './adapter'
+import { User } from './user'
+import { Room } from './room'
 
 /** Internal storage for data, can hold any key/value collection. */
 export class MemoryController {

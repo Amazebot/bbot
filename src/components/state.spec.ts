@@ -1,21 +1,20 @@
 import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
-import users from '../controllers/users'
-import messages from '../controllers/messages'
-import thoughts from '../controllers/thoughts'
-import middlewares from '../controllers/middlewares'
-import { Text } from './message'
+import { users } from './user'
+import { messages, TextMessage } from './message'
+import thoughts from './thought'
+import middlewares from './middleware'
 import { State } from './state'
-import { Custom } from './branch'
+import { CustomBranch } from './branch'
 import { Envelope } from './envelope'
 import { Bot } from '../bot'
 
-let message: Text
+let message: TextMessage
 let stubs: { [key: string]: sinon.SinonStub }
 const uId = 'test-user'
 
-describe.only('[state]', () => {
+describe('[state]', () => {
   before(() => {
     stubs = {}
     message = messages.text(users.create({ id: uId }), 'foo')
@@ -40,15 +39,15 @@ describe.only('[state]', () => {
   describe('.setMatchingBranch', () => {
     it('starts collection of matching branches', () => {
       const b = new State({ message })
-      const branch = new Custom(() => true, () => null)
+      const branch = new CustomBranch(() => true, () => null)
       branch.matched = true
       b.setMatchingBranch(branch)
       expect(b.matching).to.eql([branch])
     })
     it('adds to collection if existing matched branches', () => {
       const b = new State({ message })
-      const branchA = new Custom(() => true, () => null)
-      const branchB = new Custom(() => true, () => null)
+      const branchA = new CustomBranch(() => true, () => null)
+      const branchB = new CustomBranch(() => true, () => null)
       branchA.matched = true
       branchB.matched = true
       b.matching = [branchA]
@@ -57,7 +56,7 @@ describe.only('[state]', () => {
     })
     it('rejects branches that did not match', () => {
       const b = new State({ message })
-      const branch = new Custom(() => true, () => null)
+      const branch = new CustomBranch(() => true, () => null)
       b.setMatchingBranch(branch)
       expect(typeof b.matching).to.equal('undefined')
     })
@@ -69,25 +68,25 @@ describe.only('[state]', () => {
     })
     it('returns undefined when given ID not in state', () => {
       const b = new State({ message })
-      const branch = new Custom(() => 'A', () => null, { id: 'A' })
+      const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
       b.matching = [branch]
       expect(b.getMatchingBranch('B')).to.equal(undefined)
     })
     it('returns undefined when given index not in state', () => {
       const b = new State({ message })
-      const branch = new Custom(() => 'A', () => null, { id: 'A' })
+      const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
       b.matching = [branch]
       expect(b.getMatchingBranch(1)).to.equal(undefined)
     })
     it('returns branch by ID in state', () => {
       const b = new State({ message })
-      const branch = new Custom(() => 'A', () => null, { id: 'A' })
+      const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
       b.matching = [branch]
       expect(b.getMatchingBranch('A')).to.eql(branch)
     })
     it('returns branch by index in state', () => {
       const b = new State({ message })
-      const branch = new Custom(() => 'A', () => null, { id: 'A' })
+      const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
       b.matching = [branch]
       expect(b.getMatchingBranch(0)).to.eql(branch)
     })
@@ -95,8 +94,8 @@ describe.only('[state]', () => {
   describe('.match', () => {
     it('returns match of last branch', async () => {
       const branches = [
-        new Custom(() => 'A', () => null, { id: 'A', force: true }),
-        new Custom(() => 'B', () => null, { id: 'B', force: true })
+        new CustomBranch(() => 'A', () => null, { id: 'A', force: true }),
+        new CustomBranch(() => 'B', () => null, { id: 'B', force: true })
       ]
       const b = new State({ message })
       for (let branch of branches) await branch.process(b, middlewares.create('test'))
@@ -110,7 +109,7 @@ describe.only('[state]', () => {
   describe('.matched', () => {
     it('returns true if any branches added', () => {
       const b = new State({ message })
-      b.matching = [new Custom(() => 'B', () => null)]
+      b.matching = [new CustomBranch(() => 'B', () => null)]
       expect(b.matched).to.equal(true)
     })
     it('returns false if no branches added', () => {

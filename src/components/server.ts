@@ -1,15 +1,21 @@
+/**
+ * Serve bot data and custom routes and listen for incoming message data.
+ * @module components/server
+ */
+
 import Koa from 'koa'
 import koaBody from 'koa-body'
 import Router from 'koa-router'
 import http from 'http'
 import https from 'https'
 import { AddressInfo } from 'net'
-import config from './config'
-import logger from './logger'
-import messages from './messages'
-import thoughts from './thoughts'
-import adapters from './adapters'
-import middleware from './middlewares'
+
+import config from '../util/config'
+import logger from '../util/logger'
+import { messages } from './message'
+import { thoughts } from './thought'
+import { adapters } from './adapter'
+import { middlewares } from './middleware'
 
 /** Server states include Koa context, to respond to http/s requests. */
 export interface IContext extends Router.IRouterContext {}
@@ -150,8 +156,8 @@ export class ServerController {
       name: config.get('name'),
       started: this.started,
       adapters: adapters.names,
-      middleware: Object.keys(middleware.stacks).map((key) => {
-        return `${key}: ${middleware.stacks[key]!.stack.length}`
+      middlewares: Object.keys(middlewares.stacks).map((key) => {
+        return `${key}: ${middlewares.stacks[key]!.stack.length}`
       })
     }
   }

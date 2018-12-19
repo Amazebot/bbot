@@ -1,7 +1,11 @@
-import { random } from '../utils/id'
-import logger from '../controllers/logger'
-import users from '../controllers/users'
-import { User, IUser } from './user'
+/**
+ * Represent and handle different types of message to/from chat platform.
+ * @module components/message
+ */
+
+import logger from '../util/logger'
+import { random } from '../util/id'
+import { users, User, IUser } from './user'
 import { NLU } from './nlu'
 import { IPayload } from './payload'
 
@@ -136,3 +140,35 @@ export class CatchAllMessage extends Message {
     return this.message.toString()
   }
 }
+
+/** Create instances of different message types. */
+export class MessageController {
+
+  /** Create a blank message */
+  blank = () => new BlankMessage()
+
+  /** Create a text message. */
+  text = (user: User, text: string, id?: string) => new TextMessage(user, text, id)
+
+  /** Create a rich message. */
+  rich = (user: User, payload: IPayload, id?: string) => new RichMessage(user, payload, id)
+
+  /** Create an enter event message. */
+  enter = (user: User, id?: string) => new EnterMessage(user, id)
+
+  /** Create a leave event message. */
+  leave = (user: User, id?: string) => new LeaveMessage(user, id)
+
+  /** Create a topic event message. */
+  topic = (user: User, id?: string) => new TopicMessage(user, id)
+
+  /** Create a server request message. */
+  server = (options: IServerOptions) => new ServerMessage(options)
+
+  /** Create a catch all message. */
+  catchAll = (msg: Message) => new CatchAllMessage(msg)
+}
+
+export const messages = new MessageController()
+
+export default messages

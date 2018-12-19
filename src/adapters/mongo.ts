@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
-import adapters from '../controllers/adapters'
-import { Bot } from '../bot'
+import { Bot, abstracts } from '..'
 
 export interface IStore extends mongoose.Document {
   type: string,
@@ -28,7 +27,7 @@ export function getModel (collection: string) {
  * Long-term data is stored in sub-collections alongside memory, using either
  * a key for key/value pairs, or a key-less array for serial data.
  */
-export class Mongo extends adapters.abstract.Storage {
+export class Mongo extends abstracts.StorageAdapter {
   name = 'mongo-storage-adapter'
   config = {
     useNewUrlParser: true,

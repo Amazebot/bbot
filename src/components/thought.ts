@@ -1,26 +1,29 @@
-import config from '../controllers/config'
-import logger from '../controllers/logger'
-import adapters from '../controllers/adapters'
-import store from '../controllers/store'
-import users from '../controllers/users'
-import messages from '../controllers/messages'
-import middleware from '../controllers/middlewares'
-import { BranchController } from '../controllers/branches'
-import { Middleware } from './middleware'
-import * as state from './state'
-import * as branch from './branch'
-import * as message from './message'
-import * as nlu from './nlu'
+/**
+ * Handles sequences of discourse with context.
+ * @module components/thought
+ */
 
-/** How the bot handles discourse. */
+import config from '../util/config'
+import logger from '../util/logger'
+import { users } from './user'
+import { BranchController, Branch } from './branch'
+import { messages, TextMessage, Message, ServerMessage } from './message'
+import { NLU } from './nlu'
+import { Envelope } from './envelope'
+import { State } from './state'
+import dialogues from './dialogue'
+import { store } from './store'
+import { IContext } from './server'
+import { adapters } from './adapter'
+import middlewares, { Middleware } from './middleware'
 
 /** Options for defining thought process. */
 export interface IThought {
   name: string
-  b: state.State
+  b: State
   validate?: () => Promise<boolean> | boolean
   action?: (success: boolean) => Promise<void> | void
-  branches?: { [id: string]: branch.Branch }
+  branches?: { [id: string]: Branch }
   middleware?: Middleware
 }
 
@@ -31,11 +34,11 @@ export interface IThought {
  */
 export class Thought implements IThought {
   name: string
-  b: state.State
+  b: State
   validate: () => Promise<boolean> | boolean = () => Promise.resolve(true)
   action: (success: boolean) => Promise<void> | void = (_) => Promise.resolve()
   middleware: Middleware
-  branches?: { [id: string]: branch.Branch }
+  branches?: { [id: string]: Branch }
 
   /**
    * Create new thought process with optional validate and action functions.
@@ -49,7 +52,7 @@ export class Thought implements IThought {
     if (options.action) this.action = options.action
     if (options.branches) this.branches = options.branches
     if (options.middleware) this.middleware = options.middleware
-    else if (middleware.get(this.name)) this.middleware = middleware.get(this.name)
+    else if (middlewares.get(this.name)) this.middleware = middlewares.get(this.name)
     else throw new Error('[thought] invalid middleware provided')
   }
 
@@ -123,7 +126,7 @@ export class Thought implements IThought {
  * `action` method to run after. Validate returning false will skip the process.
  */
 export class Thoughts {
-  b: state.State
+  b: State
   branches: BranchController
   sequence: { [key: string]: string[] } = {
     serve: ['hear', 'serve', 'act', 'remember'],
@@ -139,7 +142,7 @@ export class Thoughts {
    * branches for specific conversational context.
    */
   constructor (
-    state: state.State,
+    state: State,
     initBranches?: BranchController
   ) {
     this.b = state
@@ -185,7 +188,7 @@ export class Thoughts {
     this.processes.understand.validate = async () => {
       if (!adapters.loaded.nlu) {
         logger.debug(`[thought] skip understand, no nlu adapter`)
-      } else if (!(b.message instanceof message.Text)) {
+      } else if (!(b.message instanceof TextMessage)) {
         logger.debug(`[thought] skip understand, not a text message`)
       } else if (b.message.toString().trim() === '') {
         logger.debug(`[thought] skip understand, message text is empty`)
@@ -199,7 +202,7 @@ export class Thoughts {
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
           logger.error(`[thought] nlu processing returned empty`)
         } else {
-          b.message.nlu = nlu.create().addResults(nluResultsRaw)
+          b.message.nlu = new NLU().addResults(nluResultsRaw)
           logger.info(`[thought] nlu processed ${b.message.nlu.printResults()}`)
           return true
         }
@@ -264,3 +267,64 @@ export class Thoughts {
     return this.b
   }
 }
+
+/** Control creation of through processes for incoming/outgoing sequences. */
+export class ThoughtController {
+  /**
+   * Initiate sequence of thought processes for an incoming message.
+   * Branch callbacks may also respond. Final state is remembered.
+   *
+   * If audience is engaged in dialogue, use the isolated dialogue path instead of
+   * default "global" path. The dialogue path is then progressed to a clean path,
+   * to allow adding a new set of branches upon matching the current ones.
+   * If no branches matched, no new branches would be added to the new path, so
+   * we revert to the previous path (the one that was just processed). If branches
+   * matched, but no additional branches added, close the dialogue.
+   */
+  async receive (message: Message, branches?: BranchController) {
+    logger.info(`[thought] receive message ID ${message.id}`)
+    const startingState = new State({ message })
+    const dlg = dialogues.engaged(startingState)
+    if (dlg && !branches) branches = dlg.progressBranches()
+    const thought = new Thoughts(startingState, branches)
+    const finalState = await thought.start('receive')
+    if (dlg) {
+      if (!finalState.matched) dlg.revertBranches()
+      else if (dlg.branches.exist()) await dlg.close()
+    }
+    return finalState
+  }
+
+  /**
+   * Initiate a response from an existing state. Sequence does not remember
+   * because it will usually by triggered from within the `receive` sequence.
+   */
+  async respond (b: State) {
+    if (!b.matchingBranch) logger.info(`[thought] respond without matched branch`)
+    else logger.info(`[thought] respond to matched branch ${b.matchingBranch.id}`)
+    return new Thoughts(b).start('respond')
+  }
+
+  /**
+   * Initiate chain of thought processes for an outgoing envelope.
+   * This is for sending unprompted by a branch. Final state is remembered.
+   */
+  async dispatch (envelope: Envelope) {
+    logger.info(`[thought] dispatch envelope ${envelope.id}`)
+    return new Thoughts(new State({ envelopes: [envelope] })).start('dispatch')
+  }
+
+  /** Initiate chain of thought processes for responding to a server request. */
+  async serve (
+    msg: ServerMessage,
+    ctx: IContext,
+    branches?: BranchController
+  ) {
+    logger.info(`[thought] serving ${msg.id} for ${msg.user.id}`)
+    return new Thoughts(new State({ msg, ctx }), branches).start('serve')
+  }
+}
+
+export const thoughts = new ThoughtController()
+
+export default thoughts

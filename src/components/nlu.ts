@@ -1,4 +1,9 @@
 /**
+ * Represent and handle results from natural language platforms.
+ * @module components/nlu
+ */
+
+/**
  * Interface for Natural Language Understanding result attributes.
  * @param id    The primary text code for a result
  * @param name  A display name equivalent for the ID

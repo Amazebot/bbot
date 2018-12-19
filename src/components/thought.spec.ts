@@ -2,27 +2,31 @@ import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
 
-import adapters from '../controllers/adapters'
+import config from '../util/config'
 import messages from '../controllers/messages'
-import users from '../controllers/users'
-import { BranchController } from '../controllers/branches'
-import { IContext } from '../controllers/server'
+import users from './users'
+import branches from '../controllers/branches'
+import thoughts from './thoughts'
+import { IContext } from './server'
+import { middlewares } from '../controllers/middlewares'
 import { State } from './state'
 import { Middleware } from './middleware'
 import { CustomBranch } from './branch'
 import { CatchAllMessage } from './message'
 import { NLUResult } from './nlu'
 import { Thought, Thoughts } from './thought'
+import adapters, { abstracts } from './adapter'
+
 import bBot from '../bot'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-class MockMessenger extends adapters.abstract.Message {
+class MockMessenger extends abstracts.MessageAdapter {
   name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
   async shutdown () { return }
 }
-class MockNLU extends adapters.abstract.NLU {
+class MockNLU extends abstracts.NLUAdapter {
   name = 'mock-nlu'
   async process () {
     return {
@@ -34,7 +38,7 @@ class MockNLU extends adapters.abstract.NLU {
   async start () { return }
   async shutdown () { return }
 }
-class MockStorage extends adapters.abstract.Storage {
+class MockStorage extends abstracts.StorageAdapter {
   name = 'mock-storage'
   async start () { return }
   async shutdown () { return }
@@ -52,10 +56,10 @@ const message = messages.text(
 
 describe('[thought]', () => {
   beforeEach(async () => {
-    await bBot.load()
-    bBot.adapters.loaded.message = sinon.createStubInstance(MockMessenger)
+    adapters.loaded.message = sinon.createStubInstance(MockMessenger)
+    middlewares.unloadAll()
+    branches.reset()
   })
-  afterEach(() => bBot.reset())
   describe('Thought', () => {
     describe('constructor', () => {
       it('constructor fails without corresponding middleware', async () => {
@@ -187,37 +191,37 @@ describe('[thought]', () => {
         sinon.assert.notCalled(callback)
       })
       it('named hear, processes hear middleware', async () => {
-        bBot.middlewares.register('hear', (b, _, __) => b.hearTest = true)
+        middlewares.register('hear', (b, _, __) => b.hearTest = true)
         const b = new State({ message })
         await new Thought({ name: 'hear', b }).process()
         expect(b.hearTest).to.equal(true)
       })
       it('named listen, processes listen middleware', async () => {
-        bBot.middlewares.register('listen', (b, _, __) => b.listenTest = true)
+        middlewares.register('listen', (b, _, __) => b.listenTest = true)
         const b = new State({ message })
         await new Thought({ name: 'listen', b }).process()
         expect(b.listenTest).to.equal(true)
       })
       it('named understand, processes understand middleware', async () => {
-        bBot.middlewares.register('understand', (b, _, __) => b.understandTest = true)
+        middlewares.register('understand', (b, _, __) => b.understandTest = true)
         const b = new State({ message })
         await new Thought({ name: 'understand', b }).process()
         expect(b.understandTest).to.equal(true)
       })
       it('named act, processes act middleware', async () => {
-        bBot.middlewares.register('act', (b, _, __) => b.actTest = true)
+        middlewares.register('act', (b, _, __) => b.actTest = true)
         const b = new State({ message })
         await new Thought({ name: 'act', b }).process()
         expect(b.actTest).to.equal(true)
       })
       it('named respond, processes respond middleware', async () => {
-        bBot.middlewares.register('respond', (b, _, __) => b.respondTest = true)
+        middlewares.register('respond', (b, _, __) => b.respondTest = true)
         const b = new State({ message })
         await new Thought({ name: 'respond', b }).process()
         expect(b.respondTest).to.equal(true)
       })
       it('named remember, processes remember middleware', async () => {
-        bBot.middlewares.register('remember', (b, _, __) => b.rememberTest = true)
+        middlewares.register('remember', (b, _, __) => b.rememberTest = true)
         const b = new State({ message })
         await new Thought({ name: 'remember', b }).process()
         expect(b.rememberTest).to.equal(true)
@@ -226,12 +230,12 @@ describe('[thought]', () => {
   })
   describe('Thoughts', () => {
     beforeEach(() => {
-      bBot.adapters.loaded.nlu = new MockNLU(bBot)
-      bBot.adapters.loaded.storage = sinon.createStubInstance(MockStorage)
+      adapters.loaded.nlu = new MockNLU(bBot)
+      adapters.loaded.storage = sinon.createStubInstance(MockStorage)
     })
     afterEach(() => {
-      delete bBot.adapters.loaded.nlu
-      delete bBot.adapters.loaded.storage
+      delete adapters.loaded.nlu
+      delete adapters.loaded.storage
     })
     describe('.start', () => {
       it('receive records initiating sequence', async () => {
@@ -240,7 +244,6 @@ describe('[thought]', () => {
         expect(b.sequence).to.equal('receive')
       })
       it('with path, processes branches', async () => {
-        const branches = new BranchController()
         let listens: string[] = []
         branches.custom(() => true, () => listens.push('A'), { force: true })
         branches.custom(() => true, () => listens.push('B'), { force: true })
@@ -254,7 +257,6 @@ describe('[thought]', () => {
         expect(b.sequence).to.equal('respond')
       })
       it('with path, respond keeps initial sequence', async () => {
-        const branches = new BranchController()
         branches.custom(() => true, (b) => b.respond('test'))
         const b = await new Thoughts(new State({ message }), branches)
           .start('receive')
@@ -262,9 +264,8 @@ describe('[thought]', () => {
         expect(b.processed).to.include.keys('respond')
       })
       it('with path, ignores global path', async () => {
-        const branches = new BranchController()
         let listens: string[] = []
-        bBot.branches.custom(() => true, () => listens.push('A'), { force: true })
+        branches.custom(() => true, () => listens.push('A'), { force: true })
         branches.custom(() => true, () => listens.push('B'), { force: true })
         branches.custom(() => true, () => listens.push('C'), { force: true })
         await new Thoughts(new State({ message }), branches)
@@ -272,7 +273,6 @@ describe('[thought]', () => {
         expect(listens).to.eql(['B', 'C'])
       })
       it('continues to following branches after branch responds', async () => {
-        const branches = new BranchController()
         let processed = false
         branches.custom(() => true, (b) => b.respond('foo'))
         branches.custom(() => true, () => (processed = true), { force: true })
@@ -281,7 +281,6 @@ describe('[thought]', () => {
         expect(processed).to.equal(true)
       })
       it('continues to following branches after async callback', async () => {
-        const branches = new BranchController()
         let processed = false
         branches.custom(() => true, () => delay(50))
         branches.custom(() => true, () => (processed = true), { force: true })
@@ -290,7 +289,6 @@ describe('[thought]', () => {
         expect(processed).to.equal(true)
       })
       it('continues to following branches after async matcher', async () => {
-        const branches = new BranchController()
         let processed = false
         branches.custom(() => delay(50).then(() => true), () => null)
         branches.custom(() => true, () => (processed = true), { force: true })
@@ -299,35 +297,34 @@ describe('[thought]', () => {
         expect(processed).to.equal(true)
       })
       it('without path, uses global path', async () => {
-        const branches = new BranchController()
         let listens: string[] = []
-        bBot.branches.custom(() => true, () => listens.push('A'), { force: true })
+        branches.custom(() => true, () => listens.push('A'), { force: true })
         branches.custom(() => true, () => listens.push('B'), { force: true })
         branches.custom(() => true, () => listens.push('C'), { force: true })
         await new Thoughts(new State({ message })).start('receive')
         expect(listens).to.eql(['A'])
       })
       it('does hear', async () => {
-        bBot.middlewares.register('hear', (b, _, __) => b.hearTest = true)
+        middlewares.register('hear', (b, _, __) => b.hearTest = true)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b).to.have.property('hearTest', true)
       })
       it('does listen when hear uninterrupted', async () => {
-        bBot.branches.custom(() => true, () => null)
+        branches.custom(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('listen')
       })
       it('does not listen when hear interrupted', async () => {
-        bBot.branches.custom(() => true, () => null)
-        bBot.middlewares.register('hear', (_, __, done) => done())
+        branches.custom(() => true, () => null)
+        middlewares.register('hear', (_, __, done) => done())
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('listen')
       })
       it('calls post-process action if interrupted, not ignored', async () => {
-        bBot.middlewares.register('hear', (_: any, __: any, done: any) => {
+        middlewares.register('hear', (_: any, __: any, done: any) => {
           done()
         })
         const b = new State({ message })
@@ -340,7 +337,7 @@ describe('[thought]', () => {
         expect(listenActioned).to.equal(true)
       })
       it('exits before post-process action if ignored', async () => {
-        bBot.middlewares.register('hear', (_: any, __: any, done: any) => {
+        middlewares.register('hear', (_: any, __: any, done: any) => {
           b.ignore()
           done()
         })
@@ -354,156 +351,156 @@ describe('[thought]', () => {
         expect(listenActioned).to.equal(false)
       })
       it('does understand when listen unmatched', async () => {
-        bBot.branches.custom(() => false, () => null)
-        bBot.branches.customNLU(() => true, () => null)
+        branches.custom(() => false, () => null)
+        branches.customNLU(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('understand')
       })
       it('understand passes message to NLU adapter', async () => {
-        bBot.adapters.loaded.nlu!.process = sinon.spy()
-        bBot.branches.customNLU(() => true, () => null)
+        adapters.loaded.nlu!.process = sinon.spy()
+        branches.customNLU(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
-        sinon.assert.calledWithExactly((bBot.adapters.loaded.nlu!.process as sinon.SinonSpy), message)
+        sinon.assert.calledWithExactly((adapters.loaded.nlu!.process as sinon.SinonSpy), message)
       })
       it('understand branches include NLU results from adapter', async () => {
-        bBot.adapters.loaded.nlu!.process = async () => {
+        adapters.loaded.nlu!.process = async () => {
           return { intent: new NLUResult().add({ id: 'test' }) }
         }
-        bBot.branches.customNLU(() => true, () => null)
+        branches.customNLU(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.message.nlu!.results.intent).to.eql([{ id: 'test' }])
       })
       it('does not understand without adapter', async () => {
-        bBot.branches.custom(() => false, () => null)
-        bBot.branches.customNLU(() => true, () => null)
-        delete bBot.adapters.loaded.nlu
+        branches.custom(() => false, () => null)
+        branches.customNLU(() => true, () => null)
+        delete adapters.loaded.nlu
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when listen matched', async () => {
-        bBot.branches.custom(() => true, () => null)
-        bBot.branches.customNLU(() => true, () => null)
+        branches.custom(() => true, () => null)
+        branches.customNLU(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when message text is empty', async () => {
-        bBot.adapters.loaded.nlu!.process = sinon.spy()
-        bBot.branches.customNLU(() => true, () => null)
-        const empty = bBot.messages.text(bBot.users.create(), '                   ')
+        adapters.loaded.nlu!.process = sinon.spy()
+        branches.customNLU(() => true, () => null)
+        const empty = messages.text(users.create(), '                   ')
         const b = new State({ message: empty })
         await new Thoughts(b).start('receive')
-        sinon.assert.notCalled((bBot.adapters.loaded.nlu!.process as sinon.SinonSpy))
+        sinon.assert.notCalled((adapters.loaded.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when message too short', async () => {
-        bBot.adapters.loaded.nlu!.process = sinon.spy()
-        bBot.config.set('nlu-min-length', 99)
-        bBot.branches.customNLU(() => true, () => null)
+        adapters.loaded.nlu!.process = sinon.spy()
+        config.set('nlu-min-length', 99)
+        branches.customNLU(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
-        bBot.config.unset('nlu-min-length')
-        sinon.assert.notCalled((bBot.adapters.loaded.nlu!.process as sinon.SinonSpy))
+        config.unset('nlu-min-length')
+        sinon.assert.notCalled((adapters.loaded.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when hear interrupted', async () => {
-        bBot.branches.customNLU(() => true, () => null)
-        bBot.middlewares.register('hear', (_, __, done) => done())
+        branches.customNLU(() => true, () => null)
+        middlewares.register('hear', (_, __, done) => done())
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand non-text messages', async () => {
-        bBot.branches.customNLU(() => true, () => null)
-        const b = new State({ message: bBot.messages.enter(bBot.users.create()) })
+        branches.customNLU(() => true, () => null)
+        const b = new State({ message: messages.enter(users.create()) })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does act when listen unmatched', async () => {
-        bBot.branches.custom(() => false, () => null)
-        bBot.branches.customNLU(() => false, () => null)
-        bBot.branches.catchAll(() => null)
+        branches.custom(() => false, () => null)
+        branches.customNLU(() => false, () => null)
+        branches.catchAll(() => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('act')
       })
       it('act replaces message with catch all', async () => {
-        bBot.branches.catchAll(() => null)
+        branches.catchAll(() => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.message instanceof CatchAllMessage).to.equal(true)
       })
       it('does not act when text branch matched', async () => {
-        bBot.branches.custom(() => true, () => null)
-        bBot.branches.catchAll(() => null)
+        branches.custom(() => true, () => null)
+        branches.catchAll(() => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('act')
       })
       it('does not act when NLU branch matched', async () => {
-        bBot.branches.customNLU(() => true, () => null)
-        bBot.branches.catchAll(() => null)
+        branches.customNLU(() => true, () => null)
+        branches.catchAll(() => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('act')
       })
       it('does respond if branch responds', async () => {
-        bBot.branches.custom(() => true, (b) => b.respond('test'))
+        branches.custom(() => true, (b) => b.respond('test'))
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('respond')
       })
       it('does not respond without adapter', async () => {
-        delete bBot.adapters.loaded.message
-        bBot.branches.custom(() => true, (b) => b.respond('test'))
+        delete adapters.loaded.message
+        branches.custom(() => true, (b) => b.respond('test'))
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('respond')
       })
       it('respond updates envelope with matched branch ID', async () => {
-        bBot.branches.custom(() => true, (b) => b.respond('test'), { id: 'test' })
+        branches.custom(() => true, (b) => b.respond('test'), { id: 'test' })
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.envelopes![0].branchId).to.equal('test')
       })
       it('respond passes message to nlu adapter', async () => {
-        bBot.branches.custom(() => true, (b) => b.respond('test'))
+        branches.custom(() => true, (b) => b.respond('test'))
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         const envelope = b.envelopes![0]
-        sinon.assert.calledWithExactly((bBot.adapters.loaded.message!.dispatch as sinon.SinonStub), envelope)
+        sinon.assert.calledWithExactly((adapters.loaded.message!.dispatch as sinon.SinonStub), envelope)
       })
       it('remembers user when branch matched', async () => {
-        bBot.memory.users = {}
-        bBot.branches.custom(() => true, () => null)
+        memory.users = {}
+        branches.custom(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
-        expect(bBot.memory.users[b.message.user.id]).to.eql(message.user)
+        expect(memory.users[b.message.user.id]).to.eql(message.user)
       })
       it('remembers user when branch matched', async () => {
-        bBot.memory.users = {}
-        bBot.branches.custom(() => false, () => null)
+        memory.users = {}
+        branches.custom(() => false, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
-        expect(typeof bBot.memory.users[b.message.user.id]).to.equal('undefined')
+        expect(typeof memory.users[b.message.user.id]).to.equal('undefined')
       })
       it('does remember when branch matched', async () => {
-        bBot.branches.custom(() => true, () => null)
+        branches.custom(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('remember')
       })
       it('does not remember without adapter', async () => {
-        bBot.branches.custom(() => true, () => null)
-        delete bBot.adapters.loaded.storage
+        branches.custom(() => true, () => null)
+        delete adapters.loaded.storage
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember when branch unmatched', async () => {
-        bBot.branches.custom(() => false, () => null)
+        branches.custom(() => false, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
@@ -515,7 +512,7 @@ describe('[thought]', () => {
         expect(b.processed).to.include.keys('remember')
       })
       it('does not remember on respond', async () => {
-        bBot.branches.custom(() => true, () => null)
+        branches.custom(() => true, () => null)
         const b = new State({ message })
         b.respondEnvelope().write('ping')
         await new Thoughts(b).start('respond')
@@ -527,90 +524,90 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember when hear interrupted', async () => {
-        bBot.middlewares.register('hear', (_, __, done) => done())
+        middlewares.register('hear', (_, __, done) => done())
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('remember passes state to storage adapter', async () => {
-        bBot.branches.custom(() => true, () => null)
+        branches.custom(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         sinon.assert.calledWithExactly(
-          (bBot.adapters.loaded.storage!.keep as sinon.SinonStub),
+          (adapters.loaded.storage!.keep as sinon.SinonStub),
           'states',
           sinon.match({ message })
         )
       })
       it('remember only once with multiple responses', async () => {
-        bBot.branches.custom(() => true, (b) => b.respond('A'))
-        bBot.branches.custom(() => true, (b) => b.respond('B'), { force: true })
+        branches.custom(() => true, (b) => b.respond('A'))
+        branches.custom(() => true, (b) => b.respond('B'), { force: true })
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.envelopes!.map((envelope) => envelope.strings)).to.eql([
           ['A'], ['B']
         ])
-        sinon.assert.calledOnce((bBot.adapters.loaded.storage!.keep as sinon.SinonStub))
+        sinon.assert.calledOnce((adapters.loaded.storage!.keep as sinon.SinonStub))
       })
       describe('.receive', () => {
         it('timestamps all actioned processes', async () => {
-          bBot.branches.custom(() => true, (b) => b.respond('ping'))
-          const b = await bBot.thoughts.receive(message)
+          branches.custom(() => true, (b) => b.respond('ping'))
+          const b = await thoughts.receive(message)
           expect(b.processed).to.have.all.keys('hear', 'listen', 'respond', 'remember')
         })
         it('records initiating sequence and path', async () => {
-          const b = await bBot.thoughts.receive(message)
+          const b = await thoughts.receive(message)
           expect(b.sequence).to.equal('receive')
         })
         it('consecutive calls isolate thought and path', async () => {
           const listenCallback = sinon.spy()
           const understandCallback = sinon.spy()
-          bBot.branches.text(/foo/i, listenCallback, {
+          branches.text(/foo/i, listenCallback, {
             id: 'receive-text'
           })
-          bBot.branches.customNLU(() => true, understandCallback, {
+          branches.customNLU(() => true, understandCallback, {
             id: 'receive-custom-nlu'
           })
-          bBot.config.set('nlu-min-length', 2)
-          const messageA = bBot.messages.text(bBot.users.create(), 'foo')
-          const messageB = bBot.messages.text(bBot.users.create(), 'bar')
-          await bBot.thoughts.receive(messageA)
-          await bBot.thoughts.receive(messageB)
+          config.set('nlu-min-length', 2)
+          const messageA = messages.text(users.create(), 'foo')
+          const messageB = messages.text(users.create(), 'bar')
+          await thoughts.receive(messageA)
+          await thoughts.receive(messageB)
           sinon.assert.calledOnce(listenCallback)
           sinon.assert.calledOnce(understandCallback)
-          bBot.config.unset('nlu-min-length')
+          config.unset('nlu-min-length')
         })
       })
       describe('.respond', () => {
         it('timestamps all actioned processes', async () => {
           const b = new State({ message })
           b.respondEnvelope().write('ping')
-          await bBot.thoughts.respond(b)
+          await thoughts.respond(b)
           expect(b.processed).to.have.all.keys('respond')
         })
         it('records initiating sequence and path', async () => {
           const b = new State({ message })
-          await bBot.thoughts.respond(b)
+          await thoughts.respond(b)
           expect(b.sequence).to.equal('respond')
         })
       })
       describe('.dispatch', () => {
         it('timestamps all actioned processes', async () => {
-          const envelope = bBot.envelopes.create({ user: bBot.users.create() }).write('hello')
-          const b = await bBot.thoughts.dispatch(envelope)
+          const envelope = envelopes.create({ user: users.create() }).write('hello')
+          const b = await thoughts.dispatch(envelope)
           expect(b.processed).to.have.all.keys('respond', 'remember')
         })
         it('records initiating sequence and path', async () => {
-          const envelope = bBot.envelopes.create({ user: bBot.users.create() }).write('hello')
-          const b = await bBot.thoughts.dispatch(envelope)
+          const envelope = envelopes.create({ user: users.create() }).write('hello')
+          const b = await thoughts.dispatch(envelope)
           expect(b.sequence).to.equal('dispatch')
         })
       })
       describe('.serve', () => {
         it('timestamps all actioned processes', async () => {
-          const message = bBot.messages.server({ userId: '111', data: {} })
-          bBot.branches.server({}, (b) => b.respond('ping'))
-          const b = await bBot.thoughts.serve(message, ({} as IContext))
+          const message = messages.server({ userId: '111', data: {} })
+          branches.server({}, (b) => b.respond('ping'))
+          const b = await thoughts.serve(message, ({} as IContext))
           expect(b.processed).to.have.all.keys('hear', 'serve', 'respond', 'remember')
         })
       })

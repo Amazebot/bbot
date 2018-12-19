@@ -1,10 +1,10 @@
+/**
+ * Use simple semantic conditions to create matching expressions.
+ * @module components/condition
+ */
+
 // @ts-ignore
 import rangeRegex from 'to-regex-range'
-
-/**
- * @module condition
- * Create matching expressions from semantic conditions.
- */
 
 /**
  * Key literals for condition attributes.

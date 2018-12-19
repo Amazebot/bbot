@@ -1,3 +1,8 @@
+/**
+ * Handle storing and parsing rich message content for chat platforms.
+ * @module components/payload
+ */
+
 /** Payloads add consistent and intelligent typing to rich messages. */
 export interface IPayload {
   attachments?: IAttachment[]

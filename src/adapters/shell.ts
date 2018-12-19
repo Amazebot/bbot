@@ -1,17 +1,17 @@
 import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
-import { Bot, components, controllers, abstracts } from '..'
+import { Bot, users, User, rooms, Room, Envelope, abstracts } from '..'
 
 /** Load prompts and render chat in shell, for testing interactions */
-export class Shell extends abstracts.MessageAdapter {
+export class ShellAdapter extends abstracts.MessageAdapter {
   name = 'shell-message-adapter'
   debug: boolean = false
   ui: any
   logs: string[] = ['']
   messages: [string, string][] = []
-  user: components.User = controllers.users.blank()
-  room: components.Room = controllers.rooms.blank()
+  user: User = users.blank()
+  room: Room = rooms.blank()
   line = new inquirer.Separator()
   transport?: Transport
 
@@ -143,7 +143,7 @@ export class Shell extends abstracts.MessageAdapter {
   }
 
   /** Add outgoing messages and re-render chat */
-  async dispatch (envelope: components.Envelope) {
+  async dispatch (envelope: Envelope) {
     for (let text of (envelope.strings || [])) {
       if (text) this.messages.push([this.bot.config.get('name'), text])
     }
@@ -168,8 +168,8 @@ export class Shell extends abstracts.MessageAdapter {
 }
 
 /** Adapter singleton (ish) require pattern. */
-let shell: Shell
+let shell: ShellAdapter
 export const use = (bBot: Bot) => {
-  if (!shell) shell = new Shell(bBot)
+  if (!shell) shell = new ShellAdapter(bBot)
   return shell
 }

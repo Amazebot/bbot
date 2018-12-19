@@ -2,11 +2,12 @@ import 'mocha'
 import { expect } from 'chai'
 import * as sinon from 'sinon'
 import { EventEmitter } from 'events'
+
 EventEmitter.prototype.setMaxListeners(100)
 let initEnv: any
 
-import * as abstracts from './adapters/abstract'
 import { Bot } from './bot'
+import { abstracts } from './controllers'
 
 class MessageAdapter extends abstracts.MessageAdapter {
   name = 'mock-adapter'

@@ -1,12 +1,16 @@
-import logger from '../controllers/logger'
-import messages from '../controllers/messages'
-import thoughts from '../controllers/thoughts'
-import users from '../controllers/users'
-import { IContext } from '../controllers/server'
+/**
+ * Handle conversational content and responses.
+ * @module components/state
+ */
+
+import logger from '../util/logger'
+import { users } from './user'
+import { IContext } from './server'
 import { Branch } from './branch'
 import { Dialogue } from './dialogue'
-import { Message } from './message'
+import { messages, Message } from './message'
 import { Envelope, IEnvelope } from './envelope'
+import { thoughts } from './thought'
 import bBot from '../bot'
 
 /**

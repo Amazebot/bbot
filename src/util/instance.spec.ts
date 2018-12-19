@@ -5,7 +5,7 @@ import { parse } from './instance'
 
 /** @todo tests for .clone .convert .restore */
 
-describe.only('.parse', () => {
+describe('.parse', () => {
   it('maps internal key values to given schema', () => {
     const internal = {
       room: { name: 'testing', id: '111' },

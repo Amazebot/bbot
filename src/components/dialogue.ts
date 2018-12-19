@@ -1,13 +1,15 @@
-import { counter } from '../utils/id'
-import logger from '../controllers/logger'
-import config from '../controllers/config'
-import dialogues from '../controllers/dialogues'
-import * as state from './state'
-import { BranchController, IBranches } from '../controllers/branches'
+/**
+ * Manage isolated conversational branches in context.
+ * @module components/dialogue
+ */
+
+import config from '../util/config'
+import logger from '../util/logger'
+import { counter } from '../util/id'
+import { State, ICallback } from './state'
+import { BranchController, IBranches } from './branch'
 
 /**
- * Manage isolated conversational branches (in context).
- *
  * Opening a dialogue will route any further input from the user/s in state to
  * the dialogue branches instead of the "global" bot branches, until closed.
  * Dialogues are self-closing on timeout, or if a branch handler is processed
@@ -70,6 +72,7 @@ import { BranchController, IBranches } from '../controllers/branches'
  *    })
  *  })
  */
+
 /**
  * Configure dialogue behaviour
  * @param timeout         Time to wait for input (set 0 for infinite)
@@ -97,11 +100,11 @@ export class Dialogue implements IDialogue {
   audience: 'direct' | 'user' | 'room'
   defaultBranches: IBranches = {}
   branchHistory: BranchController[] = []
-  state?: state.State
+  state?: State
   clock?: NodeJS.Timer
-  onOpen?: state.ICallback
-  onClose?: state.ICallback
-  onTimeout?: state.ICallback
+  onOpen?: ICallback
+  onClose?: ICallback
+  onTimeout?: ICallback
 
   /**
    * Create and configure dialogue from options/defaults, link with state.
@@ -126,7 +129,7 @@ export class Dialogue implements IDialogue {
   }
 
   /** Open dialogue and call optional callback (e.g. send opening message) */
-  async open (state: state.State) {
+  async open (state: State) {
     this.state = state
     if (this.onOpen) {
       await Promise.resolve(this.onOpen(this.state))
@@ -212,3 +215,63 @@ export class Dialogue implements IDialogue {
     return this.branches
   }
 }
+
+/** Track and interact with current dialogues and engaged participants. */
+export class DialogueController {
+  /** Collection of open current assigned to their audience ID. */
+  current: { [id: string]: Dialogue } = {}
+
+  /** Stop timers and clear collection of current (for tests) */
+  reset () {
+    for (let id in this.current) {
+      this.current[id].stopClock()
+      delete this.current[id]
+    }
+  }
+
+  /** Get set of possible audience IDs for a given  */
+  audiences (b: State) {
+    return {
+      direct: `${b.message.user.id}_${b.message.user.room.id}`,
+      user: `${b.message.user.id}`,
+      room: `${b.message.user.room.id}`
+    }
+  }
+
+  /** Check if audience ID has an open dialogue. */
+  audienceEngaged (id: string) {
+    return (Object.keys(this.current).indexOf(id) > -1)
+  }
+
+  /** Get the ID of engaged audience from current state (if any). */
+  engagedId (b: State) {
+    const audienceIds = this.audiences(b)
+    if (this.audienceEngaged(audienceIds.direct)) return audienceIds.direct
+    else if (this.audienceEngaged(audienceIds.user)) return audienceIds.user
+    else if (this.audienceEngaged(audienceIds.room)) return audienceIds.room
+  }
+
+  /** Find an open dialogue from state for any possibly engaged audience. */
+  engaged (b: State) {
+    const audienceId = this.engagedId(b)
+    if (audienceId) return this.current[audienceId]
+  }
+
+  /** Add an audience from state to a given dialogue. */
+  engage (b: State, dialogue: Dialogue) {
+    const audienceId = this.audiences(b)[dialogue.audience]
+    this.current[audienceId] = dialogue
+  }
+
+  /** Remove the audience from any dialogue or a given dialogue. */
+  disengage (b: State, dialogue?: Dialogue) {
+    const audienceId = (dialogue)
+      ? this.audiences(b)[dialogue.audience]
+      : this.engagedId(b)
+    if (audienceId) delete this.current[audienceId]
+  }
+}
+
+export const dialogues = new DialogueController()
+
+export default dialogues

@@ -1,5 +1,6 @@
 import * as client from 'request'
-import * as bot from '.'
+import config from './config'
+import logger from './logger'
 
 /** Standard arguments object for requests */
 export interface IRequestMeta {
@@ -36,7 +37,7 @@ export class Request {
   make (
     opts: client.CoreOptions & client.OptionsWithUri
   ): Promise<any> {
-    bot.logger.info(`[request] ${opts.method} ${opts.uri} ${(opts.body || opts.qs)
+    logger.info(`[request] ${opts.method} ${opts.uri} ${(opts.body || opts.qs)
       ? 'with data (' + Object.keys(opts.body || opts.qs).join(', ') + ')'
       : 'without data'
     }`)
@@ -44,7 +45,7 @@ export class Request {
       opts.callback = (err, res, body) => {
         const result = res && res.statusCode ? res.statusCode : 'unknown'
         if (err) {
-          bot.logger.error(`[request] ${opts.method} error ${err.code}`)
+          logger.error(`[request] ${opts.method} error ${err.code}`)
           return reject(err)
         }
         if (Buffer.isBuffer(body)) {
@@ -53,10 +54,10 @@ export class Request {
         try {
           const data = (opts.json) ? body : JSON.parse(body)
           const keys = Object.keys(data).join(', ')
-          bot.logger.info(`[request] ${opts.method} ${result} success (${keys})`)
+          logger.info(`[request] ${opts.method} ${result} success (${keys})`)
           resolve(data)
         } catch (err) {
-          bot.logger.error(`[request] ${opts.method} error parsing body: ${err.message}`)
+          logger.error(`[request] ${opts.method} error parsing body: ${err.message}`)
           reject(err)
         }
       }
@@ -67,7 +68,7 @@ export class Request {
       else if (opts.method === 'DELETE') client.del(opts)
       else if (opts.method === 'HEAD') client.head(opts)
     })
-    return timeoutPromise(bot.config.get('request-timeout'), requestPromise)
+    return timeoutPromise(config.get('request-timeout'), requestPromise)
   }
 
   /** GET request handler, adds data to query string with default options */

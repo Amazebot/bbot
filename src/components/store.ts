@@ -1,5 +1,5 @@
-import { convert } from '../utils/instance'
-import adapters from './adapters'
+import { convert } from '../util/instance'
+import adapters from './adapter'
 
 /**
  * Persistent store for non-operational data like state history.

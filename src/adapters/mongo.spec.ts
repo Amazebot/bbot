@@ -1,16 +1,15 @@
 import 'mocha'
 import { expect } from 'chai'
 
-import { convert } from '../utils/instance'
-import config from '../controllers/config'
-import users from '../controllers/users'
-import adapters from '../controllers/adapters'
-import middlewares from '../controllers/middlewares'
+import { convert } from '../util/instance'
+import { config } from '../util/config'
+import { users, User } from '../components/user'
+import { abstracts } from '../components/adapter'
+import { middlewares } from '../components/middleware'
 import { CustomBranch } from '../components/branch'
-import { User } from '../components/user'
 import { State } from '../components/state'
-import bBot from '../bot'
 import { use, getModel, Mongo } from './mongo'
+import bBot from '../bot'
 
 let initEnv: any
 const testDB = 'bbot-test'
@@ -48,7 +47,7 @@ describe('[adapter-mongo]', () => {
   after(() => process.env = initEnv)
   describe('.use', () => {
     it('returns adapter instance', () => {
-      expect(adapter).to.be.instanceof(adapters.abstract.Adapter)
+      expect(adapter).to.be.instanceof(abstracts.Adapter)
     })
     it('adds env settings for DB to bot settings', () => {
       expect(config.get('db-collection')).to.equal(testCollection)

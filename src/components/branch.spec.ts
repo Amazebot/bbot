@@ -1,15 +1,15 @@
 import 'mocha'
 import * as sinon from 'sinon'
 import { expect, assert } from 'chai'
-import config from '../controllers/config'
-import users from '../controllers/users'
-import messages from '../controllers/messages'
-import middlewares from '../controllers/middlewares'
-import bits from '../controllers/bits'
-import { State, ICallback } from './state'
-import { Conditions } from './condition'
-import { Message } from './message'
+
+import config from '../util/config'
+import users from './user'
+import { messages, Message } from './message'
 import { NLU } from './nlu'
+import middlewares from './middleware'
+import { Conditions } from './condition'
+import { State, ICallback } from './state'
+import { bits } from './bit'
 import {
   Branch,
   CustomBranch,
@@ -20,7 +20,8 @@ import {
   NLUDirectBranch,
   ServerBranch,
   directPattern,
-  directPatternCombined
+  directPatternCombined,
+  BranchController
 } from './branch'
 
 const user = users.create({ id: 'TEST_ID', name: 'testy' })
@@ -125,7 +126,6 @@ describe.only('[branch]', () => {
         const bitBranch = new MockBranch('listen-test')
         await bitBranch.process(b, middleware)
         sinon.assert.calledOnce(callback)
-        callback.restore()
       })
       it('gives state to middleware pieces', async () => {
         const b = new State({ message })
@@ -134,7 +134,6 @@ describe.only('[branch]', () => {
         const branch = new MockBranch(() => null)
         await branch.process(b, middleware)
         sinon.assert.calledWith(piece, b)
-        piece.restore()
       })
       it('calls done with match status if given', async () => {
         const b = new State({ message })
@@ -149,18 +148,16 @@ describe.only('[branch]', () => {
         const branch = new MockBranch(() => null)
         await branch.process(badB, middleware, done)
         sinon.assert.calledWith(done, false)
-        done.restore()
       })
       it('if done returns promise, process waits for resolution', async () => {
         let done: number
         const b = new State({ message })
         const branch = new MockBranch(() => null)
-        return branch.process(b, middleware, () => {
+        await branch.process(b, middleware, () => {
           done = Date.now()
           return delay(20)
-        }).then(() => {
-          expect(Date.now()).to.be.gte(done)
         })
+        expect(Date.now()).to.be.gte(done!)
       })
       it('if middleware rejected, done is called with false', () => {
         const b = new State({ message })
@@ -275,7 +272,7 @@ describe.only('[branch]', () => {
       })
       await directFoo.process(b, middleware)
       await directBar.process(b, middleware)
-      expect(b.branches).to.eql([directBar])
+      expect(b.matching).to.eql([directBar])
     })
     it('.process adds condition match results to state', () => {
       const conditions = [{ starts: 'foo' }, { ends: 'bar' }]
@@ -447,6 +444,133 @@ describe.only('[branch]', () => {
     it('does not match on name unless otherwise matched', () => {
       const direct = directPatternCombined(/test/)
       expect(direct.test(`${config.get('name')}`)).to.equal(false)
+    })
+  })
+  describe('BranchController', () => {
+    describe('.text', () => {
+      it('adds text branch to listen collection, returning ID', () => {
+        const branches = new BranchController()
+        const id = branches.text(/test/, () => null)
+        expect(branches.listen[id]).to.be.instanceof(TextBranch)
+      })
+    })
+    describe('.direct', () => {
+      it('adds direct text branch to listen collection, returning ID', () => {
+        const branches = new BranchController()
+        const id = branches.direct(/test/, () => null)
+        expect(branches.listen[id]).to.be.instanceof(TextBranch)
+      })
+    })
+    describe('.custom', () => {
+      it('adds custom branch to listen collection, returning ID', () => {
+        const branches = new BranchController()
+        const id = branches.custom(() => null, () => null)
+        expect(branches.listen[id]).to.be.instanceof(CustomBranch)
+      })
+    })
+    describe('.NLU', () => {
+      it('adds NLU branch to NLU collection, returning ID', () => {
+        const branches = new BranchController()
+        const id = branches.NLU({ intent: { id: 'test' } }, () => null)
+        expect(branches.understand[id]).to.be.instanceof(NLUBranch)
+      })
+    })
+    describe('.directNLU', () => {
+      it('adds NLU direct branch to NLU collection, returning ID', () => {
+        const branches = new BranchController()
+        const id = branches.directNLU({ intent: { id: 'test' } }, () => null)
+        expect(branches.understand[id]).to.be.instanceof(NLUDirectBranch)
+      })
+    })
+    describe('.customNLU', () => {
+      it('adds custom branch to NLU collection, returning ID', () => {
+        const branches = new BranchController()
+        const id = branches.customNLU(() => null, () => null)
+        expect(branches.understand[id]).to.be.instanceof(CustomBranch)
+      })
+      it('.process calls callback on matching message', async () => {
+        const branches = new BranchController()
+        const callback = sinon.spy()
+        const message = messages.text(user, 'testing custom NLU')
+        const id = branches.customNLU(() => true, callback, { id: 'test-custom-nlu' })
+        await branches.understand[id].process(new State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
+    describe('.enter', () => {
+      it('.process calls callback on enter messages', async () => {
+        const branches = new BranchController()
+        const callback = sinon.spy()
+        const message = messages.enter(user)
+        const id = branches.enter(callback)
+        await branches.listen[id].process(new State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
+    describe('.leave', () => {
+      it('.process calls callback on leave messages', async () => {
+        const branches = new BranchController()
+        const callback = sinon.spy()
+        const message = messages.leave(user)
+        const id = branches.leave(callback)
+        await branches.listen[id].process(new State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
+    describe('.topic', () => {
+      it('.process calls callback on topic messages', async () => {
+        const branches = new BranchController()
+        const callback = sinon.spy()
+        const message = messages.topic(user)
+        const id = branches.topic(callback)
+        await branches.listen[id].process(new State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
+    describe('.catchAll', () => {
+      it('.process calls callback on catchAll messages', async () => {
+        const branches = new BranchController()
+        const callback = sinon.spy()
+        const message = messages.catchAll(messages.text(user, ''))
+        const id = branches.catchAll(callback)
+        await branches.act[id].process(new State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
+    describe('.server', () => {
+      it('.process calls callback on matching server message', async () => {
+        const branches = new BranchController()
+        const callback = sinon.spy()
+        const message = messages.server({ userId: user.id, data: {
+          foo: 'bar'
+        } })
+        const id = branches.server({ foo: 'bar' }, callback)
+        await branches.serve[id].process(new State({ message }), middleware)
+        sinon.assert.calledOnce(callback)
+      })
+    })
+    describe('.reset', () => {
+      it('clears all branches from collections', () => {
+        const branches = new BranchController()
+        branches.text(/.*/, () => null)
+        branches.NLU({}, () => null)
+        branches.catchAll(() => null)
+        branches.reset()
+        expect(branches.listen).to.eql({})
+        expect(branches.understand).to.eql({})
+        expect(branches.act).to.eql({})
+      })
+    })
+    describe('.forced', () => {
+      it('clears all but the forced branches from given collection', () => {
+        const branches = new BranchController()
+        branches.text(/.*/, () => null, { id: 'A' })
+        branches.text(/.*/, () => null, { id: 'B' })
+        branches.text(/.*/, () => null, { id: 'C', force: true })
+        const len = branches.forced('listen')
+        expect(len).to.equal(1)
+        expect(Object.keys(branches.listen)).to.eql(['C'])
+      })
     })
   })
 })

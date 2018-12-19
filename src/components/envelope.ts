@@ -1,24 +1,22 @@
 /**
- * @module envelope
- * Create and dispatch envelopes (outgoing messages).
+ * Create, address and dispatch messages with optional payloads.
+ * @module components/envelope
  */
 
-import { random } from '../utils/id'
-import rooms from '../controllers/rooms'
-import users from '../controllers/users'
-import * as user from './user'
-import * as room from './room'
-import * as state from './state'
-import * as message from './message'
-import * as payload from './payload'
+import { random } from '../util/id'
+import rooms, { Room } from './room'
+import users, { User } from './user'
+import { IPayload, Payload, IAttachment } from './payload'
+import { Message } from './message'
+import { State } from './state'
 
 /** Envelope interface, to create from scratch. */
 export interface IEnvelope {
   method?: string
-  room?: room.Room
-  user?: user.User
+  room?: Room
+  user?: User
   strings?: string[]
-  payload?: payload.IPayload | payload.Payload
+  payload?: IPayload | Payload
   branchId?: string
   responded?: number
 }
@@ -34,13 +32,13 @@ export interface IEnvelope {
 export class Envelope implements IEnvelope {
   id: string = random()
   method: string = 'send'
-  room: room.Room
-  user: user.User
-  message?: message.Message
+  room: Room
+  user: User
+  message?: Message
   strings?: string[]
   branchId?: string
   responded?: number
-  _payload?: payload.Payload
+  _payload?: Payload
 
   /**
    * Create an envelope to dispatch unprompted or from a branch callback.
@@ -48,7 +46,7 @@ export class Envelope implements IEnvelope {
    * - Provide address and content as options (overriding those in state)
    * - Address to user's room if user given. If room given, will override user
    */
-  constructor (options?: IEnvelope, b?: state.State) {
+  constructor (options?: IEnvelope, b?: State) {
     this.room = rooms.blank()
     this.user = users.blank()
     if (b) {
@@ -62,7 +60,7 @@ export class Envelope implements IEnvelope {
       else if (options.user) this.room = options.user.room
       if (options.strings) this.strings = options.strings
       if (options.method) this.method = options.method
-      if (options.payload) this._payload = new payload.Payload(options.payload)
+      if (options.payload) this._payload = new Payload(options.payload)
     }
   }
 
@@ -73,7 +71,7 @@ export class Envelope implements IEnvelope {
   }
 
   /** Set user attribute, overwrites room if user has room attribute */
-  toUser (usr: user.User) {
+  toUser (usr: User) {
     this.user = users.byId(usr.id, usr)
     if (this.user.room) this.room = this.user.room
     return this
@@ -87,24 +85,24 @@ export class Envelope implements IEnvelope {
   }
 
   /** Accessor for payload instance creates if it doesn't exist. */
-  get payload (): payload.Payload {
-    if (!this._payload) this._payload = new payload.Payload()
+  get payload (): Payload {
+    if (!this._payload) this._payload = new Payload()
     return this._payload
   }
 
   /** Assign payload attributes as new payload instance. */
-  createPayload (content: payload.Payload | payload.IPayload) {
-    this._payload = new payload.Payload(content)
+  createPayload (content: Payload | IPayload) {
+    this._payload = new Payload(content)
   }
 
   /** Add multi-media attachments to a message via payload handlers. */
-  attach (attachment: payload.IAttachment) {
+  attach (attachment: IAttachment) {
     this.payload.attachment(attachment)
     return this
   }
 
   /** Helper to attach or write depending on type of content. */
-  compose (...content: Array<string | payload.IAttachment>) {
+  compose (...content: Array<string | IAttachment>) {
     for (let part of content) {
       if (typeof part === 'string') this.write(part)
       else this.attach(part)
@@ -118,3 +116,12 @@ export class Envelope implements IEnvelope {
     return this
   }
 }
+
+/** Access envelopes constructor. */
+export class EnvelopeController {
+  create = (atts?: IEnvelope) => new Envelope(atts)
+}
+
+export const envelopes = new EnvelopeController()
+
+export default envelopes

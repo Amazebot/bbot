@@ -2,9 +2,9 @@ import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
 import axios from 'axios'
-import bBot from '../src'
+import bBot, { abstracts } from '.'
 
-class MockMessageAdapter extends bBot.adapters.abstract.MessageAdapter {
+class MockMessageAdapter extends abstracts.MessageAdapter {
   name = 'mock-messenger'
   async dispatch () { return }
   async start () { return }
