@@ -3,7 +3,7 @@ import * as sinon from 'sinon'
 import { expect, assert } from 'chai'
 import { Expression, Conditions } from './condition'
 
-describe.only('[condition]', () => {
+describe('[condition]', () => {
   describe('Expression', () => {
     describe('.fromString', () => {
       it('convert a string in regex format to regex', () => {

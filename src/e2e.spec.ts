@@ -59,8 +59,10 @@ describe('[E2E]', () => {
     } })
   })
   it('replies to user from server message', async () => {
-    bBot.branches.server({ test: 1 }, (b) => b.respond('testing'), { id: 'e2e' })
+    bBot.branches.server({ test: 1 }, (b) => {
+      return b.respond(`testing ${ b.message.data.test }`)
+    })
     await axios.get(`${bBot.server.url}/message/111?test=1`)
-    sinon.assert.calledWithMatch(mocks.dispatch, { strings: ['testing'] })
+    sinon.assert.calledWithMatch(mocks.dispatch, { strings: ['testing 1'] })
   })
 })

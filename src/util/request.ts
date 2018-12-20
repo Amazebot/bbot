@@ -1,3 +1,8 @@
+/**
+ * Make HTTP/s requests to external services.
+ * @module util/request
+ */
+
 import * as client from 'request'
 import config from './config'
 import logger from './logger'

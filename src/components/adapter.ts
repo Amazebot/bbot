@@ -115,7 +115,7 @@ export class AdapterController {
   /** For outputting loaded adapters. */
   get names () {
     return Object.keys(this.loaded).map((key) => {
-      return this.loaded[key]!.name
+      return `${key}: ${this.loaded[key]!.name || 'unknown'}`
     })
   }
 

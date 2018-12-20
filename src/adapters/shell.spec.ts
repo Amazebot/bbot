@@ -1,12 +1,14 @@
 import 'mocha'
 import { expect } from 'chai'
-import { bBot } from '../bot'
+
+import bBot from '..'
+
 import { abstracts } from '../components/adapter'
 import * as shellAdapter from './shell'
 
 let initEnv: any
 
-describe.only('[adapter-shell]', () => {
+describe('[adapter-shell]', () => {
   before(() => {
     initEnv = process.env
     process.env.BOT_NAME = 'aston'

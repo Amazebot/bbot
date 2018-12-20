@@ -16,7 +16,14 @@ import envelopes from './components/envelope'
 import bits from './components/bit'
 
 /** Possible operational statuses. */
-export enum Status { waiting, loading, loaded, starting, started, shutdown }
+export enum Status {
+  waiting = 'waiting',
+  loading = 'loading',
+  loaded = 'loaded',
+  starting = 'starting',
+  started = 'started',
+  shutdown = 'shutdown'
+}
 export type StatusKey = keyof typeof Status
 
 /** Primary parent class for bBot import typing. */
@@ -73,9 +80,9 @@ export class Bot {
    * Extensions/adapters can interrupt or modify the stack before start.
    */
   async load () {
-    logger.level = config.get('log-level') // may change after init
-    if (this.status === Status.waiting) await this.reset()
+    if (this.status !== Status.waiting) await this.reset()
     this.status = Status.loading
+    logger.level = config.get('log-level') // may change after init
     try {
       this.config.load()
       this.middlewares.loadAll()
@@ -92,7 +99,7 @@ export class Bot {
 
   /** Make it go! */
   async start () {
-    if (this.status === Status.loaded) await this.load()
+    if (this.status !== Status.loaded) await this.load()
     this.status = Status.starting
     try {
       await this.server.start()
@@ -121,7 +128,7 @@ export class Bot {
     }
     await this.memory.shutdown()
     await this.adapters.shutdownAll()
-    await this.server.shutdown()
+    this.server.shutdown()
     await this.eventDelay()
     this.status = Status.shutdown
     this.events.emit('shutdown')

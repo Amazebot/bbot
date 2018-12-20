@@ -76,6 +76,7 @@ export class ShellAdapter extends abstracts.MessageAdapter {
         default: 5
       }
     })
+    this.bot.config.load()
     this.ui = new inquirer.ui.BottomBar()
     this.bot.branches.enter((b) => b.respond(
       `${this.user.name} Welcome to #${this.room.name}, I'm ${b.bot.config.get('name')}`,

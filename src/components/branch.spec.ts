@@ -48,7 +48,7 @@ class BoolBranch extends Branch {
   }
 }
 
-describe.only('[branch]', () => {
+describe('[branch]', () => {
   describe('Branch', () => {
     it('accepts and stores callback function', () => {
       const callback = sinon.spy()
@@ -150,14 +150,14 @@ describe.only('[branch]', () => {
         sinon.assert.calledWith(done, false)
       })
       it('if done returns promise, process waits for resolution', async () => {
-        let done: number
+        let done: number = 0
         const b = new State({ message })
         const branch = new MockBranch(() => null)
         await branch.process(b, middleware, () => {
           done = Date.now()
           return delay(20)
         })
-        expect(Date.now()).to.be.gte(done!)
+        expect(Date.now()).to.be.gte(done)
       })
       it('if middleware rejected, done is called with false', () => {
         const b = new State({ message })

@@ -1,3 +1,5 @@
+import { clone } from '../util/instance'
+
 /**
  * Handle storing and parsing rich message content for chat platforms.
  * @module components/payload
@@ -12,7 +14,6 @@ export interface IPayload {
 
 /** Generic schema for attaching image, audio or video with meta. */
 export interface IAttachment {
-  [key: string]: any           // Allow custom attributes
   fallback: string             // Required plain-text summary of the attachment
   color?: string               // Hex code (messaging platform support may vary)
   collapsed?: boolean          // Initially display as collapsed or expended
@@ -26,6 +27,7 @@ export interface IAttachment {
   audio?: string               // URL for audio attachment
   video?: string               // URL for video attachment
   fields?: IAttachmentField[]  // Additional custom meta fields
+  [key: string]: any           // Allow custom attributes
 }
 
 /** Author / source attributes for attachments. */
@@ -96,6 +98,7 @@ export class Payload implements IPayload {
   /** Add any custom attributes / JSON to a message. */
   custom (object: any) {
     for (let key in object) this[key] = object[key]
+    return this
   }
 
   /** Add an attachment to the payload. */
@@ -123,6 +126,16 @@ export class Payload implements IPayload {
 
   /** Get the payload as a plain object. */
   toObject (): IPayload {
-    return JSON.parse(JSON.stringify(this))
+    return clone(this)
   }
 }
+
+/** Helpers to create payload instances. */
+export class PayloadController {
+  create = (atts?: Payload | IPayload) => new Payload(atts)
+  custom = (object: any) => new Payload().custom(object)
+}
+
+export const payloads = new PayloadController()
+
+export default payloads

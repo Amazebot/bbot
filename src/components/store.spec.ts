@@ -1,6 +1,8 @@
 import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
+
+import { excludes } from '../util/instance'
 import { adapters, abstracts } from './adapter'
 import { store } from './store'
 import { messages } from './message'
@@ -46,7 +48,7 @@ describe('[store]', () => {
         stub.resetHistory()
       })
       it('does not keep any excluded data keys', async () => {
-        store.excludes.push('foo')
+        excludes.push('foo')
         let stub = (mockAdapter.keep as sinon.SinonStub)
         await store.keep('tests', { foo: 'foo', bar: 'bar' })
         sinon.assert.calledWithExactly(stub, 'tests', { bar: 'bar' })

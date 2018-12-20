@@ -14,6 +14,7 @@ export abstract class Message {
   id: string
   user: User
   nlu?: NLU
+  [key: string]: any
 
   /**
    * Create a message.

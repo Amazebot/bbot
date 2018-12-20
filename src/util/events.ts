@@ -1,3 +1,8 @@
+/**
+ * Central event emitter for decoupled processing.
+ * @module util/events
+ */
+
 import { EventEmitter } from 'events'
 
 /** Extending only for consistent interfaces */

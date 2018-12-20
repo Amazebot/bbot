@@ -1,3 +1,8 @@
+/**
+ * Centralised and configurable log writer.
+ * @module util/logger
+ */
+
 import * as winston from 'winston'
 const { combine, timestamp, json, colorize, align } = winston.format
 

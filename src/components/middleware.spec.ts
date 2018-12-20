@@ -2,7 +2,7 @@ import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
 
-import { users } from './users'
+import { users } from './user'
 import { TextMessage } from './message'
 import { State } from './state'
 import { middlewares, Middleware, IPiece, IPieceDone } from './middleware'
@@ -170,7 +170,7 @@ describe('[middleware]', () => {
       })
       it('passes state along with any modifications', async () => {
         const testMiddleware = new Middleware()
-        const b = { message, pieces: [] }
+        const state = new State({ message, pieces: [] })
         const pieceA = (b: State, next: any) => {
           b.pieces.push('A')
           next()
@@ -182,8 +182,8 @@ describe('[middleware]', () => {
         const complete = (b: State) => b.pieces.push('C')
         testMiddleware.register(pieceA)
         testMiddleware.register(pieceB)
-        await testMiddleware.execute(b, complete)
-        expect(b.pieces).to.eql(['A', 'B', 'C'])
+        await testMiddleware.execute(state, complete)
+        expect(state.pieces).to.eql(['A', 'B', 'C'])
       })
       it('resolves promise with final state', () => {
         const testMiddleware = new Middleware()

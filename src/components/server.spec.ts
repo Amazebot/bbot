@@ -4,8 +4,9 @@ import { expect } from 'chai'
 import axios from 'axios'
 
 import config from '../util/config'
-import thoughts from './thoughts'
-import server from './server'
+import { thoughts } from './thought'
+import { ServerMessage } from './message'
+import { server } from './server'
 
 const serve = sinon.stub(thoughts, 'serve').resolves(true)
 
@@ -54,7 +55,7 @@ describe('[server]', () => {
         await axios.get(`${server.url}/message/111/222?foo=bar`)
           .catch((err) => expect(err).to.not.be.instanceof(Error))
         const message = serve.args[0][0]
-        expect(message).to.be.instanceof(message.Server)
+        expect(message).to.be.instanceof(ServerMessage)
         expect(message.data).to.eql({ foo: 'bar' })
         expect(message.user.id).to.equal('111')
         expect(message.user.room.id).to.equal('222')

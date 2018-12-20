@@ -1,3 +1,8 @@
+/**
+ * Load, get, set and extend configuration for bot and adapters.
+ * @module util/config
+ */
+
 import { Config } from '@amazebot/config'
 
 export const config = new Config({

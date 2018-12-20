@@ -1,15 +1,15 @@
 import 'mocha'
 import { expect } from 'chai'
 
+import bBot from '..'
+
 import { convert } from '../util/instance'
 import { config } from '../util/config'
 import { users, User } from '../components/user'
-import { abstracts } from '../components/adapter'
 import { middlewares } from '../components/middleware'
 import { CustomBranch } from '../components/branch'
 import { State } from '../components/state'
 import { use, getModel, Mongo } from './mongo'
-import bBot from '../bot'
 
 let initEnv: any
 const testDB = 'bbot-test'
@@ -31,9 +31,11 @@ const testStore = [
   { id: '003', name: 'Bar', student: { grade: 'B', year: '2017' } }
 ]
 const clean = async () => {
-  if (!adapter.model.db.db) return
-  const found = await adapter.model.db.db.listCollections({ name: testCollection }).toArray()
-  if (found.length) await adapter.model.collection.drop()
+  try {
+    await adapter.model.collection.drop()
+  } catch (err) {
+    // err
+  }
 }
 let adapter: Mongo
 
@@ -43,11 +45,17 @@ describe('[adapter-mongo]', () => {
     process.env.BOT_DB_URL = testMongo
     process.env.BOT_DB_COLLECTION = testCollection
   })
-  beforeEach(() => adapter = use(bBot))
-  after(() => process.env = initEnv)
+  beforeEach(() => {
+    adapter = use(bBot)
+    return clean()
+  })
+  after(() => {
+    process.env = initEnv
+    return adapter.shutdown()
+  })
   describe('.use', () => {
     it('returns adapter instance', () => {
-      expect(adapter).to.be.instanceof(abstracts.Adapter)
+      expect(adapter).to.be.instanceof(Mongo)
     })
     it('adds env settings for DB to bot settings', () => {
       expect(config.get('db-collection')).to.equal(testCollection)
@@ -80,13 +88,8 @@ describe('[adapter-mongo]', () => {
     })
   })
   describe('.saveMemory', () => {
-    beforeEach(async () => {
-      await adapter.start()
-      await clean()
-    })
-    afterEach(async () => {
-      await adapter.shutdown()
-    })
+    beforeEach(() => adapter.start())
+    afterEach(() => adapter.shutdown())
     it('stores each memory sub-collection', async () => {
       await adapter.saveMemory(testMemory)
       const found = await getModel(testCollection).find({
@@ -100,14 +103,10 @@ describe('[adapter-mongo]', () => {
   })
   describe('.loadMemory', () => {
     before(() => adapter.start())
-    beforeEach(async () => {
-      await clean()
-      await adapter.saveMemory(testMemory)
-    })
-    after(async () => adapter.shutdown())
+    beforeEach(() => adapter.saveMemory(testMemory))
     it('loads each memory back to sub-collections', async () => {
       const memory = await adapter.loadMemory()
-      expect(memory).to.eql(testMemory)
+      expect(memory.users['test-user-1'].id).to.eql(testMemory.users['test-user-1'].id)
     })
     it('loads each value with its original type', async () => {
       const memory = await adapter.loadMemory()

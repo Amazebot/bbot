@@ -6,9 +6,6 @@ import adapters from './adapter'
  * Most methods require a storage adapter to be loaded.
  */
 export class StorageController {
-  /** Set keys to remove from data before keep. */
-  excludes = ['bot', 'server']
-
   /** Keep serial data in collection, via adapter (converted to objects). */
   async keep (collection: string, data: any) {
     if (!adapters.loaded.storage) return

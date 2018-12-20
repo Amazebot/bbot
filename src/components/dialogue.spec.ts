@@ -19,7 +19,7 @@ const Timeout = setTimeout(() => null, 100).constructor // prototype to compare
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const setImmediatePromise = promisify(setImmediate)
 
-describe.only('[dialogue]', () => {
+describe('[dialogue]', () => {
   describe('constructor', () => {
     it('inherits bot configs', () => {
       config.set('dialogue-timeout', 999)

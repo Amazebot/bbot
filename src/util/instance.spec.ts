@@ -1,7 +1,6 @@
 import 'mocha'
 import { expect } from 'chai'
 import { parse } from './instance'
-// import { clone, convert, restore, parse } from './instance'
 
 /** @todo tests for .clone .convert .restore */
 

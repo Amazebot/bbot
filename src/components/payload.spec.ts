@@ -1,12 +1,13 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '.'
+
+import { Payload } from './payload'
 
 describe('[payload]', () => {
   describe('Payload', () => {
     describe('constructor', () => {
       it('populates payload with given attachments', () => {
-        const payload = bot.payload.create({ attachments: [{
+        const payload = new Payload({ attachments: [{
           fallback: 'foo'
         }] })
         expect(payload.attachments![0]).to.eql({
@@ -14,7 +15,7 @@ describe('[payload]', () => {
         })
       })
       it('populates payload with given actions', () => {
-        const payload = bot.payload.create({ actions: [{
+        const payload = new Payload({ actions: [{
           name: 'foo',
           type: 'button',
           text: 'Foo'
@@ -26,7 +27,7 @@ describe('[payload]', () => {
         })
       })
       it('populates payload with quick reply defaults', () => {
-        const payload = bot.payload.create({ quickReplies: [{ text: 'Foo' }] })
+        const payload = new Payload({ quickReplies: [{ text: 'Foo' }] })
         expect(payload.quickReplies![0]).to.eql({
           text: 'Foo',
           content: 'Foo',
@@ -36,13 +37,18 @@ describe('[payload]', () => {
     })
     describe('.custom', () => {
       it('allows adding any custom attributes', () => {
-        const payload = bot.payload.create()
+        const payload = new Payload()
         const custom = {
           foo: 'foo',
           bar: { baz: 'qux' }
         }
         payload.custom(custom)
         expect(payload).to.eql(custom)
+      })
+      it('can add attributes with schema conflict', () => {
+        const payload = new Payload()
+        payload.custom({ title: 'My Title' })
+        expect(payload).to.have.property('title', 'My Title')
       })
     })
   })

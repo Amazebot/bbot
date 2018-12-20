@@ -6,7 +6,7 @@ import { State } from './state'
 import bits, { Bit } from './bit'
 import logger from '../util/logger'
 
-describe.only('[bit]', () => {
+describe('[bit]', () => {
   describe('Bit', () => {
     it('assigns ID if not given', () => {
       const aBit = new Bit({})

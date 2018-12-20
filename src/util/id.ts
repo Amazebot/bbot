@@ -1,9 +1,9 @@
-import crypto from 'crypto'
-
 /**
- * @module id
- * Manage module and instance unique identifiers.
+ * Manage component instances with unique identifiers.
+ * @module util/id
  */
+
+import crypto from 'crypto'
 
 /** Maintain a count of created IDs against their prefix key. */
 export const counts: { [key: string]: number } = { 'uid': 0 }

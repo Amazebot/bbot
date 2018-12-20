@@ -24,7 +24,7 @@ const mockAdapter = new MockAdapter(bBot)
 export const use = sinon.spy(() => mockAdapter) // exported to test as module
 const stubs: { [key: string]: sinon.SinonStub } = {}
 
-describe.only('[adapter]', () => {
+describe('[adapter]', () => {
   beforeEach(() => {
     for (let type of adapters.types) config.set(`${type}-adapter`, null)
     adapters.unloadAll()

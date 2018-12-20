@@ -7,7 +7,7 @@ EventEmitter.prototype.setMaxListeners(100)
 let initEnv: any
 
 import { Bot } from './bot'
-import { abstracts } from './controllers'
+import { abstracts } from './components/adapter'
 
 class MessageAdapter extends abstracts.MessageAdapter {
   name = 'mock-adapter'
@@ -64,7 +64,6 @@ describe('[bot]', () => {
     })
   })
   describe('.getStatus', () => {
-    beforeEach(() => bot.reset())
     it('returns waiting before start', () => {
       expect(bot.getStatus()).to.equal('waiting')
     })
@@ -75,7 +74,6 @@ describe('[bot]', () => {
       expect(bot.getStatus()).to.equal('loaded')
     })
     it('returns starting then ready on start', async () => {
-      await bot.load()
       const starting = bot.start()
       expect(bot.getStatus()).to.equal('starting')
       await starting

@@ -57,7 +57,7 @@ export class Mongo extends abstracts.StorageAdapter {
         default: `brain`
       }
     })
-    this.bot.config.get('db-collection') // ?
+    this.bot.config.load()
     this.model = getModel(this.bot.config.get('db-collection'))
     this.bot.logger.info(`[mongo] using Mongo as storage adapter.`)
     this.bot.logger.debug(`[mongo] storing to '${this.bot.config.get('db-collection')}' collection at ${this.bot.config.get('db-url')}`)
@@ -68,13 +68,11 @@ export class Mongo extends abstracts.StorageAdapter {
     this.bot.logger.info(`[mongo] connecting to Mongo DB at ${this.bot.config.get('db-url')}`)
     this.store = await mongoose.connect(this.bot.config.get('db-url'), this.config)
     this.bot.logger.debug(`[mongo] connected to Mongo DB`)
-    return
   }
 
   /** Disconnect Mongo */
   async shutdown () {
     await mongoose.disconnect()
-    return
   }
 
   /** Put memory data in documents by sub-collection. */
@@ -85,7 +83,6 @@ export class Mongo extends abstracts.StorageAdapter {
       const options = { upsert: true, lean: true }
       await this.model.findOneAndUpdate(query, doc, options).exec()
     }
-    return
   }
 
   /** Get all the memory document data. */

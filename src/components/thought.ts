@@ -6,7 +6,7 @@
 import config from '../util/config'
 import logger from '../util/logger'
 import { users } from './user'
-import { BranchController, Branch } from './branch'
+import { branches as globalBranches, BranchController, Branch } from './branch'
 import { messages, TextMessage, Message, ServerMessage } from './message'
 import { NLU } from './nlu'
 import { Envelope } from './envelope'
@@ -45,13 +45,13 @@ export class Thought implements IThought {
    * Presence of branches in options determines how middleware will execute.
    * Without middleware option, will the middleware of same name as the thought.
    */
-  constructor (options: IThought) {
-    this.name = options.name
-    this.b = options.b
-    if (options.validate) this.validate = options.validate
-    if (options.action) this.action = options.action
-    if (options.branches) this.branches = options.branches
-    if (options.middleware) this.middleware = options.middleware
+  constructor (atts: IThought) {
+    this.name = atts.name
+    this.b = atts.b
+    if (atts.validate) this.validate = atts.validate
+    if (atts.action) this.action = atts.action
+    if (atts.branches) this.branches = atts.branches
+    if (atts.middleware) this.middleware = atts.middleware
     else if (middlewares.get(this.name)) this.middleware = middlewares.get(this.name)
     else throw new Error('[thought] invalid middleware provided')
   }
@@ -146,7 +146,9 @@ export class Thoughts {
     initBranches?: BranchController
   ) {
     this.b = state
-    this.branches = new BranchController(initBranches)
+    this.branches = (initBranches)
+      ? new BranchController(initBranches)
+      : new BranchController(globalBranches)
     const { b } = this
 
     // Define processes with validation and post processing actions
@@ -224,8 +226,7 @@ export class Thoughts {
       }
       const envelope = b.pendingEnvelope()
       if (!envelope) return false
-      const branch = b.getBranch()
-      if (branch) envelope.branchId = branch.id
+      if (b.matchingBranch) envelope.branchId = b.matchingBranch.id
       return true
     }
 
@@ -316,12 +317,13 @@ export class ThoughtController {
 
   /** Initiate chain of thought processes for responding to a server request. */
   async serve (
-    msg: ServerMessage,
-    ctx: IContext,
+    message: ServerMessage,
+    context: IContext,
     branches?: BranchController
   ) {
-    logger.info(`[thought] serving ${msg.id} for ${msg.user.id}`)
-    return new Thoughts(new State({ msg, ctx }), branches).start('serve')
+    logger.info(`[thought] serving ${message.id} for ${message.user.id}`)
+    const state = new State({ message, context })
+    return new Thoughts(state, branches).start('serve')
   }
 }
 
