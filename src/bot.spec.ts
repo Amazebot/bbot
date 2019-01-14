@@ -74,6 +74,7 @@ describe('[bot]', () => {
       expect(bot.getStatus()).to.equal('loaded')
     })
     it('returns starting then ready on start', async () => {
+      await bot.load()
       const starting = bot.start()
       expect(bot.getStatus()).to.equal('starting')
       await starting

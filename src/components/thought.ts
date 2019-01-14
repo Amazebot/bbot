@@ -51,9 +51,9 @@ export class Thought implements IThought {
     if (atts.validate) this.validate = atts.validate
     if (atts.action) this.action = atts.action
     if (atts.branches) this.branches = atts.branches
-    if (atts.middleware) this.middleware = atts.middleware
-    else if (middlewares.get(this.name)) this.middleware = middlewares.get(this.name)
-    else throw new Error('[thought] invalid middleware provided')
+    this.middleware = (atts.middleware)
+      ? atts.middleware
+      : middlewares.get(this.name)
   }
 
   /**

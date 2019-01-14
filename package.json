@@ -68,7 +68,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
-    "@types/sinon": "^5.0.7",
+    "@types/sinon": "^7.0.2",
     "axios": "^0.18.0",
     "chai": "^4.2.0",
     "codecov": "^3.1.0",

@@ -10,6 +10,12 @@ import adapters from './adapter'
 import { User } from './user'
 import { Room } from './room'
 
+/** Keep interval length and timer together. */
+export interface IInterval { timer?: NodeJS.Timer, value: number }
+
+/** Keep save interval as external property to avoid being cleared. */
+export const saveInterval: IInterval = { value: 5000 }
+
 /** Internal storage for data, can hold any key/value collection. */
 export class MemoryController {
   /** Index signature allows any key value pair to be added to memory. */
@@ -23,14 +29,6 @@ export class MemoryController {
 
   /** Any misc data added without specifying collection. */
   private: { [key: string]: any }
-
-  /** Save tracking vars */
-  intervals: {
-    save: {
-      timer?: NodeJS.Timer,
-      value: number
-    }
-  } = { save: { value: 5000 } }
 
   /** Create a memory instance for isolating users, key/value pairs. */
   constructor () {
@@ -74,11 +72,11 @@ export class MemoryController {
 
   /** Save memory every x milliseconds */
   setSaveInterval (newInterval?: number) {
-    if (newInterval) this.intervals.save.value = newInterval
+    if (newInterval) saveInterval.value = newInterval
     if (!adapters.loaded.storage || !config.get('autoSave')) return
-    this.intervals.save.timer = global.setInterval(
+    saveInterval.timer = global.setInterval(
       () => this.save(),
-      this.intervals.save.value
+      saveInterval.value
     )
   }
 
@@ -95,9 +93,7 @@ export class MemoryController {
 
   /** Stop saving data */
   clearSaveInterval () {
-    if (this.intervals.save.timer) {
-      global.clearInterval(this.intervals.save.timer)
-    }
+    if (saveInterval.timer) global.clearInterval(saveInterval.timer)
   }
 
   /**
@@ -118,7 +114,7 @@ export class MemoryController {
     await this.load()
     this.setSaveInterval()
     if (config.get('auto-save')) {
-      const sec = (this.intervals.save.value / 1000).toFixed(2)
+      const sec = (saveInterval.value / 1000).toFixed(2)
       logger.info(`[memory] auto save is enabled, every ${sec} seconds.`)
     }
   }

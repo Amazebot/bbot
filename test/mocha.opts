@@ -1,7 +1,8 @@
---require test/mocha.env.js
 --require ts-node/register
+--require test/mocha.env.js
 --require source-map-support/register
+--reporter list
 --recursive
 --full-trace
+--throw-deprecation
 --exit
---reporter list

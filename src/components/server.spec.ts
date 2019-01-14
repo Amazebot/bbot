@@ -7,8 +7,9 @@ import config from '../util/config'
 import { thoughts } from './thought'
 import { ServerMessage } from './message'
 import { server } from './server'
+import { State } from './state'
 
-const serve = sinon.stub(thoughts, 'serve').resolves(true)
+const serve = sinon.stub(thoughts, 'serve').resolves(new State())
 
 describe('[server]', () => {
   beforeEach(() => serve.resetHistory())

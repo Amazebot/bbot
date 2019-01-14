@@ -54,9 +54,10 @@ const message = messages.text(
 
 describe('[thought]', () => {
   beforeEach(async () => {
-    adapters.loaded.message = sinon.createStubInstance(MockMessenger)
-    middlewares.unloadAll()
     globalBranches.reset()
+    middlewares.unloadAll()
+    adapters.unloadAll()
+    adapters.loaded.message = sinon.createStubInstance(MockMessenger)
   })
   describe('Thought', () => {
     describe('constructor', () => {
@@ -89,7 +90,7 @@ describe('[thought]', () => {
         await new Thought({ name, b, validate, middleware, action }).process()
         sinon.assert.callOrder(validate, middlewarePiece, action)
       })
-      it('false from validate gives false to action', async () => {
+      it('false from validate passed through to action', async () => {
         const b = new State({ message })
         const name = 'test'
         const validate = async () => false
@@ -101,142 +102,120 @@ describe('[thought]', () => {
         sinon.assert.notCalled(middlewarePiece)
         sinon.assert.calledWithExactly(action, false)
       })
-      it('adds timestamp if middleware complete', async () => {
-        const b = new State({ message })
-        const name = 'test'
-        const middlewarePiece = (_: any, next: any) => next()
-        const middleware = new Middleware('test')
-        middleware.register(middlewarePiece)
-        await new Thought({ name, b, middleware }).process()
-        expect(b.processed).to.include.keys('test')
+      context('middleware incomplete', () => {
+        it('adds timestamp if middleware complete', async () => {
+          const b = new State({ message })
+          const name = 'test'
+          const middlewarePiece = (_: any, next: any) => next()
+          const middleware = new Middleware('test')
+          middleware.register(middlewarePiece)
+          await new Thought({ name, b, middleware }).process()
+          expect(b.processed).to.include.keys('test')
+        })
       })
-      it('action called only once with interrupted middleware', async () => {
-        const action = sinon.spy()
-        const b = new State({ message })
-        const name = 'test'
-        const middlewarePiece = (_: any, next: any) => next()
-        const middleware = new Middleware('test')
-        middleware.register(middlewarePiece)
-        await new Thought({ name, b, middleware, action }).process()
-        sinon.assert.calledOnce(action)
+      context('middleware completed', () => {
+        it('action called only once', async () => {
+          const action = sinon.spy()
+          const b = new State({ message })
+          const name = 'test'
+          const middlewarePiece = (_: any, next: any) => next()
+          const middleware = new Middleware('test')
+          middleware.register(middlewarePiece)
+          await new Thought({ name, b, middleware, action }).process()
+          sinon.assert.calledOnce(action)
+        })
+        it('no timestamp', async () => {
+          const b = new State({ message })
+          const name = 'test'
+          const middlewarePiece = (_: any, __: any, done: any) => done()
+          const middleware = new Middleware('test')
+          middleware.register(middlewarePiece)
+          await new Thought({ name, b, middleware }).process()
+          expect(b.processed).to.not.include.keys('test')
+        })
       })
-      it('no timestamp if middleware incomplete', async () => {
-        const b = new State({ message })
-        const name = 'test'
-        const middlewarePiece = (_: any, __: any, done: any) => done()
-        const middleware = new Middleware('test')
-        middleware.register(middlewarePiece)
-        await new Thought({ name, b, middleware }).process()
-        expect(b.processed).to.not.include.keys('test')
+      context('with branches', () => {
+        it('calls validate, then middleware, then branch callback, then action', async () => {
+          const b = new State({ message })
+          const name = 'test'
+          const validate = sinon.stub().returns(true)
+          const action = sinon.spy()
+          const middlewarePiece = sinon.spy()
+          const branchCallback = sinon.spy()
+          const branches = {
+            test: new CustomBranch(() => true, () => branchCallback())
+          }
+          const middleware = new Middleware('test')
+          middleware.register(middlewarePiece)
+          await new Thought({ name, b, validate, middleware, branches, action }).process()
+          sinon.assert.callOrder(validate, middlewarePiece, branchCallback, action)
+        })
+        it('exits if empty branch collection', async () => {
+          const b = new State({ message })
+          const name = 'test'
+          const action = sinon.spy()
+          const middlewarePiece = sinon.spy()
+          const middleware = new Middleware('test')
+          const branches = {}
+          middleware.register(middlewarePiece)
+          await new Thought({ name, b, middleware, branches, action }).process()
+          sinon.assert.notCalled(middlewarePiece)
+          sinon.assert.calledWithExactly(action, false)
+        })
+        it('no timestamp if state already done', async () => {
+          const b = new State({ message, done: true })
+          const name = 'test'
+          const middleware = new Middleware('test')
+          const branches = {
+            test: new CustomBranch(() => true, () => null)
+          }
+          await new Thought({ name, b, middleware, branches }).process()
+          expect(typeof b.processed.test).to.equal('undefined')
+        })
+        it('calls consecutive branches if forced', async () => {
+          const b = new State({ message })
+          const name = 'test'
+          const middleware = new Middleware('test')
+          const callback = sinon.spy()
+          const branches = {
+            'A': new CustomBranch(() => true, callback),
+            'B': new CustomBranch(() => true, callback, { force: true })
+          }
+          await new Thought({ name, b, middleware, branches }).process()
+          sinon.assert.calledTwice(callback)
+        })
+        it('stops processing when state done', async () => {
+          const b = new State({ message })
+          const name = 'test'
+          const middleware = new Middleware('test')
+          const callback = sinon.spy()
+          const branches = {
+            'A': new CustomBranch(() => true, (b) => b.finish()),
+            'B': new CustomBranch(() => true, callback, { force: true })
+          }
+          await new Thought({ name, b, middleware, branches }).process()
+          sinon.assert.notCalled(callback)
+        })
       })
-      it('with branches, calls validate, then middleware, then branch callback, then action', async () => {
-        const b = new State({ message })
-        const name = 'test'
-        const validate = sinon.stub().returns(true)
-        const action = sinon.spy()
-        const middlewarePiece = sinon.spy()
-        const branchCallback = sinon.spy()
-        const branches = {
-          test: new CustomBranch(() => true, () => branchCallback())
-        }
-        const middleware = new Middleware('test')
-        middleware.register(middlewarePiece)
-        await new Thought({ name, b, validate, middleware, branches, action }).process()
-        sinon.assert.callOrder(validate, middlewarePiece, branchCallback, action)
-      })
-      it('with branches, exits if empty branch collection', async () => {
-        const b = new State({ message })
-        const name = 'test'
-        const action = sinon.spy()
-        const middlewarePiece = sinon.spy()
-        const middleware = new Middleware('test')
-        const branches = {}
-        middleware.register(middlewarePiece)
-        await new Thought({ name, b, middleware, branches, action }).process()
-        sinon.assert.notCalled(middlewarePiece)
-        sinon.assert.calledWithExactly(action, false)
-      })
-      it('with branches, no timestamp if state already done', async () => {
-        const b = new State({ message, done: true })
-        const name = 'test'
-        const middleware = new Middleware('test')
-        const branches = {
-          test: new CustomBranch(() => true, () => null)
-        }
-        await new Thought({ name, b, middleware, branches }).process()
-        expect(typeof b.processed.test).to.equal('undefined')
-      })
-      it('with branches, calls consecutive branches if forced', async () => {
-        const b = new State({ message })
-        const name = 'test'
-        const middleware = new Middleware('test')
-        const callback = sinon.spy()
-        const branches = {
-          'A': new CustomBranch(() => true, callback),
-          'B': new CustomBranch(() => true, callback, { force: true })
-        }
-        await new Thought({ name, b, middleware, branches }).process()
-        sinon.assert.calledTwice(callback)
-      })
-      it('with branches, stops processing when state done', async () => {
-        const b = new State({ message })
-        const name = 'test'
-        const middleware = new Middleware('test')
-        const callback = sinon.spy()
-        const branches = {
-          'A': new CustomBranch(() => true, (b) => b.finish()),
-          'B': new CustomBranch(() => true, callback, { force: true })
-        }
-        await new Thought({ name, b, middleware, branches }).process()
-        sinon.assert.notCalled(callback)
-      })
-      it('named hear, processes hear middleware', async () => {
+      it('with middleware name, processes existing middleware', async () => {
         middlewares.register('hear', (b, _, __) => b.hearTest = true)
         const b = new State({ message })
-        await new Thought({ name: 'hear', b }).process()
+        const thought = new Thought({ name: 'hear', b })
+        await thought.process()
         expect(b.hearTest).to.equal(true)
       })
-      it('named listen, processes listen middleware', async () => {
-        middlewares.register('listen', (b, _, __) => b.listenTest = true)
+      it('with unknown name, uses new middleware', async () => {
         const b = new State({ message })
-        await new Thought({ name: 'listen', b }).process()
-        expect(b.listenTest).to.equal(true)
-      })
-      it('named understand, processes understand middleware', async () => {
-        middlewares.register('understand', (b, _, __) => b.understandTest = true)
-        const b = new State({ message })
-        await new Thought({ name: 'understand', b }).process()
-        expect(b.understandTest).to.equal(true)
-      })
-      it('named act, processes act middleware', async () => {
-        middlewares.register('act', (b, _, __) => b.actTest = true)
-        const b = new State({ message })
-        await new Thought({ name: 'act', b }).process()
-        expect(b.actTest).to.equal(true)
-      })
-      it('named respond, processes respond middleware', async () => {
-        middlewares.register('respond', (b, _, __) => b.respondTest = true)
-        const b = new State({ message })
-        await new Thought({ name: 'respond', b }).process()
-        expect(b.respondTest).to.equal(true)
-      })
-      it('named remember, processes remember middleware', async () => {
-        middlewares.register('remember', (b, _, __) => b.rememberTest = true)
-        const b = new State({ message })
-        await new Thought({ name: 'remember', b }).process()
-        expect(b.rememberTest).to.equal(true)
+        const thought = await new Thought({ name: 'test-thought', b })
+        expect(middlewares.stacks).to.have.property('test-thought')
+        const middleware = middlewares.stacks['test-thought']!
+        const execute = sinon.spy(middleware, 'execute')
+        await thought.process()
+        sinon.assert.calledOnce(execute)
       })
     })
   })
   describe('Thoughts', () => {
-    beforeEach(() => {
-      adapters.loaded.nlu = new MockNLU(bBot)
-      adapters.loaded.storage = sinon.createStubInstance(MockStorage)
-    })
-    afterEach(() => {
-      delete adapters.loaded.nlu
-      delete adapters.loaded.storage
-    })
     describe('.start', () => {
       it('receive records initiating sequence', async () => {
         const b = await new Thoughts(new State({ message }))
@@ -355,6 +334,7 @@ describe('[thought]', () => {
         expect(listenActioned).to.equal(false)
       })
       it('does understand when listen unmatched', async () => {
+        adapters.loaded.nlu = new MockNLU(bBot)
         globalBranches.custom(() => false, () => null)
         globalBranches.customNLU(() => true, () => null)
         const b = new State({ message })
@@ -362,13 +342,15 @@ describe('[thought]', () => {
         expect(b.processed).to.include.keys('understand')
       })
       it('understand passes message to NLU adapter', async () => {
-        adapters.loaded.nlu!.process = sinon.spy()
+        adapters.loaded.nlu = new MockNLU(bBot)
+        adapters.loaded.nlu.process = sinon.spy()
         globalBranches.customNLU(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         sinon.assert.calledWithExactly((adapters.loaded.nlu!.process as sinon.SinonSpy), message)
       })
       it('understand branches include NLU results from adapter', async () => {
+        adapters.loaded.nlu = new MockNLU(bBot)
         adapters.loaded.nlu!.process = async () => {
           return { intent: new NLUResult().add({ id: 'test' }) }
         }
@@ -378,6 +360,7 @@ describe('[thought]', () => {
         expect(b.message.nlu!.results.intent).to.eql([{ id: 'test' }])
       })
       it('does not understand without adapter', async () => {
+        adapters.loaded.nlu = new MockNLU(bBot)
         globalBranches.custom(() => false, () => null)
         globalBranches.customNLU(() => true, () => null)
         delete adapters.loaded.nlu
@@ -386,6 +369,7 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when listen matched', async () => {
+        adapters.loaded.nlu = new MockNLU(bBot)
         globalBranches.custom(() => true, () => null)
         globalBranches.customNLU(() => true, () => null)
         const b = new State({ message })
@@ -393,7 +377,8 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand when message text is empty', async () => {
-        adapters.loaded.nlu!.process = sinon.spy()
+        adapters.loaded.nlu = new MockNLU(bBot)
+        adapters.loaded.nlu.process = sinon.spy()
         globalBranches.customNLU(() => true, () => null)
         const empty = messages.text(users.create(), '                   ')
         const b = new State({ message: empty })
@@ -401,7 +386,8 @@ describe('[thought]', () => {
         sinon.assert.notCalled((adapters.loaded.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when message too short', async () => {
-        adapters.loaded.nlu!.process = sinon.spy()
+        adapters.loaded.nlu = new MockNLU(bBot)
+        adapters.loaded.nlu.process = sinon.spy()
         config.set('nlu-min-length', 99)
         globalBranches.customNLU(() => true, () => null)
         const b = new State({ message })
@@ -410,6 +396,7 @@ describe('[thought]', () => {
         sinon.assert.notCalled((adapters.loaded.nlu!.process as sinon.SinonSpy))
       })
       it('does not understand when hear interrupted', async () => {
+        adapters.loaded.nlu = new MockNLU(bBot)
         globalBranches.customNLU(() => true, () => null)
         middlewares.register('hear', (_, __, done) => done())
         const b = new State({ message })
@@ -417,18 +404,11 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('understand')
       })
       it('does not understand non-text messages', async () => {
+        adapters.loaded.nlu = new MockNLU(bBot)
         globalBranches.customNLU(() => true, () => null)
         const b = new State({ message: messages.enter(users.create()) })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('understand')
-      })
-      it('does act when listen unmatched', async () => {
-        globalBranches.custom(() => false, () => null)
-        globalBranches.customNLU(() => false, () => null)
-        globalBranches.catchAll(() => null)
-        const b = new State({ message })
-        await new Thoughts(b).start('receive')
-        expect(b.processed).to.include.keys('act')
       })
       it('act replaces message with catch all', async () => {
         globalBranches.catchAll(() => null)
@@ -456,25 +436,38 @@ describe('[thought]', () => {
         await new Thoughts(b).start('receive')
         expect(b.processed).to.include.keys('respond')
       })
-      it('does not respond without adapter', async () => {
-        delete adapters.loaded.message
-        globalBranches.custom(() => true, (b) => b.respond('test'))
-        const b = new State({ message })
-        await new Thoughts(b).start('receive')
-        expect(b.processed).to.not.include.keys('respond')
-      })
       it('respond updates envelope with matched branch ID', async () => {
         globalBranches.custom(() => true, (b) => b.respond('test'), { id: 'test' })
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.envelopes![0].branchId).to.equal('test')
       })
-      it('respond passes message to nlu adapter', async () => {
-        globalBranches.custom(() => true, (b) => b.respond('test'))
-        const b = new State({ message })
-        await new Thoughts(b).start('receive')
-        const envelope = b.envelopes![0]
-        sinon.assert.calledWithExactly((adapters.loaded.message!.dispatch as sinon.SinonStub), envelope)
+      context('without message adapter', () => {
+        beforeEach(() => delete adapters.loaded.message)
+        it('does not respond', async () => {
+          globalBranches.custom(() => true, (b) => b.respond('test'))
+          const b = new State({ message })
+          await new Thoughts(b).start('receive')
+          expect(b.processed).to.not.include.keys('respond')
+        })
+      })
+      context('with nlu adapter', () => {
+        beforeEach(() => adapters.loaded.nlu = new MockNLU(bBot))
+        it('respond passes message to nlu adapter', async () => {
+          globalBranches.custom(() => true, (b) => b.respond('test'))
+          const b = new State({ message })
+          await new Thoughts(b).start('receive')
+          const envelope = b.envelopes![0]
+          sinon.assert.calledWithExactly((adapters.loaded.message!.dispatch as sinon.SinonStub), envelope)
+        })
+        it('does act when listen unmatched', async () => {
+          globalBranches.custom(() => false, () => null)
+          globalBranches.customNLU(() => false, () => null)
+          globalBranches.catchAll(() => null)
+          const b = new State({ message })
+          await new Thoughts(b).start('receive')
+          expect(b.processed).to.include.keys('act')
+        })
       })
       it('remembers user when branch matched', async () => {
         memory.users = {}
@@ -491,6 +484,7 @@ describe('[thought]', () => {
         expect(typeof memory.users[b.message.user.id]).to.equal('undefined')
       })
       it('does remember when branch matched', async () => {
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
         globalBranches.custom(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
@@ -504,18 +498,21 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember when branch unmatched', async () => {
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
         globalBranches.custom(() => false, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does remember on dispatch, without branch', async () => {
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
         const b = new State({ message })
         b.respondEnvelope().write('ping')
         await new Thoughts(b).start('dispatch')
         expect(b.processed).to.include.keys('remember')
       })
       it('does not remember on respond', async () => {
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
         globalBranches.custom(() => true, () => null)
         const b = new State({ message })
         b.respondEnvelope().write('ping')
@@ -523,6 +520,7 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('remember')
       })
       it('does not remember dispatch without envelope', async () => {
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
         const b = new State({ message })
         await new Thoughts(b).start('dispatch')
         expect(b.processed).to.not.include.keys('remember')
@@ -534,14 +532,16 @@ describe('[thought]', () => {
         expect(b.processed).to.not.include.keys('remember')
       })
       it('remember passes state to storage adapter', async () => {
-        const keep = adapters.loaded.storage!.keep as sinon.SinonStub
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
+        const keep = adapters.loaded.storage.keep as sinon.SinonStub
         globalBranches.custom(() => true, () => null)
         const b = new State({ message })
         await new Thoughts(b).start('receive')
         sinon.assert.calledWithExactly(keep, 'states', sinon.match({ message }))
       })
       it('remember only once with multiple responses', async () => {
-        const keep = adapters.loaded.storage!.keep as sinon.SinonStub
+        adapters.loaded.storage = sinon.createStubInstance(MockStorage)
+        const keep = adapters.loaded.storage.keep as sinon.SinonStub
         globalBranches.custom(() => true, (b) => b.respond('A'))
         globalBranches.custom(() => true, (b) => b.respond('B'), { force: true })
         const b = new State({ message })

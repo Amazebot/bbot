@@ -5,23 +5,20 @@ module.exports = function (wallaby) {
       'tsconfig.json',
       'src/**/*.ts',
       'package.json',
-      { pattern: 'src/**/*.spec.ts', ignore: true },
-      { pattern: 'src/**/*.d.ts', ignore: true }
+      { pattern: 'src/**/*.spec.ts', ignore: true }
     ],
     tests: [
       'src/**/*.spec.ts'
     ],
     testFramework: 'mocha',
-    env: {
-      type: 'node'
-    },
+    env: { type: 'node' },
     compilers: {
-      '**/*.ts?(x)': wallaby.compilers.typeScript({ module: 'commonjs' })
+      '**/*.ts?(x)': wallaby.compilers.typeScript({
+        module: 'commonjs',
+        useStandardDefaults: true
+      })
     },
-    debug: true,
     slowTestThreshold: 200,
-    delays: {
-      run: 2500
-    }
+    delays: { run: 2500 }
   }
 }

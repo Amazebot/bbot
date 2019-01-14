@@ -1,8 +1,9 @@
 import 'mocha'
-import * as sinon from 'sinon'
 import { expect } from 'chai'
+import * as sinon from 'sinon'
 import axios from 'axios'
-import bBot, { abstracts } from '.'
+
+import { bBot, abstracts } from '.'
 
 class MockMessageAdapter extends abstracts.MessageAdapter {
   name = 'mock-messenger'
@@ -10,23 +11,25 @@ class MockMessageAdapter extends abstracts.MessageAdapter {
   async start () { return }
   async shutdown () { return }
 }
-const mocks = sinon.createStubInstance(MockMessageAdapter)
+
+const mockAdapter = new MockMessageAdapter(bBot)
+const mockDispatch = sinon.stub(mockAdapter, 'dispatch')
 
 describe('[E2E]', () => {
   beforeEach(async () => {
     await bBot.reset()
-    bBot.adapters.loaded.message = mocks
+    bBot.adapters.loaded.message = mockAdapter
     await bBot.start()
   })
   afterEach(() => {
-    mocks.dispatch.resetHistory()
+    mockDispatch.resetHistory()
   })
   it('responds from middleware', async () => {
     bBot.middlewares.register('hear', (b, _, done) => {
       return b.respond('test').then(() => done())
     })
     await bBot.thoughts.receive(bBot.messages.text(bBot.users.create(), ''))
-    sinon.assert.calledOnce(mocks.dispatch)
+    sinon.assert.calledOnce(mockDispatch)
   })
   it('captures input matching conditions', async () => {
     let captured: any[] = []
@@ -54,7 +57,7 @@ describe('[E2E]', () => {
     bBot.branches.text(/attachment/i, (b) => b.respond(attachment))
     const msg = bBot.messages.text(bBot.users.create(), 'Do attachment')
     await bBot.thoughts.receive(msg)
-    sinon.assert.calledWithMatch(mocks.dispatch, { _payload: {
+    sinon.assert.calledWithMatch(mockDispatch, { _payload: {
       attachments: [attachment]
     } })
   })
@@ -63,6 +66,6 @@ describe('[E2E]', () => {
       return b.respond(`testing ${ b.message.data.test }`)
     })
     await axios.get(`${bBot.server.url}/message/111?test=1`)
-    sinon.assert.calledWithMatch(mocks.dispatch, { strings: ['testing 1'] })
+    sinon.assert.calledWithMatch(mockDispatch, { strings: ['testing 1'] })
   })
 })

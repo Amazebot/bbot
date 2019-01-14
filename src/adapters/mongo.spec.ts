@@ -15,7 +15,7 @@ let initEnv: any
 const testDB = 'bbot-test'
 const testMongo = 'mongodb://127.0.0.1:27017/' + testDB
 const testCollection = 'brain-testing'
-const testMemory = {
+const testData = {
   users: {
     'test-user-1': users.create({ id: 'test-user-1' }),
     'test-user-2': users.create({ id: 'test-user-2' })
@@ -91,26 +91,26 @@ describe('[adapter-mongo]', () => {
     beforeEach(() => adapter.start())
     afterEach(() => adapter.shutdown())
     it('stores each memory sub-collection', async () => {
-      await adapter.saveMemory(testMemory)
+      await adapter.saveMemory(testData)
       const found = await getModel(testCollection).find({
         type: 'memory'
       }, { _id: 0, data: 1, sub: 1 }).lean().exec()
       expect(found).to.eql([
-        { sub: 'users', data: testMemory.users },
-        { sub: 'private', data: testMemory.private }
+        { sub: 'users', data: testData.users },
+        { sub: 'private', data: testData.private }
       ])
     })
   })
   describe('.loadMemory', () => {
     before(() => adapter.start())
-    beforeEach(() => adapter.saveMemory(testMemory))
+    beforeEach(() => adapter.saveMemory(testData))
     it('loads each memory back to sub-collections', async () => {
-      const memory = await adapter.loadMemory()
-      expect(memory.users['test-user-1'].id).to.eql(testMemory.users['test-user-1'].id)
+      const data = await adapter.loadMemory()
+      expect(data.users['test-user-1'].id).to.eql(testData.users['test-user-1'].id)
     })
     it('loads each value with its original type', async () => {
-      const memory = await adapter.loadMemory()
-      expect(memory.users['test-user-1']).to.be.instanceof(User)
+      const data = await adapter.loadMemory()
+      expect(data.users['test-user-1']).to.be.instanceof(User)
     })
   })
   describe('.keep', () => {
