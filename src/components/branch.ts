@@ -518,6 +518,18 @@ export class BranchController implements IBranches {
       'serve'
     )
   }
+
+  /** Create a server branch with custom matcher. */
+  customServer (
+    matcher: IMatcher,
+    action: ICallback | string,
+    atts?: IBranch
+  ) {
+    return this.add(
+      new CustomBranch(matcher, action, atts),
+      'serve'
+    )
+  }
 }
 
 export const branches = new BranchController()

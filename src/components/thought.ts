@@ -22,7 +22,7 @@ export interface IThought {
   name: string
   b: State
   validate?: () => Promise<boolean> | boolean
-  action?: (success: boolean) => Promise<void> | void
+  action?: (success: boolean) => Promise<any> | any
   branches?: { [id: string]: Branch }
   middleware?: Middleware
 }
@@ -36,7 +36,7 @@ export class Thought implements IThought {
   name: string
   b: State
   validate: () => Promise<boolean> | boolean = () => Promise.resolve(true)
-  action: (success: boolean) => Promise<void> | void = (_) => Promise.resolve()
+  action: (success: boolean) => Promise<any> | any = (_) => Promise.resolve()
   middleware: Middleware
   branches?: { [id: string]: Branch }
 
@@ -117,6 +117,9 @@ export class Thought implements IThought {
   }
 }
 
+/** Collection of Thought instances, extends object. */
+export type ThoughtProcesses = object & { [key: string]: Thought }
+
 /**
  * Collection of processes and branches to execute with middleware and state.
  * Will use global branches by default, but can be replaced with custom set.
@@ -134,7 +137,7 @@ export class Thoughts {
     respond: ['respond'],
     dispatch: ['respond', 'remember']
   }
-  processes: { [key: string]: Thought }
+  processes: ThoughtProcesses
 
   /**
    * Start new instance of thought processes with optional branches to process.
@@ -214,7 +217,7 @@ export class Thoughts {
 
     // Wrap message in catch all before processing act branches
     this.processes.act.validate = async () => {
-      if (b.matched) return false
+      if (b.matched) this.branches.forced('act')
       if (b.message) b.message = messages.catchAll(b.message)
       return true
     }
@@ -244,8 +247,8 @@ export class Thoughts {
       if (b.matched) users.byId(b.message.user.id, b.message.user)
       if (!adapters.loaded.storage) {
         logger.debug(`[thought] skip remember, no storage adapter`)
-      } else if (!b.matched && !b.dispatchedEnvelope()) {
-        logger.debug(`[thought] skip remember on outgoing`)
+      } else if (b.dispatchedEnvelope() && !b.matched) {
+        logger.debug(`[thought] skip remember on respond`)
       } else {
         return true
       }
@@ -282,13 +285,35 @@ export class ThoughtController {
    * we revert to the previous path (the one that was just processed). If branches
    * matched, but no additional branches added, close the dialogue.
    */
-  async receive (message: Message, branches?: BranchController) {
+  async receive (
+    message: Message,
+    branches?: BranchController
+  ) {
     logger.info(`[thought] receive message ID ${message.id}`)
     const startingState = new State({ message })
     const dlg = dialogues.engaged(startingState)
     if (dlg && !branches) branches = dlg.progressBranches()
     const thought = new Thoughts(startingState, branches)
     const finalState = await thought.start('receive')
+    if (dlg) {
+      if (!finalState.matched) dlg.revertBranches()
+      else if (dlg.branches.exist()) await dlg.close()
+    }
+    return finalState
+  }
+
+  /** Initiate chain of thought processes for responding to a server request. */
+  async serve (
+    message: ServerMessage,
+    context: IContext,
+    branches?: BranchController
+  ) {
+    logger.info(`[thought] serving ${message.id} for ${message.user.id}`)
+    const startingState = new State({ message, context })
+    const dlg = dialogues.engaged(startingState)
+    if (dlg && !branches) branches = dlg.progressBranches()
+    const thought = new Thoughts(startingState, branches)
+    const finalState = await thought.start('serve')
     if (dlg) {
       if (!finalState.matched) dlg.revertBranches()
       else if (dlg.branches.exist()) await dlg.close()
@@ -313,17 +338,6 @@ export class ThoughtController {
   async dispatch (envelope: Envelope) {
     logger.info(`[thought] dispatch envelope ${envelope.id}`)
     return new Thoughts(new State({ envelopes: [envelope] })).start('dispatch')
-  }
-
-  /** Initiate chain of thought processes for responding to a server request. */
-  async serve (
-    message: ServerMessage,
-    context: IContext,
-    branches?: BranchController
-  ) {
-    logger.info(`[thought] serving ${message.id} for ${message.user.id}`)
-    const state = new State({ message, context })
-    return new Thoughts(state, branches).start('serve')
   }
 }
 
