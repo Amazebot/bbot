@@ -2,32 +2,18 @@ import 'mocha'
 import * as sinon from 'sinon'
 import { expect } from 'chai'
 
-import bBot from '../bot'
-
 import config from '../util/config'
 import { memory, saveInterval } from './memory'
-import { adapters, abstracts } from './adapter'
+import { adapters } from './adapter'
 import { users } from './user'
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-class MockStorageAdapter extends abstracts.StorageAdapter {
-  name = 'mock-storage'
-  async start () { return }
-  async shutdown () { return }
-  async saveMemory () { return }
-  async loadMemory () { return { test: { foo: 'bar' } } }
-  async keep () { return }
-  async find () { return [{ test: 'test' }] }
-  async findOne () { return { test: 'test' } }
-  async lose () { return }
-}
-let mockStorage = new MockStorageAdapter(bBot)
+import * as mocks from '../test/mocks'
+import { delay } from '../test/utils'
 
 describe('[memory]', () => {
   before(() => {
     config.set('autoSave', false)
-    adapters.loaded.storage = mockStorage
+    adapters.loaded.storage = mocks.storageAdapter()
   })
   describe('Memory', () => {
     describe('.clear', () => {

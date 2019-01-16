@@ -1,16 +1,15 @@
+import config from './config'
+
 /**
  * Handle various transformations of instance types and properties.
  * @module util/instance
  */
 
-/** Set keys to remove from data before keep. */
-export const excludes = ['bot', 'server']
-
 /** Deep clone any class or object via JSON conversion. */
 export const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 /** Convert instance to plain object for storage. */
-export function convert (data: any, exclude: string[] = excludes) {
+export function convert (data: any, exclude: string[] = config.get('storage-excludes')) {
   if (typeof data === 'object') {
     data = clone(Object.keys(data)
       .filter((key) => !exclude.includes(key))

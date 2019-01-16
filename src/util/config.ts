@@ -58,16 +58,22 @@ export const config = new Config({
     alias: 'l',
     default: null
   },
+  'nlu-min-length': {
+    type: 'number',
+    describe: 'Minimum string length for NLU parsing to apply on message',
+    default: 10
+  },
   'storage-adapter': {
     type: 'string',
     describe: 'Local path or NPM package name to require as storage engine adapter',
     alias: 's',
     default: null
   },
-  'nlu-min-length': {
-    type: 'number',
-    describe: 'Minimum string length for NLU parsing to apply on message',
-    default: 10
+  'storage-excludes': {
+    type: 'array',
+    describe: 'Set keys to remove from data before keep.',
+    alias: 'x',
+    default: ['bot', 'server']
   },
   'request-timeout': {
     type: 'number',

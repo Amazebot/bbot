@@ -35,7 +35,7 @@
   "scripts": {
     "lint": "tslint -p .",
     "pretest": "yarn lint",
-    "test": "nyc mocha **/*.spec.ts",
+    "test": "nyc mocha src/**/*.spec.ts",
     "test:bail": "mocha src/**/*.spec.ts --bail",
     "test:debug": "mocha --inspect --debug-brk src/**/*.spec.ts",
     "test:watch": "nodemon --exec 'yarn test:bail --silent || true'",

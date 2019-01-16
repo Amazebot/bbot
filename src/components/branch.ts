@@ -21,6 +21,9 @@ import {
 } from './message'
 import { NLUCriteria, NLUResultsRaw } from './nlu'
 
+export enum BranchKey { listen, understand, serve, act }
+export type BranchKeys = keyof typeof BranchKey
+
 /** Branch matcher function interface, resolved value must be truthy. */
 export interface IMatcher { (input: any): Promise<any> | any }
 
@@ -362,7 +365,8 @@ export class BranchController implements IBranches {
   }
 
   /** Check if any branches have been added. */
-  exist () {
+  exist (type: BranchKeys) {
+    if (type) return (Object.keys(this[type]).length)
     if (Object.keys(this.listen).length) return true
     if (Object.keys(this.understand).length) return true
     if (Object.keys(this.serve).length) return true
@@ -371,7 +375,7 @@ export class BranchController implements IBranches {
   }
 
   /** Remove all but forced branches from collection, return remaining size. */
-  forced (collection: 'listen' | 'understand' | 'act') {
+  forced (collection: BranchKeys) {
     for (let id in this[collection]) {
       if (!this[collection][id].force) delete this[collection][id]
     }
@@ -379,19 +383,16 @@ export class BranchController implements IBranches {
   }
 
   /** Add branch to collection, for separation based on thought processes. */
-  add (
-    branch: Branch,
-    collection: 'listen' | 'understand' | 'act' | 'serve'
-  ) {
+  add (branch: Branch, collection: BranchKeys) {
     this[collection][branch.id] = branch
     return branch.id
   }
 
   /** Reset path to initial empty branch collections */
   reset () {
-    this.listen = {}
-    this.understand = {}
-    this.act = {}
+    for (let key in BranchKey) {
+      if (isNaN(Number(key))) this[key as BranchKeys] = {}
+    }
   }
 
   /** Create text branch with provided regex, action and options */

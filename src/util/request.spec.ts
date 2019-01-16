@@ -7,13 +7,16 @@ import { Request } from './request'
 
 const request = new Request()
 
+// import { debug } from '../test/utils'
+// debug() // 👈 route logs to console for more informative tests
+
 describe('[request]', () => {
   before(() => {
     server.load()
     server.router.get('/pass', (ctx) => ctx.body = 'success')
     server.router.get('/json', (ctx) => ctx.body = { id: '1' })
     server.router.get('/data', (ctx) => ctx.body = { data: ctx.query })
-    server.router.post('/data', (ctx) => ctx.body = { data: ctx.body })
+    server.router.post('/data', (ctx) => ctx.body = { data: ctx.request.body })
     server.router.get('/fail', (ctx) => ctx.throw('failure'))
     return server.start()
   })

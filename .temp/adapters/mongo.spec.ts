@@ -17,8 +17,8 @@ const testMongo = 'mongodb://127.0.0.1:27017/' + testDB
 const testCollection = 'brain-testing'
 const testData = {
   users: {
-    'test-user-1': users.create({ id: 'test-user-1' }),
-    'test-user-2': users.create({ id: 'test-user-2' })
+    'mock-user-1': users.create({ id: 'mock-user-1' }),
+    'mock-user-2': users.create({ id: 'mock-user-2' })
   },
   private: {
     'last-respond-time': Date.parse('01 Jun 2018 01:30:00 GMT'),
@@ -106,11 +106,11 @@ describe('[adapter-mongo]', () => {
     beforeEach(() => adapter.saveMemory(testData))
     it('loads each memory back to sub-collections', async () => {
       const data = await adapter.loadMemory()
-      expect(data.users['test-user-1'].id).to.eql(testData.users['test-user-1'].id)
+      expect(data.users['mock-user-1'].id).to.eql(testData.users['mock-user-1'].id)
     })
     it('loads each value with its original type', async () => {
       const data = await adapter.loadMemory()
-      expect(data.users['test-user-1']).to.be.instanceof(User)
+      expect(data.users['mock-user-1']).to.be.instanceof(User)
     })
   })
   describe('.keep', () => {

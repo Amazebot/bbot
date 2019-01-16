@@ -3,45 +3,24 @@ import * as sinon from 'sinon'
 import { expect } from 'chai'
 
 import config from '../util/config'
-import logger from '../util/logger'
 import { users } from './user'
 import { messages, CatchAllMessage, ServerMessage } from './message'
 import { branches as globalBranches, CustomBranch } from './branch'
-import { NLUResult } from './nlu'
 import { State } from './state'
-import { Dialogue } from './dialogue'
+import { dialogues, Dialogue } from './dialogue'
 import { IContext } from './server'
 import { envelopes } from './envelope'
 import { middlewares, Middleware } from './middleware'
-import { adapters, abstracts } from './adapter'
+import { adapters } from './adapter'
 import { memory } from './memory'
+import { store } from './store'
 import { Thought, Thoughts, ThoughtController } from './thought'
 
-logger.on('data', (data) => console.log(data.message)) // 👈 debug logger
+import * as mocks from '../test/mocks'
+import { delay /*, debug*/ } from '../test/utils'
+const message = mocks.textMessage()
 
-import bBot from '../bot'
-
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
-class MockMessenger extends abstracts.MessageAdapter {
-  name = 'mock-messenger'
-  async dispatch () { return }
-  async start () { return }
-  async shutdown () { return }
-}
-
-class MockNLU extends abstracts.NLUAdapter {
-  name = 'mock-nlu'
-  async process () {
-    return {
-      intent: [{ id: 'test', score: 1 }],
-      entities: [{ id: 'testing' }],
-      language: [{ id: 'en' }]
-    }
-  }
-  async start () { return }
-  async shutdown () { return }
-}
+// debug() // 👈 route logs to console for more informative tests
 
 const stubThoughtProcesses = (thoughts: Thoughts) => {
   const processes: { [key: string]: sinon.SinonStub } = {} // for sequence stubs
@@ -51,31 +30,22 @@ const stubThoughtProcesses = (thoughts: Thoughts) => {
   return processes
 }
 
-class MockStorage extends abstracts.StorageAdapter {
-  name = 'mock-storage'
-  async start () { return }
-  async shutdown () { return }
-  async saveMemory () { return }
-  async loadMemory () { return }
-  async keep () { return }
-  async find () { return }
-  async findOne () { return }
-  async lose () { return }
-}
+let mockMessage: mocks.MockMessageAdapterStub
+let mockNLU: mocks.MockNLUAdapterStub
+let mockStorage: mocks.MockStorageAdapterStub
 
-const message = messages.text(
-  users.create({ id: 'test-user' }),
-  `Where there a foo, there's a bar. And with you, there's always a bar.`
-)
-
-describe.only('[thought]', () => {
+describe('[thought]', () => {
   beforeEach(async () => {
+    mockMessage = mocks.stubMessageAdapter()
+    mockNLU = mocks.stubNLUAdapter()
+    mockStorage = mocks.stubStorageAdapter()
     globalBranches.reset()
     middlewares.unloadAll()
     adapters.unloadAll()
-    adapters.loaded.message = new MockMessenger(bBot)
-    adapters.loaded.nlu = new MockNLU(bBot)
-    adapters.loaded.storage = new MockStorage(bBot)
+    dialogues.reset()
+    adapters.loaded.message = mockMessage
+    adapters.loaded.nlu = mockNLU
+    adapters.loaded.storage = mockStorage
   })
   describe('Thought', () => {
     describe('constructor', () => {
@@ -282,7 +252,6 @@ describe.only('[thought]', () => {
       })
     })
     describe('.start', () => {
-      beforeEach(() => globalBranches.reset())
       context('"receive"', () => {
         it('initiating sequence added to state', async () => {
           const b = await new Thoughts(new State({ message })).start('receive')
@@ -402,7 +371,8 @@ describe.only('[thought]', () => {
         })
         it('timestamps all actioned processes', async () => {
           const thoughts = new Thoughts(new State({ message }))
-          await thoughts.b.respond('test')
+          globalBranches.custom(() => true, () => null)
+          thoughts.b.envelope.compose('test')
           const b = await thoughts.start('dispatch')
           expect(b.processed).to.have.all.keys(
             'respond',
@@ -414,19 +384,19 @@ describe.only('[thought]', () => {
     describe('.processes', () => {
       describe('.hear.action', () => {
         context('on success', () => {
-          it('ignores state', () => {
-            const b = new State({ message })
-            const thoughts = new Thoughts(b)
-            thoughts.processes.hear.action(true)
-            expect(b.exit).to.equal(true)
-          })
-        })
-        context('on fail', () => {
           it('continues with state', () => {
             const b = new State({ message })
             const thoughts = new Thoughts(b)
             thoughts.processes.hear.action(true)
             expect(b.exit).to.equal(undefined)
+          })
+        })
+        context('on fail', () => {
+          it('finishes with state', () => {
+            const b = new State({ message })
+            const thoughts = new Thoughts(b)
+            thoughts.processes.hear.action(false)
+            expect(b.done).to.equal(true)
           })
         })
       })
@@ -437,7 +407,7 @@ describe.only('[thought]', () => {
             globalBranches.customNLU(() => true, () => null)
             const thoughts = new Thoughts(new State({ message }))
             thoughts.processes.listen.action(true)
-            expect(thoughts.branches.understand).to.have.lengthOf(1)
+            expect(Object.keys(thoughts.branches.understand)).to.have.lengthOf(1)
           })
         })
         context('on fail', () => {
@@ -446,7 +416,7 @@ describe.only('[thought]', () => {
             globalBranches.customNLU(() => true, () => null)
             const thoughts = new Thoughts(new State({ message }))
             await thoughts.processes.listen.action(false)
-            expect(globalBranches.understand).to.have.lengthOf(2)
+            expect(Object.keys(globalBranches.understand)).to.have.lengthOf(2)
           })
         })
       })
@@ -478,28 +448,32 @@ describe.only('[thought]', () => {
         })
         it('true passes message to NLU adapter', async () => {
           const thoughts = new Thoughts(new State({ message }))
-          const stub = sinon.stub(adapters.loaded.nlu!, 'process')
           const valid = await thoughts.processes.understand.validate()
           expect(valid).to.equal(true)
-          sinon.assert.calledWithExactly(stub, message)
+          sinon.assert.calledWithExactly(mockNLU.process, message)
         })
         it('true NLU result added to message', async () => {
           const thoughts = new Thoughts(new State({ message }))
-          adapters.loaded.nlu!.process = async () => {
-            return { intent: new NLUResult().add({ id: 'test' }) }
-          }
           const valid = await thoughts.processes.understand.validate()
           expect(valid).to.equal(true)
-          expect(thoughts.b.message.nlu!.results.intent).to.eql([{ id: 'test' }])
+          expect(thoughts.b.message.nlu!.results).to.eql(mocks.nlu)
         })
       })
       describe('.act.validate', () => {
         it('false if branch matched', async () => {
-          const thoughts = new Thoughts(new State({ message, matched: true }))
+          globalBranches.catchAll(() => null)
+          const thoughts = new Thoughts(new State({ message }))
+          thoughts.b.matching = [new CustomBranch(() => true, () => null)]
+          const valid = await thoughts.processes.act.validate()
+          expect(valid).to.equal(false)
+        })
+        it('false if no catch all branches', async () => {
+          const thoughts = new Thoughts(new State({ message }))
           const valid = await thoughts.processes.act.validate()
           expect(valid).to.equal(false)
         })
         it('true replaces message with catch all', async () => {
+          globalBranches.catchAll(() => null)
           const thoughts = new Thoughts(new State({ message }))
           const valid = await thoughts.processes.act.validate()
           expect(valid).to.equal(true)
@@ -515,14 +489,15 @@ describe.only('[thought]', () => {
         it('false without message adapter', async () => {
           adapters.loaded.message = undefined
           const thoughts = new Thoughts(new State({ message }))
-          await thoughts.b.respond('test')
+          thoughts.b.envelope.compose('test')
           const valid = await thoughts.processes.respond.validate()
           expect(valid).to.equal(false)
         })
         it('true updates envelope with matched branch ID', async () => {
-          globalBranches.custom(() => true, (b) => b.respond('test'), { id: 'test' })
+          globalBranches.custom(() => false, () => null)
           const thoughts = new Thoughts(new State({ message }))
-          await thoughts.b.respond('test')
+          thoughts.b.envelope.compose('test')
+          thoughts.b.matching = [new CustomBranch(() => true, () => null, { id: 'test' })]
           await thoughts.processes.listen.process()
           const valid = await thoughts.processes.respond.validate()
           expect(valid).to.equal(true)
@@ -532,36 +507,37 @@ describe.only('[thought]', () => {
       describe('.respond.action', () => {
         context('on success', () => {
           it('dispatches envelope to message adapter', async () => {
-            const spy = sinon.spy(adapters.loaded.message!.dispatch)
             const thoughts = new Thoughts(new State({ message }))
-            await thoughts.b.respond('test')
+            const envelope = thoughts.b.envelope.compose('test')
             await thoughts.processes.respond.action(true)
-            sinon.assert.calledWithExactly(spy, thoughts.b.envelope)
+            sinon.assert.calledWithExactly(mockMessage.dispatch, envelope)
           })
         })
       })
       describe('.remember.validate', () => {
         it('remembers user when branch matched', async () => {
-          globalBranches.custom(() => true, () => null)
           memory.users = {}
           const thoughts = new Thoughts(new State({ message }))
+          thoughts.b.matching = [new CustomBranch(() => true, () => null)]
           await thoughts.processes.remember.validate()
           expect(memory.users[message.user.id]).to.eql(message.user)
         })
         it('false if no adapter', async () => {
           adapters.loaded.storage = undefined
-          const thoughts = new Thoughts(new State({ message, matched: true }))
-          const valid = await thoughts.processes.understand.validate()
+          const thoughts = new Thoughts(new State({ message }))
+          thoughts.b.matching = [new CustomBranch(() => true, () => null)]
+          const valid = await thoughts.processes.remember.validate()
           expect(valid).to.equal(false)
         })
       })
       describe('.remember.action', () => {
         context('on success', () => {
-          it('keeps state in storage adapter', async () => {
-            const spy = sinon.spy(adapters.loaded.storage!.keep)
+          it('keeps state in memory store', async () => {
+            const spy = sinon.stub(store, 'keep')
             const thoughts = new Thoughts(new State({ message }))
             await thoughts.processes.remember.action(true)
-            sinon.assert.calledWithExactly(spy, thoughts.b)
+            sinon.assert.calledWithExactly(spy, 'states', thoughts.b)
+            spy.restore()
           })
         })
       })
@@ -575,6 +551,8 @@ describe.only('[thought]', () => {
         expect(b.message).to.eql(message)
       })
       it('initiates receive thought process', async () => {
+        globalBranches.custom(() => true, () => null)
+        globalBranches.catchAll(() => null, { force: true })
         const thoughts = new ThoughtController()
         const b = await thoughts.receive(message)
         expect(b.processed).to.have.keys('hear', 'listen', 'act', 'remember')
@@ -591,7 +569,7 @@ describe.only('[thought]', () => {
     describe('.serve', () => {
       it('creates state for message', async () => {
         const message = new ServerMessage({
-          userId: 'test-user',
+          userId: 'mock-user',
           data: { foo: 'bar' }
         })
         const thoughts = new ThoughtController()
@@ -599,8 +577,10 @@ describe.only('[thought]', () => {
         expect(b.message).to.eql(message)
       })
       it('initiates serve thought process', async () => {
+        globalBranches.customServer(() => true, () => null)
+        globalBranches.catchAll(() => null, { force: true })
         const message = new ServerMessage({
-          userId: 'test-user',
+          userId: 'mock-user',
           data: { foo: 'bar' }
         })
         const thoughts = new ThoughtController()
@@ -609,29 +589,32 @@ describe.only('[thought]', () => {
       })
       it('use branches from dialogue if user engaged', async () => {
         const message = new ServerMessage({
-          userId: 'test-user',
+          userId: 'mock-user',
           data: { foo: 'bar' }
         })
         const dlg = new Dialogue()
         await dlg.open(new State({ message }))
-        dlg.branches.custom(() => true, () => null)
+        const bId = dlg.branches.customServer(() => true, () => null)
+        const branch = dlg.branches.serve[bId]
         const thoughts = new ThoughtController()
         const b = await thoughts.serve(message, {} as IContext)
-        expect(b.branches).to.eql(dlg.branches)
+        expect(b.matchingBranch).to.eql(branch)
       })
     })
     describe('.respond', () => {
       it('initiates respond thought process', async () => {
         const thoughts = new ThoughtController()
-        const b = await thoughts.receive(message)
-        expect(b.processed).to.have.keys('hear', 'listen', 'act', 'remember')
+        const b = new State({ message })
+        b.envelope.compose('test')
+        await thoughts.respond(b)
+        expect(b.processed).to.have.keys('respond')
       })
     })
     describe('.dispatch', () => {
       it('initiates respond thought process', async () => {
         const thoughts = new ThoughtController()
         const b = await thoughts.dispatch(envelopes.create())
-        expect(b.processed).to.have.keys('hear', 'listen', 'act', 'remember')
+        expect(b.processed).to.have.keys('respond', 'remember')
       })
     })
   })

@@ -7,32 +7,24 @@ import adapters, { abstracts } from './adapter'
 import bBot from '..'
 import { ShellAdapter } from '../adapters/shell'
 
-/** Mock Adapter class has methods to imitate all different types */
-class MockAdapter extends abstracts.Adapter {
-  name = 'mock-adapter'
-  async start () { /* mock start */ }
-  async shutdown () { /* mock shutdown */ }
-  async findOne () { /* mock findOne */ }
-  async find () { /* mock find */ }
-  async keep () { /* mock keep */ }
-  async lose () { /* mock lose */ }
-  async loadMemory () { /* mock loadMemory */ }
-  async saveMemory () { /* mock saveMemory */ }
-  async process () { return {} }
-}
-const mockAdapter = new MockAdapter(bBot)
-export const use = sinon.spy(() => mockAdapter) // exported to test as module
+import * as mocks from '../test/mocks'
+let stubStorage: mocks.MockStorageAdapterStub
+let stubNLU: mocks.MockNLUAdapterStub
+
 const stubs: { [key: string]: sinon.SinonStub } = {}
 
 describe('[adapter]', () => {
   beforeEach(() => {
     for (let type of adapters.types) config.set(`${type}-adapter`, null)
     adapters.unloadAll()
-    use.resetHistory()
+    stubStorage = mocks.stubStorageAdapter()
+    stubNLU = mocks.stubNLUAdapter()
+    mocks.use.resetHistory()
   })
+  after(() => mocks.use.resetHistory())
   describe('.isAdapter', () => {
     it('returns true for adapter instances', () => {
-      expect(adapters.isAdapter(mockAdapter)).to.equal(true)
+      expect(adapters.isAdapter(mocks.mockAdapter())).to.equal(true)
     })
     it('returns false if adapter instance not implemented properly', () => {
       expect(adapters.isAdapter({
@@ -51,7 +43,7 @@ describe('[adapter]', () => {
   })
   describe('.fromPath', () => {
     it('loads adapter exported at path', () => {
-      const test = adapters.fromPath('./components/adapter.spec')
+      const test = adapters.fromPath('./test/mocks')
       expect(test.use(bBot)).to.be.an.instanceof(abstracts.Adapter)
     })
     it('loads internal adapters at path', () => {
@@ -62,7 +54,10 @@ describe('[adapter]', () => {
   describe('.load', () => {
     before(() => {
       stubs.fromModule = sinon.stub(adapters, 'fromModule')
-      stubs.fromPath = sinon.stub(adapters, 'fromPath').returns({ use })
+      stubs.fromPath = sinon.stub(adapters, 'fromPath')
+      stubs.fromModule.withArgs('good-name').returns({ use: mocks.use })
+      stubs.fromModule.withArgs('bad-name').returns(undefined)
+      stubs.fromPath.returns({ use: mocks.use })
     })
     beforeEach(() => {
       stubs.fromModule.resetHistory()
@@ -73,7 +68,7 @@ describe('[adapter]', () => {
       stubs.fromPath.restore()
     })
     it('loads from module if not given a path', () => {
-      adapters.load('name')
+      adapters.load('good-name')
       sinon.assert.calledOnce(stubs.fromModule)
     })
     it('does not attempt load from module if path given', () => {
@@ -85,9 +80,9 @@ describe('[adapter]', () => {
       sinon.assert.calledOnce(stubs.fromPath)
     })
     it('attempts to use name as path if module loading fails', () => {
-      adapters.load('name')
+      adapters.load('bad-name')
       sinon.assert.calledOnce(stubs.fromModule)
-      sinon.assert.calledWithMatch(stubs.fromPath, /\/name/)
+      sinon.assert.calledWithMatch(stubs.fromPath, /\/bad-name/)
     })
   })
   describe('.loadAll', () => {
@@ -99,11 +94,11 @@ describe('[adapter]', () => {
       expect(() => adapters.loadAll()).to.throw()
     })
     it('loads all configured adapters at valid path', () => {
-      config.set('messageAdapter', './components/adapter.spec')
-      config.set('storageAdapter', './components/adapter.spec')
-      config.set('nluAdapter', './components/adapter.spec')
+      config.set('messageAdapter', './test/mocks')
+      config.set('storageAdapter', './test/mocks')
+      config.set('nluAdapter', './test/mocks')
       adapters.loadAll()
-      sinon.assert.calledThrice(use)
+      sinon.assert.calledThrice(mocks.use)
     })
     it('loads shell message adapter by default', () => {
       config.reset()
@@ -112,39 +107,39 @@ describe('[adapter]', () => {
       expect(adapters.loaded.message!.name).to.equal('shell-message-adapter')
     })
     it('keeps loaded adapters in collection', () => {
-      config.set('messageAdapter', './components/adapter.spec')
+      config.set('messageAdapter', './test/mocks')
       adapters.loadAll()
       expect(adapters.loaded.message).to.be.instanceof(abstracts.Adapter)
       expect(typeof adapters.loaded.nlu).to.equal('undefined')
     })
   })
   describe('.startAll', () => {
+    beforeEach(() => {
+      adapters.loaded.storage = stubStorage
+      adapters.loaded.nlu = stubNLU
+    })
     it('starts all loaded adapters', async () => {
-      adapters.loaded.storage = new MockAdapter(bBot)
-      adapters.loaded.nlu = new MockAdapter(bBot)
-      const startStorage = sinon.spy(adapters.loaded.storage, 'start')
-      const startNLU = sinon.spy(adapters.loaded.nlu, 'start')
       await adapters.startAll()
-      sinon.assert.calledOnce(startStorage)
-      sinon.assert.calledOnce(startNLU)
+      sinon.assert.calledOnce(stubStorage.start)
+      sinon.assert.calledOnce(stubNLU.start)
     })
   })
   describe('.shutdownAll', () => {
+    beforeEach(() => {
+      adapters.loaded.storage = stubStorage
+      adapters.loaded.nlu = stubNLU
+    })
     it('shuts down all loaded adapters', async () => {
-      adapters.loaded.storage = new MockAdapter(bBot)
-      adapters.loaded.nlu = new MockAdapter(bBot)
-      const shutdownStorage = sinon.spy(adapters.loaded.storage, 'shutdown')
-      const shutdownNLU = sinon.spy(adapters.loaded.nlu, 'shutdown')
       await adapters.shutdownAll()
-      sinon.assert.calledOnce(shutdownStorage)
-      sinon.assert.calledOnce(shutdownNLU)
+      sinon.assert.calledOnce(stubStorage.shutdown)
+      sinon.assert.calledOnce(stubNLU.shutdown)
     })
   })
   describe('.unloadAll', () => {
     it('clears all configured adapters', async () => {
-      adapters.register('message', './components/adapter.spec')
-      adapters.register('nlu', './components/adapter.spec')
-      adapters.register('storage', './components/adapter.spec')
+      adapters.register('message', './test/mocks')
+      adapters.register('nlu', './test/mocks')
+      adapters.register('storage', './test/mocks')
       adapters.unloadAll()
       expect(adapters.loaded).to.eql({})
     })

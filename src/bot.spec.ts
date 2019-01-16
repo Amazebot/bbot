@@ -15,6 +15,7 @@ class MessageAdapter extends abstracts.MessageAdapter {
   async shutdown () { /* mock shutdown */ }
   async dispatch () { /* mock dispatch */ }
 }
+
 export const use = sinon.spy((bot: Bot) => new MessageAdapter(bot))
 
 let bot: Bot

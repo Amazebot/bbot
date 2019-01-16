@@ -12,7 +12,7 @@ import { Bot } from '../bot'
 
 let message: TextMessage
 let stubs: { [key: string]: sinon.SinonStub }
-const uId = 'test-user'
+const uId = 'mock-user'
 
 describe('[state]', () => {
   before(() => {

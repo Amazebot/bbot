@@ -181,7 +181,7 @@ export class Thoughts {
 
     // Ignore all further branches if hear process interrupted
     this.processes.hear.action = async (success: boolean) => {
-      if (!success) b.finish()
+      if (!success) this.b.finish()
     }
 
     // Only processed forced understand branches if listen branches matched
@@ -193,22 +193,22 @@ export class Thoughts {
     this.processes.understand.validate = async () => {
       if (!adapters.loaded.nlu) {
         logger.debug(`[thought] skip understand, no nlu adapter`)
-      } else if (!(b.message instanceof TextMessage)) {
+      } else if (!(this.b.message instanceof TextMessage)) {
         logger.debug(`[thought] skip understand, not a text message`)
-      } else if (b.message.toString().trim() === '') {
+      } else if (this.b.message.toString().trim() === '') {
         logger.debug(`[thought] skip understand, message text is empty`)
       } else if (
         config.get('nlu-min-length') &&
-        b.message.toString().trim().length < config.get('nlu-min-length')
+        this.b.message.toString().trim().length < config.get('nlu-min-length')
       ) {
         logger.debug(`[thought] skip understand, message text too short`)
       } else {
-        const nluResultsRaw = await adapters.loaded.nlu.process(b.message)
+        const nluResultsRaw = await adapters.loaded.nlu.process(this.b.message)
         if (!nluResultsRaw || Object.keys(nluResultsRaw).length === 0) {
           logger.error(`[thought] nlu processing returned empty`)
         } else {
-          b.message.nlu = new NLU().addResults(nluResultsRaw)
-          logger.info(`[thought] nlu processed ${b.message.nlu.printResults()}`)
+          this.b.message.nlu = new NLU().addResults(nluResultsRaw)
+          logger.info(`[thought] nlu processed ${this.b.message.nlu.printResults()}`)
           return true
         }
       }
@@ -217,26 +217,38 @@ export class Thoughts {
 
     // Wrap message in catch all before processing act branches
     this.processes.act.validate = async () => {
-      if (b.matched) this.branches.forced('act')
-      if (b.message) b.message = messages.catchAll(b.message)
+      if (this.b.matched) {
+        logger.debug(`[thought] found match, clearing unforced catch branches`)
+        this.branches.forced('act')
+      }
+      if (!this.branches.exist('act')) {
+        logger.debug(`[thought] no catch branches remain, ending processing`)
+        return false
+      }
+      if (this.b.message) {
+        if (this.b.matched) logger.debug(`[thought] message matched, processing forced catch`)
+        else logger.debug(`[thought] message unmatched, replacing with catch message type`)
+        this.b.message = messages.catchAll(this.b.message)
+      }
       return true
     }
 
     // Connect response envelope to last branch before processing respond
     this.processes.respond.validate = async () => {
       if (!adapters.loaded.message) {
-        throw new Error('[thought] message adapter not found')
+        logger.error(`[thought] message adapter not found`)
+        return false
       }
-      const envelope = b.pendingEnvelope()
+      const envelope = this.b.pendingEnvelope()
       if (!envelope) return false
-      if (b.matchingBranch) envelope.branchId = b.matchingBranch.id
+      if (this.b.matchingBranch) envelope.branchId = this.b.matchingBranch.id
       return true
     }
 
     // Don't respond unless middleware completed (timestamped) with envelope
     this.processes.respond.action = async (success: boolean) => {
       if (success) {
-        const envelope = b.respondEnvelope()
+        const envelope = this.b.respondEnvelope()
         await adapters.loaded.message!.dispatch(envelope)
         envelope.responded = Date.now()
       }
@@ -244,12 +256,13 @@ export class Thoughts {
 
     // Don't remember states with unmatched messages
     this.processes.remember.validate = async () => {
-      if (b.matched) users.byId(b.message.user.id, b.message.user)
-      if (!adapters.loaded.storage) {
-        logger.debug(`[thought] skip remember, no storage adapter`)
-      } else if (b.dispatchedEnvelope() && !b.matched) {
+      if (this.b.sequence === 'respond') {
         logger.debug(`[thought] skip remember on respond`)
+      } else if (!adapters.loaded.storage) {
+        logger.debug(`[thought] skip remember, no storage adapter`)
       } else {
+        logger.debug(`[thought] remembering ${this.b.matched ? 'matched state and user' : 'unmatched state'}`)
+        if (this.b.matched) users.byId(this.b.message.user.id, this.b.message.user)
         return true
       }
       return false
@@ -257,7 +270,7 @@ export class Thoughts {
 
     // Don't remember unless middleware completed (timestamped)
     this.processes.remember.action = async (success) => {
-      if (success) await store.keep('states', b)
+      if (success) await store.keep('states', this.b)
     }
   }
 

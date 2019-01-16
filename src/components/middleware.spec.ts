@@ -8,7 +8,7 @@ import { State } from './state'
 import { middlewares, Middleware, IPiece, IPieceDone } from './middleware'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-const message = new TextMessage(users.create({ id: 'test-user' }), 'foo')
+const message = new TextMessage(users.create({ id: 'mock-user' }), 'foo')
 
 describe('[middleware]', () => {
   describe('Middleware', () => {
