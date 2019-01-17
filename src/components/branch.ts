@@ -365,7 +365,7 @@ export class BranchController implements IBranches {
   }
 
   /** Check if any branches have been added. */
-  exist (type: BranchKeys) {
+  exist (type?: BranchKeys) {
     if (type) return (Object.keys(this[type]).length)
     if (Object.keys(this.listen).length) return true
     if (Object.keys(this.understand).length) return true

@@ -149,7 +149,6 @@ export class AdapterController {
 
   /** Require an adapter from a local file path. */
   fromPath (path: string) {
-    path // ?
     logger.debug(`[adapter] loading adapter by path: ${path}`)
     let sourcePath = 'src'
     let distPath = 'dist'
