@@ -1,3 +1,6 @@
+# Compiled source
+lib/
+
 # Logs
 *.log
 npm-debug.log*

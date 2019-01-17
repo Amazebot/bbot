@@ -24,6 +24,7 @@ describe('[adapter-shell]', () => {
     })
     it('accepts changes in bot settings before startup', async () => {
       const shell = shellAdapter.use(bBot)
+      shell.debug = true
       shell.bot.config.set('name', 'shelby')
       bBot.adapters.loaded.message = shell
       await bBot.start()
@@ -32,6 +33,7 @@ describe('[adapter-shell]', () => {
     })
     it('accepts changes in bot settings after startup', async () => {
       const shell = shellAdapter.use(bBot)
+      shell.debug = true
       bBot.adapters.loaded.message = shell
       shell.bot.config.set('name', 'not-shelby')
       await bBot.start()

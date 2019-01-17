@@ -20,6 +20,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const setImmediatePromise = promisify(setImmediate)
 
 describe('[dialogue]', () => {
+  after(() => config.reset())
   describe('constructor', () => {
     it('inherits bot configs', () => {
       config.set('dialogue-timeout', 999)

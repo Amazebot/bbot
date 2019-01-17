@@ -1,6 +1,0 @@
-{
-  "verbose": true,
-  "ignoreRoot": [".git"],
-  "watch": ["src/**/*.ts"],
-  "ext": "ts json"
-}

@@ -1,4 +1,10 @@
 {
+  "check-coverage": false,
+  "per-file": true,
+  "lines": 80,
+  "statements": 80,
+  "functions": 80,
+  "branches": 80,
   "extension": [
     ".ts"
   ],
@@ -6,13 +12,12 @@
     "ts-node/register"
   ],
   "exclude": [
-    "test/",
-    "src/index.ts",
-    "**/*.d.ts",
+    "**/test/**",
+    "**/index.ts",
     "**/*.spec.ts"
   ],
   "reporter": [
     "lcovonly",
-    "text"
+    "text-summary"
   ]
 }

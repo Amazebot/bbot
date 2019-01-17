@@ -1,0 +1,13 @@
+{
+  "packages": ["packages/*"],
+  "npmClient": "yarn",
+  "command": {
+    "publish": {
+      "push": false,
+      "conventionalCommits": true,
+      "message": "chore: publish",
+      "ignoreChanges": ["*.md", "*.spec.ts"]
+    }
+  },
+  "version": "1.4.0"
+}

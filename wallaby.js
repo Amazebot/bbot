@@ -1,12 +1,18 @@
 module.exports = function () {
+  process.env.NODE_ENV = 'test'
   return {
-    name: 'bbot',
+    name: '@amazebot/bbot',
     files: [
-      'src/**/*.ts',
-      { pattern: 'src/**/*.spec.ts', ignore: true }
+      { pattern: 'packages/**/src/**/*.ts', load: true },
+      { pattern: 'packages/**/src/**/*.spec.ts', ignore: true },
+      { pattern: 'packages/**/node_modules/**', ignore: true }
     ],
     tests: [
-      'src/**/*.spec.ts'
+      { pattern: 'packages/**/src/**/*.spec.ts', load: true },
+      { pattern: 'packages/**/node_modules/**', ignore: true }
+    ],
+    filesWithNoCoverageCalculated: [
+      'packages/**/src/index.ts'
     ],
     env: {
       type: 'node'

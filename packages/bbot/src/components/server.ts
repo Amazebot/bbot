@@ -138,7 +138,10 @@ export class ServerController {
 
   /** Close server */
   shutdown () {
-    if (this._server) this._server.close()
+    if (this._server) {
+      this._server.close()
+      this.app.removeAllListeners()
+    }
   }
 
   /** Get the root URL being served */

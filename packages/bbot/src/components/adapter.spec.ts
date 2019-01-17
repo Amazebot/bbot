@@ -90,13 +90,13 @@ describe('[adapter]', () => {
       expect(() => adapters.loadAll()).to.not.throw()
     })
     it('throws if bad path in config for adapter', () => {
-      config.set('messageAdapter', 'foo')
+      config.set('message-adapter', 'foo')
       expect(() => adapters.loadAll()).to.throw()
     })
     it('loads all configured adapters at valid path', () => {
-      config.set('messageAdapter', './test/mocks')
-      config.set('storageAdapter', './test/mocks')
-      config.set('nluAdapter', './test/mocks')
+      config.set('message-adapter', './test/mocks')
+      config.set('storage-adapter', './test/mocks')
+      config.set('nlu-adapter', './test/mocks')
       adapters.loadAll()
       sinon.assert.calledThrice(mocks.use)
     })
@@ -107,7 +107,7 @@ describe('[adapter]', () => {
       expect(adapters.loaded.message!.name).to.equal('shell-message-adapter')
     })
     it('keeps loaded adapters in collection', () => {
-      config.set('messageAdapter', './test/mocks')
+      config.set('message-adapter', './test/mocks')
       adapters.loadAll()
       expect(adapters.loaded.message).to.be.instanceof(abstracts.Adapter)
       expect(typeof adapters.loaded.nlu).to.equal('undefined')

@@ -150,13 +150,18 @@ export class AdapterController {
   /** Require an adapter from a local file path. */
   fromPath (path: string) {
     logger.debug(`[adapter] loading adapter by path: ${path}`)
-    let sourcePath = 'src'
-    let distPath = 'dist'
-    let modulePath = 'node_modules/bbot/dist'
+    let modulePath = 'node_modules/bbot/lib'
     let currentPath = process.cwd()
     let currentModule = resolve(currentPath, modulePath)
     let resolver = {
-      paths: [ sourcePath, distPath, currentPath, currentModule ]
+      paths: [
+        currentPath,
+        currentModule,
+        'src',
+        'lib',
+        'packages/bbot/src',
+        'packages/bbot/lib'
+      ]
     }
     if (require.main) {
       resolver.paths = resolver.paths.concat(...require.main.paths)

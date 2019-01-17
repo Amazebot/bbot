@@ -36,9 +36,16 @@
       "sourceMaps": true,
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/.bin/_mocha",
-      "args": ["${relativeFile}"],
+      "args": [
+        "--opts",
+        "${workspaceRoot}/mocha.opts",
+        "--reporter",
+        "spec",
+        "${relativeFile}",
+      ],
       "cwd": "${workspaceRoot}",
-      "protocol": "inspector"
+      "protocol": "inspector",
+      "console": "integratedTerminal"
     }
   ]
 }

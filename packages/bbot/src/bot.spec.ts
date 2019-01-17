@@ -1,34 +1,17 @@
 import 'mocha'
 import { expect } from 'chai'
 import * as sinon from 'sinon'
-import { EventEmitter } from 'events'
-
-EventEmitter.prototype.setMaxListeners(100)
-let initEnv: any
 
 import { Bot } from './bot'
-import { abstracts } from './components/adapter'
-
-class MessageAdapter extends abstracts.MessageAdapter {
-  name = 'mock-adapter'
-  async start () { /* mock start */ }
-  async shutdown () { /* mock shutdown */ }
-  async dispatch () { /* mock dispatch */ }
-}
-
-export const use = sinon.spy((bot: Bot) => new MessageAdapter(bot))
-
 let bot: Bot
 
+import * as mocks from './test/mocks'
+
 describe('[bot]', () => {
-  before(() => {
-    initEnv = process.env
-    process.env.BOT_MESSAGE_ADAPTER = './bot.spec'
-  })
   beforeEach(() => {
     bot = new Bot()
+    bot.adapters.loaded.message = mocks.messageAdapter()
   })
-  after(() => process.env = initEnv)
   describe('.load', () => {
     it('loads middleware', async () => {
       await bot.load()

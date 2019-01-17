@@ -12,6 +12,7 @@ describe('[E2E]', () => {
     await bBot.reset()
     mockAdapter = mocks.stubMessageAdapter()
     bBot.adapters.loaded.message = mockAdapter
+    mockAdapter.dispatch.resetHistory()
     await bBot.start()
   })
   it('responds from middleware', async () => {
