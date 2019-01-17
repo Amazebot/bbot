@@ -1,6 +1,9 @@
 import 'mocha'
 import { expect } from 'chai'
-import * as bot from '..'
+
+import bBot from '..'
+
+import { abstracts } from '../components/adapter'
 import * as shellAdapter from './shell'
 
 let initEnv: any
@@ -13,28 +16,28 @@ describe('[adapter-shell]', () => {
     process.env.BOT_SHELL_ROOM = 'shell'
   })
   after(() => process.env = initEnv)
-  afterEach(() => bot.reset())
+  afterEach(() => bBot.reset())
   describe('.use', () => {
     it('returns adapter instance', () => {
-      const shell = shellAdapter.use(bot)
-      expect(shell).to.be.instanceof(bot.adapter.Adapter)
+      const shell = shellAdapter.use(bBot)
+      expect(shell).to.be.instanceof(abstracts.Adapter)
     })
     it('accepts changes in bot settings before startup', async () => {
-      const shell = shellAdapter.use(bot)
-      shell.bot.settings.set('name', 'shelby')
-      bot.adapter.adapters.message = shell
-      await bot.start()
-      expect(bot.settings.get('name')).to.equal('shelby')
-      expect(shell.bot.settings.get('name')).to.equal('shelby')
+      const shell = shellAdapter.use(bBot)
+      shell.bot.config.set('name', 'shelby')
+      bBot.adapters.loaded.message = shell
+      await bBot.start()
+      expect(bBot.config.get('name')).to.equal('shelby')
+      expect(shell.bot.config.get('name')).to.equal('shelby')
     })
     it('accepts changes in bot settings after startup', async () => {
-      const shell = shellAdapter.use(bot)
-      bot.adapter.adapters.message = shell
-      shell.bot.settings.set('name', 'not-shelby')
-      await bot.start()
-      shell.bot.settings.set('name', 'shelby')
-      expect(bot.settings.get('name')).to.equal('shelby')
-      expect(shell.bot.settings.get('name')).to.equal('shelby')
+      const shell = shellAdapter.use(bBot)
+      bBot.adapters.loaded.message = shell
+      shell.bot.config.set('name', 'not-shelby')
+      await bBot.start()
+      shell.bot.config.set('name', 'shelby')
+      expect(bBot.config.get('name')).to.equal('shelby')
+      expect(shell.bot.config.get('name')).to.equal('shelby')
     })
   })
 })

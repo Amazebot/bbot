@@ -35,7 +35,7 @@
   "scripts": {
     "lint": "tslint -p .",
     "pretest": "yarn lint",
-    "test": "nyc mocha **/*.spec.ts",
+    "test": "nyc mocha src/**/*.spec.ts",
     "test:bail": "mocha src/**/*.spec.ts --bail",
     "test:debug": "mocha --inspect --debug-brk src/**/*.spec.ts",
     "test:watch": "nodemon --exec 'yarn test:bail --silent || true'",
@@ -68,7 +68,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
-    "@types/sinon": "^5.0.7",
+    "@types/sinon": "^7.0.2",
     "axios": "^0.18.0",
     "chai": "^4.2.0",
     "codecov": "^3.1.0",
@@ -79,6 +79,7 @@
     "nyc": "^13.1.0",
     "rimraf": "^2.6.2",
     "sinon": "^7.1.1",
+    "source-map-support": "^0.5.9",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "tslint-config-standard": "^8.0.1",
@@ -86,6 +87,7 @@
     "typescript": "^3.1.6"
   },
   "dependencies": {
+    "@amazebot/config": "^0.1.1",
     "@types/inquirer": "^0.0.43",
     "@types/koa": "^2.0.47",
     "@types/koa-router": "^7.0.35",
