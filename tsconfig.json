@@ -2,6 +2,7 @@
   "extends": "./tsconfig.settings.json",
   "files": [],
   "references": [
-    { "path": "packages/bbot" }
+    { "path": "packages/bbot" },
+    { "path": "packages/bbot-message-rocketchat" }
   ]
 }

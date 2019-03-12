@@ -3,6 +3,7 @@ import { promisify } from 'util'
 import config from './util/config'
 import logger from './util/logger'
 import events from './util/events'
+import request from './util/request'
 import server from './components/server'
 import memory from './components/memory'
 import middlewares from './components/middleware'
@@ -31,6 +32,7 @@ export class Bot {
   config = config
   logger = logger
   events = events
+  request = request
   server = server
   memory = memory
   users = users

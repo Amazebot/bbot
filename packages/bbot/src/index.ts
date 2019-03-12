@@ -8,6 +8,12 @@ export * from './components/message'
 export * from './components/nlu'
 export * from './components/envelope'
 
+import * as instance from './util/instance'
+import * as id from './util/id'
+
+/** Utility methods exported at root - does not reference bot instance. */
+export const util = Object.assign({}, id, instance)
+
 /** Require bot instance by default. */
 import bBot from './bot'
 export default bBot

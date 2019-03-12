@@ -49,8 +49,8 @@
     "release:next": "yarn release -- --npm-tag next",
     "release:local": "yarn release -- --registry http://localhost:4873 --skip-git",
     "rollback:local": "lerna exec -- npm unpublish --registry http://localhost:4873",
-    "local": "ts-node src/start",
-    "start": "node dist/start"
+    "local": "ts-node packages/bbot/src/start",
+    "start": "node packages/bbot/lib/start"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
