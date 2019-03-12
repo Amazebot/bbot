@@ -22,9 +22,9 @@
     }
   },
   "scripts": {
+    "ts-node": "ts-node",
     "lint": "tslint -p .",
-    "clear": "rimraf './packages/*/node_modules'",
-    "bootstrap": "lerna bootstrap",
+    "bootstrap": "rimraf './packages/*/node_modules' && lerna bootstrap",
     "pretest": "yarn bootstrap && yarn lint",
     "test": "nyc mocha ./packages/**/*.spec.ts",
     "test:debug": "mocha --inspect --debug-brk ./packages/**/*.spec.ts",

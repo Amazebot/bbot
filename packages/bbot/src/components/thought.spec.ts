@@ -16,36 +16,30 @@ import { memory } from './memory'
 import { store } from './store'
 import { Thought, Thoughts, ThoughtController } from './thought'
 
-import * as mocks from '../test/mocks'
+import * as mock from '../test/mock'
 import { delay /*, debug*/ } from '../test/utils'
-const message = mocks.textMessage()
+const message = mock.textMessage()
 
 // debug() // 👈 route logs to console for more informative tests
 
 const stubThoughtProcesses = (thoughts: Thoughts) => {
   const processes: { [key: string]: sinon.SinonStub } = {} // for sequence stubs
   for (let key of Object.keys(thoughts.processes)) {
-    processes[key] = sinon.stub(thoughts.processes[key], 'process')
+    processes[key] = sinon.stub(thoughts.processes[key], 'process' as any)
   }
   return processes
 }
 
-let mockMessage: mocks.MockMessageAdapterStub
-let mockNLU: mocks.MockNLUAdapterStub
-let mockStorage: mocks.MockStorageAdapterStub
-
 describe('[thought]', () => {
   beforeEach(async () => {
-    mockMessage = mocks.stubMessageAdapter()
-    mockNLU = mocks.stubNLUAdapter()
-    mockStorage = mocks.stubStorageAdapter()
     globalBranches.reset()
     middlewares.unloadAll()
     adapters.unloadAll()
     dialogues.reset()
-    adapters.loaded.message = mockMessage
-    adapters.loaded.nlu = mockNLU
-    adapters.loaded.storage = mockStorage
+    mock.adapters.reset()
+    adapters.loaded.message = mock.adapters.message
+    adapters.loaded.nlu = mock.adapters.nlu
+    adapters.loaded.storage = mock.adapters.storage
   })
   describe('Thought', () => {
     describe('constructor', () => {
@@ -450,13 +444,16 @@ describe('[thought]', () => {
           const thoughts = new Thoughts(new State({ message }))
           const valid = await thoughts.processes.understand.validate()
           expect(valid).to.equal(true)
-          sinon.assert.calledWithExactly(mockNLU.process, message)
+          sinon.assert.calledWithExactly(
+            (adapters.loaded.nlu!.process as sinon.SinonStub),
+            message
+          )
         })
         it('true NLU result added to message', async () => {
           const thoughts = new Thoughts(new State({ message }))
           const valid = await thoughts.processes.understand.validate()
           expect(valid).to.equal(true)
-          expect(thoughts.b.message.nlu!.results).to.eql(mocks.nlu)
+          expect(thoughts.b.message.nlu!.results).to.eql(mock.data.nlu)
         })
       })
       describe('.act.validate', () => {
@@ -510,7 +507,10 @@ describe('[thought]', () => {
             const thoughts = new Thoughts(new State({ message }))
             const envelope = thoughts.b.envelope.compose('test')
             await thoughts.processes.respond.action(true)
-            sinon.assert.calledWithExactly(mockMessage.dispatch, envelope)
+            sinon.assert.calledWithExactly(
+              (adapters.loaded.message!.dispatch as sinon.SinonStub),
+              envelope
+            )
           })
         })
       })

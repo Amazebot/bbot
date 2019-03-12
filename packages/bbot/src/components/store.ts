@@ -1,10 +1,12 @@
+/**
+ * Persistent store for non-operational data like state history.
+ * @module components/store
+ */
+
 import { convert } from '../util/instance'
 import adapters from './adapter'
 
-/**
- * Persistent store for non-operational data like state history.
- * Most methods require a storage adapter to be loaded.
- */
+/** Storage controller, methods require a storage adapter to be loaded. */
 export class StorageController {
   /** Keep serial data in collection, via adapter (converted to objects). */
   async keep (collection: string, data: any) {

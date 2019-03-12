@@ -5,12 +5,13 @@ import * as sinon from 'sinon'
 import { Bot } from './bot'
 let bot: Bot
 
-import * as mocks from './test/mocks'
+import * as mock from './test/mock'
 
 describe('[bot]', () => {
   beforeEach(() => {
     bot = new Bot()
-    bot.adapters.loaded.message = mocks.messageAdapter()
+    mock.adapters.reset()
+    bot.adapters.loaded.message = mock.adapters.message
   })
   describe('.load', () => {
     it('loads middleware', async () => {

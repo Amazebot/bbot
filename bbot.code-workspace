@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"name": "bBot mono-repo",
+			"path": "."
+		},
+		{
+			"name": "bBot core",
+			"path": "packages/bbot"
+		},
+		{
+			"name": "bBot Rocket.Chat",
+			"path": "packages/bbot-message-rocketchat"
+		}
+	],
+	"settings": {}
+}

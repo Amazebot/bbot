@@ -12,7 +12,7 @@
       "sourceMaps": true,
       "runtimeExecutable": "node",
       "program": "${workspaceFolder}/node_modules/ts-node/dist/bin.js",
-      "args": ["${workspaceFolder}/src/start.ts"],
+      "args": ["${workspaceFolder}/packages/bbot/src/start.ts"],
       "protocol": "inspector",
       "stopOnEntry": false,
       "console": "integratedTerminal"
@@ -20,7 +20,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Current .ts File",
+      "name": "Current File",
       "cwd": "${workspaceRoot}",
       "sourceMaps": true,
       "runtimeExecutable": "node",
@@ -38,12 +38,11 @@
       "program": "${workspaceRoot}/node_modules/.bin/_mocha",
       "args": [
         "--opts",
-        "${workspaceRoot}/mocha.opts",
+        "${workspaceRoot}/test/mocha.opts",
         "--reporter",
         "spec",
         "${relativeFile}",
       ],
-      "cwd": "${workspaceRoot}",
       "protocol": "inspector",
       "console": "integratedTerminal"
     }

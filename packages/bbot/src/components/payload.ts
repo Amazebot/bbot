@@ -1,9 +1,9 @@
-import { clone } from '../util/instance'
-
 /**
  * Handle storing and parsing rich message content for chat platforms.
  * @module components/payload
  */
+
+import { clone } from '../util/instance'
 
 /** Payloads add consistent and intelligent typing to rich messages. */
 export interface IPayload {
@@ -14,7 +14,7 @@ export interface IPayload {
 
 /** Generic schema for attaching image, audio or video with meta. */
 export interface IAttachment {
-  fallback: string             // Required plain-text summary of the attachment
+  fallback?: string            // Plain-text summary of the attachment
   color?: string               // Hex code (messaging platform support may vary)
   collapsed?: boolean          // Initially display as collapsed or expended
   pretext?: string             // Text that appears above the attachment block

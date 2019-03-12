@@ -151,7 +151,7 @@ describe('[state]', () => {
     })
   })
   describe('.respond', () => {
-    beforeEach(() => stubs.respond = sinon.stub(thoughts, 'respond'))
+    beforeEach(() => stubs.respond = sinon.stub(thoughts, 'respond' as any))
     afterEach(() => stubs.respond.restore())
     it('calls respond thought process with the current state', async () => {
       const b = new State({ message })

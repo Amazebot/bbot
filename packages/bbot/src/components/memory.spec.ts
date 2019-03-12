@@ -7,13 +7,13 @@ import { memory, saveInterval } from './memory'
 import { adapters } from './adapter'
 import { users } from './user'
 
-import * as mocks from '../test/mocks'
+import * as mock from '../test/mock'
 import { delay } from '../test/utils'
 
 describe('[memory]', () => {
   before(() => {
     config.set('autoSave', false)
-    adapters.loaded.storage = mocks.storageAdapter()
+    adapters.loaded.storage = mock.adapters.storage
   })
   describe('Memory', () => {
     describe('.clear', () => {

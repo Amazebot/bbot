@@ -6,11 +6,13 @@ import { users } from './user'
 import { TextMessage } from './message'
 import { State } from './state'
 import { middlewares, Middleware, IPiece, IPieceDone } from './middleware'
+import adapters from './adapter'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const message = new TextMessage(users.create({ id: 'mock-user' }), 'foo')
 
 describe('[middleware]', () => {
+  before(() => adapters.unloadAll())
   describe('Middleware', () => {
     describe('.register', () => {
       it('adds a piece to the stack', () => {
@@ -102,9 +104,7 @@ describe('[middleware]', () => {
       })
       it('rejects promise if piece throws', () => {
         const testMiddleware = new Middleware('failure')
-        const piece: IPiece = () => {
-          throw new Error('test throw')
-        }
+        const piece: IPiece = () => { throw new Error('test throw') }
         const complete = sinon.spy()
         testMiddleware.register(piece)
         return testMiddleware.execute({ message }, complete)
@@ -113,9 +113,7 @@ describe('[middleware]', () => {
       })
       it('does not execute complete function if piece throws', () => {
         const testMiddleware = new Middleware('failure')
-        const piece: IPiece = () => {
-          throw new Error('test throw')
-        }
+        const piece: IPiece = () => { throw new Error('test throw') }
         const complete = sinon.spy()
         testMiddleware.register(piece)
         return testMiddleware.execute({ message }, complete)
