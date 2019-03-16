@@ -1,5 +1,6 @@
 {
   "name": "root",
+  "version": "0.0.0",
   "description": "Mono-repo for bBot core, starter kit and adapter packages.",
   "homepage": "http://bbot.chat",
   "repository": "git@github.com:Amazebot/bbot.git",
@@ -22,6 +23,7 @@
     }
   },
   "scripts": {
+    "example": "node ./packages/bbot-examples/index.js",
     "ts-node": "ts-node",
     "lint": "tslint -p .",
     "bootstrap": "rimraf './packages/*/node_modules' && lerna bootstrap",
