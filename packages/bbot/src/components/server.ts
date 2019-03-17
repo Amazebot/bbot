@@ -99,6 +99,7 @@ export class ServerController {
 
   /** Start server listening on configured port and protocol */
   async start () {
+    if (!config.get('use-server')) return
     if (this.messageRouter) this.router.use('/message', this.messageRouter.routes())
     this.app.use(this.router.routes() as any)
     this.app.use(this.router.allowedMethods() as any)

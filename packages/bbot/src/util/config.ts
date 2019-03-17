@@ -50,7 +50,7 @@ export const config = new Config({
     type: 'string',
     describe: 'Local path or NPM package name to require as message platform adapter',
     alias: 'm',
-    default: './adapters/shell'
+    default: 'shell'
   },
   'nlu-adapter': {
     type: 'string',

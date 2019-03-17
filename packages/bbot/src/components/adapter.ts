@@ -3,7 +3,7 @@
  * @module components/adapter
  */
 
-import { resolve } from 'path'
+import { resolve, dirname } from 'path'
 
 import config from '../util/config'
 import logger from '../util/logger'
@@ -150,13 +150,16 @@ export class AdapterController {
   /** Require an adapter from a local file path. */
   fromPath (path: string) {
     logger.debug(`[adapter] loading adapter by path: ${path}`)
-    let modulePath = 'node_modules/bbot/lib'
-    let currentPath = process.cwd()
-    let currentModule = resolve(currentPath, modulePath)
-    let resolver = {
+    const currentPath = process.cwd()
+    const bBotPath = dirname(require.resolve('bbot/package.json', {
+      paths: [currentPath]
+    })) + '/lib'
+    const modulesPath = resolve(currentPath, 'node_modules/bbot/lib')
+    const resolver = {
       paths: [
+        bBotPath,
         currentPath,
-        currentModule,
+        modulesPath,
         'src',
         'lib',
         'packages/bbot/src',
