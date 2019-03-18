@@ -147,13 +147,21 @@ export class AdapterController {
     }
   }
 
-  /** Require an adapter from a local file path. */
+  /**
+   * Require an adapter from a local file path.
+   * Tries a variety of possible locations relative to the current node process,
+   * to allow flexibility for running as or with a dependency, or in sand-boxed
+   * test environment (like Wallaby.js).
+   */
   fromPath (path: string) {
     logger.debug(`[adapter] loading adapter by path: ${path}`)
     const currentPath = process.cwd()
-    const bBotPath = dirname(require.resolve('bbot/package.json', {
-      paths: [currentPath]
-    })) + '/lib'
+    let bBotPath = dirname(__dirname) + '/lib'
+    try {
+      bBotPath = dirname(require.resolve('bbot/package.json', {
+        paths: [currentPath]
+      }) + '/lib')
+    } catch (err) { /* ignore */ }
     const modulesPath = resolve(currentPath, 'node_modules/bbot/lib')
     const resolver = {
       paths: [
