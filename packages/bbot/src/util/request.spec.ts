@@ -13,13 +13,34 @@ const request = new Request()
 describe('[request]', () => {
   before(() => {
     server.load()
-    server.router.get('/pass', (ctx) => ctx.body = 'success')
-    server.router.post('/pass', (ctx) => ctx.body = 'success')
-    server.router.get('/json', (ctx) => ctx.body = { id: '1' })
-    server.router.get('/data', (ctx) => ctx.body = { data: ctx.query })
-    server.router.post('/data', (ctx) => ctx.body = { data: ctx.request.body })
-    server.router.post('/empty', (ctx) => ctx.body = '')
-    server.router.get('/fail', (ctx) => ctx.throw('failure'))
+    server.router.get('/pass', (ctx, next) => {
+      ctx.body = 'success'
+      next()
+    })
+    server.router.post('/pass', (ctx, next) => {
+      ctx.body = 'success'
+      next()
+    })
+    server.router.get('/json', (ctx, next) => {
+      ctx.body = { id: '1' }
+      next()
+    })
+    server.router.get('/data', (ctx, next) => {
+      ctx.body = { data: ctx.query }
+      next()
+    })
+    server.router.post('/data', (ctx, next) => {
+      ctx.body = { data: ctx.request.body }
+      next()
+    })
+    server.router.post('/empty', (ctx, next) => {
+      ctx.body = ''
+      next()
+    })
+    server.router.get('/fail', (ctx, next) => {
+      ctx.throw('failure')
+      next()
+    })
     return server.start()
   })
   after(() => server.shutdown())
