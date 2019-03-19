@@ -2,7 +2,7 @@
 [node]: https://nodejs.org/
 [yarn]: https://yarnpkg.com/
 [bbot]: https://github.com/Amazebot/bbot/tree/master/packages/bbot
-[bbot-starter]: https://github.com/Amazebot/bbot/tree/master/packages/bbot-starter
+[examples]: https://github.com/Amazebot/bbot/tree/master/packages/bbot-examples
 [packages]: https://github.com/Amazebot/bbot/tree/master/packages
 
 # bbot
@@ -31,7 +31,7 @@ An adaptable engine for conversational UI
 [![codecov](https://codecov.io/gh/Amazebot/bbot/branch/develop/graph/badge.svg)](https://codecov.io/gh/Amazebot/bbot/branch/develop)
 [![devDependencies Status](https://david-dm.org/amazebot/bbot/dev-status.svg)](https://david-dm.org/amazebot/bbot?type=dev)
 
-This [mono-repo][lerna] contains the core [bBot][bbot] package, a [starter kit][bbot-starter]
+This [mono-repo][lerna] contains the core [bBot][bbot] package, [examples][examples]
 for bootstrapping your own bots, as well as the [various platform adapters][packages] your
 bot can load to interact with messaging, natural language and storage providers.
 

@@ -1,6 +1,6 @@
-[adapter]: '../bbot-message-rocketchat/'
-[rocket-control]: 'https://github.com/Amazebot/rocket-control'
-[rocket-bot]: 'https://github.com/Amazebot/rocket-control/tree/master/packages/bot'
+[adapter]: https://github.com/Amazebot/bbot/tree/master/packages/bbot-message-rocketchat
+[rocket-control]: https://github.com/Amazebot/rocket-control
+[rocket-bot]: https://github.com/Amazebot/rocket-control/tree/master/packages/bot
 
 # Rocket.Chat message adapter (basic)
 
