@@ -151,7 +151,7 @@ export class Expression {
 
     // combine multiple condition type patterns, capturing only the last
     const regex = (patterns.length > 1)
-      ? new RegExp(`${patterns.join('')}`, i)
+      ? new RegExp(`${patterns.join('\\s?')}`, i)
       : new RegExp(patterns[0], i)
     return regex
   }

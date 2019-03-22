@@ -8,7 +8,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "bbot": "^1.4.0",
-    "bbot-message-rocketchat": "^1.4.0"
+    "bbot": "^1.4.0"
   }
 }

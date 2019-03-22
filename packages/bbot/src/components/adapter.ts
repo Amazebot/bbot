@@ -160,7 +160,7 @@ export class AdapterController {
     try {
       bBotPath = dirname(require.resolve('bbot/package.json', {
         paths: [currentPath]
-      }) + '/lib')
+      })) + '/lib'
     } catch (err) { /* ignore */ }
     const modulesPath = resolve(currentPath, 'node_modules/bbot/lib')
     const resolver = {
@@ -173,9 +173,6 @@ export class AdapterController {
         'packages/bbot/src',
         'packages/bbot/lib'
       ]
-    }
-    if (require.main) {
-      resolver.paths = resolver.paths.concat(...require.main.paths)
     }
     try {
       const adapter = require(require.resolve(path, resolver))
