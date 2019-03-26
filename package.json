@@ -28,7 +28,7 @@
     "lint": "tslint -p .",
     "setup": "yarn install && yarn bootstrap && yarn compile",
     "bootstrap": "rimraf './packages/*/node_modules' && lerna bootstrap",
-    "pretest": "yarn bootstrap && yarn lint",
+    "pretest": "yarn lint",
     "test": "nyc mocha ./packages/**/*.spec.ts",
     "test:debug": "mocha --inspect --debug-brk ./packages/**/*.spec.ts",
     "test:coverage": "set -o allexport; source .env; set +o allexport; codecov",
