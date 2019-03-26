@@ -78,10 +78,10 @@ export class ShellAdapter extends abstracts.MessageAdapter {
     })
     this.bot.config.load()
     this.ui = new inquirer.ui.BottomBar()
-    this.bot.branches.enter((b) => b.respond(
-      `@${this.user.name} welcome to #${this.room.name}, I'm ${b.bot.config.get('name')}`,
+    this.dispatch(this.bot.envelopes.create().write(
+      `@${this.user.name} welcome to #${this.room.name}!`,
       `Type "exit" to exit any time.`
-    ), { id: 'shell-enter' })
+    ))
     this.bot.branches.text(/^exit$/i, (b) => b.bot.shutdown(1), { id: 'shell-exit' })
     this.bot.events.on('started', async () => {
       if (!this.debug) {
