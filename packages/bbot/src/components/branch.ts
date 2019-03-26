@@ -158,10 +158,15 @@ export class TextBranch extends Branch {
     callback: action,
     options?: IBranch
   ) {
-    super(callback, options)
-    this.conditions = (input instanceof Conditions)
-      ? input
-      : new Conditions(input)
+    try {
+      super(callback, options)
+      this.conditions = (input instanceof Conditions)
+        ? input
+        : new Conditions(input)
+    } catch (err) {
+      logger.error(`[branch] failed creating branch with input: ${JSON.stringify(input)}: \n${err.stack}`)
+      throw err
+    }
   }
 
   /**
@@ -172,7 +177,7 @@ export class TextBranch extends Branch {
     this.conditions.exec(msg.toString())
     const match = this.conditions.match
     if (match) {
-      logger.debug(`[branch] message "${msg}" matched branch ${this.id} conditions`)
+      logger.debug(`[branch] message "${msg.toString()}" matched branch ${this.id} conditions`)
     }
     return match
   }
