@@ -5,10 +5,12 @@
 
 // @ts-ignore
 import rangeRegex from 'to-regex-range'
+import logger from '../util/logger'
 
 /**
  * Key literals for condition attributes.
  * Behaviour alternates depending on `matchWord` option.
+ * @todo Refactor ConditionKey to Operator, keys to Operators
  */
 export enum ConditionKey {
   is,       // Match whole input
@@ -105,23 +107,33 @@ export class Expression {
     const patterns: string[] = []
     for (let cKey of Object.keys(condition)) {
       const type = (cKey as keys)
-      let value = condition[type]
-      if (typeof value === 'string') value = [value]
-      value = value!.map((v) => (type === 'range') ? v : this.escape(v))
-      if (config.ignorePunctuation) {
-        value = value.map((v) => v.replace(/([^\\\w\s])/g, '$1+'))
+      let matchValues = condition[type]
+      if (typeof matchValues === 'undefined') {
+        throw new Error(`Error making expression for undefined values in ${condition}[${type}]`)
       }
-      value = value.join('|') // make all values options for match
+      if (typeof matchValues === 'string') matchValues = [matchValues]
+      matchValues = matchValues.map((matchValue) => {
+        let isValidRegex = true
+        try { new RegExp(matchValue) } catch (_) { isValidRegex = false }
+        if (type !== 'range' && !isValidRegex) {
+          matchValue = this.escape(matchValue)
+        }
+        if (config.ignorePunctuation) {
+          matchValue = matchValue.replace(/([^\\\w\s])/g, '$1+')
+        }
+        return matchValue
+      })
+      const v = matchValues.join('|') // make all values options for match
       switch (type) {
-        case 'is': patterns.push(`^(${value})$`); break
-        case 'starts': patterns.push(`^(?:${value})${b}`); break
-        case 'ends': patterns.push(`${b}(?:${value})$`); break
-        case 'contains': patterns.push(`${b}(${value})${b}`); break
-        case 'excludes': patterns.push(`^((?!${b}${value}${b}).)*$`); break
-        case 'after': patterns.push(`(?:${value}\\s?)([\\w\\-\\s${p}]+)`); break
-        case 'before': patterns.push(`([\\w\\-\\s${p}]+)(?:\\s?${value})`); break
+        case 'is': patterns.push(`^(${v})$`); break
+        case 'starts': patterns.push(`^(${v})${b}`); break
+        case 'ends': patterns.push(`${b}(${v})$`); break
+        case 'contains': patterns.push(`${b}(${v})${b}`); break
+        case 'excludes': patterns.push(`^((?!${b}${v}${b}).)*$`); break
+        case 'after': patterns.push(`(?:${v}\\s?)([\\w\\-\\s${p}]+)`); break
+        case 'before': patterns.push(`([\\w\\-\\s${p}]+)(?:\\s?${v})`); break
         case 'range':
-          const rangeExp = rangeRegex(value.split('-')[0], value.split('-')[1])
+          const rangeExp = rangeRegex(v.split('-')[0], v.split('-')[1])
           patterns.push(`${b}(${rangeExp})${b}`)
           break
       }
@@ -167,8 +179,8 @@ export class Conditions {
   config: IOptions
   expressions: { [key: string]: RegExp } = {}
   matches: {
-    [key: string]: any
-    [key: number]: any
+    [key: string]: RegExpMatchArray | undefined
+    [key: number]: RegExpMatchArray | undefined
   } = {}
   captures: {
     [key: string]: string | undefined
@@ -202,12 +214,20 @@ export class Conditions {
    */
   add (condition: string | RegExp | Condition, key?: string | number) {
     if (!key) key = Object.keys(this.expressions).length
-    if (condition instanceof RegExp) {
-      this.expressions[key] = condition
-    } else if (typeof condition === 'string') {
-      this.expressions[key] = expression.fromString(condition)
-    } else {
-      this.expressions[key] = expression.fromCondition(condition, this.config)
+    try {
+      let regex: RegExp
+      if (condition instanceof RegExp) {
+        regex = condition
+      } else if (typeof condition === 'string') {
+        regex = expression.fromString(condition)
+      } else {
+        regex = expression.fromCondition(condition, this.config)
+      }
+      if (regex) this.expressions[key] = regex
+      else throw new Error('failed to make expression')
+    } catch (err) {
+      logger.error(`[condition] Error adding ${JSON.stringify(condition)} (key: ${key}) ${err}`)
+      throw err
     }
     return this
   }
@@ -215,10 +235,13 @@ export class Conditions {
   /** Test a string against all expressions. */
   exec (str: string) {
     for (let key in this.expressions) {
-      const match: any = str.match(this.expressions[key])
-      this.matches[key] = match
-      this.captures[key] = (match && typeof match[1] === 'string')
-        ? match[1].replace(/(^[\,\-\:\s]*)|([\,\-\:\s]*$)/g, '')
+      const match = str.match(this.expressions[key])
+      this.matches[key] = match || undefined
+      const capture = (match || []).filter((v) => (typeof v === 'string'))
+      capture.shift() // remove first match not in capture groups
+      const replace = /(^[\,\-\:\s]*)|([\,\-\:\s]*$)/g // suffix/prefix punctuation
+      this.captures[key] = (typeof capture[0] === 'string')
+        ? capture[0].replace(replace, '').trim()
         : undefined
     }
     return this.matches
@@ -226,7 +249,9 @@ export class Conditions {
 
   /** Get cumulative success (all matches truthy). */
   get success () {
-    return (Object.keys(this.matches).every((key) => this.matches[key]))
+    return (Object.keys(this.matches).every((key) => {
+      return typeof this.matches[key] !== 'undefined'
+    }))
   }
 
   /** Get success of all matches or the first match object if only one */

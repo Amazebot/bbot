@@ -1,5 +1,6 @@
 /** Bot instance, adapter and key component classes for adapters to extend. */
 export * from './bot'
+export * from './components/condition'
 export * from './components/adapter'
 export * from './components/user'
 export * from './components/room'

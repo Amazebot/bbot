@@ -175,7 +175,7 @@ describe('[condition]', () => {
       })
       it('combines multiple conditions against same key', () => {
         const c = new Conditions({
-          who: { after: 'who', ends: '?' },
+          who: { after: 'who', before: '?' },
           verb: { contains: ['goes', 'is'] }
         }, {
           ignorePunctuation: false,
@@ -184,7 +184,7 @@ describe('[condition]', () => {
         const s = 'who goes there?'
         c.exec(s)
         expect(c.matches).to.eql({
-          who: /who (?:.*)+?\?/.exec(s),
+          who: /who (.*)+?\?/.exec(s),
           verb: /(goes|is)/.exec(s)
         })
       })
@@ -198,7 +198,8 @@ describe('[condition]', () => {
       })
       it('returns false if only some', () => {
         const c = new Conditions()
-        c.add(/foo/).add(/bar/)
+        c.add(/foo/)
+        c.add(/bar/)
         c.exec('foo')
         expect(c.success).to.equal(false)
       })
@@ -219,7 +220,7 @@ describe('[condition]', () => {
       })
     })
     describe('.captured', () => {
-      it('returns single string if only one condition without key', () => {
+      it('returns capture groups if only one condition without key', () => {
         const c = new Conditions()
         c.add({ range: '1-9' })
         c.exec('Test: name Testing, number 1')
@@ -246,11 +247,18 @@ describe('[condition]', () => {
         c.exec('Test: name Testing, no number')
         expect(c.captured).to.eql({ num: undefined, 1: 'Testing' })
       })
-      it('combines multiple conditions for capture, against key', () => {
+      it('combines multiple conditions for capture against key', () => {
         const c = new Conditions()
         c.add({ after: 'door', range: '1-3' }, 'door')
         c.exec('Door number 3')
         expect(c.captured).to.eql({ door: '3' })
+      })
+      it('captures prefix/suffix without other conditions against key', () => {
+        const c = new Conditions()
+        c.add({ starts: 'foo' }, 'start')
+        c.add({ ends: 'baz' }, 'end')
+        c.exec('foo bar baz')
+        expect(c.captured).to.eql({ start: 'foo', end: 'baz' })
       })
     })
     describe('.clear', () => {
