@@ -33,8 +33,8 @@ bBot.branches.text({ contains: 'prize' }, (b) => {
     .quickReply({ text: 'Door number 1' })
     .quickReply({ text: 'Door number 2' })
     .quickReply({ text: 'Door number 3' })
-  b.branches.text({ contains: 'door' }, (b) => {
-    b.respond(`You chose door ${b.message.text.match(/\d/)[0]}.`)
+  b.branches.text({ after: 'door', range: '1-3' }, (b) => {
+    b.respond(`You chose door ${b.match.captured}`)
   })
   return b.respond()
 })
