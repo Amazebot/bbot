@@ -3,6 +3,7 @@
   "extends": [ "tslint-config-standard" ],
   "jsRules": {},
   "rules": {
+    "no-unused-expression": false,
     "no-unused-variable": false,
     "no-use-before-declare": false,
     "semicolon": [ true, "never" ]

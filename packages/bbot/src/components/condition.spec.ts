@@ -35,7 +35,6 @@ describe('[condition]', () => {
   })
   describe('Conditions', () => {
     describe('constructor', () => {
-      /* tslint:disable:no-unused-expression */
       before(() => {
         sinon.spy(Conditions.prototype, 'add')
       })
@@ -82,7 +81,6 @@ describe('[condition]', () => {
         expect(add.args).to.eql([
           [arg['first'], 'first'], [arg['second'], 'second']
         ])
-        /* tslint:enable:no-unused-expression */
       })
     })
     describe('.add', () => {
