@@ -37,7 +37,7 @@
     "updated": "lerna updated",
     "practice": "lerna version",
     "build": "yarn test && yarn compile",
-    "docs": "rimraf ./docs && typedoc --options ./typedoc.json ./packages/**/*.ts",
+    "docs": "rimraf ./docs && typedoc --options ./typedoc.json ./packages/bbot",
     "docs:clone": "rimraf gh-pages && git clone $npm_package_repository_url gh-pages",
     "docs:branch": "cd gh-pages && git checkout gh-pages || git checkout --orphan gh-pages && git rm -rf .",
     "docs:copy": "cp -a docs/. gh-pages/. && mkdir -p gh-pages/.circleci && cp -a .circleci/. gh-pages/.circleci/.",

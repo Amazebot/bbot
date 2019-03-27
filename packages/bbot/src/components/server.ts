@@ -17,7 +17,7 @@ import { thoughts } from './thought'
 import { adapters } from './adapter'
 import { middlewares } from './middleware'
 
-/** Server states include Koa context, to respond to http/s requests. */
+/** Server states include Koa router context, to respond to http/s requests. */
 export interface IContext extends Router.IRouterContext {}
 
 /** Load and start server to listen for data over HTTP/s */
@@ -70,7 +70,7 @@ export class ServerController {
    * bot may fail in dispatching a response, depends on the messaging platform.
    */
   messageRoutes () {
-    this.messageRouter.post('/:userId/:roomId*', async (ctx) => {
+    this.messageRouter.post('/:userId/:roomId*', async (ctx: IContext) => {
       const msg = messages.server({
         userId: ctx.params.userId,
         roomId: ctx.params.roomId,
@@ -79,7 +79,7 @@ export class ServerController {
       await thoughts.serve(msg, ctx)
       if (!ctx.body) ctx.body = msg.id
     })
-    this.messageRouter.get('/:userId/:roomId*', async (ctx) => {
+    this.messageRouter.get('/:userId/:roomId*', async (ctx: IContext) => {
       const msg = messages.server({
         userId: ctx.params.userId,
         roomId: ctx.params.roomId,
@@ -92,7 +92,7 @@ export class ServerController {
 
   /** Public routes serve content without entering thought process/middleware */
   publicRoutes () {
-    this.router.get('/public', async (ctx) => {
+    this.router.get('/public', async (ctx: IContext) => {
       ctx.body = this.publicStats()
     })
   }
