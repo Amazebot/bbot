@@ -9,6 +9,6 @@
   "externalPattern": "node_modules",
   "excludeExternals": true,
   "excludePrivate": true,
-  "exclude": "**/*.spec.ts",
+  "exclude": ["**/*.spec.ts", "**/node_modules/**/*"],
   "readme": "none"
 }
