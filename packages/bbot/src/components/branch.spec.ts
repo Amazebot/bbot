@@ -71,13 +71,13 @@ describe('[branch]', () => {
       const idBranch = new MockBranch(() => null, { id: 'TEST_ID' })
       expect(idBranch.id).to.equal('TEST_ID')
     })
-    describe('.process', () => {
+    describe('.execute', () => {
       beforeEach(() => middleware.stack.splice(0, middleware.stack.length))
       it('calls matcher with message from state', async () => {
         const b = new State({ message })
         const branch = new MockBranch(() => null)
         const matcher = sinon.spy(branch, 'matcher')
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
         sinon.assert.calledWith(matcher, b.message)
         matcher.restore()
       })
@@ -85,7 +85,7 @@ describe('[branch]', () => {
         const b = new State({ message })
         const branch = new MockBranch(() => null)
         const execute = sinon.spy(middleware, 'execute')
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
         sinon.assert.calledOnce(execute)
         execute.restore()
       })
@@ -93,8 +93,8 @@ describe('[branch]', () => {
         const b = new State({ message })
         const branch = new MockBranch(() => null)
         const execute = sinon.spy(middleware, 'execute')
-        await branch.process(b, middleware)
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
+        await branch.execute(b, middleware)
         sinon.assert.calledOnce(execute)
         execute.restore()
       })
@@ -103,28 +103,28 @@ describe('[branch]', () => {
         const branch = new MockBranch(() => null)
         const execute = sinon.spy(middleware, 'execute')
         branch.force = true
-        await branch.process(b, middleware)
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
+        await branch.execute(b, middleware)
         sinon.assert.calledTwice(execute)
         execute.restore()
       })
       it('executes when forced, after prior branch fails', async () => {
         const b = new State({ message })
-        let processed: string[] = []
-        const A = new BoolBranch(true, () => processed.push('A'))
-        const B = new BoolBranch(false, () => processed.push('B'))
-        const C = new BoolBranch(true, () => processed.push('C'), { force: true })
-        await A.process(b, middleware)
-        await B.process(b, middleware)
-        await C.process(b, middleware)
-        expect(processed).to.eql(['A', 'C'])
+        let executed: string[] = []
+        const A = new BoolBranch(true, () => executed.push('A'))
+        const B = new BoolBranch(false, () => executed.push('B'))
+        const C = new BoolBranch(true, () => executed.push('C'), { force: true })
+        await A.execute(b, middleware)
+        await B.execute(b, middleware)
+        await C.execute(b, middleware)
+        expect(executed).to.eql(['A', 'C'])
       })
       it('executes bit if ID used as callback', async () => {
         const b = new State({ message })
         const callback = sinon.spy()
         bits.setup({ id: 'listen-test', callback })
         const bitBranch = new MockBranch('listen-test')
-        await bitBranch.process(b, middleware)
+        await bitBranch.execute(b, middleware)
         sinon.assert.calledOnce(callback)
       })
       it('gives state to middleware pieces', async () => {
@@ -132,28 +132,28 @@ describe('[branch]', () => {
         const piece = sinon.spy()
         middleware.register(piece)
         const branch = new MockBranch(() => null)
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
         sinon.assert.calledWith(piece, b)
       })
       it('calls done with match status if given', async () => {
         const b = new State({ message })
         const branch = new MockBranch(() => null)
         const done = sinon.spy()
-        await branch.process(b, middleware, done)
+        await branch.execute(b, middleware, done)
         sinon.assert.calledWith(done, true)
       })
       it('calls done even when unmatched', async () => {
         const done = sinon.spy()
         const badB = new State({ message: messages.text(user, 'no match') })
         const branch = new MockBranch(() => null)
-        await branch.process(badB, middleware, done)
+        await branch.execute(badB, middleware, done)
         sinon.assert.calledWith(done, false)
       })
-      it('if done returns promise, process waits for resolution', async () => {
+      it('if done returns promise, execute waits for resolution', async () => {
         let done: number = 0
         const b = new State({ message })
         const branch = new MockBranch(() => null)
-        await branch.process(b, middleware, () => {
+        await branch.execute(b, middleware, () => {
           done = Date.now()
           return delay(20)
         })
@@ -166,14 +166,14 @@ describe('[branch]', () => {
         badMiddleware.register(() => {
           throw new Error('(╯°□°）╯︵ ┻━┻')
         })
-        return branch.process(b, badMiddleware, (result) => {
+        return branch.execute(b, badMiddleware, (result) => {
           expect(result).to.equal(false)
         })
       })
       it('state is changed by reference', async () => {
         const b = new State({ message })
         const branch = new MockBranch(() => null)
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
         expect(b.matched).to.equal(true)
       })
       it('consecutive branches share state changes', async () => {
@@ -183,8 +183,8 @@ describe('[branch]', () => {
         middleware.register((b) => {
           b.modified = (!b.modified) ? 1 : b.modified + 1
         })
-        await branch.process(b, middleware)
-        await branch.process(b, middleware)
+        await branch.execute(b, middleware)
+        await branch.execute(b, middleware)
         expect(b.modified).to.equal(2)
       })
       it('state collects matching branches and match results', async () => {
@@ -200,37 +200,37 @@ describe('[branch]', () => {
             expect(b.match).to.equal(3)
           }, { id: 'C', force: true })
         ]
-        for (let branch of branches) await branch.process(b, middleware)
+        for (let branch of branches) await branch.execute(b, middleware)
         expect(b.match).to.equal(3)
         expect(b.matched).to.equal(true)
       })
     })
   })
   describe('TextBranch', () => {
-    it('.process adds matcher result to state', async () => {
+    it('.execute adds matcher result to state', async () => {
       const branch = new TextBranch(/foo/, () => null)
       const text = 'foo'
       const b = new State({ message: messages.text(user, text) })
-      await branch.process(b, middleware)
+      await branch.execute(b, middleware)
       expect(b.match).to.eql('foo'.match(/foo/))
     })
-    it('.process adds condition match results to state', async () => {
+    it('.execute adds condition match results to state', async () => {
       const conditions = [{ starts: 'foo' }, { ends: 'bar' }]
       const text = 'foo bar'
       const b = new State({ message: messages.text(user, text) })
       const branch = new TextBranch(conditions, () => null)
-      await branch.process(b, middleware)
+      await branch.execute(b, middleware)
       expect(b.conditions.success).to.equal(true)
     })
-    it('.process adds condition captures to branch in state', async () => {
+    it('.execute adds condition captures to branch in state', async () => {
       const conditions = { door: { after: 'door number', range: '1-3' } }
       const text = 'door number 3'
       const b = new State({ message: messages.text(user, text) })
       const branch = new TextBranch(conditions, () => null)
-      await branch.process(b, middleware)
+      await branch.execute(b, middleware)
       expect(b.conditions.captured).to.eql({ door: '3' })
     })
-    it('.process branch with pre-constructed conditions', async () => {
+    it('.execute branch with pre-constructed conditions', async () => {
       const conditions = new Conditions({
         they: { contains: [`they're`, `their`, 'they'] }
       }, {
@@ -239,10 +239,10 @@ describe('[branch]', () => {
       const text = `they're about ready aren't they`
       const b = new State({ message: messages.text(user, text) })
       const branch = new TextBranch(conditions, () => null)
-      await branch.process(b, middleware)
+      await branch.execute(b, middleware)
       expect(b.conditions.captured).to.eql({ they: `they're` })
     })
-    it('.process unmatched if condition match falsy', async () => {
+    it('.execute unmatched if condition match falsy', async () => {
       const conditions = {
         question: { ends: '?' },
         not: { starts: 'not' }
@@ -250,31 +250,31 @@ describe('[branch]', () => {
       const text = `not a question!`
       const b = new State({ message: messages.text(user, text) })
       const branch = new TextBranch(conditions, () => null)
-      await branch.process(b, middleware)
+      await branch.execute(b, middleware)
       expect(typeof b.conditions).to.equal('undefined')
       assert.notOk(b.match)
     })
   })
   describe('TextDirectBranch', () => {
-    it('.process returns match if bot name prefixed', () => {
+    it('.execute returns match if bot name prefixed', () => {
       const direct = new TextDirectBranch(/foo/, (b) => {
         expect(b.match).to.eql('foo'.match(/foo/))
       })
-      return direct.process(new State({
+      return direct.execute(new State({
         message: messages.text(user, `${config.get('name')} foo`)
       }), middleware)
     })
-    it('.process returns match on consecutive direct branch', async () => {
+    it('.execute returns match on consecutive direct branch', async () => {
       const directFoo = new TextDirectBranch(/foo/, () => null)
       const directBar = new TextDirectBranch(/bar/, () => null)
       const b = new State({
         message: messages.text(user, `${config.get('name')} bar`)
       })
-      await directFoo.process(b, middleware)
-      await directBar.process(b, middleware)
+      await directFoo.execute(b, middleware)
+      await directBar.execute(b, middleware)
       expect(b.matching).to.eql([directBar])
     })
-    it('.process adds condition match results to state', () => {
+    it('.execute adds condition match results to state', () => {
       const conditions = [{ starts: 'foo' }, { ends: 'bar' }]
       const branch = new TextDirectBranch(conditions, (b) => {
         expect(b.match).to.equal(true)
@@ -283,36 +283,36 @@ describe('[branch]', () => {
           1: /bar$/.exec('foo bar')
         })
       })
-      return branch.process(new State({
+      return branch.execute(new State({
         message: messages.text(user, `${config.get('name')} foo bar`)
       }), middleware)
     })
   })
   describe('CustomBranch', () => {
-    it('.process runs custom matcher', async () => {
+    it('.execute runs custom matcher', async () => {
       const fooMatcher = sinon.spy((message: Message) => {
         return /foo/.test(message.toString())
       })
       const fooBranch = new CustomBranch(fooMatcher, () => null)
-      await fooBranch.process(new State({
+      await fooBranch.execute(new State({
         message: messages.text(user, 'foo')
       }), middleware)
       sinon.assert.calledOnce(fooMatcher)
     })
-    it('.process resolves state with async matcher result', async () => {
+    it('.execute resolves state with async matcher result', async () => {
       const asyncMatcher = async () => {
         await delay(20)
         return 'delayed'
       }
       const asyncBranch = new CustomBranch(asyncMatcher, () => null)
-      const result = await asyncBranch.process(new State({
+      const result = await asyncBranch.execute(new State({
         message: messages.text(user, '')
       }), middleware)
       expect(result.match).to.equal('delayed')
     })
   })
   describe('NLUBranch', () => {
-    it('.process returns state with truthy match for matching results', async () => {
+    it('.execute returns state with truthy match for matching results', async () => {
       const nluBranch = new NLUBranch({
         intent: { id: 'foo' }
       }, (state) => {
@@ -322,39 +322,39 @@ describe('[branch]', () => {
       })
       const message = messages.text(user, 'foo')
       message.nlu = new NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
-      const b = await nluBranch.process(new State({ message }), middleware)
+      const b = await nluBranch.execute(new State({ message }), middleware)
       assert.isOk(b.match)
       assert.isTrue(b.matched)
     })
-    it('.process returns state with falsy match if below score threshold', async () => {
+    it('.execute returns state with falsy match if below score threshold', async () => {
       const nluBranch = new NLUBranch({
         intent: { id: 'foo', score: .8 }
       }, () => null)
       const message = messages.text(user, 'foo')
       message.nlu = new NLU().addResult('intent', { id: 'foo', score: .7 })
-      const b = await nluBranch.process(new State({ message }), middleware)
+      const b = await nluBranch.execute(new State({ message }), middleware)
       assert.notOk(b.match)
       assert.isFalse(b.matched)
     })
   })
   describe('NLUDirectBranch', () => {
-    it('.process returns true for matches with bot prefix', async () => {
+    it('.execute returns true for matches with bot prefix', async () => {
       const nluBranch = new NLUDirectBranch({
         intent: { id: 'foo' }
       }, () => null)
       const message = messages.text(user, `${config.get('name')} foo`)
       message.nlu = new NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
-      const b = await nluBranch.process(new State({ message }), middleware)
+      const b = await nluBranch.execute(new State({ message }), middleware)
       assert.isOk(b.match)
       assert.isTrue(b.matched)
     })
-    it('.process returns false for message without bot prefixed', async () => {
+    it('.execute returns false for message without bot prefixed', async () => {
       const nluBranch = new NLUDirectBranch({
         intent: { id: 'foo' }
       }, () => null)
       const message = messages.text(user, `foo`)
       message.nlu = new NLU().addResult('intent', { id: 'foo', name: 'Test Foo' })
-      const b = await nluBranch.process(new State({ message }), middleware)
+      const b = await nluBranch.execute(new State({ message }), middleware)
       assert.notOk(b.match)
       assert.isFalse(b.matched)
     })
@@ -469,7 +469,7 @@ describe('[branch]', () => {
       })
     })
     describe('.NLU', () => {
-      it('adds NLU branch to NLU collection, returning ID', () => {
+      it('adds NLU branch to understand collection, returning ID', () => {
         const branches = new BranchController()
         const id = branches.NLU({ intent: { id: 'test' } }, () => null)
         expect(branches.understand[id]).to.be.instanceof(NLUBranch)
@@ -488,64 +488,64 @@ describe('[branch]', () => {
         const id = branches.customNLU(() => null, () => null)
         expect(branches.understand[id]).to.be.instanceof(CustomBranch)
       })
-      it('.process calls callback on matching message', async () => {
+      it('.execute calls callback on matching message', async () => {
         const branches = new BranchController()
         const callback = sinon.spy()
         const message = messages.text(user, 'testing custom NLU')
         const id = branches.customNLU(() => true, callback, { id: 'test-custom-nlu' })
-        await branches.understand[id].process(new State({ message }), middleware)
+        await branches.understand[id].execute(new State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
     })
     describe('.enter', () => {
-      it('.process calls callback on enter messages', async () => {
+      it('.execute calls callback on enter messages', async () => {
         const branches = new BranchController()
         const callback = sinon.spy()
         const message = messages.enter(user)
         const id = branches.enter(callback)
-        await branches.listen[id].process(new State({ message }), middleware)
+        await branches.listen[id].execute(new State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
     })
     describe('.leave', () => {
-      it('.process calls callback on leave messages', async () => {
+      it('.execute calls callback on leave messages', async () => {
         const branches = new BranchController()
         const callback = sinon.spy()
         const message = messages.leave(user)
         const id = branches.leave(callback)
-        await branches.listen[id].process(new State({ message }), middleware)
+        await branches.listen[id].execute(new State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
     })
     describe('.topic', () => {
-      it('.process calls callback on topic messages', async () => {
+      it('.execute calls callback on topic messages', async () => {
         const branches = new BranchController()
         const callback = sinon.spy()
         const message = messages.topic(user)
         const id = branches.topic(callback)
-        await branches.listen[id].process(new State({ message }), middleware)
+        await branches.listen[id].execute(new State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
     })
     describe('.catchAll', () => {
-      it('.process calls callback on catchAll messages', async () => {
+      it('.execute calls callback on catchAll messages', async () => {
         const branches = new BranchController()
         const callback = sinon.spy()
         const message = messages.catchAll(messages.text(user, ''))
         const id = branches.catchAll(callback)
-        await branches.act[id].process(new State({ message }), middleware)
+        await branches.act[id].execute(new State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
     })
     describe('.server', () => {
-      it('.process calls callback on matching server message', async () => {
+      it('.execute calls callback on matching server message', async () => {
         const branches = new BranchController()
         const callback = sinon.spy()
         const message = messages.server({ userId: user.id, data: {
           foo: 'bar'
         } })
         const id = branches.server({ foo: 'bar' }, callback)
-        await branches.serve[id].process(new State({ message }), middleware)
+        await branches.serve[id].execute(new State({ message }), middleware)
         sinon.assert.calledOnce(callback)
       })
     })

@@ -11,13 +11,17 @@ bBot.branches.text({
 
 // Catch branch. Say anything other than "match".
 bBot.branches.text(/match/i, (b) => b.respond('Input matched'))
-bBot.branches.catchAll((b) => b.respond('Input did not match'))
+bBot.branches.catchAll((b) => {
+  if (b.message.type !== 'EnterMessage') {
+    return b.respond('Input did not match')
+  }
+})
 
 // Text branch with dialogue. Say > Help? > Yes/No
 bBot.branches.text({ starts: 'help' }, (b) => {
-  b.branches.text({ is: 'yes' }, (b) => 'OK, I will try...')
-  b.branches.text({ is: 'no' }, (b) => 'OK, never mind.')
-  b.branches.catchAll((b) => 'Sorry, just say "yes" or "no"')
+  b.branches.text({ is: 'yes' }, (b) => b.respond('OK, I will try...'))
+  b.branches.text({ is: 'no' }, (b) => b.respond('OK, never mind.'))
+  b.branches.catchAll((b) => b.respond('Sorry, just say "yes" or "no"'))
   return b.respond('Need some help?')
 })
 

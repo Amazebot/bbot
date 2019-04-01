@@ -1,5 +1,5 @@
 /**
- * Contains collections of branches and methods to create each type.
+ * Defines, creates and collects branches for each thought process.
  * @module components/branch
  */
 
@@ -21,8 +21,8 @@ import {
 } from './message'
 import { NLUCriteria, NLUResultsRaw } from './nlu'
 
-export enum BranchKey { listen, understand, serve, act }
-export type BranchKeys = keyof typeof BranchKey
+export enum ProcessKey { listen, understand, serve, act }
+export type ProcessKeys = keyof typeof ProcessKey
 
 /** Branch matcher function interface, resolved value must be truthy. */
 export interface IMatcher { (input: any): Promise<any> | any }
@@ -34,6 +34,7 @@ export interface IDone { (matched: boolean): void }
 export interface IBranch {
   id?: string
   force?: boolean
+  processKey?: ProcessKeys
   [key: string]: any
 }
 
@@ -48,9 +49,15 @@ export type action = ICallback | string
  */
 export abstract class Branch implements IBranch {
   id: string
+  /** Action to take on matching input. */
   callback: ICallback
+  /** Force matching on this branch regardless of other matched branches. */
   force: boolean = false
+  /** The thought process collection the branch should be applied. */
+  processKey: ProcessKeys = 'listen'
+  /** The result of branch matcher on input. */
   match?: any
+  /** Status of match. */
   matched?: boolean
   [key: string]: any
 
@@ -73,6 +80,11 @@ export abstract class Branch implements IBranch {
    */
   abstract matcher (input: any): Promise<any>
 
+  /** Get the branch type, allows filtering processing. */
+  get type () {
+    return this.constructor.name
+  }
+
   /**
    * Runs the matcher, then middleware and callback if matched.
    * Middleware can intercept and prevent the callback from executing.
@@ -82,7 +94,7 @@ export abstract class Branch implements IBranch {
    * @param middleware Executes before the branch callback if matched
    * @param done       Called after middleware (optional), with match status
    */
-  async process (
+  async execute (
     b: State,
     middleware: Middleware,
     done: IDone = () => null
@@ -96,7 +108,7 @@ export abstract class Branch implements IBranch {
           logger.debug(`[branch] executing ${this.constructor.name} callback, ID ${this.id}`)
           return Promise.resolve(this.callback(b))
         }).then(() => {
-          logger.debug(`[branch] ${this.id} process done (${(this.matched) ? 'matched' : 'no match'})`)
+          logger.debug(`[branch] ${this.id} execute done (${(this.matched) ? 'matched' : 'no match'})`)
           return Promise.resolve(done(true))
         }).catch((err: Error) => {
           logger.error(`[branch] ${this.id} middleware error, ${err.message}`)
@@ -112,6 +124,8 @@ export abstract class Branch implements IBranch {
 
 /** Branch to match on any CatchAll type */
 export class CatchAllBranch extends Branch {
+  processKey: ProcessKeys = 'act'
+
   /** Accepts only super args, matcher is fixed */
   constructor (action: action, options?: IBranch) {
     super(action, options)
@@ -150,6 +164,7 @@ export class CustomBranch extends Branch {
 
 /** Text branch uses basic regex matching */
 export class TextBranch extends Branch {
+  processKey: ProcessKeys = 'listen'
   conditions: Conditions
 
   /** Create text branch for regex pattern */
@@ -158,8 +173,8 @@ export class TextBranch extends Branch {
     callback: action,
     options?: IBranch
   ) {
+    super(callback, options)
     try {
-      super(callback, options)
       this.conditions = (input instanceof Conditions)
         ? input
         : new Conditions(input)
@@ -190,6 +205,8 @@ export class TextBranch extends Branch {
  * `is` to operate on the body of the message, without failing due to a prefix.
  */
 export class TextDirectBranch extends TextBranch {
+  processKey: ProcessKeys = 'listen'
+
   async matcher (msg: TextMessage) {
     if (directPattern().exec(msg.toString())) {
       const indirectMessage = msg.clone()
@@ -206,6 +223,7 @@ export class TextDirectBranch extends TextBranch {
  * sentiment of optional score threshold. NLU must be trained to provide intent.
  */
 export class NLUBranch extends Branch {
+  processKey: ProcessKeys = 'understand'
   match: NLUResultsRaw | undefined
 
   /** Create natural language branch for NLU matching. */
@@ -234,6 +252,8 @@ export class NLUBranch extends Branch {
 
 /** Natural Language Direct Branch pre-matches the text for bot name prefix. */
 export class NLUDirectBranch extends NLUBranch {
+  processKey: ProcessKeys = 'understand'
+
   async matcher (msg: TextMessage) {
     if (directPattern().exec(msg.toString())) {
       return super.matcher(msg)
@@ -250,6 +270,7 @@ export interface IServerBranchCriteria {
 
 /** Server branch matches data in a message received on the server. */
 export class ServerBranch extends Branch {
+  processKey: ProcessKeys = 'serve'
   match: any
 
   /** Create server branch for data matching. */
@@ -338,7 +359,7 @@ export function directPatternCombined (regex: RegExp) {
   return new RegExp(`^\\s*[@]?(?:${alias}[:,]?|${name}[:,]?)\\s*(?:${pattern})`, modifiers)
 }
 
-/** Collection interface for containing sets of branches. */
+/** Interface for collections of thought process branches. */
 export interface IBranches {
   listen?: { [id: string]: TextBranch | CustomBranch }
   understand?: { [id: string]: NLUBranch | CustomBranch }
@@ -346,7 +367,7 @@ export interface IBranches {
   act?: { [id: string]: CatchAllBranch }
 }
 
-/** Contains collections of branches and methods to create each type. */
+/** Creates and collects branches for each thought process. */
 export class BranchController implements IBranches {
   listen: { [id: string]: TextBranch | CustomBranch }
   understand: { [id: string]: NLUBranch | CustomBranch }
@@ -370,7 +391,7 @@ export class BranchController implements IBranches {
   }
 
   /** Check if any branches have been added. */
-  exist (type?: BranchKeys) {
+  exist (type?: ProcessKeys) {
     if (type) return (Object.keys(this[type]).length)
     if (Object.keys(this.listen).length) return true
     if (Object.keys(this.understand).length) return true
@@ -379,24 +400,25 @@ export class BranchController implements IBranches {
     return false
   }
 
-  /** Remove all but forced branches from collection, return remaining size. */
-  forced (collection: BranchKeys) {
-    for (let id in this[collection]) {
-      if (!this[collection][id].force) delete this[collection][id]
+  /** Remove all but forced branches from process, return remaining size. */
+  forced (processKey: ProcessKeys) {
+    for (let id in this[processKey]) {
+      if (!this[processKey][id].force) delete this[processKey][id]
     }
-    return Object.keys(this[collection]).length
+    return Object.keys(this[processKey]).length
   }
 
-  /** Add branch to collection, for separation based on thought processes. */
-  add (branch: Branch, collection: BranchKeys) {
-    this[collection][branch.id] = branch
+  /** Add branch to thought process by it's class default or given key. */
+  add (branch: Branch, processKey?: ProcessKeys) {
+    if (!processKey) processKey = branch.processKey
+    this[processKey][branch.id] = branch
     return branch.id
   }
 
-  /** Reset path to initial empty branch collections */
+  /** Empty thought process branch collections. */
   reset () {
-    for (let key in BranchKey) {
-      if (isNaN(Number(key))) this[key as BranchKeys] = {}
+    for (let key in ProcessKey) {
+      if (isNaN(Number(key))) this[key as ProcessKeys] = {}
     }
   }
 
@@ -406,10 +428,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new TextBranch(condition, action, atts),
-      'listen'
-    )
+    return this.add(new TextBranch(condition, action, atts))
   }
 
   /** Create text branch pre-matched on the bot name as prefix. */
@@ -418,10 +437,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new TextDirectBranch(condition, action, atts),
-      'listen'
-    )
+    return this.add(new TextDirectBranch(condition, action, atts))
   }
 
   /** Create custom branch with provided matcher, action and optional meta. */
@@ -430,10 +446,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new CustomBranch(matcher, action, atts),
-      'listen'
-    )
+    return this.add(new CustomBranch(matcher, action, atts), 'listen')
   }
 
   /** Create a branch that triggers when no other branch matches. */
@@ -441,10 +454,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new CatchAllBranch(action, atts),
-      'act'
-    )
+    return this.add(new CatchAllBranch(action, atts))
   }
 
   /** Create a natural language branch to match on NLU result attributes. */
@@ -453,10 +463,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new NLUBranch(criteria, action, atts),
-      'understand'
-    )
+    return this.add(new NLUBranch(criteria, action, atts))
   }
 
   /** Create a natural language branch pre-matched on the bot name as prefix. */
@@ -465,10 +472,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new NLUDirectBranch(criteria, action, atts),
-      'understand'
-    )
+    return this.add(new NLUDirectBranch(criteria, action, atts))
   }
 
   /** Create a natural language branch with custom matcher. */
@@ -477,10 +481,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new CustomBranch(matcher, action, atts),
-      'understand'
-    )
+    return this.add(new CustomBranch(matcher, action, atts), 'understand')
   }
 
   /** Create a branch that triggers when user joins a room. */
@@ -519,10 +520,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new ServerBranch(criteria, action, atts),
-      'serve'
-    )
+    return this.add(new ServerBranch(criteria, action, atts))
   }
 
   /** Create a server branch with custom matcher. */
@@ -531,10 +529,7 @@ export class BranchController implements IBranches {
     action: ICallback | string,
     atts?: IBranch
   ) {
-    return this.add(
-      new CustomBranch(matcher, action, atts),
-      'serve'
-    )
+    return this.add(new CustomBranch(matcher, action, atts), 'serve')
   }
 }
 

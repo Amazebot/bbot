@@ -157,6 +157,15 @@ export class State implements IState {
     return (this.matching && this.matching.length) ? true : false
   }
 
+  /** A strict version of matched, only true if not matched on act stage. */
+  get resolved () {
+    return (
+      this.matched &&
+      this.matchingBranch &&
+      this.matchingBranch.processKey !== 'act'
+    )
+  }
+
   /** Check for existing envelope without response. */
   pendingEnvelope () {
     if (!this.envelopes) return

@@ -61,6 +61,13 @@ describe('[message]', () => {
       const mockMessage = new MockMessage(mockUser)
       expect(mockMessage.id).to.have.lengthOf(32)
     })
+    it('type property returns class name', () => {
+      class MockMessage extends Message {
+        toString () { return 'test' }
+      }
+      const mockMessage = new MockMessage(mockUser)
+      expect(mockMessage.type).to.equal('MockMessage')
+    })
   })
   describe('Text', () => {
     it('.toString returns text', () => {
@@ -92,6 +99,11 @@ describe('[message]', () => {
       const catchMessage = new CatchAllMessage(textMessage)
       expect(catchMessage.id).to.equal(textMessage.id)
       expect(catchMessage.toString()).to.equal(textMessage.toString())
+    })
+    it('type returns the original message type', () => {
+      const textMessage = new TextMessage(mockUser, 'test txt')
+      const catchMessage = new CatchAllMessage(textMessage)
+      expect(catchMessage.type).to.equal('TextMessage')
     })
   })
   describe('Server', () => {

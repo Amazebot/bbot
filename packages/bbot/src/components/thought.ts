@@ -94,7 +94,7 @@ export class Thought implements IThought {
           if (typeof branches === 'undefined') return middleware.execute(b, resolve).then(reject)
           for (let id in branches) {
             if (b.done) break
-            await branches[id].process(b, middleware)
+            await branches[id].execute(b, middleware)
           }
           return (b.matched) ? resolve() : reject()
         })
@@ -285,7 +285,7 @@ export class Thoughts {
   }
 }
 
-/** Control creation of through processes for incoming/outgoing sequences. */
+/** Control creation of thought processes for incoming/outgoing sequences. */
 export class ThoughtController {
   /**
    * Initiate sequence of thought processes for an incoming message.
@@ -309,8 +309,9 @@ export class ThoughtController {
     const thought = new Thoughts(startingState, branches)
     const finalState = await thought.start('receive')
     if (dlg) {
-      if (!finalState.matched) dlg.revertBranches()
-      else if (dlg.branches.exist()) await dlg.close()
+      if (!finalState.resolved) dlg.revertBranches()
+      else if (!dlg.branches.exist()) await dlg.close()
+      logger.debug(JSON.stringify(dlg.branches))
     }
     return finalState
   }

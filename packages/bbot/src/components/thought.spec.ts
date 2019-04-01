@@ -565,6 +565,35 @@ describe('[thought]', () => {
         const b = await thoughts.receive(message)
         expect(b.branches).to.eql(dlg.branches)
       })
+      it('progresses open dialogue if branches exist', async () => {
+        const dlg = new Dialogue()
+        await dlg.open(new State({ message }))
+        dlg.branches.custom(() => true, () => {
+          dlg.branches.custom(() => true, () => null, { id: '2nd' })
+        }, { id: '1st' })
+        const thoughts = new ThoughtController()
+        await thoughts.receive(message)
+        expect(dlg.branches.listen).to.have.property('2nd')
+        const b = await thoughts.receive(message)
+        expect(b.matchingBranch).to.have.property('id', '2nd')
+      })
+      it('does not progress dialogue if catch all matched', async () => {
+        const dlg = new Dialogue()
+        await dlg.open(new State({ message }))
+        dlg.branches.custom(() => false, () => null, { id: '1st' })
+        dlg.branches.catchAll(() => null)
+        const thoughts = new ThoughtController()
+        await thoughts.receive(message)
+        expect(dlg.branches.listen).to.have.property('1st')
+      })
+      it('closes dialogue if no branches exist', async () => {
+        const dlg = new Dialogue()
+        await dlg.open(new State({ message }))
+        dlg.branches.custom(() => true, () => null)
+        const thoughts = new ThoughtController()
+        await thoughts.receive(message)
+        expect(dlg.branches.listen).to.eql({})
+      })
     })
     describe('.serve', () => {
       it('creates state for message', async () => {

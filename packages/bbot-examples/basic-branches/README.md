@@ -60,5 +60,5 @@ bot.branches.text({ starts: 'help' }, (b) => {
 })
 ```
 
-Test with "Help!" then either "yes" or "no". Notice that "help" doesn't work
+Test with "Help" then either "yes" or "no". Notice that "help" doesn't work
 in the context, as yes/no don't work out of context.
