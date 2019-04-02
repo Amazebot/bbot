@@ -33,6 +33,11 @@ export abstract class Message {
   clone () {
     return Object.assign(Object.create(this), this)
   }
+
+  /** Get message type, allows filtering responders. */
+  get type () {
+    return this.constructor.name
+  }
 }
 
 /** An empty message for outgoings without original input */
@@ -138,7 +143,7 @@ export class ServerMessage extends EventMessage {
   }
 }
 
-/** Represent a message where nothing matched. */
+/** Represent a message where nothing matched (wraps the original message). */
 export class CatchAllMessage extends Message {
   constructor (public message: Message) {
     super(message.user, message.id)
@@ -146,6 +151,11 @@ export class CatchAllMessage extends Message {
 
   toString () {
     return this.message.toString()
+  }
+
+  /** Get original message type. */
+  get type () {
+    return this.message.type
   }
 }
 

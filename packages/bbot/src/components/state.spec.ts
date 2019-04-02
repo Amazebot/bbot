@@ -98,7 +98,9 @@ describe('[state]', () => {
         new CustomBranch(() => 'B', () => null, { id: 'B', force: true })
       ]
       const b = new State({ message })
-      for (let branch of branches) await branch.process(b, middlewares.create('test'))
+      for (let branch of branches) {
+        await branch.execute(b, middlewares.create('test'))
+      }
       expect(b.match).to.eql('B')
     })
     it('returns undefined if nothing matched', () => {

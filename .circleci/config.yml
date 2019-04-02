@@ -22,6 +22,7 @@ jobs:
             - v1-dependencies-
 
       - run: yarn install
+      - run: yarn bootstrap
 
       - save_cache:
           name: Save Yarn Package Cache
@@ -33,7 +34,8 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: yarn build
+      - run: yarn compile
+      - run: yarn test
       - run: yarn test:coverage
       - persist_to_workspace:
           root: ~/repo

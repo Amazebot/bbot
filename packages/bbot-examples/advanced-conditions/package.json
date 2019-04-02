@@ -1,0 +1,13 @@
+{
+  "name": "bbot-examples-basic-branches",
+  "version": "0.0.0",
+  "description": "Usage examples for the variety of bBot branch types (basic).",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bbot": "^1.4.0"
+  }
+}

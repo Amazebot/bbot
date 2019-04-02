@@ -7,8 +7,6 @@
 This example gives an introduction to using the variety of `branches` which
 listen and respond for different types of input from users.
 
-Run it from the root of the repo, with `yarn example basic-branches`
-
 ## Text Branches
 
 Text branches simply respond when input matches a text pattern.
@@ -62,5 +60,5 @@ bot.branches.text({ starts: 'help' }, (b) => {
 })
 ```
 
-Test with "Help!" then either "yes" or "no". Notice that "help" doesn't work
+Test with "Help" then either "yes" or "no". Notice that "help" doesn't work
 in the context, as yes/no don't work out of context.

@@ -152,7 +152,7 @@ export class Dialogue implements IDialogue {
     if (this.branches.exist()) {
       logger.debug(`Dialogue closed ${this.state.matched ? '' : 'in'}complete`)
     } else {
-      logger.debug('Dialogue closed before branches added')
+      logger.debug('Dialogue closed, no active branches')
     }
     if (this.onClose) {
       await Promise.resolve(this.onClose(this.state))

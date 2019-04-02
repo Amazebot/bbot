@@ -41,7 +41,8 @@ export class Bot {
   envelopes = envelopes
   bits = bits
   branches = branches
-  global = branches // @todo deprecate `global` method
+  /** @deprecated - Update usage of `bot.global` to `bot.branches`. */
+  global = branches
   adapters = adapters
   middlewares = middlewares
   thoughts = thoughts

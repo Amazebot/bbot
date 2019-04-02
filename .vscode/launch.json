@@ -41,6 +41,7 @@
         "${workspaceRoot}/test/mocha.opts",
         "--reporter",
         "spec",
+        "--bail",
         "${relativeFile}",
       ],
       "protocol": "inspector",
