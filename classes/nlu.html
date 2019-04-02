@@ -68,7 +68,7 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>NLU attributes controller.
-						Results are instance of results class (not interface) to access helpers.</p>
+						NLUResults are instance of results class (not interface) to access helpers.</p>
 					</div>
 				</div>
 			</section>
@@ -108,10 +108,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="results" class="tsd-anchor"></a>
 					<h3>results</h3>
-					<div class="tsd-signature tsd-kind-icon">results<span class="tsd-signature-symbol">:</span> <a href="../index.html#naturallanguageresults" class="tsd-signature-type">NaturalLanguageResults</a></div>
+					<div class="tsd-signature tsd-kind-icon">results<span class="tsd-signature-symbol">:</span> <a href="../index.html#nluresults" class="tsd-signature-type">NLUResults</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L166">lib/nlu.ts:166</a></li>
+							<li>Defined in lib/components/nlu.d.ts:36</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/nlu.ts#L175">src/components/nlu.ts:175</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,13 +123,13 @@
 					<a name="addresult" class="tsd-anchor"></a>
 					<h3>add<wbr>Result</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Result<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../index.html#nlukeys" class="tsd-signature-type">NLUKeys</a>, <span class="tsd-signature-symbol">...</span>results<span class="tsd-signature-symbol">: </span><a href="../interfaces/inaturallanguageresult.html" class="tsd-signature-type">INaturalLanguageResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Result<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../index.html#nlukeys" class="tsd-signature-type">NLUKeys</a>, <span class="tsd-signature-symbol">...</span>results<span class="tsd-signature-symbol">: </span><a href="../interfaces/inluresult.html" class="tsd-signature-type">INLUResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L169">lib/nlu.ts:169</a></li>
+									<li>Defined in lib/components/nlu.d.ts:37</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -142,7 +143,7 @@
 									<h5>key: <a href="../index.html#nlukeys" class="tsd-signature-type">NLUKeys</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>results: <a href="../interfaces/inaturallanguageresult.html" class="tsd-signature-type">INaturalLanguageResult</a><span class="tsd-signature-symbol">[]</span></h5>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>results: <a href="../interfaces/inluresult.html" class="tsd-signature-type">INLUResult</a><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -153,13 +154,13 @@
 					<a name="addresults" class="tsd-anchor"></a>
 					<h3>add<wbr>Results</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Results<span class="tsd-signature-symbol">(</span>results<span class="tsd-signature-symbol">: </span><a href="../index.html#naturallanguageresultsraw" class="tsd-signature-type">NaturalLanguageResultsRaw</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Results<span class="tsd-signature-symbol">(</span>results<span class="tsd-signature-symbol">: </span><a href="../index.html#nluresultsraw" class="tsd-signature-type">NLUResultsRaw</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L179">lib/nlu.ts:179</a></li>
+									<li>Defined in lib/components/nlu.d.ts:38</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -170,7 +171,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>results: <a href="../index.html#naturallanguageresultsraw" class="tsd-signature-type">NaturalLanguageResultsRaw</a></h5>
+									<h5>results: <a href="../index.html#nluresultsraw" class="tsd-signature-type">NLUResultsRaw</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -181,13 +182,13 @@
 					<a name="matchallcriteria" class="tsd-anchor"></a>
 					<h3>match<wbr>All<wbr>Criteria</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">match<wbr>All<wbr>Criteria<span class="tsd-signature-symbol">(</span>criteria<span class="tsd-signature-symbol">: </span><a href="../index.html#naturallanguagecriteria" class="tsd-signature-type">NaturalLanguageCriteria</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></li>
+						<li class="tsd-signature tsd-kind-icon">match<wbr>All<wbr>Criteria<span class="tsd-signature-symbol">(</span>criteria<span class="tsd-signature-symbol">: </span><a href="../index.html#nlucriteria" class="tsd-signature-type">NLUCriteria</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../index.html#nluresultsraw" class="tsd-signature-type">NLUResultsRaw</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L194">lib/nlu.ts:194</a></li>
+									<li>Defined in lib/components/nlu.d.ts:40</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -198,12 +199,12 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>criteria: <a href="../index.html#naturallanguagecriteria" class="tsd-signature-type">NaturalLanguageCriteria</a></h5>
+									<h5>criteria: <a href="../index.html#nlucriteria" class="tsd-signature-type">NLUCriteria</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+							<h4 class="tsd-returns-title">Returns <a href="../index.html#nluresultsraw" class="tsd-signature-type">NLUResultsRaw</a>
 								<span class="tsd-signature-symbol"> | </span>
-								<span class="tsd-signature-type">object</span>
+								<span class="tsd-signature-type">undefined</span>
 							</h4>
 						</li>
 					</ul>
@@ -212,13 +213,13 @@
 					<a name="matchcriteria" class="tsd-anchor"></a>
 					<h3>match<wbr>Criteria</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">match<wbr>Criteria<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../index.html#nlukeys" class="tsd-signature-type">NLUKeys</a>, criteria<span class="tsd-signature-symbol">: </span><a href="../interfaces/inaturallanguagecriteria.html" class="tsd-signature-type">INaturalLanguageCriteria</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/inaturallanguageresult.html" class="tsd-signature-type">INaturalLanguageResult</a><span class="tsd-signature-symbol">[]</span></li>
+						<li class="tsd-signature tsd-kind-icon">match<wbr>Criteria<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../index.html#nlukeys" class="tsd-signature-type">NLUKeys</a>, criteria<span class="tsd-signature-symbol">: </span><a href="../interfaces/inlucriteria.html" class="tsd-signature-type">INLUCriteria</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/inluresult.html" class="tsd-signature-type">INLUResult</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L188">lib/nlu.ts:188</a></li>
+									<li>Defined in lib/components/nlu.d.ts:39</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -232,12 +233,12 @@
 									<h5>key: <a href="../index.html#nlukeys" class="tsd-signature-type">NLUKeys</a></h5>
 								</li>
 								<li>
-									<h5>criteria: <a href="../interfaces/inaturallanguagecriteria.html" class="tsd-signature-type">INaturalLanguageCriteria</a></h5>
+									<h5>criteria: <a href="../interfaces/inlucriteria.html" class="tsd-signature-type">INLUCriteria</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/inluresult.html" class="tsd-signature-type">INLUResult</a><span class="tsd-signature-symbol">[]</span>
 								<span class="tsd-signature-symbol"> | </span>
-								<a href="../interfaces/inaturallanguageresult.html" class="tsd-signature-type">INaturalLanguageResult</a><span class="tsd-signature-symbol">[]</span>
+								<span class="tsd-signature-type">undefined</span>
 							</h4>
 						</li>
 					</ul>
@@ -252,7 +253,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L206">lib/nlu.ts:206</a></li>
+									<li>Defined in lib/components/nlu.d.ts:41</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

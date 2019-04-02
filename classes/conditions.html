@@ -93,19 +93,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#captured" class="tsd-kind-icon">captured</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#captures" class="tsd-kind-icon">captures</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#config" class="tsd-kind-icon">config</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#expressions" class="tsd-kind-icon">expressions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#match" class="tsd-kind-icon">match</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#matched" class="tsd-kind-icon">matched</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#matches" class="tsd-kind-icon">matches</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="conditions.html#captured" class="tsd-kind-icon">captured</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="conditions.html#match" class="tsd-kind-icon">match</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="conditions.html#matched" class="tsd-kind-icon">matched</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="conditions.html#success" class="tsd-kind-icon">success</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="conditions.html#success" class="tsd-kind-icon">success</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -126,28 +121,30 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Conditions<span class="tsd-signature-symbol">(</span>condition<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#condition" class="tsd-signature-type">Condition</a><span class="tsd-signature-symbol"> | </span><a href="../index.html#condition" class="tsd-signature-type">Condition</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#conditioncollection" class="tsd-signature-type">ConditionCollection</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/iconditionoptions.html" class="tsd-signature-type">IConditionOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="conditions.html" class="tsd-signature-type">Conditions</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Conditions<span class="tsd-signature-symbol">(</span>condition<span class="tsd-signature-symbol">?: </span><a href="../index.html#conditioninput" class="tsd-signature-type">ConditionInput</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ioptions.html" class="tsd-signature-type">IOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="conditions.html" class="tsd-signature-type">Conditions</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L173">lib/condition.ts:173</a></li>
+									<li>Defined in lib/components/condition.d.ts:43</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Created new conditions instance.
+										Generate expressions from conditions and options.
+										Created new conditions instance.
 									Generate expressions from conditions and options.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> condition: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#condition" class="tsd-signature-type">Condition</a><span class="tsd-signature-symbol"> | </span><a href="../index.html#condition" class="tsd-signature-type">Condition</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#conditioncollection" class="tsd-signature-type">ConditionCollection</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> condition: <a href="../index.html#conditioninput" class="tsd-signature-type">ConditionInput</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../interfaces/iconditionoptions.html" class="tsd-signature-type">IConditionOptions</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/ioptions.html" class="tsd-signature-type">IOptions</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="conditions.html" class="tsd-signature-type">Conditions</a></h4>
@@ -158,83 +155,16 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="captures" class="tsd-anchor"></a>
-					<h3>captures</h3>
-					<div class="tsd-signature tsd-kind-icon">captures<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L170">lib/condition.ts:170</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="config" class="tsd-anchor"></a>
-					<h3>config</h3>
-					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <a href="../interfaces/iconditionoptions.html" class="tsd-signature-type">IConditionOptions</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L164">lib/condition.ts:164</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="expressions" class="tsd-anchor"></a>
-					<h3>expressions</h3>
-					<div class="tsd-signature tsd-kind-icon">expressions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L165">lib/condition.ts:165</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">RegExp</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="matches" class="tsd-anchor"></a>
-					<h3>matches</h3>
-					<div class="tsd-signature tsd-kind-icon">matches<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L166">lib/condition.ts:166</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
-							</li>
-						</ul>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="captured" class="tsd-anchor"></a>
 					<h3>captured</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-property tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> captured<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L251">lib/condition.ts:251</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L276">src/components/condition.ts:276</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -251,17 +181,66 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="captures" class="tsd-anchor"></a>
+					<h3>captures</h3>
+					<div class="tsd-signature tsd-kind-icon">captures<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/condition.d.ts:40</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L185">src/components/condition.ts:185</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="config" class="tsd-anchor"></a>
+					<h3>config</h3>
+					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IOptions</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/condition.d.ts:32</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L179">src/components/condition.ts:179</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="expressions" class="tsd-anchor"></a>
+					<h3>expressions</h3>
+					<div class="tsd-signature tsd-kind-icon">expressions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/condition.d.ts:33</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L180">src/components/condition.ts:180</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">RegExp</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="match" class="tsd-anchor"></a>
 					<h3>match</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> match<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					<ul class="tsd-signatures tsd-kind-property tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> match<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExpMatchArray</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L233">lib/condition.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L258">src/components/condition.ts:258</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -269,21 +248,28 @@
 									<p>Get success of all matches or the first match object if only one</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">false</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">true</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">RegExpMatchArray</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="matched" class="tsd-anchor"></a>
 					<h3>matched</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> matched<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					<ul class="tsd-signatures tsd-kind-property tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> matched<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L241">lib/condition.ts:241</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L266">src/components/condition.ts:266</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -291,21 +277,45 @@
 									<p>Get the result of all matches or the first if only one and no keys used</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">RegExpMatchArray</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">object</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="matches" class="tsd-anchor"></a>
+					<h3>matches</h3>
+					<div class="tsd-signature tsd-kind-icon">matches<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/condition.d.ts:36</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L181">src/components/condition.ts:181</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-index-signature">
+								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="success" class="tsd-anchor"></a>
 					<h3>success</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+					<ul class="tsd-signatures tsd-kind-property tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> success<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L228">lib/condition.ts:228</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/condition.ts#L251">src/components/condition.ts:251</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -330,7 +340,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L203">lib/condition.ts:203</a></li>
+									<li>Defined in lib/components/condition.d.ts:45</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -363,7 +373,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L261">lib/condition.ts:261</a></li>
+									<li>Defined in lib/components/condition.d.ts:60</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -385,7 +395,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L267">lib/condition.ts:267</a></li>
+									<li>Defined in lib/components/condition.d.ts:61</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -407,7 +417,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/condition.ts#L216">lib/condition.ts:216</a></li>
+									<li>Defined in lib/components/condition.d.ts:46</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -424,7 +434,7 @@
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter-index-signature">
-									<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5>
+									<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
 								</li>
 							</ul>
 						</li>
@@ -451,6 +461,9 @@
 								<a href="conditions.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="conditions.html#captured" class="tsd-kind-icon">captured</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="conditions.html#captures" class="tsd-kind-icon">captures</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -460,18 +473,15 @@
 								<a href="conditions.html#expressions" class="tsd-kind-icon">expressions</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="conditions.html#matches" class="tsd-kind-icon">matches</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="conditions.html#captured" class="tsd-kind-icon">captured</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="conditions.html#match" class="tsd-kind-icon">match</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="conditions.html#matched" class="tsd-kind-icon">matched</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="conditions.html#matches" class="tsd-kind-icon">matches</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="conditions.html#success" class="tsd-kind-icon">success</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">

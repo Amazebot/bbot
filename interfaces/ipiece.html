@@ -89,12 +89,13 @@
 				<h3 class="tsd-before-signature">Callable</h3>
 				<ul class="tsd-signatures tsd-kind-interface">
 					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="../classes/state.html" class="tsd-signature-type">State</a>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, done<span class="tsd-signature-symbol">: </span><a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span></li>
+					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">State</span>, next<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, done<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IPieceDone</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">any</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/middleware.ts#L13">lib/middleware.ts:13</a></li>
+								<li>Defined in lib/components/middleware.d.ts:2</li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -136,6 +137,58 @@
 							</li>
 							<li>
 								<h5>done: <a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>
+							<span class="tsd-signature-symbol"> | </span>
+							<span class="tsd-signature-type">any</span>
+						</h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/middleware.ts#L19">src/components/middleware.ts:19</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>A generic middleware pipeline function that can either continue the pipeline
+								or interrupt it. Can return a promise to wait on before next piece executed.</p>
+							</div>
+							<p>The <code>next</code> function should be called to continue on to the next piece in the
+								stack. It can be called with a single, optional argument: either the provided
+								<code>done</code> function or a new function that eventually calls done, to execute
+								logic after the stack completes. If the argument is not given, the provided
+							done will be assumed.</p>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>state: <span class="tsd-signature-type">State</span></h5>
+							</li>
+							<li>
+								<h5>next: <span class="tsd-signature-type">function</span></h5>
+								<ul class="tsd-parameters">
+									<li class="tsd-parameter-siganture">
+										<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+											<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>done<span class="tsd-signature-symbol">?: </span><a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+										</ul>
+										<ul class="tsd-descriptions">
+											<li class="tsd-description">
+												<h4 class="tsd-parameters-title">Parameters</h4>
+												<ul class="tsd-parameters">
+													<li>
+														<h5><span class="tsd-flag ts-flagOptional">Optional</span> done: <a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a></h5>
+													</li>
+												</ul>
+												<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li>
+								<h5>done: <span class="tsd-signature-type">IPieceDone</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>

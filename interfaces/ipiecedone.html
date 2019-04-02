@@ -85,12 +85,34 @@
 				<h3 class="tsd-before-signature">Callable</h3>
 				<ul class="tsd-signatures tsd-kind-interface">
 					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>newDone<span class="tsd-signature-symbol">?: </span><a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>newDone<span class="tsd-signature-symbol">?: </span><a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/middleware.ts#L26">lib/middleware.ts:26</a></li>
+								<li>Defined in lib/components/middleware.d.ts:5</li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>A <code>done</code> function, created when executing middleware piece, is passed to each
+									piece and can be called (with no arguments) to interrupt the stack and begin
+								executing the chain of completion functions.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> newDone: <a href="ipiecedone.html" class="tsd-signature-type">IPieceDone</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/middleware.ts#L32">src/components/middleware.ts:32</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">

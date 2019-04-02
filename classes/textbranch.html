@@ -76,6 +76,9 @@
 				<ul class="tsd-hierarchy">
 					<li>
 						<a href="branch.html" class="tsd-signature-type">Branch</a>
+					</li>
+					<li>
+						<span class="tsd-signature-type">Branch</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">TextBranch</span>
@@ -87,6 +90,13 @@
 							</li>
 						</ul>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a></li>
+					<li><span class="tsd-signature-type">IBranch</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-class">
@@ -111,19 +121,21 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textbranch.html#callback" class="tsd-kind-icon">callback</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#callback" class="tsd-kind-icon">callback</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="textbranch.html#conditions" class="tsd-kind-icon">conditions</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textbranch.html#force" class="tsd-kind-icon">force</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textbranch.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textbranch.html#match" class="tsd-kind-icon">match</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="textbranch.html#matched" class="tsd-kind-icon">matched</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#force" class="tsd-kind-icon">force</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#match" class="tsd-kind-icon">match</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#matched" class="tsd-kind-icon">matched</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite"><a href="textbranch.html#processkey" class="tsd-kind-icon">process<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="textbranch.html#execute" class="tsd-kind-icon">execute</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="textbranch.html#matcher" class="tsd-kind-icon">matcher</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="textbranch.html#process" class="tsd-kind-icon">process</a></li>
 							</ul>
 						</section>
 					</div>
@@ -135,28 +147,29 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Text<wbr>Branch<span class="tsd-signature-symbol">(</span>conditions<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bot.Condition</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bot.Condition</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bot.ConditionCollection</span><span class="tsd-signature-symbol"> | </span><a href="conditions.html" class="tsd-signature-type">Conditions</a>, callback<span class="tsd-signature-symbol">: </span><a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="textbranch.html" class="tsd-signature-type">TextBranch</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Text<wbr>Branch<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><a href="conditions.html" class="tsd-signature-type">Conditions</a><span class="tsd-signature-symbol"> | </span><a href="../index.html#conditioninput" class="tsd-signature-type">ConditionInput</a>, callback<span class="tsd-signature-symbol">: </span><a href="payload.html#action" class="tsd-signature-type">action</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="textbranch.html" class="tsd-signature-type">TextBranch</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L138">lib/branch.ts:138</a></li>
+									<li>Defined in lib/components/branch.d.ts:51</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create text branch for regex pattern</p>
+									<p>Create text branch for regex pattern
+									Create text branch for regex pattern</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>conditions: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExp</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bot.Condition</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bot.Condition</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">bot.ConditionCollection</span><span class="tsd-signature-symbol"> | </span><a href="conditions.html" class="tsd-signature-type">Conditions</a></h5>
+									<h5>input: <a href="conditions.html" class="tsd-signature-type">Conditions</a><span class="tsd-signature-symbol"> | </span><a href="../index.html#conditioninput" class="tsd-signature-type">ConditionInput</a></h5>
 								</li>
 								<li>
-									<h5>callback: <a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5>callback: <a href="payload.html#action" class="tsd-signature-type">action</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a></h5>
@@ -169,86 +182,150 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="callback" class="tsd-anchor"></a>
 					<h3>callback</h3>
-					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a></div>
+					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/icallback.html" class="tsd-signature-type">ICallback</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#callback">callback</a></p>
+						<p>Overrides Branch.callback</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L33">lib/branch.ts:33</a></li>
+							<li>Defined in lib/components/branch.d.ts:28</li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="conditions" class="tsd-anchor"></a>
 					<h3>conditions</h3>
-					<div class="tsd-signature tsd-kind-icon">conditions<span class="tsd-signature-symbol">:</span> <a href="conditions.html" class="tsd-signature-type">Conditions</a></div>
+					<div class="tsd-signature tsd-kind-icon">conditions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Conditions</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L138">lib/branch.ts:138</a></li>
+							<li>Defined in lib/components/branch.d.ts:51</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L168">src/components/branch.ts:168</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="force" class="tsd-anchor"></a>
 					<h3>force</h3>
-					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
+					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ibranch.html">IBranch</a>.<a href="../interfaces/ibranch.html#force">force</a></p>
 						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#force">force</a></p>
+						<p>Overrides Branch.force</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L34">lib/branch.ts:34</a></li>
+							<li>Defined in lib/components/branch.d.ts:29</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ibranch.html">IBranch</a>.<a href="../interfaces/ibranch.html#id">id</a></p>
 						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#id">id</a></p>
+						<p>Overrides Branch.id</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L32">lib/branch.ts:32</a></li>
+							<li>Defined in lib/components/branch.d.ts:27</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="match" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> match</h3>
 					<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#match">match</a></p>
+						<p>Overrides Branch.match</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L35">lib/branch.ts:35</a></li>
+							<li>Defined in lib/components/branch.d.ts:31</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="matched" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> matched</h3>
-					<div class="tsd-signature tsd-kind-icon">matched<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<div class="tsd-signature tsd-kind-icon">matched<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#matched">matched</a></p>
+						<p>Overrides Branch.matched</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L36">lib/branch.ts:36</a></li>
+							<li>Defined in lib/components/branch.d.ts:32</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+					<a name="processkey" class="tsd-anchor"></a>
+					<h3>process<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">process<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="../index.html#processkeys" class="tsd-signature-type">ProcessKeys</a><span class="tsd-signature-symbol"> =&nbsp;&quot;listen&quot;</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ibranch.html">IBranch</a>.<a href="../interfaces/ibranch.html#processkey">processKey</a></p>
+						<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#processkey">processKey</a></p>
+						<ul>
+							<li>Defined in lib/components/branch.d.ts:50</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L167">src/components/branch.ts:167</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#type">type</a></p>
+						<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#type">type</a></p>
+						<ul>
+							<li>Defined in lib/components/branch.d.ts:36</li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="execute" class="tsd-anchor"></a>
+					<h3>execute</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">execute<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, middleware<span class="tsd-signature-symbol">: </span><a href="middleware.html" class="tsd-signature-type">Middleware</a>, done<span class="tsd-signature-symbol">?: </span><a href="../interfaces/idone.html" class="tsd-signature-type">IDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#execute">execute</a></p>
+								<p>Overrides Branch.execute</p>
+								<ul>
+									<li>Defined in lib/components/branch.d.ts:37</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>b: <a href="state.html" class="tsd-signature-type">State</a></h5>
+								</li>
+								<li>
+									<h5>middleware: <a href="middleware.html" class="tsd-signature-type">Middleware</a></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> done: <a href="../interfaces/idone.html" class="tsd-signature-type">IDone</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 					<a name="matcher" class="tsd-anchor"></a>
 					<h3>matcher</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">matcher<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="message.html" class="tsd-signature-type">Message</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">matcher<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><a href="message.html" class="tsd-signature-type">Message</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="branch.html">Branch</a>.<a href="branch.html#matcher">matcher</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L156">lib/branch.ts:156</a></li>
+									<li>Defined in lib/components/branch.d.ts:53</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -260,57 +337,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>message: <a href="message.html" class="tsd-signature-type">Message</a></h5>
+									<h5>msg: <a href="message.html" class="tsd-signature-type">Message</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="process" class="tsd-anchor"></a>
-					<h3>process</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, middleware<span class="tsd-signature-symbol">: </span><a href="middleware.html" class="tsd-signature-type">Middleware</a>, done<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranchdone.html" class="tsd-signature-type">IBranchDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="branch.html">Branch</a>.<a href="branch.html#process">process</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L67">lib/branch.ts:67</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Runs the matcher, then middleware and callback if matched.
-										Middleware can intercept and prevent the callback from executing.
-										If the state has already matched on prior branch, it will not match again
-									unless forced to, with the branch&#39;s <code>force</code> property.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>b: <a href="state.html" class="tsd-signature-type">State</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>State containing message to process</p>
-									</div>
-								</li>
-								<li>
-									<h5>middleware: <a href="middleware.html" class="tsd-signature-type">Middleware</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Executes before the branch callback if matched</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> done: <a href="../interfaces/ibranchdone.html" class="tsd-signature-type">IBranchDone</a><span class="tsd-signature-symbol"> =&nbsp;() &#x3D;&gt; null</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Called after middleware (optional), with match status</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">RegExpMatchArray</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -334,29 +364,35 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="textbranch.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="textbranch.html#callback" class="tsd-kind-icon">callback</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="textbranch.html#conditions" class="tsd-kind-icon">conditions</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="textbranch.html#force" class="tsd-kind-icon">force</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="textbranch.html#id" class="tsd-kind-icon">id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="textbranch.html#match" class="tsd-kind-icon">match</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="textbranch.html#matched" class="tsd-kind-icon">matched</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+								<a href="textbranch.html#processkey" class="tsd-kind-icon">process<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="textbranch.html#type" class="tsd-kind-icon">type</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="textbranch.html#execute" class="tsd-kind-icon">execute</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="textbranch.html#matcher" class="tsd-kind-icon">matcher</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="textbranch.html#process" class="tsd-kind-icon">process</a>
 							</li>
 						</ul>
 					</li>

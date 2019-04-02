@@ -85,6 +85,7 @@
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
 					<li><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></li>
+					<li><span class="tsd-signature-type">IThought</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -123,18 +124,21 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Thought<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thought.html" class="tsd-signature-type">Thought</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Thought<span class="tsd-signature-symbol">(</span>atts<span class="tsd-signature-symbol">: </span><a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thought.html" class="tsd-signature-type">Thought</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L24">lib/thought.ts:24</a></li>
+									<li>Defined in lib/components/thought.d.ts:25</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Create new thought process with optional validate and action functions.
+										Presence of branches in options determines how middleware will execute.
+										Without middleware option, will the middleware of same name as the thought.
+										Create new thought process with optional validate and action functions.
 										Presence of branches in options determines how middleware will execute.
 									Without middleware option, will the middleware of same name as the thought.</p>
 								</div>
@@ -142,7 +146,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>options: <a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></h5>
+									<h5>atts: <a href="../interfaces/ithought.html" class="tsd-signature-type">IThought</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="thought.html" class="tsd-signature-type">Thought</a></h4>
@@ -155,11 +159,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="b" class="tsd-anchor"></a>
 					<h3>b</h3>
-					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <a href="state.html" class="tsd-signature-type">State</a></div>
+					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">State</span></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#b">b</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L20">lib/thought.ts:20</a></li>
+							<li>Defined in lib/components/thought.d.ts:19</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L37">src/components/thought.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,18 +175,20 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#branches">branches</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L24">lib/thought.ts:24</a></li>
+							<li>Defined in lib/components/thought.d.ts:23</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L41">src/components/thought.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="middleware" class="tsd-anchor"></a>
 					<h3>middleware</h3>
-					<div class="tsd-signature tsd-kind-icon">middleware<span class="tsd-signature-symbol">:</span> <a href="middleware.html" class="tsd-signature-type">Middleware</a></div>
+					<div class="tsd-signature tsd-kind-icon">middleware<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Middleware</span></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#middleware">middleware</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L23">lib/thought.ts:23</a></li>
+							<li>Defined in lib/components/thought.d.ts:22</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L40">src/components/thought.ts:40</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -192,7 +199,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ithought.html">IThought</a>.<a href="../interfaces/ithought.html#name">name</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L19">lib/thought.ts:19</a></li>
+							<li>Defined in lib/components/thought.d.ts:18</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L36">src/components/thought.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -209,7 +217,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L22">lib/thought.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L39">src/components/thought.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -226,13 +234,13 @@
 					<a name="process" class="tsd-anchor"></a>
 					<h3>process</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L51">lib/thought.ts:51</a></li>
+									<li>Defined in lib/components/thought.d.ts:27</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -246,7 +254,7 @@
 									If process succeeds, timestamp is added to state.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -260,7 +268,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L21">lib/thought.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L38">src/components/thought.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>

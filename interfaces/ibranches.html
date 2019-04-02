@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>INaturalLanguageCriteria | bBot</title>
+	<title>IBranches | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="inaturallanguagecriteria.html">INaturalLanguageCriteria</a>
+					<a href="ibranches.html">IBranches</a>
 				</li>
 			</ul>
-			<h1>Interface INaturalLanguageCriteria</h1>
+			<h1>Interface IBranches</h1>
 		</div>
 	</div>
 </header>
@@ -67,19 +67,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Add an operator to compare array of NLU results with one given.
-						Comparisons requiring a score will use the default threshold if none given.</p>
-						<ul>
-							<li><code>in</code>   id and/or name (or score if only score given) exists in the result</li>
-							<li><code>is</code>   id and/or name (or score if only score given) are the only result</li>
-							<li><code>max</code>  id and/or name match result with highest score</li>
-							<li><code>min</code>  id and/or name match result with lowest score</li>
-							<li><code>eq</code>   any result has score exactly equal to comparison</li>
-							<li><code>gte</code>  any result has score greater than or equal to comparison</li>
-							<li><code>gt</code>   any result has score greater than comparison</li>
-							<li><code>lt</code>   any result has score less than comparison</li>
-							<li><code>lte</code>  any result has score less than or equal to comparison</li>
-						</ul>
+						<p>Interface for collections of thought process branches.</p>
 					</div>
 				</div>
 			</section>
@@ -87,35 +75,15 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="inaturallanguageresult.html" class="tsd-signature-type">INaturalLanguageResult</a>
-						<ul class="tsd-hierarchy">
-							<li>
-								<span class="target">INaturalLanguageCriteria</span>
-							</li>
-						</ul>
+						<span class="target">IBranches</span>
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel tsd-kind-interface">
-				<h3 class="tsd-before-signature">Indexable</h3>
-				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>Add an operator to compare array of NLU results with one given.
-						Comparisons requiring a score will use the default threshold if none given.</p>
-						<ul>
-							<li><code>in</code>   id and/or name (or score if only score given) exists in the result</li>
-							<li><code>is</code>   id and/or name (or score if only score given) are the only result</li>
-							<li><code>max</code>  id and/or name match result with highest score</li>
-							<li><code>min</code>  id and/or name match result with lowest score</li>
-							<li><code>eq</code>   any result has score exactly equal to comparison</li>
-							<li><code>gte</code>  any result has score greater than or equal to comparison</li>
-							<li><code>gt</code>   any result has score greater than comparison</li>
-							<li><code>lt</code>   any result has score less than comparison</li>
-							<li><code>lte</code>  any result has score less than or equal to comparison</li>
-						</ul>
-					</div>
-				</div>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/branchcontroller.html" class="tsd-signature-type">BranchController</a></li>
+				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
@@ -124,10 +92,10 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="inaturallanguagecriteria.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="inaturallanguagecriteria.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inaturallanguagecriteria.html#operator" class="tsd-kind-icon">operator</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="inaturallanguagecriteria.html#score" class="tsd-kind-icon">score</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranches.html#act" class="tsd-kind-icon">act</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranches.html#listen" class="tsd-kind-icon">listen</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranches.html#serve" class="tsd-kind-icon">serve</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranches.html#understand" class="tsd-kind-icon">understand</a></li>
 							</ul>
 						</section>
 					</div>
@@ -135,46 +103,47 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="id" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="act" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> act</h3>
+					<div class="tsd-signature tsd-kind-icon">act<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="inaturallanguageresult.html">INaturalLanguageResult</a>.<a href="inaturallanguageresult.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L8">lib/nlu.ts:8</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="inaturallanguageresult.html">INaturalLanguageResult</a>.<a href="inaturallanguageresult.html#name">name</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L9">lib/nlu.ts:9</a></li>
+							<li>Defined in lib/components/branch.d.ts:94</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L367">src/components/branch.ts:367</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="operator" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> operator</h3>
-					<div class="tsd-signature tsd-kind-icon">operator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"in"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"is"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"match"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"max"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"min"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"eq"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"gte"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"gt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"lt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"lte"</span></div>
+					<a name="listen" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> listen</h3>
+					<div class="tsd-signature tsd-kind-icon">listen<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L28">lib/nlu.ts:28</a></li>
+							<li>Defined in lib/components/branch.d.ts:85</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L364">src/components/branch.ts:364</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-					<a name="score" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> score</h3>
-					<div class="tsd-signature tsd-kind-icon">score<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="serve" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> serve</h3>
+					<div class="tsd-signature tsd-kind-icon">serve<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="inaturallanguageresult.html">INaturalLanguageResult</a>.<a href="inaturallanguageresult.html#score">score</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/nlu.ts#L10">lib/nlu.ts:10</a></li>
+							<li>Defined in lib/components/branch.d.ts:91</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L366">src/components/branch.ts:366</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="understand" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> understand</h3>
+					<div class="tsd-signature tsd-kind-icon">understand<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">object</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/branch.d.ts:88</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L365">src/components/branch.ts:365</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -193,19 +162,19 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="inaturallanguagecriteria.html" class="tsd-kind-icon">INatural<wbr>Language<wbr>Criteria</a>
+						<a href="ibranches.html" class="tsd-kind-icon">IBranches</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="inaturallanguagecriteria.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="inaturallanguagecriteria.html#name" class="tsd-kind-icon">name</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ibranches.html#act" class="tsd-kind-icon">act</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="inaturallanguagecriteria.html#operator" class="tsd-kind-icon">operator</a>
+								<a href="ibranches.html#listen" class="tsd-kind-icon">listen</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
-								<a href="inaturallanguagecriteria.html#score" class="tsd-kind-icon">score</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ibranches.html#serve" class="tsd-kind-icon">serve</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ibranches.html#understand" class="tsd-kind-icon">understand</a>
 							</li>
 						</ul>
 					</li>

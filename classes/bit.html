@@ -85,6 +85,7 @@
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
 					<li><a href="../interfaces/ibit.html" class="tsd-signature-type">IBit</a></li>
+					<li><span class="tsd-signature-type">IBit</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-class">
@@ -123,7 +124,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="bit.html#execute" class="tsd-kind-icon">execute</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="bit.html#run" class="tsd-kind-icon">run</a></li>
 							</ul>
 						</section>
 					</div>
@@ -135,21 +136,25 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Bit<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../interfaces/ibit.html" class="tsd-signature-type">IBit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="bit.html" class="tsd-signature-type">Bit</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Bit<span class="tsd-signature-symbol">(</span>atts<span class="tsd-signature-symbol">: </span><a href="../interfaces/ibit.html" class="tsd-signature-type">IBit</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="bit.html" class="tsd-signature-type">Bit</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L52">lib/bit.ts:52</a></li>
+									<li>Defined in lib/components/bit.d.ts:24</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Define a <code>condition</code> or <code>intent</code> that executes the bit, consecutively from
-										a prior bit, or with a <code>scope</code> attribute to become a &quot;global&quot; entry point
-									to a one time interaction or continuing scene.</p>
+									<p>Define a <code>condition</code> or <code>intent</code> that executes the bit.
+									Define a <code>condition</code> or <code>intent</code> that executes the bit.</p>
 								</div>
+								<p>A subsequent bit can even lead back to its own parent or any other bit,
+								creating a mesh of possible conversational pathways.</p>
+								<p>A bit without a <code>condition</code> or <code>intent</code> can still be executed by calling
+									<code>doBit</code> with its <code>id</code>. This could be useful for defining integration logic
+								that does something outside chat, but can be triggered by chat scripts.</p>
 								<p>A subsequent bit can even lead back to its own parent or any other bit,
 								creating a mesh of possible conversational pathways.</p>
 								<p>A bit without a <code>condition</code> or <code>intent</code> can still be executed by calling
@@ -159,7 +164,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>options: <a href="../interfaces/ibit.html" class="tsd-signature-type">IBit</a></h5>
+									<h5>atts: <a href="../interfaces/ibit.html" class="tsd-signature-type">IBit</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="bit.html" class="tsd-signature-type">Bit</a></h4>
@@ -172,11 +177,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="callback" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> callback</h3>
-					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IBranchCallback</span></div>
+					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/icallback.html" class="tsd-signature-type">ICallback</a></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#callback">callback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L40">lib/bit.ts:40</a></li>
+							<li>Defined in lib/components/bit.d.ts:18</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L41">src/components/bit.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -192,7 +198,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#catch">catch</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L38">lib/bit.ts:38</a></li>
+							<li>Defined in lib/components/bit.d.ts:17</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L39">src/components/bit.ts:39</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -204,11 +211,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="catchcallback" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> catch<wbr>Callback</h3>
-					<div class="tsd-signature tsd-kind-icon">catch<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.IBranchCallback</span></div>
+					<div class="tsd-signature tsd-kind-icon">catch<wbr>Callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/icallback.html" class="tsd-signature-type">ICallback</a></div>
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#catchcallback">catchCallback</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L42">lib/bit.ts:42</a></li>
+							<li>Defined in lib/components/bit.d.ts:19</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L43">src/components/bit.ts:43</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -224,7 +232,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#condition">condition</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L44">lib/bit.ts:44</a></li>
+							<li>Defined in lib/components/bit.d.ts:20</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L45">src/components/bit.ts:45</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -240,7 +249,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L34">lib/bit.ts:34</a></li>
+							<li>Defined in lib/components/bit.d.ts:15</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L35">src/components/bit.ts:35</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -256,7 +266,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#intent">intent</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L46">lib/bit.ts:46</a></li>
+							<li>Defined in lib/components/bit.d.ts:21</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L47">src/components/bit.ts:47</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -272,7 +283,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#next">next</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L48">lib/bit.ts:48</a></li>
+							<li>Defined in lib/components/bit.d.ts:22</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L49">src/components/bit.ts:49</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -288,7 +300,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#options">options</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L50">lib/bit.ts:50</a></li>
+							<li>Defined in lib/components/bit.d.ts:23</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L51">src/components/bit.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -304,7 +317,8 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/ibit.html">IBit</a>.<a href="../interfaces/ibit.html#send">send</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L36">lib/bit.ts:36</a></li>
+							<li>Defined in lib/components/bit.d.ts:16</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/bit.ts#L37">src/components/bit.ts:37</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -317,21 +331,21 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="execute" class="tsd-anchor"></a>
-					<h3>execute</h3>
+					<a name="run" class="tsd-anchor"></a>
+					<h3>run</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">execute<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">run<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/bit.ts#L76">lib/bit.ts:76</a></li>
+									<li>Defined in lib/components/bit.d.ts:26</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Do stuff with current bot state (e.g. send replies and/or call callbacks)</p>
+									<p>Execute with current state (e.g. send replies and/or call callbacks).</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -392,7 +406,7 @@
 								<a href="bit.html#send" class="tsd-kind-icon">send</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="bit.html#execute" class="tsd-kind-icon">execute</a>
+								<a href="bit.html#run" class="tsd-kind-icon">run</a>
 							</li>
 						</ul>
 					</li>

@@ -68,7 +68,7 @@
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
 						<p>Collection of processes and branches to execute with middleware and state.
-							Will use global path by default, but can be replaced with custom set.
+							Will use global branches by default, but can be replaced with custom set.
 							Sequence arrays define orders of named processes, to run consecutively.
 							Default sequences are <code>receive</code> and <code>dispatch</code> to process incoming/outgoing.
 							Each process may have a <code>validate</code> method to run before processing and an
@@ -98,7 +98,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#b" class="tsd-kind-icon">b</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#path" class="tsd-kind-icon">path</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#branches" class="tsd-kind-icon">branches</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="thoughts.html#processes" class="tsd-kind-icon">processes</a></li>
 							</ul>
 						</section>
@@ -123,20 +123,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Thoughts<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, path<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">bot.Path</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thoughts.html" class="tsd-signature-type">Thoughts</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Thoughts<span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, initBranches<span class="tsd-signature-symbol">?: </span><a href="branchcontroller.html" class="tsd-signature-type">BranchController</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="thoughts.html" class="tsd-signature-type">Thoughts</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L116">lib/thought.ts:116</a></li>
+									<li>Defined in lib/components/thought.d.ts:38</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Start a new instance of thought processes with an optional path to process.
-										By default will process global path, but can accept an isolated path for
-									specific conversational context.</p>
+									<p>Start new instance of thought processes with optional branches to process.
+										By default will process global branches, but can accept an isolated
+										branches for specific conversational context.
+										Start new instance of thought processes with optional branches to process.
+										By default will process global branches, but can accept an isolated
+									branches for specific conversational context.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -145,7 +148,7 @@
 									<h5>state: <a href="state.html" class="tsd-signature-type">State</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> path: <span class="tsd-signature-type">bot.Path</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> initBranches: <a href="branchcontroller.html" class="tsd-signature-type">BranchController</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="thoughts.html" class="tsd-signature-type">Thoughts</a></h4>
@@ -158,40 +161,35 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="b" class="tsd-anchor"></a>
 					<h3>b</h3>
-					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol"> | </span><a href="state.html" class="tsd-signature-type">State</a></div>
+					<div class="tsd-signature tsd-kind-icon">b<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">State</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L109">lib/thought.ts:109</a></li>
+							<li>Defined in lib/components/thought.d.ts:33</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L132">src/components/thought.ts:132</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="path" class="tsd-anchor"></a>
-					<h3>path</h3>
-					<div class="tsd-signature tsd-kind-icon">path<span class="tsd-signature-symbol">:</span> <a href="path.html" class="tsd-signature-type">Path</a></div>
+					<a name="branches" class="tsd-anchor"></a>
+					<h3>branches</h3>
+					<div class="tsd-signature tsd-kind-icon">branches<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BranchController</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L110">lib/thought.ts:110</a></li>
+							<li>Defined in lib/components/thought.d.ts:34</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L133">src/components/thought.ts:133</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="processes" class="tsd-anchor"></a>
 					<h3>processes</h3>
-					<div class="tsd-signature tsd-kind-icon">processes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+					<div class="tsd-signature tsd-kind-icon">processes<span class="tsd-signature-symbol">:</span> <a href="../index.html#thoughtprocesses" class="tsd-signature-type">ThoughtProcesses</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L116">lib/thought.ts:116</a></li>
+							<li>Defined in lib/components/thought.d.ts:38</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L140">src/components/thought.ts:140</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-index-signature">
-								<h5><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><a href="thought.html" class="tsd-signature-type">Thought</a></h5>
-							</li>
-						</ul>
-					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -206,7 +204,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L225">lib/thought.ts:225</a></li>
+									<li>Defined in lib/components/thought.d.ts:40</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -233,7 +231,8 @@
 					<div class="tsd-signature tsd-kind-icon">sequence<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L111">lib/thought.ts:111</a></li>
+							<li>Defined in lib/components/thought.d.ts:35</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L134">src/components/thought.ts:134</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -242,7 +241,7 @@
 						<div class="tsd-signature tsd-kind-icon">dispatch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;respond&#x27;, &#x27;remember&#x27;]</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L114">lib/thought.ts:114</a></li>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L138">src/components/thought.ts:138</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -252,7 +251,7 @@
 						<div class="tsd-signature tsd-kind-icon">receive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;hear&#x27;, &#x27;listen&#x27;, &#x27;understand&#x27;, &#x27;act&#x27;, &#x27;remember&#x27;]</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L112">lib/thought.ts:112</a></li>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L136">src/components/thought.ts:136</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -262,7 +261,17 @@
 						<div class="tsd-signature tsd-kind-icon">respond<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;respond&#x27;]</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/thought.ts#L113">lib/thought.ts:113</a></li>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L137">src/components/thought.ts:137</a></li>
+							</ul>
+						</aside>
+					</section>
+					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+						<a name="sequence.serve" class="tsd-anchor"></a>
+						<h3>serve</h3>
+						<div class="tsd-signature tsd-kind-icon">serve<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;[&#x27;hear&#x27;, &#x27;serve&#x27;, &#x27;act&#x27;, &#x27;remember&#x27;]</span></div>
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/thought.ts#L135">src/components/thought.ts:135</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -291,7 +300,7 @@
 								<a href="thoughts.html#b" class="tsd-kind-icon">b</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="thoughts.html#path" class="tsd-kind-icon">path</a>
+								<a href="thoughts.html#branches" class="tsd-kind-icon">branches</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="thoughts.html#processes" class="tsd-kind-icon">processes</a>

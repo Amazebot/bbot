@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>NullMessage | bBot</title>
+	<title>INLUCriteria | bBot</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="nullmessage.html">NullMessage</a>
+					<a href="inlucriteria.html">INLUCriteria</a>
 				</li>
 			</ul>
-			<h1>Class NullMessage</h1>
+			<h1>Interface INLUCriteria</h1>
 		</div>
 	</div>
 </header>
@@ -67,7 +67,19 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>An empty message for outgoings without original input</p>
+						<p>Add an operator to compare array of NLU results with one given.
+						Comparisons requiring a score will use the default threshold if none given.</p>
+						<ul>
+							<li><code>in</code>   id and/or name (or score if only score given) exists in the result</li>
+							<li><code>is</code>   id and/or name (or score if only score given) are the only result</li>
+							<li><code>max</code>  id and/or name match result with highest score</li>
+							<li><code>min</code>  id and/or name match result with lowest score</li>
+							<li><code>eq</code>   any result has score exactly equal to comparison</li>
+							<li><code>gte</code>  any result has score greater than or equal to comparison</li>
+							<li><code>gt</code>   any result has score greater than comparison</li>
+							<li><code>lt</code>   any result has score less than comparison</li>
+							<li><code>lte</code>  any result has score less than or equal to comparison</li>
+						</ul>
 					</div>
 				</div>
 			</section>
@@ -75,147 +87,103 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="message.html" class="tsd-signature-type">Message</a>
+						<a href="inluresult.html" class="tsd-signature-type">INLUResult</a>
+					</li>
+					<li>
+						<span class="tsd-signature-type">INLUResult</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">NullMessage</span>
+								<span class="target">INLUCriteria</span>
 							</li>
 						</ul>
 					</li>
 				</ul>
+			</section>
+			<section class="tsd-panel tsd-kind-interface">
+				<h3 class="tsd-before-signature">Indexable</h3>
+				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Add an operator to compare array of NLU results with one given.
+						Comparisons requiring a score will use the default threshold if none given.</p>
+						<ul>
+							<li><code>in</code>   id and/or name (or score if only score given) exists in the result</li>
+							<li><code>is</code>   id and/or name (or score if only score given) are the only result</li>
+							<li><code>max</code>  id and/or name match result with highest score</li>
+							<li><code>min</code>  id and/or name match result with lowest score</li>
+							<li><code>eq</code>   any result has score exactly equal to comparison</li>
+							<li><code>gte</code>  any result has score greater than or equal to comparison</li>
+							<li><code>gt</code>   any result has score greater than comparison</li>
+							<li><code>lt</code>   any result has score less than comparison</li>
+							<li><code>lte</code>  any result has score less than or equal to comparison</li>
+						</ul>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="nullmessage.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="nullmessage.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="nullmessage.html#nlu" class="tsd-kind-icon">nlu</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="nullmessage.html#user" class="tsd-kind-icon">user</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Methods</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="nullmessage.html#clone" class="tsd-kind-icon">clone</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="nullmessage.html#tostring" class="tsd-kind-icon">to<wbr>String</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="inlucriteria.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="inlucriteria.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="inlucriteria.html#operator" class="tsd-kind-icon">operator</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited"><a href="inlucriteria.html#score" class="tsd-kind-icon">score</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Null<wbr>Message<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="nullmessage.html" class="tsd-signature-type">NullMessage</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="message.html">Message</a>.<a href="message.html#constructor">constructor</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/message.ts#L27">lib/message.ts:27</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <a href="nullmessage.html" class="tsd-signature-type">NullMessage</a></h4>
-						</li>
-					</ul>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> id</h3>
+					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="message.html">Message</a>.<a href="message.html#id">id</a></p>
+						<p>Inherited from <a href="inluresult.html">INLUResult</a>.<a href="inluresult.html#id">id</a></p>
+						<p>Overrides INLUResult.id</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/message.ts#L13">lib/message.ts:13</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>A unique ID for the message</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="nlu" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> nlu</h3>
-					<div class="tsd-signature tsd-kind-icon">nlu<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">bot.NLU</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="message.html">Message</a>.<a href="message.html#nlu">nlu</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/message.ts#L6">lib/message.ts:6</a></li>
+							<li>Defined in lib/components/nlu.d.ts:2</li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-					<a name="user" class="tsd-anchor"></a>
-					<h3>user</h3>
-					<div class="tsd-signature tsd-kind-icon">user<span class="tsd-signature-symbol">:</span> <a href="user.html" class="tsd-signature-type">User</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
-						<p>Inherited from <a href="message.html">Message</a>.<a href="message.html#user">user</a></p>
+						<p>Inherited from <a href="inluresult.html">INLUResult</a>.<a href="inluresult.html#name">name</a></p>
+						<p>Overrides INLUResult.name</p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/message.ts#L5">lib/message.ts:5</a></li>
+							<li>Defined in lib/components/nlu.d.ts:3</li>
 						</ul>
 					</aside>
 				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="clone" class="tsd-anchor"></a>
-					<h3>clone</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">clone<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="message.html">Message</a>.<a href="message.html#clone">clone</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/message.ts#L21">lib/message.ts:21</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Return a copy of message to alter without effecting original</p>
-								</div>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="operator" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> operator</h3>
+					<div class="tsd-signature tsd-kind-icon">operator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"in"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"is"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"match"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"max"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"min"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"eq"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"gte"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"gt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"lt"</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">"lte"</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/nlu.d.ts:8</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/nlu.ts#L33">src/components/nlu.ts:33</a></li>
+						</ul>
+					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="tostring" class="tsd-anchor"></a>
-					<h3>to<wbr>String</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">to<wbr>String<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="message.html">Message</a>.<a href="message.html#tostring">toString</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/message.ts#L31">lib/message.ts:31</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+					<a name="score" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> score</h3>
+					<div class="tsd-signature tsd-kind-icon">score<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="inluresult.html">INLUResult</a>.<a href="inluresult.html#score">score</a></p>
+						<p>Overrides INLUResult.score</p>
+						<ul>
+							<li>Defined in lib/components/nlu.d.ts:4</li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -231,26 +199,20 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class">
-						<a href="nullmessage.html" class="tsd-kind-icon">Null<wbr>Message</a>
+					<li class="current tsd-kind-interface">
+						<a href="inlucriteria.html" class="tsd-kind-icon">INLUCriteria</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="nullmessage.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+								<a href="inlucriteria.html#id" class="tsd-kind-icon">id</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="nullmessage.html#id" class="tsd-kind-icon">id</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+								<a href="inlucriteria.html#name" class="tsd-kind-icon">name</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="nullmessage.html#nlu" class="tsd-kind-icon">nlu</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="inlucriteria.html#operator" class="tsd-kind-icon">operator</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="nullmessage.html#user" class="tsd-kind-icon">user</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="nullmessage.html#clone" class="tsd-kind-icon">clone</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="nullmessage.html#tostring" class="tsd-kind-icon">to<wbr>String</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
+								<a href="inlucriteria.html#score" class="tsd-kind-icon">score</a>
 							</li>
 						</ul>
 					</li>

@@ -67,7 +67,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Hold extra key/value data for extensions to use, such as ID</p>
+						<p>Attributes for branch.</p>
 					</div>
 				</div>
 			</section>
@@ -79,12 +79,25 @@
 					</li>
 				</ul>
 			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/branch.html" class="tsd-signature-type">Branch</a></li>
+					<li><a href="../classes/catchallbranch.html" class="tsd-signature-type">CatchAllBranch</a></li>
+					<li><a href="../classes/custombranch.html" class="tsd-signature-type">CustomBranch</a></li>
+					<li><a href="../classes/nlubranch.html" class="tsd-signature-type">NLUBranch</a></li>
+					<li><a href="../classes/nludirectbranch.html" class="tsd-signature-type">NLUDirectBranch</a></li>
+					<li><a href="../classes/serverbranch.html" class="tsd-signature-type">ServerBranch</a></li>
+					<li><a href="../classes/textbranch.html" class="tsd-signature-type">TextBranch</a></li>
+					<li><a href="../classes/textdirectbranch.html" class="tsd-signature-type">TextDirectBranch</a></li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-kind-interface">
 				<h3 class="tsd-before-signature">Indexable</h3>
 				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></div>
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Hold extra key/value data for extensions to use, such as ID</p>
+						<p>Attributes for branch.</p>
 					</div>
 				</div>
 			</section>
@@ -97,6 +110,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranch.html#force" class="tsd-kind-icon">force</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranch.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ibranch.html#processkey" class="tsd-kind-icon">process<wbr>Key</a></li>
 							</ul>
 						</section>
 					</div>
@@ -107,10 +121,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="force" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> force</h3>
-					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L21">lib/branch.ts:21</a></li>
+							<li>Defined in lib/components/branch.d.ts:21</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L36">src/components/branch.ts:36</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -120,7 +135,19 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L20">lib/branch.ts:20</a></li>
+							<li>Defined in lib/components/branch.d.ts:20</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L35">src/components/branch.ts:35</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="processkey" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> process<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">process<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="../index.html#processkeys" class="tsd-signature-type">ProcessKeys</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in lib/components/branch.d.ts:22</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L37">src/components/branch.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -146,6 +173,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="ibranch.html#id" class="tsd-kind-icon">id</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ibranch.html#processkey" class="tsd-kind-icon">process<wbr>Key</a>
 							</li>
 						</ul>
 					</li>

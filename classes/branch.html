@@ -87,10 +87,20 @@
 								<a href="textbranch.html" class="tsd-signature-type">TextBranch</a>
 							</li>
 							<li>
-								<a href="naturallanguagebranch.html" class="tsd-signature-type">NaturalLanguageBranch</a>
+								<a href="nlubranch.html" class="tsd-signature-type">NLUBranch</a>
+							</li>
+							<li>
+								<a href="serverbranch.html" class="tsd-signature-type">ServerBranch</a>
 							</li>
 						</ul>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a></li>
+					<li><span class="tsd-signature-type">IBranch</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-kind-class">
@@ -120,13 +130,15 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="branch.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="branch.html#match" class="tsd-kind-icon">match</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="branch.html#matched" class="tsd-kind-icon">matched</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="branch.html#processkey" class="tsd-kind-icon">process<wbr>Key</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="branch.html#type" class="tsd-kind-icon">type</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="branch.html#execute" class="tsd-kind-icon">execute</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="branch.html#matcher" class="tsd-kind-icon">matcher</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="branch.html#process" class="tsd-kind-icon">process</a></li>
 							</ul>
 						</section>
 					</div>
@@ -138,27 +150,28 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Branch<span class="tsd-signature-symbol">(</span>action<span class="tsd-signature-symbol">: </span><a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="branch.html" class="tsd-signature-type">Branch</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Branch<span class="tsd-signature-symbol">(</span>action<span class="tsd-signature-symbol">: </span><a href="" class="tsd-signature-type">action</a>, atts<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="branch.html" class="tsd-signature-type">Branch</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L37">lib/branch.ts:37</a></li>
+									<li>Defined in lib/components/branch.d.ts:33</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Create a Branch</p>
+									<p>Create a Branch
+									Create a Branch</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>action: <a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<h5>action: <a href="" class="tsd-signature-type">action</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> atts: <a href="../interfaces/ibranch.html" class="tsd-signature-type">IBranch</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="branch.html" class="tsd-signature-type">Branch</a></h4>
@@ -171,30 +184,45 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="callback" class="tsd-anchor"></a>
 					<h3>callback</h3>
-					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ibranchcallback.html" class="tsd-signature-type">IBranchCallback</a></div>
+					<div class="tsd-signature tsd-kind-icon">callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">ICallback</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L33">lib/branch.ts:33</a></li>
+							<li>Defined in lib/components/branch.d.ts:28</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L53">src/components/branch.ts:53</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Action to take on matching input.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="force" class="tsd-anchor"></a>
 					<h3>force</h3>
 					<div class="tsd-signature tsd-kind-icon">force<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ibranch.html">IBranch</a>.<a href="../interfaces/ibranch.html#force">force</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L34">lib/branch.ts:34</a></li>
+							<li>Defined in lib/components/branch.d.ts:29</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L55">src/components/branch.ts:55</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Force matching on this branch regardless of other matched branches.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="id" class="tsd-anchor"></a>
 					<h3>id</h3>
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ibranch.html">IBranch</a>.<a href="../interfaces/ibranch.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L32">lib/branch.ts:32</a></li>
+							<li>Defined in lib/components/branch.d.ts:27</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L51">src/components/branch.ts:51</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -204,34 +232,152 @@
 					<div class="tsd-signature tsd-kind-icon">match<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L35">lib/branch.ts:35</a></li>
+							<li>Defined in lib/components/branch.d.ts:31</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L59">src/components/branch.ts:59</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The result of branch matcher on input.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="matched" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> matched</h3>
-					<div class="tsd-signature tsd-kind-icon">matched<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></div>
+					<div class="tsd-signature tsd-kind-icon">matched<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L36">lib/branch.ts:36</a></li>
+							<li>Defined in lib/components/branch.d.ts:32</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L61">src/components/branch.ts:61</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Status of match.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="processkey" class="tsd-anchor"></a>
+					<h3>process<wbr>Key</h3>
+					<div class="tsd-signature tsd-kind-icon">process<wbr>Key<span class="tsd-signature-symbol">:</span> <a href="../index.html#processkeys" class="tsd-signature-type">ProcessKeys</a><span class="tsd-signature-symbol"> =&nbsp;&quot;listen&quot;</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/ibranch.html">IBranch</a>.<a href="../interfaces/ibranch.html#processkey">processKey</a></p>
+						<ul>
+							<li>Defined in lib/components/branch.d.ts:30</li>
+							<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L57">src/components/branch.ts:57</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The thought process collection the branch should be applied.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="type" class="tsd-anchor"></a>
+					<h3>type</h3>
+					<ul class="tsd-signatures tsd-kind-property tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> type<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L84">src/components/branch.ts:84</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Get the branch type, allows filtering processing.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="execute" class="tsd-anchor"></a>
+					<h3>execute</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">execute<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, middleware<span class="tsd-signature-symbol">: </span><a href="middleware.html" class="tsd-signature-type">Middleware</a>, done<span class="tsd-signature-symbol">?: </span><a href="../interfaces/idone.html" class="tsd-signature-type">IDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in lib/components/branch.d.ts:37</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Runs the matcher, then middleware and callback if matched.
+										Middleware can intercept and prevent the callback from executing.
+										If the state has already matched on prior branch, it will not match again
+									unless forced to, with the branch&#39;s <code>force</code> property.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>b: <a href="state.html" class="tsd-signature-type">State</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>State containing message to process</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5>middleware: <a href="middleware.html" class="tsd-signature-type">Middleware</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Executes before the branch callback if matched</p>
+										</div>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> done: <a href="../interfaces/idone.html" class="tsd-signature-type">IDone</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>Called after middleware (optional), with match status</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="matcher" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> matcher</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">matcher<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 						<li class="tsd-signature tsd-kind-icon">matcher<span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L56">lib/branch.ts:56</a></li>
+									<li>Defined in lib/components/branch.d.ts:35</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>input: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/67c0088/packages/bbot/src/components/branch.ts#L81">src/components/branch.ts:81</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -248,52 +394,6 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="process" class="tsd-anchor"></a>
-					<h3>process</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>b<span class="tsd-signature-symbol">: </span><a href="state.html" class="tsd-signature-type">State</a>, middleware<span class="tsd-signature-symbol">: </span><a href="middleware.html" class="tsd-signature-type">Middleware</a>, done<span class="tsd-signature-symbol">?: </span><a href="../interfaces/ibranchdone.html" class="tsd-signature-type">IBranchDone</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Amazebot/bbot/blob/de3bd97/src/lib/branch.ts#L67">lib/branch.ts:67</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Runs the matcher, then middleware and callback if matched.
-										Middleware can intercept and prevent the callback from executing.
-										If the state has already matched on prior branch, it will not match again
-									unless forced to, with the branch&#39;s <code>force</code> property.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>b: <a href="state.html" class="tsd-signature-type">State</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>State containing message to process</p>
-									</div>
-								</li>
-								<li>
-									<h5>middleware: <a href="middleware.html" class="tsd-signature-type">Middleware</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Executes before the branch callback if matched</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> done: <a href="../interfaces/ibranchdone.html" class="tsd-signature-type">IBranchDone</a><span class="tsd-signature-symbol"> =&nbsp;() &#x3D;&gt; null</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Called after middleware (optional), with match status</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -332,11 +432,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="branch.html#matched" class="tsd-kind-icon">matched</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="branch.html#matcher" class="tsd-kind-icon">matcher</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="branch.html#processkey" class="tsd-kind-icon">process<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="branch.html#type" class="tsd-kind-icon">type</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="branch.html#process" class="tsd-kind-icon">process</a>
+								<a href="branch.html#execute" class="tsd-kind-icon">execute</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="branch.html#matcher" class="tsd-kind-icon">matcher</a>
 							</li>
 						</ul>
 					</li>

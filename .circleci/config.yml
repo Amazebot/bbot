@@ -5,8 +5,8 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:8.11
-    - image: circleci/mongo:4-ram
+    - image: circleci/node:8.14.0-jessie
+    - image: circleci/mongo:4.1-ram
 
 jobs:
   build:
@@ -22,6 +22,7 @@ jobs:
             - v1-dependencies-
 
       - run: yarn install
+      - run: yarn bootstrap
 
       - save_cache:
           name: Save Yarn Package Cache
@@ -33,23 +34,12 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: yarn build
+      - run: yarn compile
+      - run: yarn test
       - run: yarn test:coverage
       - persist_to_workspace:
           root: ~/repo
           paths: .
-
-  publish:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
-      - run:
-          name: Publish package
-          command: npm publish
 
   docs:
     <<: *defaults
@@ -63,9 +53,22 @@ jobs:
           git config --global user.name $GH_NAME
           yarn docs:publish
 
+  publish:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: npm publish
+
 workflows:
   version: 2
-  build-publish-docs:
+  # build-publish-docs:
+  build:
     jobs:
       - build:
           filters:
@@ -73,14 +76,6 @@ workflows:
               only: /^v.*/
             branches:
               ignore: gh-pages
-      # - publish:
-      #     requires:
-      #       - build
-      #     filters:
-      #       tags:
-      #         only: /^v.*/
-      #       branches:
-      #         only: master
       - docs:
           requires:
             - build
@@ -89,3 +84,11 @@ workflows:
               only: /^v.*/
             branches:
               only: master
+      # - publish:
+      #     requires:
+      #       - build
+      #     filters:
+      #       tags:
+      #         only: /^v.*/
+      #       branches:
+      #         only: master
