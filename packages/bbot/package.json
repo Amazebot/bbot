@@ -3,6 +3,7 @@
   "version": "1.4.0",
   "description": "An adaptable chatbot framework with a conversational core.",
   "homepage": "http://bbot.chat",
+  "readme": "See [monorepo root for docs](https://github.com/Amazebot/bbot).",
   "repository": "git@github.com:Amazebot/bbot.git",
   "author": "Tim Kinnane <tim.kinnane@amazebot.chat>",
   "license": "MIT",
@@ -37,19 +38,15 @@
   "bot": {
     "alias": "bb"
   },
-  "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1",
-    "add:local": "yarn add --registry http://localhost:4873"
-  },
   "dependencies": {
     "@amazebot/config": "^0.1.1",
+    "chalk": "^2.4.1",
+    "inquirer": "^6.2.0",
+    "koa": "^2.6.2",
     "@types/inquirer": "^0.0.43",
     "@types/koa": "^2.0.47",
     "@types/koa-router": "^7.0.35",
     "@types/request": "^2.48.1",
-    "chalk": "^2.4.1",
-    "inquirer": "^6.2.0",
-    "koa": "^2.6.2",
     "koa-body": "^4.0.4",
     "koa-router": "^7.4.0",
     "request": "^2.88.0",

@@ -41,11 +41,11 @@ export class Bot {
   envelopes = envelopes
   bits = bits
   branches = branches
-  /** @deprecated - Update usage of `bot.global` to `bot.branches`. */
-  global = branches
   adapters = adapters
   middlewares = middlewares
   thoughts = thoughts
+  /** @deprecated - Update usage of `bot.global` to `bot.branches`. */
+  global = branches
 
   /** Internal index for loading status. */
   status: Status
@@ -53,9 +53,10 @@ export class Bot {
   /** Await helper, pauses for event loop. */
   eventDelay = promisify(setImmediate)
 
-  /** Create a bot instance. */
-  constructor () {
+  /** Create a bot instance, with config options. */
+  constructor (options: { [key: string]: any } = {}) {
     this.status = Status.waiting
+    for (let key in options) this.config.set(key, options[key])
   }
 
   /** Find out where the loading or shutdown process is at. */

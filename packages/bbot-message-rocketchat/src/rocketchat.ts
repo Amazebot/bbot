@@ -24,11 +24,12 @@ const attachmentSchema = {
 export class Rocketchat extends abstracts.MessageAdapter {
   name = 'rocketchat-message-adapter'
   driver = driver
+  config = driver.socket.config
 
   /** Connect to Rocket.Chat via DDP driver and setup message subscriptions */
   async start () {
-    // this.bot.config.extend({})
     this.driver.logger = this.bot.logger
+    this.bot.logger.info(`[rocketchat] connecting to ${this.driver.socket.config.host}`)
     await this.driver.login()
     const username = this.driver.username
     if (username !== this.bot.config.get('name')) {

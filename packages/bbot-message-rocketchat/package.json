@@ -38,6 +38,6 @@
   },
   "dependencies": {
     "bbot": "^1.4.0",
-    "@amazebot/rocket-bot": "^0.1.1"
+    "@amazebot/rocket-bot": "^0.1.2"
   }
 }

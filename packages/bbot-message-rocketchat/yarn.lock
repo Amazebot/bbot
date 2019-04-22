@@ -16,45 +16,45 @@
   resolved "https://registry.yarnpkg.com/@amazebot/logger/-/logger-0.1.1.tgz#ceab816cd7708e27b4eb6870343630358b04b868"
   integrity sha512-4cGFeFqlv6Xvpx/GIWM+hrtz9twRGskZXVinBgBr6Yymdo+2Bvvlh9l4Wryj3nwwmNmIdQ6TbhW4MJm/6Qt2PQ==
 
-"@amazebot/rocket-bot@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@amazebot/rocket-bot/-/rocket-bot-0.1.1.tgz#124887b5e06d2e993198a02ffb2732c9c24066a1"
-  integrity sha512-+kbGz/DMwymdseKmqeNhPPmL7+0GUpRGObawF1KRmsOv9fJ6UEwqVXo2lwCq2Nus24we+f2TWRdxNYC0aZThJA==
+"@amazebot/rocket-bot@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@amazebot/rocket-bot/-/rocket-bot-0.1.2.tgz#cc1c93dad1d14e701959043e7f9fc783a5fe21fc"
+  integrity sha512-4HcyT1JEOcNrwfWMvg+NGjxjHEgo/5mjskKXpQYaDB5S3pSt+oAc3Bch6rfjepphGU+IwSPsVnhWtFhU2Jt2og==
   dependencies:
     "@amazebot/config" "^0.1.1"
     "@amazebot/logger" "^0.1.1"
-    "@amazebot/rocket-rest" "^0.2.0"
-    "@amazebot/rocket-sims" "^0.1.0"
-    "@amazebot/rocket-socket" "^0.1.0"
+    "@amazebot/rocket-rest" "^0.2.1"
+    "@amazebot/rocket-sims" "^0.1.1"
+    "@amazebot/rocket-socket" "^0.1.1"
     "@types/lru-cache" "^4.1.1"
     lru-cache "^5.1.1"
 
-"@amazebot/rocket-rest@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@amazebot/rocket-rest/-/rocket-rest-0.2.0.tgz#fd9c38e6b93cf9a2ee6e0d6b5d846bb73be44646"
-  integrity sha512-jWGHPLxxidVfXZ/2yNi0REEKWTfnf4bGyzLhRdO/sePTFgdYPqRInNkSWc8BrmF8Fd1GT2uCQwCIqSBfjGO1bQ==
+"@amazebot/rocket-rest@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@amazebot/rocket-rest/-/rocket-rest-0.2.1.tgz#e4f37c5eddaefc7bbacf111fbeab0cb20bdb236e"
+  integrity sha512-vloF5SoM9mUQggHGPECgu39drR6eyfVdeMOg5Q8A+tF8m0NYw73z2jiQ0J4mF10/5DOT8Iy4Sj5G9C2hHQQC4g==
   dependencies:
     "@amazebot/config" "^0.1.1"
     "@amazebot/logger" "^0.1.1"
-    "@amazebot/rocket-sims" "^0.1.0"
-    "@amazebot/rocket-socket" "^0.1.0"
+    "@amazebot/rocket-sims" "^0.1.1"
+    "@amazebot/rocket-socket" "^0.1.1"
     axios "^0.18.0"
 
-"@amazebot/rocket-sims@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@amazebot/rocket-sims/-/rocket-sims-0.1.0.tgz#b6aedd11d2fb238f6ac76d053f95cec7e6283b37"
-  integrity sha512-ef0mB0AY6JHTPwBqWaiIJYd5gAx/oYuyN6EwMMf+Rdtk2wN/BO7xe+iS0ppqs0JQZ1LZ5idkrhmu+omBuFQGEg==
+"@amazebot/rocket-sims@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@amazebot/rocket-sims/-/rocket-sims-0.1.1.tgz#b14ff137d506f243c7c55e680a43e7b4ead29a54"
+  integrity sha512-sjF/IZgN3bhrbrAKtOhCpvYQbl/Yvn38VUd0gt/3QZkAr2mMpl+Nf4XRcWjmHcpq5x+aoUY48aNeCAS0xTy+rg==
   dependencies:
     "@amazebot/config" "^0.1.1"
     "@amazebot/logger" "^0.1.1"
-    "@amazebot/rocket-socket" "^0.1.0"
+    "@amazebot/rocket-socket" "^0.1.1"
     "@types/faker" "^4.1.4"
     faker "^4.1.0"
 
-"@amazebot/rocket-socket@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@amazebot/rocket-socket/-/rocket-socket-0.1.0.tgz#4679d713a32deed040d40e35e4da0179a675f401"
-  integrity sha512-sEnNfpQJMiM6/8l5drB3V1DW9V/KWOnq72LBfqXgtgY27jCoDdhg6L3lgy1jrieCHlywqOkdEwnJIJVp95/wiw==
+"@amazebot/rocket-socket@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@amazebot/rocket-socket/-/rocket-socket-0.1.1.tgz#16927fc4bb5e6fdaa5c1f2a16ab814dca6e8d78b"
+  integrity sha512-e8x1yhq7+HoqMxhnItgyEoxT9CoxZPkK02PX/Vh3ndWG6DyUtMRl4ZhmnodOup7mM7N0qxX/Gr7gjfLYgzkZTg==
   dependencies:
     "@amazebot/config" "^0.1.1"
     "@amazebot/logger" "^0.1.1"

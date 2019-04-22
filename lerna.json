@@ -1,12 +1,17 @@
 {
-  "packages": ["packages/*"],
+  "packages": [
+    "packages/*"
+  ],
   "npmClient": "yarn",
   "command": {
     "publish": {
       "push": false,
       "conventionalCommits": true,
-      "message": "chore: publish",
-      "ignoreChanges": ["*.md", "*.spec.ts"]
+      "message": "chore: Version update",
+      "ignoreChanges": [
+        "*.md",
+        "*.spec.ts"
+      ]
     }
   },
   "version": "1.4.0"

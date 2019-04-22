@@ -13,6 +13,12 @@ describe('[bot]', () => {
     mock.adapters.reset()
     bot.adapters.loaded.message = mock.adapters.message
   })
+  describe('constructor', () => {
+    it.only('accepts options overriding default config', () => {
+      const brocket = new Bot({ 'message-adapter': 'bbot-testing' })
+      expect(brocket.config.get('message-adapter')).to.equal('bbot-testing')
+    })
+  })
   describe('.load', () => {
     it('loads middleware', async () => {
       await bot.load()

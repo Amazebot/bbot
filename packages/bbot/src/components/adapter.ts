@@ -213,12 +213,15 @@ export class AdapterController {
     switch (type) {
       case 'message':
         this.loaded.message = this.load(loadPath) as MessageAdapter
+        config.set('message-adapter', loadPath)
         break
       case 'nlu':
         this.loaded.nlu = this.load(loadPath) as NLUAdapter
+        config.set('nlu-adapter', loadPath)
         break
       case 'storage':
         this.loaded.storage = this.load(loadPath) as StorageAdapter
+        config.set('storage-adapter', loadPath)
         break
     }
   }

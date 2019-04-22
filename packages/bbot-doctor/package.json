@@ -1,0 +1,19 @@
+{
+  "name": "bbot-doc",
+  "version": "1.4.0",
+  "description": "Performs bBot health checks.",
+  "homepage": "http://bbot.chat",
+  "repository": "git@github.com:Amazebot/bbot.git",
+  "author": "Tim Kinnane <tim.kinnane@amazebot.chat>",
+  "license": "MIT",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "checkup": "node src/index.js"
+  },
+  "dependencies": {
+    "bbot": "^1.4.0",
+    "bbot-message-rocketchat": "^1.4.0",
+    "chalk": "^2.4.2"
+  }
+}
