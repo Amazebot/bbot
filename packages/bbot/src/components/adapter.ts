@@ -208,6 +208,22 @@ export class AdapterController {
     return instance
   }
 
+  /**
+   * Ignore this "just jam it in there" feature.
+   * @todo Add enum type for adapter types.
+   * @todo Add tests.
+   * @todo Add type guards or generics to strict load adapter for given type.
+   * @todo Use this message in load, instead of reproducing logic.
+   */
+  use (
+    type: 'message' | 'nlu' | 'storage',
+    module: { use: (bot: Bot) => MessageAdapter | NLUAdapter | StorageAdapter }
+  ) {
+    const instance = module.use(bBot)
+    this.loaded[type] = instance
+    return instance
+  }
+
   /** Load and register adapter against type */
   register (type: string, loadPath: string) {
     switch (type) {

@@ -9,6 +9,7 @@ import users, { User } from './user'
 import { IPayload, Payload, IAttachment } from './payload'
 import { Message } from './message'
 import { State } from './state'
+import thoughts from './thought'
 
 /** Envelope interface, to create from scratch. */
 export interface IEnvelope {
@@ -114,6 +115,11 @@ export class Envelope implements IEnvelope {
   via (method: string) {
     this.method = method
     return this
+  }
+
+  /** Dispatch this envelope via bot thoughts controller. */
+  dispatch () {
+    return thoughts.dispatch(this)
   }
 }
 

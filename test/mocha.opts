@@ -1,4 +1,4 @@
---require ts-node/register
+--require ts-node/register/transpile-only
 --require test/mocha.env.js
 --require source-map-support/register
 --reporter list

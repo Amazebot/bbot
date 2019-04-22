@@ -5,6 +5,7 @@ import { expect } from 'chai'
 import users from './user'
 import rooms from './room'
 import { Envelope } from './envelope'
+import { thoughts } from './thought'
 
 const testRoom = { id: '111', name: 'testing' }
 const testRoomDM = rooms.byId('222', { name: 'tester-direct ' })
@@ -102,6 +103,15 @@ describe('[envelope]', () => {
       const envelope = new Envelope()
       envelope.via('emote')
       expect(envelope.method).to.equal('emote')
+    })
+  })
+  describe('.dispatch', () => {
+    it('dispatches the envelope', async () => {
+      const spy = sinon.spy(thoughts, 'dispatch')
+      const envelope = new Envelope()
+      await envelope.dispatch()
+      sinon.assert.calledWithExactly(spy, envelope)
+      spy.restore()
     })
   })
 })
