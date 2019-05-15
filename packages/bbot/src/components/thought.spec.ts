@@ -460,7 +460,7 @@ describe('[thought]', () => {
         it('false if branch matched', async () => {
           globalBranches.catchAll(() => null)
           const thoughts = new Thoughts(new State({ message }))
-          thoughts.b.matching = [new CustomBranch(() => true, () => null)]
+          thoughts.b.matchingBranches = [new CustomBranch(() => true, () => null)]
           const valid = await thoughts.processes.act.validate()
           expect(valid).to.equal(false)
         })
@@ -494,7 +494,7 @@ describe('[thought]', () => {
           globalBranches.custom(() => false, () => null)
           const thoughts = new Thoughts(new State({ message }))
           thoughts.b.envelope.compose('test')
-          thoughts.b.matching = [new CustomBranch(() => true, () => null, { id: 'test' })]
+          thoughts.b.matchingBranches = [new CustomBranch(() => true, () => null, { id: 'test' })]
           await thoughts.processes.listen.process()
           const valid = await thoughts.processes.respond.validate()
           expect(valid).to.equal(true)
@@ -518,14 +518,14 @@ describe('[thought]', () => {
         it('remembers user when branch matched', async () => {
           memory.users = {}
           const thoughts = new Thoughts(new State({ message }))
-          thoughts.b.matching = [new CustomBranch(() => true, () => null)]
+          thoughts.b.matchingBranches = [new CustomBranch(() => true, () => null)]
           await thoughts.processes.remember.validate()
           expect(memory.users[message.user.id]).to.eql(message.user)
         })
         it('false if no adapter', async () => {
           adapters.loaded.storage = undefined
           const thoughts = new Thoughts(new State({ message }))
-          thoughts.b.matching = [new CustomBranch(() => true, () => null)]
+          thoughts.b.matchingBranches = [new CustomBranch(() => true, () => null)]
           const valid = await thoughts.processes.remember.validate()
           expect(valid).to.equal(false)
         })

@@ -162,7 +162,7 @@ export class CustomBranch extends Branch {
   }
 }
 
-/** Text branch uses basic regex matching */
+/** Text branch uses basic regex or condition instance matching */
 export class TextBranch extends Branch {
   processKey: ProcessKeys = 'listen'
   conditions: Conditions

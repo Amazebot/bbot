@@ -102,8 +102,8 @@ export class State implements IState {
   /** Add to or create collection of matched branches. */
   setMatchingBranch (branch: Branch) {
     if (!branch.matched) return
-    if (!this.matching) this.matching = []
-    this.matching.push(branch)
+    if (!this.matchingBranches) this.matchingBranches = []
+    this.matchingBranches.push(branch)
   }
 
   /** Proxy to use setMatchingBranch as property */
@@ -113,11 +113,11 @@ export class State implements IState {
 
   /** Get a matched branch by it's ID or index (or last matched). */
   getMatchingBranch (id?: number | string) {
-    if (!this.matching) return undefined
-    if (!id) id = this.matching.length - 1
-    return (typeof id === 'number' && this.matching.length > id)
-      ? this.matching[id]
-      : this.matching.find((branch) => branch.id === id)
+    if (!this.matchingBranches) return undefined
+    if (!id) id = this.matchingBranches.length - 1
+    return (typeof id === 'number' && this.matchingBranches.length > id)
+      ? this.matchingBranches[id]
+      : this.matchingBranches.find((branch: Branch) => branch.id === id)
   }
 
   /** Proxy to use getMatchingBranch as property */
@@ -154,7 +154,7 @@ export class State implements IState {
 
   /** Use property getting for match state (only matched branches are kept). */
   get matched () {
-    return (this.matching && this.matching.length) ? true : false
+    return (this.matchingBranches && this.matchingBranches.length) ? true : false
   }
 
   /** A strict version of matched, only true if not matched on act stage. */

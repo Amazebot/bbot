@@ -2,7 +2,7 @@
   "compilerOptions": {
     "incremental": true,
     "pretty": true,
-    "target": "ES2017",
+    "target": "es2017",
     "module": "commonjs",
     "lib": ["dom", "es2017"],
     "composite": true,

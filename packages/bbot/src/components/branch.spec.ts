@@ -272,7 +272,7 @@ describe('[branch]', () => {
       })
       await directFoo.execute(b, middleware)
       await directBar.execute(b, middleware)
-      expect(b.matching).to.eql([directBar])
+      expect(b.matchingBranches).to.eql([directBar])
     })
     it('.execute adds condition match results to state', () => {
       const conditions = [{ starts: 'foo' }, { ends: 'bar' }]

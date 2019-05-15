@@ -13,7 +13,7 @@ Text branches simply respond when input matches a text pattern.
 [Learn more about branches.][branches] e.g.
 
 ```js
-bot.branches.text(/(hi|hello) bots/, (b) => b.respond('Hello 👋'))
+bot.branches.text(/hello bots/, (b) => b.respond('Hello 👋'))
 ```
 
 Test with "Hello bots!".

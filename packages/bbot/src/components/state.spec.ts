@@ -42,7 +42,7 @@ describe('[state]', () => {
       const branch = new CustomBranch(() => true, () => null)
       branch.matched = true
       b.setMatchingBranch(branch)
-      expect(b.matching).to.eql([branch])
+      expect(b.matchingBranches).to.eql([branch])
     })
     it('adds to collection if existing matched branches', () => {
       const b = new State({ message })
@@ -50,15 +50,15 @@ describe('[state]', () => {
       const branchB = new CustomBranch(() => true, () => null)
       branchA.matched = true
       branchB.matched = true
-      b.matching = [branchA]
+      b.matchingBranches = [branchA]
       b.setMatchingBranch(branchB)
-      expect(b.matching).to.eql([branchA, branchB])
+      expect(b.matchingBranches).to.eql([branchA, branchB])
     })
     it('rejects branches that did not match', () => {
       const b = new State({ message })
       const branch = new CustomBranch(() => true, () => null)
       b.setMatchingBranch(branch)
-      expect(typeof b.matching).to.equal('undefined')
+      expect(typeof b.matchingBranches).to.equal('undefined')
     })
   })
   describe('.getMatchingBranch', () => {
@@ -69,25 +69,25 @@ describe('[state]', () => {
     it('returns undefined when given ID not in state', () => {
       const b = new State({ message })
       const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
-      b.matching = [branch]
+      b.matchingBranches = [branch]
       expect(b.getMatchingBranch('B')).to.equal(undefined)
     })
     it('returns undefined when given index not in state', () => {
       const b = new State({ message })
       const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
-      b.matching = [branch]
+      b.matchingBranches = [branch]
       expect(b.getMatchingBranch(1)).to.equal(undefined)
     })
     it('returns branch by ID in state', () => {
       const b = new State({ message })
       const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
-      b.matching = [branch]
+      b.matchingBranches = [branch]
       expect(b.getMatchingBranch('A')).to.eql(branch)
     })
     it('returns branch by index in state', () => {
       const b = new State({ message })
       const branch = new CustomBranch(() => 'A', () => null, { id: 'A' })
-      b.matching = [branch]
+      b.matchingBranches = [branch]
       expect(b.getMatchingBranch(0)).to.eql(branch)
     })
   })
@@ -111,7 +111,7 @@ describe('[state]', () => {
   describe('.matched', () => {
     it('returns true if any branches added', () => {
       const b = new State({ message })
-      b.matching = [new CustomBranch(() => 'B', () => null)]
+      b.matchingBranches = [new CustomBranch(() => 'B', () => null)]
       expect(b.matched).to.equal(true)
     })
     it('returns false if no branches added', () => {

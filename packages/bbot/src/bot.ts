@@ -4,6 +4,7 @@ import config from './util/config'
 import logger from './util/logger'
 import events from './util/events'
 import request from './util/request'
+import caches from './components/cache'
 import server from './components/server'
 import memory from './components/memory'
 import middlewares from './components/middleware'
@@ -15,6 +16,7 @@ import users from './components/user'
 import messages from './components/message'
 import envelopes from './components/envelope'
 import bits from './components/bit'
+import dialogues from './components/dialogue'
 
 /** Possible operational statuses. */
 export enum Status {
@@ -33,6 +35,7 @@ export class Bot {
   logger = logger
   events = events
   request = request
+  caches = caches
   server = server
   memory = memory
   users = users
@@ -43,6 +46,7 @@ export class Bot {
   branches = branches
   adapters = adapters
   middlewares = middlewares
+  dialogues = dialogues
   thoughts = thoughts
   /** @deprecated - Update usage of `bot.global` to `bot.branches`. */
   global = branches
@@ -162,6 +166,7 @@ export class Bot {
       this.middlewares.unloadAll()
       this.branches.reset()
       this.config.reset()
+      this.caches.reset()
     } catch (err) {
       this.logger.error('[core] failed to reset')
       await this.shutdown(1).catch()
