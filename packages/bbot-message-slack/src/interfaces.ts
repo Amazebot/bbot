@@ -1,8 +1,15 @@
 import {
   RTMClientOptions,
   RTMStartArguments,
-  RTMConnectArguments
+  RTMConnectArguments,
+  MessageAttachment,
+  AttachmentAction
 } from '@slack/client'
+
+/** Generic callback. */
+export interface ICallback {
+  (err: Error, result: any): void
+}
 
 /** Options for Slack RTM and Web Client connection. */
 export interface ISlackClientOptions {

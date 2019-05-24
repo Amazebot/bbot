@@ -5,19 +5,27 @@ import {
   ChatPostEphemeralArguments
 } from '@slack/client'
 import {
+  ICallback,
   IUser,
+  isUser,
   IConversation,
   IEvent,
   IBot,
   IConnection
 } from './interfaces'
 
+const fallbackHandler: ICallback = (err, result) => {
+  if (err) throw err
+  else console.log(`[slack] event result ${JSON.stringify(result)}`)
+}
+
 /** Connection handler for Slack RTM and Web clients. */
 export class SlackClient {
   rtm: RTMClient
   web: WebClient
   botUserIdMap: { [id: string]: IBot }
-  eventHandler: any
+  messageHandler: ICallback
+  userHandler: ICallback
   pageSize = 100
   connection?: IConnection
 
@@ -26,7 +34,10 @@ export class SlackClient {
    * @todo pass bot logger to RTM after implementing `setLevel` and `setName`.
    * @todo optimise sessions by looking at other RTM and Web client options.
    */
-  constructor (token: string) {
+  constructor (token: string, handlers: {
+    message?: ICallback,
+    user?: ICallback
+  } = {}) {
     this.rtm = new RTMClient(token)
     this.web = new WebClient(token, { maxRequestConcurrency: 1 })
 
@@ -41,12 +52,30 @@ export class SlackClient {
     this.rtm.on('member_joined_channel', this.eventWrapper, this)
     this.rtm.on('member_left_channel', this.eventWrapper, this)
     this.rtm.on('user_change', this.eventWrapper, this)
-    this.eventHandler = undefined
+    this.messageHandler = handlers.message || fallbackHandler
+    this.userHandler = handlers.user || fallbackHandler
   }
 
-  /** Set event handler. */
-  onEvent (callback: (err: Error, result: any) => void) {
-    if (this.eventHandler !== callback) this.eventHandler = callback
+  /** Set message event handler. */
+  onMessage (callback: (err: Error, result: any) => void) {
+    if (this.messageHandler !== callback) this.messageHandler = callback
+  }
+
+  /** Set user update handler. */
+  onUser (callback: (err: Error, result: any) => void) {
+    if (this.userHandler !== callback) this.userHandler = callback
+  }
+
+  /** Process events with given handler. */
+  async eventWrapper (e: IEvent) {
+    // ignore self originated events
+    if (this.connection && e.user === this.connection.self.id) return
+
+    if (e.type === 'user_change' && isUser(e.user) && this.userHandler) {
+      return this.userHandler(e)
+    }
+
+    if (this.eventHandler) return this.eventHandler(e)
   }
 
   /** Open connection to the Slack RTM API. */
@@ -67,39 +96,25 @@ export class SlackClient {
   }
 
   /** Set a channel's topic */
-  setTopic (channelId: string, topic: string) {
-    logger.debug(`[slack] set topic to ${topic}`)
-    return this.web.conversations.setTopic({ channel: channelId, topic })
-      .catch((err) => {
-        logger.error(`[slack] failed setting topic in ${channelId}: ${err.message}`)
-      })
+  setTopic (channel: string, topic: string) {
+    return this.web.conversations.setTopic({ channel, topic })
   }
 
   /** Respond to incoming Slack message or dispatch unprompted. */
   send (message: ChatPostMessageArguments) {
-    logger.debug(`[slack] send to channel: ${message.channel}, message: ${message}`)
     const defaults = { as_user: true, link_names: 1 } // post message options
-    // @todo enable threading after bBot update allows prototype changes
-    // if (envelope.message && envelope.message.thread) {
-    //   options.thread_ts = envelope.message.thread
-    // }
     return this.web.chat.postMessage(Object.assign(message, defaults))
-      .catch((err) => logger.error(`[slack] postMessage error: ${err.message}`))
   }
 
   /** Send an ephemeral message to a user in a given channel */
-  ephemeral (message: ChatPostEphemeralArguments) {
-    logger.debug(`[slack] send ephemeral to user ${message.user} channel ${message.channel}`)
+  sendEphemeral (message: ChatPostEphemeralArguments) {
     const defaults = { as_user: true, link_names: 1 } // post message options
     return this.web.chat.postEphemeral(Object.assign(message, defaults))
-      .catch((err) => logger.error(`[slack] postEphemeral error: ${err.message}`))
   }
 
   /** Set a reaction (emoji) on a given message. */
-  react (name: string, channel: string, timestamp: string) {
-    logger.debug(`[slack] set reaction :${name}:, on message at ${timestamp} in ${channel}`)
+  addReaction (name: string, channel: string, timestamp: string) {
     return this.web.reactions.add({ name, channel, timestamp })
-      .catch((err) => logger.error(`[slack] add reaction error: ${err.message}`))
   }
 
   /** Do API list request/s, concatenating paginated results */
@@ -150,33 +165,17 @@ export class SlackClient {
   }
 
   /** Open direct message channel with a user (or resume cached) */
-  async openDirect (user: string): Promise<IConversation | undefined> {
-    // get from cache
-    // const cachedChannel = cache.get('openDirect', user)
-    // if (cachedChannel) return (cachedChannel as string)
-    // not in cache
-    logger.debug(`[slack] opening direct channel with ${user}`)
+  async openDirect (user: string) {
     const result = await this.web.im.open({ user })
-    if (result.ok) {
-      logger.debug(`[slack] IM info ${JSON.stringify((result as any).channel)}`)
-      cache.set('openDirect', user, (result as any).channel)
-      return (result as any).channel
-    }
+    if (result.ok) return result.channel as IConversation
+    throw new Error(`[slack] failed to open IM channel with user: ${JSON.stringify(user)}`)
   }
 
   /** Get conversation/channel by its ID (from cache if available). */
-  async conversationById (channel: string): Promise<IConversation | undefined> {
-    // get from cache
-    const cachedChannel = cache.get('conversationById', channel)
-    if (cachedChannel) return cachedChannel as IConversation
-    // not in cache
-    logger.debug(`[slack] getting channel info: ${channel}`)
+  async conversationById (channel: string) {
     const result = await this.web.conversations.info({ channel })
-    if (result.ok) {
-      logger.debug(`[slack] channel info ${JSON.stringify((result as any).channel)}`)
-      cache.set('conversationById', channel, (result as any).channel)
-      return (result as any).channel
-    }
+    if (result.ok) return result.channel as IConversation
+    throw new Error(`[slack] could not find conversation by ID: ${channel}`)
   }
 
   /** Get channel by its name (has to load all and filter). */
@@ -185,47 +184,26 @@ export class SlackClient {
     return channels.find((channel) => channel.name === name)
   }
 
-  /** Get just the ID from a channel by name (from cache if available) */
-  async channelIdByName (name: string): Promise<string | undefined> {
-    // get from cache
-    const cachedId = cache.get('channelIdByName', name)
-    if (cachedId) return cachedId
-    // not in cache
+  /** Get just the ID from a channel by name. */
+  async channelIdByName (name: string) {
     const channel = await this.channelByName(name)
-    if (channel) {
-      cache.set('channelIdByName', name, channel.id)
-      return channel.id
-    }
+    if (channel) return channel.id as string
+    throw new Error(`[slack] could not find channel by name: ${name}`)
   }
 
-  /** Get the user by their ID (from cache if available) */
-  async userById (user: string): Promise<IUser | undefined> {
-    // get from cache
-    const cachedUser = cache.get('userById', user)
-    if (cachedUser) return cachedUser
-    // not in cache
+  /** Get the user by their ID (from cache if available). */
+  async userById (user: string) {
     const result = await this.web.users.info({ user })
-    if (result.ok) cache.set('userById', user, (result as any).user)
-    return (result as any).user
+    if (result.ok) return result.user as IUser
+    throw new Error(`[slack] could not find user by ID: ${user}`)
   }
 
-  /** Get a bot user by its ID (from internal collection if available) */
-  async botById (bot: string): Promise<IBot | undefined> {
+  /** Get a bot user by its ID (from internal collection if available). */
+  async botById (bot: string) {
     if (!this.botUserIdMap[bot]) {
       const result = await this.web.bots.info({ bot })
-      if (result.ok) this.botUserIdMap[bot] = (result as any).bot
+      if (result.ok) this.botUserIdMap[bot] = result.bot as IBot
     }
     return this.botUserIdMap[bot]
-  }
-
-  /** Process events with given handler (ignoring self originated events). */
-  async eventWrapper (e: IEvent) {
-    if (this.connection && e.user === this.connection.self.id) return
-    if (this.eventHandler) {
-      return Promise.resolve(this.eventHandler(e))
-        .catch((err: Error) => {
-          logger.error(`[slack] Error processing an RTM event: ${err.message}.`)
-        })
-    }
   }
 }
