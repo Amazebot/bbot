@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "extendedDiagnostics": true,
     "incremental": true,
     "pretty": true,
     "target": "es2017",

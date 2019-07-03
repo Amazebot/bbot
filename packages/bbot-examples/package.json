@@ -16,10 +16,9 @@
     "add:local": "yarn add --registry http://localhost:4873"
   },
   "dependencies": {
-    "marked-terminal": "^3.2.0"
-  },
-  "devDependencies": {
+    "marked-terminal": "^3.2.0",
     "bbot": "^1.4.0",
-    "bbot-message-rocketchat": "^1.4.0"
+    "bbot-message-rocketchat": "^1.4.0",
+    "bbot-message-slack": "^1.4.0"
   }
 }

@@ -13,6 +13,10 @@
 			"path": "packages/bbot-message-rocketchat"
 		},
 		{
+			"name": "bBot Slack",
+			"path": "packages/bbot-message-slack"
+		},
+		{
 			"name": "bBot Examples",
 			"path": "packages/bbot-examples"
 		}

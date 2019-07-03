@@ -1,7 +1,11 @@
 import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
-import { Bot, users, User, rooms, Room, Envelope, abstracts } from '..'
+import { Bot } from '../bot'
+import { users, User } from '../components/user'
+import { rooms, Room } from '../components/room'
+import { Envelope } from '../components/envelope'
+import { abstracts } from '../components/adapter'
 
 /** Load prompts and render chat in shell, for testing interactions */
 export class ShellAdapter extends abstracts.MessageAdapter {

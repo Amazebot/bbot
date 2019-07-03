@@ -3,6 +3,7 @@
   "files": [],
   "references": [
     { "path": "packages/bbot" },
-    { "path": "packages/bbot-message-rocketchat" }
+    { "path": "packages/bbot-message-rocketchat" },
+    { "path": "packages/bbot-message-slack" }
   ]
 }

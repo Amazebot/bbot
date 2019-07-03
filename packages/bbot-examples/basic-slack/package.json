@@ -1,0 +1,14 @@
+{
+  "name": "bbot-examples-slack-basic",
+  "version": "0.0.0",
+  "description": "Usage examples for bBot with Slack message adapter (basic).",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bbot": "^1.4.0",
+    "bbot-message-slack": "^1.4.0"
+  }
+}

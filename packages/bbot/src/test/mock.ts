@@ -1,5 +1,8 @@
 import * as sinon from 'sinon'
-import { bBot, User, TextMessage, abstracts } from '..'
+import { bBot } from '../bot'
+import { User } from '../components/user'
+import { TextMessage } from '../components/message'
+import { abstracts } from '../components/adapter'
 
 /** Mock method inputs and results for easy testing. */
 export const data = {
