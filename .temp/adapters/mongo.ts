@@ -98,7 +98,7 @@ export class Mongo extends abstracts.StorageAdapter {
       if (doc.sub === 'users') {
         if (!memory[doc.sub]) memory[doc.sub] = {}
         for (let id in doc.data) {
-          memory[doc.sub][id] = this.bot.users.byId(doc.data[id])
+          memory[doc.sub][id] = this.bot.user.byId(doc.data[id])
         }
       } else {
         memory[doc.sub] = doc.data

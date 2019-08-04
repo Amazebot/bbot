@@ -47,4 +47,6 @@ export const logger = winston.createLogger({
   exitOnError: (err: Error) => (typeof (err as any).middleware === 'undefined')
 })
 
+export type Logger = winston.Logger
+
 export default logger

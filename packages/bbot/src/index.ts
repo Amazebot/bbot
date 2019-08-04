@@ -2,7 +2,7 @@
 export * from './bot'
 // export * from './components/cache'
 // export * from './components/condition'
-export * from './components/adapter'
+export * from './components/adapter/controller'
 // export * from './components/user'
 // export * from './components/room'
 // export * from './components/branch'

@@ -33,7 +33,6 @@
     {
       "name": "Current Spec",
       "type": "node",
-      "envFile": "${fileDirname}/.env",
       "sourceMaps": true,
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/.bin/_mocha",

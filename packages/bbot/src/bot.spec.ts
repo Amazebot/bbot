@@ -11,7 +11,7 @@ describe('[bot]', () => {
   beforeEach(() => {
     bot = new Bot()
     mock.adapters.reset()
-    bot.adapters.loaded.message = mock.adapters.message
+    bot.adapter.slots.message = mock.adapters.message
   })
   describe('constructor', () => {
     it('accepts options overriding default config', () => {
@@ -26,7 +26,7 @@ describe('[bot]', () => {
     })
     it('loads adapters', async () => {
       await bot.load()
-      expect(Object.keys(bot.adapters.loaded)).have.length.gt(0)
+      expect(Object.keys(bot.adapter.slots)).have.length.gt(0)
     })
   })
   describe('.start', () => {
@@ -46,7 +46,7 @@ describe('[bot]', () => {
     it('clears adapters', async () => {
       await bot.start()
       await bot.reset()
-      expect(Object.keys(bot.adapters.loaded)).to.have.lengthOf(0)
+      expect(Object.keys(bot.adapter.slots)).to.have.lengthOf(0)
     })
     it('returns bot to waiting state', async () => {
       await bot.start()

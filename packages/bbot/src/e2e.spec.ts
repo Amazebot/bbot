@@ -11,14 +11,14 @@ describe.skip('[E2E]', () => {
   beforeEach(async () => {
     await bBot.reset()
     mock.adapters.reset()
-    bBot.adapters.loaded.message = mock.adapters.message
+    bBot.adapter.slots.message = mock.adapters.message
     await bBot.start()
   })
   it('responds from middleware', async () => {
     bBot.middlewares.register('hear', (b, _, done) => {
       return b.respond('test').then(() => done())
     })
-    await bBot.thoughts.receive(bBot.messages.text(bBot.users.create(), ''))
+    await bBot.thoughts.receive(bBot.messages.text(bBot.user.create(), ''))
     sinon.assert.calledOnce(mock.adapters.message.dispatch)
   })
   it('captures input matching conditions', async () => {
@@ -29,7 +29,7 @@ describe.skip('[E2E]', () => {
     bBot.branches.text({ after: 'call me' }, (b) => {
       captured.push(b.conditions.captured)
     }, { force: true })
-    const msg = bBot.messages.text(bBot.users.create(), 'Call me bb, please')
+    const msg = bBot.messages.text(bBot.user.create(), 'Call me bb, please')
     await bBot.thoughts.receive(msg)
     expect(captured).to.eql(['bb', 'bb, please'])
   })
@@ -43,7 +43,7 @@ describe.skip('[E2E]', () => {
       }]
     }
     bBot.branches.text(/attachment/i, (b) => b.respond(attachment))
-    const msg = bBot.messages.text(bBot.users.create(), 'Do attachment')
+    const msg = bBot.messages.text(bBot.user.create(), 'Do attachment')
     await bBot.thoughts.receive(msg)
     // sinon.assert.calledWithMatch(mock.adapters.message.dispatch, { payload: {
     //   attachments: [attachment]

@@ -2,22 +2,28 @@ import Transport from 'winston-transport'
 import * as inquirer from 'inquirer'
 import chalk from 'chalk'
 import { Bot } from '../bot'
-import { users, User } from '../components/user'
-import { rooms, Room } from '../components/room'
+import { User } from '../components/user/controller'
+import { Room } from '../components/room'
 import { Envelope } from '../components/envelope'
-import { abstracts } from '../components/adapter'
+import { MessageAdapter } from '../components/adapter/class'
 
 /** Load prompts and render chat in shell, for testing interactions */
-export class ShellAdapter extends abstracts.MessageAdapter {
+export class ShellAdapter extends MessageAdapter {
   name = 'shell-message-adapter'
   debug: boolean = false
   ui: any
   logs: string[] = ['']
   messages: [string, string][] = []
-  user: User = users.blank()
-  room: Room = rooms.blank()
   line = new inquirer.Separator()
+  user: User
+  room: Room
   transport?: Transport
+
+  constructor (bot: Bot) {
+    super(bot)
+    this.user = this.bot.user.blank()
+    this.room = this.bot.rooms.blank()
+  }
 
   /** Update chat window and return to input prompt */
   async render () {
@@ -128,7 +134,7 @@ export class ShellAdapter extends abstracts.MessageAdapter {
     this.room = this.bot.rooms.create({
       name: this.bot.config.get('shell-room-name')
     })
-    this.user = this.bot.users.create({
+    this.user = this.bot.user.create({
       name: this.bot.config.get('shell-user-name'),
       id: this.bot.config.get('shell-user-id'),
       room: this.room

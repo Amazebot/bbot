@@ -1,22 +1,24 @@
 import { promisify } from 'util'
 
+import * as id from './util/id'
 import config from './util/config'
 import logger from './util/logger'
 import events from './util/events'
 import request from './util/request'
+
 import caches from './components/cache'
 import server from './components/server'
-import memory from './components/memory'
 import middlewares from './components/middleware'
-import adapters from './components/adapter'
 import thoughts from './components/thought'
 import branches from './components/branch'
-import rooms from './components/room'
-import users from './components/user'
 import messages from './components/message'
 import envelopes from './components/envelope'
 import bits from './components/bit'
 import dialogues from './components/dialogue'
+import { makeAdapterController } from './components/adapter'
+import { MemoryController } from './components/memory'
+import { RoomController } from './components/room'
+import { makeUserController } from './components/user'
 
 /** Possible operational statuses. */
 export enum Status {
@@ -31,23 +33,28 @@ export type StatusKey = keyof typeof Status
 
 /** Primary parent class for bBot import typing. */
 export class Bot {
+  id = id
   config = config
   logger = logger
   events = events
+
+  /* @todo refactor all with new composition pattern */
   request = request
   caches = caches
   server = server
-  memory = memory
-  users = users
-  rooms = rooms
   messages = messages
   envelopes = envelopes
   bits = bits
   branches = branches
-  adapters = adapters
   middlewares = middlewares
   dialogues = dialogues
   thoughts = thoughts
+
+  adapter = makeAdapterController(this)
+  memory = new MemoryController(this)
+  user = makeUserController(this)
+  rooms = new RoomController(this) /** @todo refactor all pluralised names */
+
   /** @deprecated - Update usage of `bot.global` to `bot.branches`. */
   global = branches
 
@@ -96,7 +103,7 @@ export class Bot {
       this.config.load()
       this.middlewares.loadAll()
       this.server.load()
-      this.adapters.loadAll()
+      this.adapter.loadAll()
       await this.eventDelay()
       this.status = Status.loaded
       this.events.emit('loaded')
@@ -112,7 +119,7 @@ export class Bot {
     this.status = Status.starting
     try {
       await this.server.start()
-      await this.adapters.startAll()
+      await this.adapter.startAll()
       await this.memory.start()
     } catch (err) {
       logger.error('[core] failed to start')
@@ -136,7 +143,7 @@ export class Bot {
       await new Promise((resolve) => this.events.on('started', () => resolve()))
     }
     await this.memory.shutdown()
-    await this.adapters.shutdownAll()
+    await this.adapter.shutdownAll()
     this.server.shutdown()
     await this.eventDelay()
     this.status = Status.shutdown
@@ -162,7 +169,7 @@ export class Bot {
   async reset () {
     if (this.status !== Status.shutdown) await this.shutdown()
     try {
-      this.adapters.unloadAll()
+      this.adapter.unloadAll()
       this.middlewares.unloadAll()
       this.branches.reset()
       this.config.reset()
