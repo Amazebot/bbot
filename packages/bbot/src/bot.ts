@@ -22,12 +22,12 @@ import { makeUserController } from './components/user'
 
 /** Possible operational statuses. */
 export enum Status {
-  waiting = 'waiting',
-  loading = 'loading',
-  loaded = 'loaded',
-  starting = 'starting',
-  started = 'started',
-  shutdown = 'shutdown'
+  waiting,
+  loading,
+  loaded,
+  starting,
+  started,
+  shutdown
 }
 export type StatusKey = keyof typeof Status
 

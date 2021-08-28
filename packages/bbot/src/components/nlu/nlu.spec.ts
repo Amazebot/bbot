@@ -1,7 +1,7 @@
 import 'mocha'
 import * as sinon from 'sinon'
 import { expect, assert } from 'chai'
-import { NLU, NLUResult, NLUResults } from './nlu'
+import { NLU, NLUResult, NLUResults } from './controller'
 
 let results: NLUResults
 

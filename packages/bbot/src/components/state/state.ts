@@ -5,7 +5,6 @@
 
 import logger from '../util/logger'
 import { users } from './user/controller'
-import { IContext } from './server'
 import { Branch } from './branch'
 import { Dialogue } from './dialogue'
 import { messages, Message } from './message'
@@ -13,23 +12,8 @@ import { Envelope, IEnvelope } from './envelope'
 import { thoughts } from './thought'
 import bBot from '../bot'
 
-/**
- * States accept some known common properties, but can accept any key/value pair
- * that is needed for a specific type of branch or middleware.
- * The `done` property tells middleware not to continue processing state.
- */
-export interface IState {
-  done?: boolean
-  exit?: boolean
-  sequence?: string
-  branch?: Branch
-  dialogue?: Dialogue
-  server?: IContext
-  [key: string]: any
-}
-
 /** State callback interface, usually for branch if the message matched. */
-export interface ICallback {
+export interface IStateCallback {
   (b: State): any
 }
 
@@ -37,7 +21,7 @@ export interface ICallback {
  * Received states persist the incoming message to be used for matching and
  * to address response envelopes.
  */
-export interface IReceiveState extends IState {
+export interface IReceiveStateProps extends IStateProps {
   message: Message
 }
 
@@ -45,7 +29,7 @@ export interface IReceiveState extends IState {
  * Dispatching states don't have an originating message, so they will be
  * processed via the attributes of the outgoing envelope/s.
  */
-export interface IDispatchState extends IState {
+export interface IDispatchStateProps extends IStateProps {
   envelopes?: Envelope[]
 }
 
@@ -172,12 +156,6 @@ export class State implements IState {
     return this.envelopes.find((e) => typeof e.responded === 'undefined')
   }
 
-  /** Access user from memory matching message details */
-  get user () {
-    const user = this.message.user
-    return users.byId(user.id, user)
-  }
-
   /** Return the last dispatched envelope. */
   dispatchedEnvelope () {
     if (!this.envelopes) return
@@ -195,11 +173,6 @@ export class State implements IState {
     return pending
   }
 
-  /** Get an envelope for responding with, either pending or newly created. */
-  get envelope () {
-    return this.respondEnvelope()
-  }
-
   /** Dispatch the envelope via respond thought process. */
   respond (...content: any[]) {
     this.respondEnvelope().compose(...content)
@@ -210,5 +183,15 @@ export class State implements IState {
   respondVia (method: string, ...content: any[]) {
     this.respondEnvelope().via(method)
     return this.respond(...content)
+  }
+
+  /** Get an envelope for responding with, either pending or newly created. */
+  get envelope () {
+    return this.respondEnvelope()
+  }
+
+  /** Get user from message in state. */
+  get user () {
+    return this.message.user
   }
 }

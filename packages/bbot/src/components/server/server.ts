@@ -19,6 +19,11 @@ import { middlewares } from './middleware'
 /** Server states include Koa router context, to respond to http/s requests. */
 export interface IContext extends Router.IRouterContext {}
 
+/** Web request states include http/s request context from server. */
+export interface IRequestStateProps extends IStateProps {
+  server?: IContext
+}
+
 /** Load and start server to listen for data over HTTP/s */
 export class ServerController {
   /** Koa app. */

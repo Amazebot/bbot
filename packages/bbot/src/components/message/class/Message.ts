@@ -2,7 +2,7 @@ import { User } from '../../user/class'
 import { Room } from '../../room/class'
 import { NLU } from '../../nlu/class'
 
-export interface IMessage {
+export interface IMessageProps {
   /** A unique ID for the message. */
   id: string
   /** The user who sent the message. */
@@ -14,14 +14,14 @@ export interface IMessage {
 }
 
 /** Represents an incoming message from the chat. */
-export abstract class Message implements IMessage {
+export abstract class Message implements IMessageProps {
   id: string
   user: User
   room: Room
   nlu?: NLU
 
   /** Create a message. */
-  constructor ({ id, user, room, nlu }: IMessage) {
+  constructor ({ id, user, room, nlu }: IMessageProps) {
     this.id = id
     this.user = user
     this.room = room

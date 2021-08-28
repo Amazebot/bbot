@@ -22,12 +22,16 @@ export class MessageController {
 
   /** Create adapter controller for bot instance. */
   constructor (private _: {
+    newUser: () => User
     getUser: (id: string) => User
   }) {}
 
   /** Create a blank message */
   /** @todo fix with normal message and blank user */
-  // blank = () => new BlankMessage()
+  blank = (id: string = 'null-user') => {
+    const user = this._.newUser()
+    return new TextMessage({ id, user })
+  }
 
   /** Create a text message. */
   text = (
@@ -36,7 +40,7 @@ export class MessageController {
     text: string,
     id: string = random()
   ) => {
-    return new TextMessage(id, user, room, text)
+    return new TextMessage({ id, user, room, text })
   }
 
   /** Create a rich message. */

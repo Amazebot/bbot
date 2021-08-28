@@ -1,8 +1,3 @@
-/**
- * Represent and handle results from natural language platforms.
- * @module components/nlu
- */
-
 import { NLU } from './class'
 import {
   NLUKeys,

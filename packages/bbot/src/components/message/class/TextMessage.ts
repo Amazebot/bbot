@@ -1,23 +1,16 @@
-import { User } from '../../user/class'
-import { Room } from '../../room/class'
-import { Message } from './Message'
+import { Message, IMessageProps } from './Message'
+
+export interface ITextMessageAttributes extends IMessageProps {
+  /** The text content of the message */
+  text: string
+}
 
 /** A plain text/string message type. */
-export class TextMessage extends Message {
-  /**
-   * Create a text message.
-   * @param id   A unique ID for the message
-   * @param user The user who sent the message
-   * @param room The room the message was sent from
-   * @param text The text content of the message
-   */
-  constructor (
-    id: string,
-    user: User,
-    room: Room,
-    public text: string
-  ) {
-    super(id, user, room)
+export class TextMessage extends Message implements ITextMessageAttributes {
+  text: string
+  constructor ({ id, user, room, text }: ITextMessageAttributes) {
+    super({ id, user, room })
+    this.text = text
   }
 
   toString () {
